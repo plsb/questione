@@ -11,6 +11,8 @@ import {
   Typography
 } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import api from '../../services/api';
+import Swal from 'sweetalert2';
 
 const schema = {
   name: {
@@ -184,9 +186,61 @@ const SignUp = props => {
     history.goBack();
   };
 
-  const handleSignUp = event => {
-    event.preventDefault();
-    history.push('/');
+  //configuration alert
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'bottom-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    onOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
+
+  function loadAlert(icon, message) {
+    Toast.fire({
+      icon: icon,
+      title: message
+    });
+  }
+
+  async function handleSignUp(e){
+    e.preventDefault();
+    try {
+      const name = formState.values.name;
+      const cpf = formState.values.cpf;
+      const email = formState.values.email;
+      const password = formState.values.password;
+
+      const data = {
+        name, cpf, email, password
+      };
+
+      const response = await api.post('register/', data);
+      console.log(response);
+      if (response.status == 202) {
+        if(response.data.message){
+          loadAlert('error', response.data.message);
+        } else if(response.data.errors[0].name){
+          loadAlert('error', response.data.errors[0].name);
+        } if(response.data.errors[0].cpf){
+          loadAlert('error', response.data.errors[0].cpf);
+        } if(response.data.errors[0].email){
+          console.log(response);
+          loadAlert('error', response.data.errors[0].email);
+        } if(response.data.errors[0].password){
+          loadAlert('error', response.data.errors[0].password);
+        }
+      } else {
+        loadAlert('success', 'Usuário cadastrado!');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+   // history.push('/');
   };
 
   const hasError = field =>
