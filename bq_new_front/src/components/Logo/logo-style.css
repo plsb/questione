@@ -1,0 +1,17 @@
+.logo {
+    width: 120px;
+    height: 120px;
+    text-align: center;
+  }
+  
+  .logo .image {
+    width:120px;
+    height:120px;
+    position:absolute;
+    top:30%;
+    left:50%;
+    margin-top:-50px;
+    margin-left:-50px;
+    
+  }
+  
