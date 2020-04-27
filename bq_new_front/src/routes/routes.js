@@ -3,10 +3,14 @@ import {
   BrowserRouter,
   Switch,
   Route,
-  //Redirect
 } from 'react-router-dom';
+import { RouteWithLayout } from './../components';
+import { Main as MainLayout, Minimal as MinimalLayout } from './../layouts';
 
-
+import {
+    SignUp as SignUpView,
+    SignIn as SignInView,
+} from '../pages';
 //importar as paginas
 import Login from '../components/Login';
 import Home from '../pages/Professor/Home';
@@ -18,15 +22,24 @@ import AdmHome from '../pages/Administrador/AdmHome';
 const Routes = () => (
   <BrowserRouter>
     <Switch>
-      <Route exact path="/Login" component={Login} />
-      <Route exact path="/Home" component={Home} />
-      <Route exact path="/ListCurso" component={ListCurso} />
-      <Route exact path="/Administrador/AdmLogin" component={AdmLogin} />
-      <Route exact path="/Administrador/AdmHome" component={AdmHome} />
-      
-
-
-
+      <RouteWithLayout
+          component={Home}
+          exact
+          layout={MainLayout}
+          path="/home"
+      />
+        <RouteWithLayout
+            component={SignUpView}
+            exact
+            layout={MinimalLayout}
+            path="/sign-up"
+        />
+        <RouteWithLayout
+            component={SignInView}
+            exact
+            layout={MinimalLayout}
+            path="/sign-in"
+        />
       <Route path="*" component={() => <h1>Page not found</h1>} />
     </Switch>
   </BrowserRouter>

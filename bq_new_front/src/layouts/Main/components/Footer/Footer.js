@@ -24,16 +24,15 @@ const Footer = props => {
         &copy;{' '}
         <Link
           component="a"
-          href="https://devias.io/"
+          href="https://www.ifce.edu.br/"
           target="_blank"
         >
-          Devias IO
+          IFCE
         </Link>
-        . 2019
+        . 2020
       </Typography>
       <Typography variant="caption">
-        Created with love for the environment. By designers and developers who
-        love to work together in offices!
+        Desenvolvido com recursos do Instituto Federal de Educação, Ciência e Tecnologia do Ceará.
       </Typography>
     </div>
   );
