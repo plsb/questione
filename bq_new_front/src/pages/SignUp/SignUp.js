@@ -13,6 +13,7 @@ import {
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import api from '../../services/api';
 import Swal from 'sweetalert2';
+import { cpfMask } from './../../common/mask'
 
 const schema = {
   name: {
@@ -171,15 +172,16 @@ const SignUp = props => {
       values: {
         ...formState.values,
         [event.target.name]:
-          event.target.type === 'checkbox'
-            ? event.target.checked
-            : event.target.value
+            event.target.name === 'cpf'
+                ? formState.values.cpf = cpfMask(event.target.value)
+                : event.target.value
       },
       touched: {
         ...formState.touched,
         [event.target.name]: true
       }
     }));
+
   };
 
   const handleBack = () => {
@@ -234,13 +236,12 @@ const SignUp = props => {
           loadAlert('error', response.data.errors[0].password);
         }
       } else {
-        loadAlert('success', 'Usuário cadastrado!');
+        loadAlert('success', response.data[0].name+', cadastrado!');
+        history.push('/sign-in');
       }
     } catch (error) {
       console.log(error);
     }
-
-   // history.push('/');
   };
 
   const hasError = field =>
