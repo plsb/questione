@@ -43,25 +43,17 @@ class AuthController extends Controller
                 $validation->messages()
             ));
             $json_str = json_encode($erros);
-            return response($json_str, 200);
+            return response($json_str, 202);
         }
 
         if(!$this->verifyCPFValid($request->cpf))
         {
-            $erros = array('errors' => array(
-                'message' => 'CPF Inválido!'
-            ));
-            $json_str = json_encode($erros);
-            return response($json_str, 200);
+            return response()->json(['message' => 'CPF Inválido!'], 202);
         }
 
         if(!$this->verifyEmailValid($request->email))
         {
-            $erros = array('errors' => array(
-                'message' => 'E-mail Inválido!'
-            ));
-            $json_str = json_encode($erros);
-            return response($json_str, 200);
+            return response()->json(['message' => 'E-mail Inválido!'], 202);
         }
 
         $user = User::create([
@@ -72,9 +64,7 @@ class AuthController extends Controller
             'acess_level' => 0,
         ]);
 
-        $token = auth()->login($user);
-
-        return $this->respondWithToken($token);
+        return response()->json([$user], 200);
     }
 
     public function login(Request $request)
@@ -83,14 +73,14 @@ class AuthController extends Controller
 
         if(!$request->email ||  !$request->password)
         {
-            return response()->json(['error' => 'Informe e-mail e senha.'], 401);
+            return response()->json(['message' => 'Informe e-mail e senha.'], 202);
         }
 
         if (! $token = auth()
             ->setTTL(1800)
             ->attempt($credentials))
         {
-            return response()->json(['error' => 'Não autorizado.'], 401);
+            return response()->json(['message' => 'Não autorizado.'], 202);
         }
 
         return $this->respondWithToken($token);
@@ -100,11 +90,11 @@ class AuthController extends Controller
     {
         if(!$request->token)
         {
-            return response()->json(['message' => 'Não foi informado o token.']);
+            return response()->json(['message' => 'Não foi informado o token.'], 200);
         }
         auth()->logout();
 
-        return response()->json(['message' => 'Sucesso ao realizar logout.']);
+        return response()->json(['message' => 'Sucesso ao realizar logout.'], 200);
     }
 
     protected function respondWithToken($token)
@@ -113,7 +103,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type'   => 'bearer',
             'expires_in'   => auth()->factory()->getTTL() * 60
-        ]);
+        ], 200);
     }
 
     //Função de Validar CPF
