@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Adm;
 
 use App\Course;
+use App\Question;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Validator;
 use App\Http\Controllers\Controller;
@@ -105,6 +107,11 @@ class CourseController extends Controller
         $course = Course::find($id);
 
         $this->verifyRecord($course);
+
+        $questions = Question::where('fk_course_id', '=', $id)->get();
+        if(sizeof($questions)>0) {
+            return response()->json(['message' => 'Operação não realizada. Existem questões para este curso.'], 202);
+        }
 
         $course->delete();
 
