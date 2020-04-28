@@ -1,17 +1,29 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import {Redirect, Route} from 'react-router-dom';
 import PropTypes from 'prop-types';
+import {isAuthenticated} from "./../../services/auth";
 
 const RouteWithLayout = props => {
-  const { layout: Layout, component: Component, ...rest } = props;
+  const { layout: Layout, component: Component, needToBeLogged, ...rest } = props;
 
   return (
     <Route
       {...rest}
       render={matchProps => (
-        <Layout>
-          <Component {...matchProps} />
-        </Layout>
+          needToBeLogged ? (
+               isAuthenticated() ? (
+                  <Layout>
+                      <Component {...matchProps} />
+                  </Layout>
+              ) : (
+                  <Redirect to={{ pathname: "/sign-in", state: { from: props.location } }} />
+              )
+
+          ) : (
+              <Layout>
+                  <Component {...matchProps} />
+              </Layout>
+          )
       )}
     />
   );
@@ -20,6 +32,7 @@ const RouteWithLayout = props => {
 RouteWithLayout.propTypes = {
   component: PropTypes.any.isRequired,
   layout: PropTypes.any.isRequired,
+  needToBeLogged: PropTypes.any.isRequired,
   path: PropTypes.string
 };
 

@@ -3,9 +3,11 @@ import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import { AppBar, Toolbar, Badge, Hidden, IconButton } from '@material-ui/core';
+import { AppBar, Toolbar, Hidden, IconButton } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import InputIcon from '@material-ui/icons/Input';
+import { logout } from "../../../../services/auth";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -20,11 +22,20 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Topbar = props => {
+  const history = useHistory();
+
   const { className, onSidebarOpen, ...rest } = props;
 
   const classes = useStyles();
 
   const [notifications] = useState([]);
+
+  async function handleLogout(event) {
+    event.preventDefault();
+
+    logout();
+    history.push('/sign-in');
+  }
 
   return (
     <AppBar
@@ -41,12 +52,12 @@ const Topbar = props => {
         </RouterLink>
         <div className={classes.flexGrow} />
         <Hidden mdDown>
-          <IconButton
-            className={classes.signOutButton}
-            color="inherit"
-          >
-            <InputIcon />
-          </IconButton>
+            <IconButton
+              className={classes.signOutButton}
+              color="inherit"
+              onClick={handleLogout}>
+              <InputIcon />
+            </IconButton>
         </Hidden>
         <Hidden lgUp>
           <IconButton
@@ -63,7 +74,8 @@ const Topbar = props => {
 
 Topbar.propTypes = {
   className: PropTypes.string,
-  onSidebarOpen: PropTypes.func
+  onSidebarOpen: PropTypes.func,
+  history: PropTypes.object
 };
 
 export default Topbar;

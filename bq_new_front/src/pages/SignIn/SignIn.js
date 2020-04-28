@@ -11,7 +11,9 @@ import {
   Link,
   Typography
 } from '@material-ui/core';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import api from '../../services/api';
+import Swal from 'sweetalert2';
+import { login } from "../../services/auth";
 
 const schema = {
   email: {
@@ -24,7 +26,7 @@ const schema = {
   password: {
     presence: { allowEmpty: false, message: 'is required' },
     length: {
-      maximum: 128
+
     }
   }
 };
@@ -145,10 +147,6 @@ const SignIn = props => {
     }));
   }, [formState.values]);
 
-  const handleBack = () => {
-    history.goBack();
-  };
-
   const handleChange = event => {
     event.persist();
 
@@ -168,10 +166,54 @@ const SignIn = props => {
     }));
   };
 
-  const handleSignIn = event => {
+  //configuration alert
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'bottom-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    onOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
+
+  function loadAlert(icon, message) {
+    Toast.fire({
+      icon: icon,
+      title: message
+    });
+  }
+
+  async function handleSignIn(event) {
     event.preventDefault();
-    history.push('/');
-  };
+    try {
+      const name = formState.values.name;
+      const cpf = formState.values.cpf;
+      const email = formState.values.email;
+      const password = formState.values.password;
+
+      const data = {
+        name, cpf, email, password
+      };
+
+      const response = await api.post('login/', data);
+      console.log(response);
+      if (response.status == 202) {
+        if(response.data.message){
+          loadAlert('error', response.data.message);
+        }
+      } else {
+        login(response.data.token, response.data[0].name,
+                response.data[0].email, response.data[0].acess_level);
+        loadAlert('success', response.data[0].name+', seja bem-vindo!');
+        history.push('/home');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const hasError = field =>
     formState.touched[field] && formState.errors[field] ? true : false;
@@ -179,11 +221,6 @@ const SignIn = props => {
   return (
     <div className={classes.root}>
       <div className={classes.content}>
-        <div className={classes.contentHeader}>
-          <IconButton onClick={handleBack}>
-            <ArrowBackIcon />
-          </IconButton>
-        </div>
         <div className={classes.contentBody}>
           <form
             className={classes.form}

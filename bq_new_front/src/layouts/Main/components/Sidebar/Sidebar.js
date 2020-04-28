@@ -9,7 +9,7 @@ import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 
-import { SidebarNav } from './components';
+import { Profile, SidebarNav } from './components';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -73,12 +73,12 @@ const Sidebar = props => {
       classes={{ paper: classes.drawer }}
       onClose={onClose}
       open={open}
-      variant={variant}
-    >
+      variant={variant}>
       <div
         {...rest}
-        className={clsx(classes.root, className)}
-      >
+        className={clsx(classes.root, className)}>
+        <Profile />
+        <Divider className={classes.divider} />
         <SidebarNav
           className={classes.nav}
           pages={pages}

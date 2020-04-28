@@ -27,16 +27,18 @@ const Profile = props => {
   const classes = useStyles();
 
   const user = {
-    name: 'Shen Zhi',
+    name: localStorage.getItem("@Questione-name-user"),
     avatar: '/images/avatars/avatar_11.png',
-    bio: 'Brain Director'
+    email: localStorage.getItem('@Questione-email-user'),
+    level: localStorage.getItem('@Questione-acess-level-user')=="1"
+        ? "Administrador" : localStorage.getItem('@Questione-acess-level-user')=="2"
+           ? "Professor" : "Usuário"
   };
 
   return (
     <div
       {...rest}
-      className={clsx(classes.root, className)}
-    >
+      className={clsx(classes.root, className)}>
       <Avatar
         alt="Person"
         className={classes.avatar}
@@ -46,11 +48,12 @@ const Profile = props => {
       />
       <Typography
         className={classes.name}
-        variant="h4"
+        variant="h5"
       >
         {user.name}
       </Typography>
-      <Typography variant="body2">{user.bio}</Typography>
+      <Typography variant="body2">{user.email}</Typography>
+      <Typography variant="body2">{user.level}</Typography>
     </div>
   );
 };

@@ -5,12 +5,10 @@ import validate from 'validate.js';
 import { makeStyles } from '@material-ui/styles';
 import {
   Button,
-  IconButton,
   TextField,
   Link,
   Typography
 } from '@material-ui/core';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import api from '../../services/api';
 import Swal from 'sweetalert2';
 import { cpfMask } from './../../common/mask'
@@ -242,7 +240,7 @@ const SignUp = props => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }
 
   const hasError = field =>
     formState.touched[field] && formState.errors[field] ? true : false;
@@ -250,11 +248,6 @@ const SignUp = props => {
   return (
     <div className={classes.root}>
       <div className={classes.content}>
-        <div className={classes.contentHeader}>
-          <IconButton onClick={handleBack}>
-            <ArrowBackIcon />
-          </IconButton>
-        </div>
         <div className={classes.contentBody}>
           <form
             className={classes.form}
