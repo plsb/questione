@@ -8,6 +8,8 @@ import PeopleIcon from '@material-ui/icons/People';
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
+import EmojiObjects from '@material-ui/icons/EmojiObjects';
+import Note from '@material-ui/icons/Note';
 
 import { Profile, SidebarNav } from './components';
 
@@ -53,12 +55,12 @@ const Sidebar = props => {
     {
       title: 'Competências',
       href: '/skills',
-      icon: <ShoppingBasketIcon />
+      icon: <Note />
     },
     {
       title: 'Obj. Conhecimento',
       href: '/objects',
-      icon: <LockOpenIcon />
+      icon: <EmojiObjects />
     },
     {
       title: 'Usuários',

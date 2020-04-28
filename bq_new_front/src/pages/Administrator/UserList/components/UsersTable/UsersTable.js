@@ -18,9 +18,9 @@ import {
   Typography,
   TablePagination
 } from '@material-ui/core';
-import api from '../../../../services/api';
+import api from '../../../../../services/api';
 
-import { getInitials } from './../../../../helpers';
+import { getInitials } from '../../../../../helpers';
 import {UsersToolbar} from "../index";
 
 const useStyles = makeStyles(theme => ({
