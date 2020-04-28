@@ -80,29 +80,32 @@ class AuthController extends Controller
             ->setTTL(1800)
             ->attempt($credentials))
         {
-            return response()->json(['message' => 'Não autorizado.'], 202);
+            return response()->json(['message' => 'Acesso não autorizado.'], 202);
         }
 
-        return $this->respondWithToken($token);
+        $user = User::where('email', '=', $request->email)->first();
+
+        return $this->respondWithToken($token, $user);
     }
 
     public function logout(Request $request)
     {
         if(!$request->token)
         {
-            return response()->json(['message' => 'Não foi informado o token.'], 200);
+            return response()->json(['message' => 'Não foi informado o token.'], 202);
         }
         auth()->logout();
 
         return response()->json(['message' => 'Sucesso ao realizar logout.'], 200);
     }
 
-    protected function respondWithToken($token)
+    protected function respondWithToken($token, $user)
     {
         return response()->json([
-            'access_token' => $token,
+            'token' => $token,
             'token_type'   => 'bearer',
-            'expires_in'   => auth()->factory()->getTTL() * 60
+            'expires_in'   => auth()->factory()->getTTL() * 60,
+            $user
         ], 200);
     }
 

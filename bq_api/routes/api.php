@@ -49,7 +49,6 @@ Route::group(['prefix' => 'object'], function (){
 
 Route::group(['prefix' => 'user'], function (){
     Route::get('/', 'Adm\UserController@index')->name('user.index');
-    Route::get('/show/{user}', 'Adm\UserController@show')->name('user.show');
     Route::get('/search/', 'Adm\UserController@search')->name('user.search');
     Route::post('/isprofessor/{user}', 'Adm\UserController@isProfessor')->name('user.isProfessor');
 });

@@ -21,6 +21,7 @@ import {
 import api from '../../../../services/api';
 
 import { getInitials } from './../../../../helpers';
+import {UsersToolbar} from "../index";
 
 const useStyles = makeStyles(theme => ({
   root: {},

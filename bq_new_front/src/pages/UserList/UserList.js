@@ -17,24 +17,9 @@ const useStyles = makeStyles(theme => ({
 export default function UserList () {
     const classes = useStyles();
 
-    const [users, setUsers] = useState([]);
-
-    async function loadUsers(){
-        /*const response = await api.get('user', {
-           // params: { page }
-        });
-        //setUsers(response.data.data);
-        console.log(users);*/
-    }
-
-    useEffect(() => {
-        loadUsers();
-        console.log(users);
-    }, []);
-
     return (
     <div className={classes.root}>
-      <UsersToolbar />
+          <UsersToolbar />
       <div className={classes.content}>
         <UsersTable />
       </div>

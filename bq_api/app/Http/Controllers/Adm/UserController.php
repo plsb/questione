@@ -15,21 +15,8 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = User::where('acess_level', '=', 0)
-            ->orderBy('id')->paginate(10);
-        return response()->json($users);
-    }
-
-    public function show(int $id)
-    {
-        $user = User::find($id);
-
-        if(!$user){
-            return response()->json([
-                'message' => 'Registro não encontrado.'
-            ], 404);
-        }
-        return response()->json($user);
+        $users = User::orderBy('id')->paginate(10);
+        return response()->json($users, 200);
     }
 
     public function search(Request $request)
