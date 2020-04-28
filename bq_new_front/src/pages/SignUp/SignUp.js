@@ -225,12 +225,12 @@ const SignUp = props => {
           loadAlert('error', response.data.message);
         } else if(response.data.errors[0].name){
           loadAlert('error', response.data.errors[0].name);
-        } if(response.data.errors[0].cpf){
+        } else if(response.data.errors[0].cpf){
           loadAlert('error', response.data.errors[0].cpf);
-        } if(response.data.errors[0].email){
+        } else if(response.data.errors[0].email){
           console.log(response);
           loadAlert('error', response.data.errors[0].email);
-        } if(response.data.errors[0].password){
+        } else if(response.data.errors[0].password){
           loadAlert('error', response.data.errors[0].password);
         }
       } else {

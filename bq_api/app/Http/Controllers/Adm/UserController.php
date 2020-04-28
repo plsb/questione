@@ -28,7 +28,7 @@ class UserController extends Controller
         if ($users == '[]') {
             return response()->json([
                 'message' => 'Registro não encontrado.'
-            ], 404);
+            ], 202);
         }
         return response()->json($users, 200);
 

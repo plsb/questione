@@ -17,7 +17,6 @@ Route::group(['prefix' => 'course'], function (){
     Route::get('/show/{course}', 'Adm\CourseController@show')->name('course.show');
     Route::put('/{course}', 'Adm\CourseController@update')->name('course.update');
     Route::delete('/{course}', 'Adm\CourseController@destroy')->name('course.destroy');
-    Route::get('/search/', 'Adm\CourseController@search')->name('course.search');
 });
 
 Route::group(['prefix' => 'profile'], function (){

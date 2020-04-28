@@ -31,10 +31,15 @@ class CourseController extends Controller
 
     ];
 
-    public function index()
+    public function index(Request $request)
     {
-        $course = Course::orderBy('id')->paginate(10);
-        return response()->json($course);
+        if($request->description){
+            $courses = Course::where('description', 'like', '%'.$request->description.'%')->paginate(10);
+        } else {
+            $courses = Course::orderBy('id')->paginate(10);
+        }
+
+        return response()->json($courses, 200);
     }
 
     public function store(Request $request)
@@ -42,7 +47,11 @@ class CourseController extends Controller
         $validation = Validator::make($request->all(),$this->rules, $this->messages);
 
         if($validation->fails()){
-            return $validation->errors()->toJson();
+            $erros = array('errors' => array(
+                $validation->messages()
+            ));
+            $json_str = json_encode($erros);
+            return response($json_str, 202);
         }
 
         $course = new Course();
@@ -50,7 +59,10 @@ class CourseController extends Controller
         $course->description = $request->description;
         $course->save();
 
-        return response()->json($course, 201);
+        return response()->json([
+            'message' => 'Curso '.$course->description.' cadastrado.',
+            $course
+        ], 200);
     }
 
     public function show(int $id)
@@ -59,7 +71,7 @@ class CourseController extends Controller
 
         $this->verifyRecord($course);
 
-        return response()->json($course);
+        return response()->json($course, 200);
     }
 
     public function update(Request $request, $id)
@@ -67,7 +79,11 @@ class CourseController extends Controller
         $validation = Validator::make($request->all(), $this->rules, $this->messages);
 
         if($validation->fails()){
-            return $validation->errors()->toJson();
+            $erros = array('errors' => array(
+                $validation->messages()
+            ));
+            $json_str = json_encode($erros);
+            return response($json_str, 202);
         }
 
         $course = Course::find($id);
@@ -78,9 +94,10 @@ class CourseController extends Controller
         $course->description = $request->description;
         $course->save();
 
-
-        return response()->json($course);
-
+        return response()->json([
+            'message' => 'Curso '.$course->description.' atualizado.',
+            $course
+        ], 200);
     }
 
     public function destroy($id)
@@ -92,27 +109,16 @@ class CourseController extends Controller
         $course->delete();
 
         return response()->json([
-            'message' => 'Curso '.$course->description.' excluído!'
-        ], 202);
-    }
-
-    public function search(Request $request)
-    {
-
-        $courses = Course::where('description', 'like', '%'.$request->description.'%')->paginate(10);
-
-
-        $this->verifyRecord($courses);
-
-        return response()->json($courses, 200);
-
+            'message' => 'Curso '.$course->description.' excluído.',
+            $course
+        ], 200);
     }
 
     public function verifyRecord($record){
         if(!$record || $record == '[]'){
             return response()->json([
                 'message' => 'Registro não encontrado.'
-            ], 404);
+            ], 202);
         }
     }
 }
