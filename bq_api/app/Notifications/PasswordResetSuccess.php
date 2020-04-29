@@ -7,15 +7,16 @@ use Illuminate\Notifications\Messages\MailMessage;
 class PasswordResetSuccess extends Notification implements ShouldQueue
 {
     use Queueable;
-    
+    protected $user;
+
     /**
     * Create a new notification instance.
     *
     * @return void
     */
-    public function __construct()
+    public function __construct($user)
     {
-        //
+        $this->user = $user;
     }
     /**
     * Get the notification's delivery channels.
@@ -35,10 +36,14 @@ class PasswordResetSuccess extends Notification implements ShouldQueue
     */
     public function toMail($notifiable)
     {
+        $url = "http://localhost:3000/sign-in/";
         return (new MailMessage)
-            ->line('You are changed your password succeful.')
-            ->line('If you did change password, no further action is required.')
-            ->line('If you did not change password, protect your account.');
+            ->subject('[QUESTIONE] Senha recuperada')
+            ->greeting('Olá, '.$this->user->name.'.')
+            ->line('Você mudou sua senha com sucesso.')
+            ->line('Se você alterou a senha, nenhuma ação adicional será necessária.')
+            ->line('Se você não alterou a senha, proteja sua conta.')
+            ->action('Acesse o Questione', url($url));;
     }
 /**
      * Get the array representation of the notification.

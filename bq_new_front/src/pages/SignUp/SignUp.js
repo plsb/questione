@@ -49,41 +49,11 @@ const schema = {
 
 const useStyles = makeStyles(theme => ({
   root: {
-    backgroundColor: theme.palette.background.default,
+    //backgroundColor: theme.palette.background.default,
     height: '100%'
-  },
-  grid: {
-    height: '100%'
-  },
-  quoteContainer: {
-    [theme.breakpoints.down('md')]: {
-      display: 'none'
-    }
-  },
-  quote: {
-    backgroundColor: theme.palette.neutral,
-    height: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundImage: 'url(/images/auth.jpg)',
-    backgroundSize: 'cover',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center'
-  },
-  quoteInner: {
-    textAlign: 'center',
-    flexBasis: '600px'
-  },
-  quoteText: {
-    color: theme.palette.white,
-    fontWeight: 300
   },
   name: {
     marginTop: theme.spacing(3),
-    color: theme.palette.white
-  },
-  bio: {
     color: theme.palette.white
   },
   contentContainer: {},
@@ -228,7 +198,6 @@ const SignUp = props => {
         } else if(response.data.errors[0].cpf){
           loadAlert('error', response.data.errors[0].cpf);
         } else if(response.data.errors[0].email){
-          console.log(response);
           loadAlert('error', response.data.errors[0].email);
         } else if(response.data.errors[0].password){
           loadAlert('error', response.data.errors[0].password);
@@ -320,20 +289,17 @@ const SignUp = props => {
               fullWidth
               size="large"
               type="submit"
-              variant="contained"
-            >
+              variant="contained">
               Cadastre-se
             </Button>
             <Typography
               color="textSecondary"
-              variant="body1"
-            >
+              variant="body1">
               Já tem uma conta?{' '}
               <Link
                 component={RouterLink}
                 to="/sign-in"
-                variant="h6"
-              >
+                variant="h6">
                 Login
               </Link>
             </Typography>

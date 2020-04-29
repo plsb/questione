@@ -1,30 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Link as RouterLink, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import validate from 'validate.js';
 import { makeStyles } from '@material-ui/styles';
 import {
   Button,
   TextField,
-  Link,
-  Typography
+  Typography,
+  IconButton
 } from '@material-ui/core';
 import api from '../../services/api';
 import Swal from 'sweetalert2';
 import { login } from "../../services/auth";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const schema = {
   email: {
-    presence: { allowEmpty: false, message: 'is required' },
+    presence: {allowEmpty: false, message: 'is required'},
     email: true,
     length: {
       maximum: 64
-    }
-  },
-  password: {
-    presence: { allowEmpty: false, message: 'is required' },
-    length: {
-
     }
   }
 };
@@ -32,14 +27,12 @@ const schema = {
 const useStyles = makeStyles(theme => ({
   root: {
     //backgroundColor: theme.palette.background.default,
-    height: '100%',
-
+    height: '100%'
   },
   name: {
     marginTop: theme.spacing(3),
     color: theme.palette.white
   },
-  contentContainer: {},
   content: {
     height: '100%',
     display: 'flex',
@@ -52,9 +45,6 @@ const useStyles = makeStyles(theme => ({
     paddingBototm: theme.spacing(2),
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2)
-  },
-  logoImage: {
-    marginLeft: theme.spacing(4)
   },
   contentBody: {
     flexGrow: 1,
@@ -77,15 +67,6 @@ const useStyles = makeStyles(theme => ({
   title: {
     marginTop: theme.spacing(3)
   },
-  socialButtons: {
-    marginTop: theme.spacing(3)
-  },
-  socialIcon: {
-    marginRight: theme.spacing(1)
-  },
-  sugestion: {
-    marginTop: theme.spacing(2)
-  },
   textField: {
     marginTop: theme.spacing(2)
   },
@@ -94,8 +75,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const SignIn = props => {
+const RedefinePassword = props => {
   const { history } = props;
+  const { id } = props.match.params;
 
   const classes = useStyles();
 
@@ -155,28 +137,25 @@ const SignIn = props => {
     });
   }
 
-  async function handleSignIn(event) {
+  async function handleRedefinePassword(event) {
     event.preventDefault();
+    console.log(id);
     try {
-      const name = formState.values.name;
-      const cpf = formState.values.cpf;
       const email = formState.values.email;
-      const password = formState.values.password;
 
       const data = {
-        name, cpf, email, password
+        email
       };
 
-      const response = await api.post('login/', data);
-      console.log(response);
+      const response = await api.post('redefinepw', data);
       if (response.status == 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
+        } else if(response.data.errors[0].email){
+          loadAlert('error', response.data.errors[0].email);
         }
       } else {
-        login(response.data.token, response.data[0].name,
-                response.data[0].email, response.data[0].acess_level);
-        loadAlert('success', response.data[0].name+', seja bem-vindo!');
+        loadAlert('success', response.data.message);
         history.push('/home');
       }
     } catch (error) {
@@ -184,20 +163,29 @@ const SignIn = props => {
     }
   }
 
+  const handleBack = () => {
+    history.goBack();
+  };
+
   const hasError = field =>
     formState.touched[field] && formState.errors[field] ? true : false;
 
   return (
     <div className={classes.root}>
       <div className={classes.content}>
+        <div className={classes.contentHeader}>
+          <IconButton onClick={handleBack}>
+            <ArrowBackIcon />
+          </IconButton>
+        </div>
         <div className={classes.contentBody}>
           <form
             className={classes.form}
-            onSubmit={handleSignIn}>
+            onSubmit={handleRedefinePassword}>
             <Typography
               className={classes.title}
               variant="h2">
-              Login
+              Redefinir Senha
             </Typography>
             <TextField
               className={classes.textField}
@@ -211,22 +199,7 @@ const SignIn = props => {
               onChange={handleChange}
               type="text"
               value={formState.values.email || ''}
-              variant="outlined"
-            />
-            <TextField
-              className={classes.textField}
-              error={hasError('password')}
-              fullWidth
-              helperText={
-                hasError('password') ? formState.errors.password[0] : null
-              }
-              label="Senha"
-              name="password"
-              onChange={handleChange}
-              type="password"
-              value={formState.values.password || ''}
-              variant="outlined"
-            />
+              variant="outlined"/>
             <Button
               className={classes.signInButton}
               color="primary"
@@ -234,32 +207,9 @@ const SignIn = props => {
               fullWidth
               size="large"
               type="submit"
-              variant="contained"
-            >
-              Entrar
+              variant="contained">
+              Enviar
             </Button>
-            <Typography
-              color="textSecondary"
-              variant="body1">
-              Você não tem conta?{' '}
-              <Link
-                component={RouterLink}
-                to="/sign-up"
-                variant="h6">
-                Cadastre-se.
-              </Link>
-            </Typography>
-            <Typography
-              color="textSecondary"
-              variant="body1">
-              Esqueceu sua senha?{' '}
-              <Link
-                component={RouterLink}
-                to="/redefine-password"
-                variant="h6">
-                Redefina aqui.
-              </Link>
-            </Typography>
           </form>
         </div>
       </div>
@@ -267,8 +217,8 @@ const SignIn = props => {
   );
 };
 
-SignIn.propTypes = {
+RedefinePassword.propTypes = {
   history: PropTypes.object
 };
 
-export default withRouter(SignIn);
+export default withRouter(RedefinePassword);

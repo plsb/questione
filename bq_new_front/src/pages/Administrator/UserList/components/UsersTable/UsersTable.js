@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { makeStyles } from '@material-ui/styles';
 import {
@@ -21,8 +20,6 @@ import {
 import api from '../../../../../services/api';
 
 import { getInitials } from '../../../../../helpers';
-import {UsersToolbar} from "../index";
-
 const useStyles = makeStyles(theme => ({
   root: {},
   content: {
@@ -58,12 +55,16 @@ const UsersTable = props => {
   const [currentPage, setCurrentPage] = useState(0);
 
   async function loadUsers(page){
-    const response = await api.get('user?page='+page);
-    setTotal(response.data.total);
-    setUsers(response.data.data);
-    setLastPage(response.data.last_page);
-    setCurrentPage(response.data.current_page);
-    console.log(response.data);
+    try {
+      const response = await api.get('user?page='+page);
+      setTotal(response.data.total);
+      setUsers(response.data.data);
+      setLastPage(response.data.last_page);
+      setCurrentPage(response.data.current_page);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   useEffect(() => {

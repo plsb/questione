@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
@@ -27,8 +27,14 @@ const useStyles = makeStyles(theme => ({
 
 const SearchInput = props => {
   const { className, onChange, style, ...rest } = props;
+  const [value, setValue] = useState('');
 
   const classes = useStyles();
+
+  function handleSend(event) {
+    event.persist();
+    setValue(event.target.value);
+  };
 
   return (
     <Paper
@@ -41,7 +47,8 @@ const SearchInput = props => {
         {...rest}
         className={classes.input}
         disableUnderline
-        onChange={onChange}
+        onChange={handleSend}
+        value={value}
       />
     </Paper>
   );

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link as RouterLink, withRouter } from 'react-router-dom';
+import {Link as RouterLink, withRouter} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import validate from 'validate.js';
 import { makeStyles } from '@material-ui/styles';
 import {
   Button,
   TextField,
-  Link,
-  Typography
+  Typography,
+  IconButton, Link
 } from '@material-ui/core';
 import api from '../../services/api';
 import Swal from 'sweetalert2';
@@ -24,22 +24,28 @@ const schema = {
   password: {
     presence: { allowEmpty: false, message: 'is required' },
     length: {
-
+      minimum: 6,
+      maximum: 10
     }
-  }
+  },
+  confirmPassword: {
+    presence: { allowEmpty: false, message: 'is required' },
+    length: {
+      minimum: 6,
+      maximum: 10
+    }
+  },
 };
 
 const useStyles = makeStyles(theme => ({
   root: {
     //backgroundColor: theme.palette.background.default,
-    height: '100%',
-
+    height: '100%'
   },
   name: {
     marginTop: theme.spacing(3),
     color: theme.palette.white
   },
-  contentContainer: {},
   content: {
     height: '100%',
     display: 'flex',
@@ -52,9 +58,6 @@ const useStyles = makeStyles(theme => ({
     paddingBototm: theme.spacing(2),
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2)
-  },
-  logoImage: {
-    marginLeft: theme.spacing(4)
   },
   contentBody: {
     flexGrow: 1,
@@ -77,15 +80,6 @@ const useStyles = makeStyles(theme => ({
   title: {
     marginTop: theme.spacing(3)
   },
-  socialButtons: {
-    marginTop: theme.spacing(3)
-  },
-  socialIcon: {
-    marginRight: theme.spacing(1)
-  },
-  sugestion: {
-    marginTop: theme.spacing(2)
-  },
   textField: {
     marginTop: theme.spacing(2)
   },
@@ -94,8 +88,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const SignIn = props => {
+const ResetPassword = props => {
   const { history } = props;
+  const { token } = props.match.params;
 
   const classes = useStyles();
 
@@ -155,34 +150,46 @@ const SignIn = props => {
     });
   }
 
-  async function handleSignIn(event) {
+  async function handleResetPassword(event) {
     event.preventDefault();
+    console.log(token);
     try {
-      const name = formState.values.name;
-      const cpf = formState.values.cpf;
       const email = formState.values.email;
       const password = formState.values.password;
+      const confirmPassword = formState.values.confirmPassword;
+
+      if(password != confirmPassword){
+        loadAlert('error', "A confirmação da senha está incorreta.");
+        return ;
+      }
 
       const data = {
-        name, cpf, email, password
+        email, password, token
       };
 
-      const response = await api.post('login/', data);
-      console.log(response);
+      const response = await api.post('resetpw', data);
       if (response.status == 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
+        } else if(response.data.errors[0].email){
+          loadAlert('error', response.data.errors[0].email);
+        } else if(response.data.errors[0].password){
+          loadAlert('error', response.data.errors[0].password);
+        } else if(response.data.errors[0].token){
+          loadAlert('error', response.data.errors[0].token);
         }
       } else {
-        login(response.data.token, response.data[0].name,
-                response.data[0].email, response.data[0].acess_level);
-        loadAlert('success', response.data[0].name+', seja bem-vindo!');
+        loadAlert('success', response.data.message);
         history.push('/home');
       }
     } catch (error) {
       console.log(error);
     }
   }
+
+  const handleBack = () => {
+    history.goBack();
+  };
 
   const hasError = field =>
     formState.touched[field] && formState.errors[field] ? true : false;
@@ -193,11 +200,11 @@ const SignIn = props => {
         <div className={classes.contentBody}>
           <form
             className={classes.form}
-            onSubmit={handleSignIn}>
+            onSubmit={handleResetPassword}>
             <Typography
               className={classes.title}
               variant="h2">
-              Login
+              Redefinir Senha
             </Typography>
             <TextField
               className={classes.textField}
@@ -211,21 +218,34 @@ const SignIn = props => {
               onChange={handleChange}
               type="text"
               value={formState.values.email || ''}
-              variant="outlined"
+              variant="outlined"/>
+            <TextField
+                className={classes.textField}
+                error={hasError('password')}
+                fullWidth
+                helperText={
+                  hasError('password') ? formState.errors.password[0] : null
+                }
+                label="Nova Senha"
+                name="password"
+                onChange={handleChange}
+                type="password"
+                value={formState.values.password || ''}
+                variant="outlined"
             />
             <TextField
-              className={classes.textField}
-              error={hasError('password')}
-              fullWidth
-              helperText={
-                hasError('password') ? formState.errors.password[0] : null
-              }
-              label="Senha"
-              name="password"
-              onChange={handleChange}
-              type="password"
-              value={formState.values.password || ''}
-              variant="outlined"
+                className={classes.textField}
+                error={hasError('confirmPassword')}
+                fullWidth
+                helperText={
+                  hasError('confirmPassword') ? formState.errors.confirmPassword[0] : null
+                }
+                label="Cofirmar Senha"
+                name="confirmPassword"
+                onChange={handleChange}
+                type="password"
+                value={formState.values.confirmPassword || ''}
+                variant="outlined"
             />
             <Button
               className={classes.signInButton}
@@ -234,30 +254,18 @@ const SignIn = props => {
               fullWidth
               size="large"
               type="submit"
-              variant="contained"
-            >
-              Entrar
+              variant="contained">
+              Redefinir
             </Button>
             <Typography
-              color="textSecondary"
-              variant="body1">
-              Você não tem conta?{' '}
+                color="textSecondary"
+                variant="body1">
+              Volte para a página de{' '}
               <Link
-                component={RouterLink}
-                to="/sign-up"
-                variant="h6">
-                Cadastre-se.
-              </Link>
-            </Typography>
-            <Typography
-              color="textSecondary"
-              variant="body1">
-              Esqueceu sua senha?{' '}
-              <Link
-                component={RouterLink}
-                to="/redefine-password"
-                variant="h6">
-                Redefina aqui.
+                  component={RouterLink}
+                  to="/sign-in"
+                  variant="h6">
+                Login.
               </Link>
             </Typography>
           </form>
@@ -267,8 +275,8 @@ const SignIn = props => {
   );
 };
 
-SignIn.propTypes = {
+ResetPassword.propTypes = {
   history: PropTypes.object
 };
 
-export default withRouter(SignIn);
+export default withRouter(ResetPassword);

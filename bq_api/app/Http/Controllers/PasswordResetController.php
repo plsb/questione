@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
+use App\Jobs\SendEmailPasswordResert;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Notifications\PasswordResetRequest;
@@ -32,13 +33,17 @@ class PasswordResetController extends Controller
         $validation = Validator::make($request->all(),$rules, $messages);
 
         if($validation->fails()){
-            return $validation->errors()->toJson();
+            $erros = array('errors' => array(
+                $validation->messages()
+            ));
+            $json_str = json_encode($erros);
+            return response($json_str, 202);
         }
 
         $user = User::where('email', $request->email)->first();
         if (!$user)
             return response()->json([
-                'message' => 'O endereo de EMAIL não pertence a um usuário.'], 404);
+                'message' => 'O endereço de EMAIL não pertence a um usuário.'], 202);
         $passwordReset = PasswordReset::updateOrCreate(
             ['email' => $user->email],
             [
@@ -48,11 +53,12 @@ class PasswordResetController extends Controller
         );
         if ($user && $passwordReset)
             $user->notify(
-                new PasswordResetRequest($passwordReset->token)
+                new PasswordResetRequest($passwordReset->token, $user)
             );
         return response()->json([
-            'message' => 'O link de redefinição de senha foi enviado para o e-mail.'
-        ]);
+            'message' => 'O link de redefinição de senha será enviado para o e-mail '
+                                    .$user->email.'.'
+        ], 200);
     }
     /**
      * Find token password reset
@@ -67,15 +73,15 @@ class PasswordResetController extends Controller
             ->first();
         if (!$passwordReset)
             return response()->json([
-                'message' => 'Este token de redefinição de senha é inválido.'
-            ], 404);
+                'message' => 'O token de redefinição de senha é inválido.'
+            ], 202);
         if (Carbon::parse($passwordReset->updated_at)->addMinutes(720)->isPast()) {
             $passwordReset->delete();
             return response()->json([
-                'message' => 'Este token de redefinição de senha é inválido.'], 404);
+                'message' => 'O token de redefinição de senha é inválido.'], 202);
         }
 
-        return response()->json($passwordReset);
+        return response()->json($passwordReset, 200);
     }
      /**
      * Reset password
@@ -108,7 +114,11 @@ class PasswordResetController extends Controller
         $validation = Validator::make($request->all(),$rules, $messages);
 
         if($validation->fails()){
-            return $validation->errors()->toJson();
+            $erros = array('errors' => array(
+                $validation->messages()
+            ));
+            $json_str = json_encode($erros);
+            return response($json_str, 202);
         }
 
         $passwordReset = PasswordReset::where([
@@ -117,17 +127,19 @@ class PasswordResetController extends Controller
         ])->first();
         if (!$passwordReset)
             return response()->json([
-                'message' => 'Este token de redefinição de senha é inválido.'
-            ], 404);
+                'message' => 'O token de redefinição de senha é inválido.'
+            ], 202);
         $user = User::where('email', $passwordReset->email)->first();
         if (!$user)
             return response()->json([
-                'message' => 'O endereo de EMAIL não pertence a um usuário.'
-            ], 404);
+                'message' => 'O endereço de EMAIL não pertence a um usuário.'
+            ], 202);
         $user->password = $request->password;
         $user->save();
         $passwordReset->delete();
-        $user->notify(new PasswordResetSuccess($passwordReset));
-        return response()->json($user);
+        $user->notify(new PasswordResetSuccess($user));
+        return response()->json([
+            'message' => 'Redefinição de senha realizada com sucesso.',
+            $user], 200);
     }
 }
