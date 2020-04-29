@@ -9,11 +9,14 @@ import { RouteWithLayout } from './../components';
 import { Main as MainLayout, Minimal as MinimalLayout } from './../layouts';
 
 import {
+
     SignUp,
     SignIn,
     UserList,
     RedefinePassword,
-    ResetPassword
+    ResetPassword,
+    CourseList
+
 } from '../pages';
 
 const Routes = () => (
@@ -60,6 +63,13 @@ const Routes = () => (
             layout={MinimalLayout}
             needToBeLogged={false}
             path="/reset-password/:token"/>
+      <RouteWithLayout
+            component={CourseList}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/courses"/>
+
 
       <Route path="*" component={() => <h1>Page not found</h1>} />
     </Switch>

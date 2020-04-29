@@ -3,3 +3,4 @@ export { default as SignUp } from './SignUp';
 export { default as RedefinePassword } from './RedifinePassword';
 export { default as ResetPassword } from './ResetPassword';
 export { default as UserList } from './Administrator/UserList';
+export { default as CourseList } from './Administrator/CourseList';
