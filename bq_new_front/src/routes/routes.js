@@ -19,6 +19,11 @@ import {
 const Routes = () => (
   <BrowserRouter>
     <Switch>
+        <Redirect
+            exact
+            from="/"
+            to="/home"
+        />
         <RouteWithLayout
             component={UserList}
             exact
