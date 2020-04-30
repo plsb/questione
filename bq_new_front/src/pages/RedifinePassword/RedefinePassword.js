@@ -11,7 +11,6 @@ import {
 } from '@material-ui/core';
 import api from '../../services/api';
 import Swal from 'sweetalert2';
-import { login } from "../../services/auth";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const schema = {
@@ -41,18 +40,13 @@ const useStyles = makeStyles(theme => ({
   contentHeader: {
     display: 'flex',
     alignItems: 'center',
-    paddingTop: theme.spacing(5),
-    paddingBototm: theme.spacing(2),
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
+    paddingTop: theme.spacing(2),
+
   },
   contentBody: {
     flexGrow: 1,
     display: 'flex',
-    alignItems: 'center',
-    [theme.breakpoints.down('md')]: {
-      justifyContent: 'center'
-    }
+    justifyContent: 'center'
   },
   form: {
     paddingLeft: 100,
@@ -65,14 +59,21 @@ const useStyles = makeStyles(theme => ({
     }
   },
   title: {
-    marginTop: theme.spacing(3)
+    marginTop: theme.spacing(3),
+    fontWeight: 'bold'
   },
   textField: {
     marginTop: theme.spacing(2)
   },
   signInButton: {
     margin: theme.spacing(2, 0)
-  }
+  },
+  logoImage: {
+    paddingTop: theme.spacing(3),
+    flexGrow: 1,
+    display: 'flex',
+    justifyContent: 'center'
+  },
 }));
 
 const RedefinePassword = props => {
@@ -148,7 +149,7 @@ const RedefinePassword = props => {
       };
 
       const response = await api.post('redefinepw', data);
-      if (response.status == 202) {
+      if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
         } else if(response.data.errors[0].email){
@@ -159,7 +160,7 @@ const RedefinePassword = props => {
         history.push('/home');
       }
     } catch (error) {
-      console.log(error);
+      loadAlert('error', 'Erro de conexão.');
     }
   }
 
@@ -182,9 +183,14 @@ const RedefinePassword = props => {
           <form
             className={classes.form}
             onSubmit={handleRedefinePassword}>
+            <div className={classes.logoImage}>
+              <img
+                  alt="Logo"
+                  src="/images/logomarca.png"/>
+            </div>
             <Typography
               className={classes.title}
-              variant="h2">
+              variant="h5">
               Redefinir Senha
             </Typography>
             <TextField

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -27,8 +27,6 @@ const Topbar = props => {
   const { className, onSidebarOpen, ...rest } = props;
 
   const classes = useStyles();
-
-  const [notifications] = useState([]);
 
   async function handleLogout(event) {
     event.preventDefault();
@@ -62,8 +60,7 @@ const Topbar = props => {
         <Hidden lgUp>
           <IconButton
             color="inherit"
-            onClick={onSidebarOpen}
-          >
+            onClick={onSidebarOpen}>
             <MenuIcon />
           </IconButton>
         </Hidden>

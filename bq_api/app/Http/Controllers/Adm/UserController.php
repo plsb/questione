@@ -13,9 +13,13 @@ class UserController extends Controller
         $this->middleware(['jwt.auth', 'checkAdm']);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::orderBy('id')->paginate(10);
+        if($request->name){
+            $users = User::where('name', 'like', '%'.$request->name.'%')->paginate(10);
+        } else {
+            $users = User::orderBy('id')->paginate(10);
+        }
         return response()->json($users, 200);
     }
 

@@ -7,11 +7,10 @@ import {
   Button,
   TextField,
   Typography,
-  IconButton, Link
+  Link
 } from '@material-ui/core';
 import api from '../../services/api';
 import Swal from 'sweetalert2';
-import { login } from "../../services/auth";
 
 const schema = {
   email: {
@@ -34,7 +33,7 @@ const schema = {
       minimum: 6,
       maximum: 10
     }
-  },
+  }
 };
 
 const useStyles = makeStyles(theme => ({
@@ -62,10 +61,7 @@ const useStyles = makeStyles(theme => ({
   contentBody: {
     flexGrow: 1,
     display: 'flex',
-    alignItems: 'center',
-    [theme.breakpoints.down('md')]: {
-      justifyContent: 'center'
-    }
+    justifyContent: 'center'
   },
   form: {
     paddingLeft: 100,
@@ -78,14 +74,21 @@ const useStyles = makeStyles(theme => ({
     }
   },
   title: {
-    marginTop: theme.spacing(3)
+    marginTop: theme.spacing(3),
+    fontWeight: 'bold'
   },
   textField: {
     marginTop: theme.spacing(2)
   },
   signInButton: {
     margin: theme.spacing(2, 0)
-  }
+  },
+  logoImage: {
+    paddingTop: theme.spacing(3),
+    flexGrow: 1,
+    display: 'flex',
+    justifyContent: 'center'
+  },
 }));
 
 const ResetPassword = props => {
@@ -158,7 +161,7 @@ const ResetPassword = props => {
       const password = formState.values.password;
       const confirmPassword = formState.values.confirmPassword;
 
-      if(password != confirmPassword){
+      if(password !== confirmPassword){
         loadAlert('error', "A confirmação da senha está incorreta.");
         return ;
       }
@@ -168,7 +171,7 @@ const ResetPassword = props => {
       };
 
       const response = await api.post('resetpw', data);
-      if (response.status == 202) {
+      if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
         } else if(response.data.errors[0].email){
@@ -183,13 +186,9 @@ const ResetPassword = props => {
         history.push('/home');
       }
     } catch (error) {
-      console.log(error);
+      loadAlert('error', 'Erro de conexão.');
     }
   }
-
-  const handleBack = () => {
-    history.goBack();
-  };
 
   const hasError = field =>
     formState.touched[field] && formState.errors[field] ? true : false;
@@ -201,9 +200,14 @@ const ResetPassword = props => {
           <form
             className={classes.form}
             onSubmit={handleResetPassword}>
+            <div className={classes.logoImage}>
+              <img
+                  alt="Logo"
+                  src="/images/logomarca.png"/>
+            </div>
             <Typography
               className={classes.title}
-              variant="h2">
+              variant="h5">
               Redefinir Senha
             </Typography>
             <TextField
@@ -260,7 +264,7 @@ const ResetPassword = props => {
             <Typography
                 color="textSecondary"
                 variant="body1">
-              Volte para a página de{' '}
+              Vá para a página de{' '}
               <Link
                   component={RouterLink}
                   to="/sign-in"

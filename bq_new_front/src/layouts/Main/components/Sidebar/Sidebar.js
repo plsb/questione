@@ -5,13 +5,11 @@ import { makeStyles } from '@material-ui/styles';
 import { Divider, Drawer } from '@material-ui/core';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import PeopleIcon from '@material-ui/icons/People';
-import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
 import EmojiObjects from '@material-ui/icons/EmojiObjects';
 import Note from '@material-ui/icons/Note';
 
-import { Profile, SidebarNav } from './components';
+import { Profile, SidebarNavAdm } from './components';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -41,7 +39,7 @@ const Sidebar = props => {
 
   const classes = useStyles();
 
-  const pages = [
+  const pagesAdm = [
     {
       title: 'Cursos',
       href: '/courses',
@@ -69,6 +67,43 @@ const Sidebar = props => {
     },
   ];
 
+  const pagesProfessor = [
+    {
+      title: 'Questões',
+      href: '/questions',
+      icon: <DashboardIcon />
+    },
+    {
+      title: 'Avaliações',
+      href: '/evaluation',
+      icon: <PeopleIcon />
+    }
+  ];
+
+  const pagesUser = [
+    {
+      title: 'Realizar Avaliação',
+      href: '/courses',
+      icon: <DashboardIcon />
+    },
+    {
+      title: 'Minhas Avaliações',
+      href: '/profiles',
+      icon: <PeopleIcon />
+    }
+  ];
+
+  function handlePage(event) {
+    const level_user = localStorage.getItem("@Questione-acess-level-user");
+    console.log("Usuer : "+level_user);
+    if(level_user === 1){
+      return pagesAdm;
+    } else if(level_user === 2){
+      return pagesProfessor;
+    }
+    return pagesUser;
+  }
+
   return (
     <Drawer
       anchor="left"
@@ -81,9 +116,9 @@ const Sidebar = props => {
         className={clsx(classes.root, className)}>
         <Profile />
         <Divider className={classes.divider} />
-        <SidebarNav
-          className={classes.nav}
-          pages={pages}
+        <SidebarNavAdm
+            className={classes.nav}
+            pages={handlePage()}
         />
       </div>
     </Drawer>

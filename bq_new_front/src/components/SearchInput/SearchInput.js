@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
@@ -26,30 +26,23 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const SearchInput = props => {
-  const { className, onChange, style, ...rest } = props;
-  const [value, setValue] = useState('');
+  const { className, onChange, value, style, ...rest } = props;
 
   const classes = useStyles();
-
-  function handleSend(event) {
-    event.persist();
-    setValue(event.target.value);
-  };
 
   return (
     <Paper
       {...rest}
       className={clsx(classes.root, className)}
-      style={style}
-    >
+      style={style}>
       <SearchIcon className={classes.icon} />
       <Input
         {...rest}
         className={classes.input}
         disableUnderline
-        onChange={handleSend}
-        value={value}
-      />
+        onChange={onChange}
+        type="text"
+        value={value || ''}/>
     </Paper>
   );
 };
@@ -57,7 +50,8 @@ const SearchInput = props => {
 SearchInput.propTypes = {
   className: PropTypes.string,
   onChange: PropTypes.func,
-  style: PropTypes.object
+  style: PropTypes.object,
+  value: PropTypes.object
 };
 
 export default SearchInput;

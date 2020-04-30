@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const UsersToolbar = props => {
-  const { className, ...rest } = props;
+  const { className, onChangeSearch, searchText, ...rest } = props;
 
   const classes = useStyles();
 
@@ -39,18 +39,14 @@ const UsersToolbar = props => {
       className={clsx(classes.root, className)}>
       <div className={classes.row}>
         <span className={classes.spacer} />
-        <Button className={classes.importButton}>Import</Button>
-        <Button className={classes.exportButton}>Export</Button>
-        <Button
-          color="primary"
-          variant="contained">
-          Add user
-        </Button>
+        <Button className={classes.exportButton}>Solicitações dos Professores</Button>
       </div>
       <div className={classes.row}>
         <SearchInput
           className={classes.searchInput}
           placeholder="Pesquisar"
+          onChange={onChangeSearch}
+          value={searchText}
         />
       </div>
     </div>
@@ -58,7 +54,9 @@ const UsersToolbar = props => {
 };
 
 UsersToolbar.propTypes = {
-  className: PropTypes.string
+  className: PropTypes.string,
+  onChangeSearch: PropTypes.func,
+  searchText: PropTypes.string
 };
 
 export default UsersToolbar;

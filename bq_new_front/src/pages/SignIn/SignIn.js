@@ -33,7 +33,6 @@ const useStyles = makeStyles(theme => ({
   root: {
     //backgroundColor: theme.palette.background.default,
     height: '100%',
-
   },
   name: {
     marginTop: theme.spacing(3),
@@ -43,7 +42,7 @@ const useStyles = makeStyles(theme => ({
   content: {
     height: '100%',
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   contentHeader: {
     display: 'flex',
@@ -54,28 +53,30 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(2)
   },
   logoImage: {
-    marginLeft: theme.spacing(4)
+    paddingTop: theme.spacing(3),
+    flexGrow: 1,
+    display: 'flex',
+    justifyContent: 'center'
   },
   contentBody: {
     flexGrow: 1,
     display: 'flex',
-    alignItems: 'center',
-    [theme.breakpoints.down('md')]: {
-      justifyContent: 'center'
-    }
+    justifyContent: 'center'
   },
   form: {
     paddingLeft: 100,
     paddingRight: 100,
     paddingBottom: 125,
     flexBasis: 700,
+    justifyContent: 'center',
     [theme.breakpoints.down('sm')]: {
       paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(2)
+      paddingRight: theme.spacing(2),
     }
   },
   title: {
-    marginTop: theme.spacing(3)
+    marginTop: theme.spacing(3),
+    fontWeight: 'bold'
   },
   socialButtons: {
     marginTop: theme.spacing(3)
@@ -169,18 +170,19 @@ const SignIn = props => {
 
       const response = await api.post('login/', data);
       console.log(response);
-      if (response.status == 202) {
+      if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
         }
       } else {
         login(response.data.token, response.data[0].name,
                 response.data[0].email, response.data[0].acess_level);
+        console.log(response.data[0].acess_level)
         loadAlert('success', response.data[0].name+', seja bem-vindo!');
         history.push('/home');
       }
     } catch (error) {
-      console.log(error);
+      loadAlert('error', 'Erro de conexão.');
     }
   }
 
@@ -194,9 +196,14 @@ const SignIn = props => {
           <form
             className={classes.form}
             onSubmit={handleSignIn}>
+            <div className={classes.logoImage}>
+              <img
+                   alt="Logo"
+                   src="/images/logomarca.png"/>
+            </div>
             <Typography
               className={classes.title}
-              variant="h2">
+              variant="h4">
               Login
             </Typography>
             <TextField

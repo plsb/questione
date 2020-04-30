@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
@@ -31,8 +30,8 @@ const Profile = props => {
     name: localStorage.getItem("@Questione-name-user"),
     avatar: '/images/avatars/avatar_11.png',
     email: localStorage.getItem('@Questione-email-user'),
-    level: localStorage.getItem('@Questione-acess-level-user')=="1"
-        ? "Administrador" : localStorage.getItem('@Questione-acess-level-user')=="2"
+    level: localStorage.getItem('@Questione-acess-level-user')==="1"
+        ? "Administrador" : localStorage.getItem('@Questione-acess-level-user')==="2"
            ? "Professor" : "Usuário"
   };
 
@@ -47,8 +46,7 @@ const Profile = props => {
         </Avatar>
       <Typography
         className={classes.name}
-        variant="h5"
-      >
+        variant="h5">
         {user.name}
       </Typography>
       <Typography variant="body2">{user.email}</Typography>
