@@ -17,9 +17,8 @@ import {
 } from '@material-ui/core';
 import api from '../../../services/api';
 
-import { getInitials } from '../../../helpers';
 import Swal from "sweetalert2";
-import UsersToolbar from "./components/UsersToolbar";
+import ProfileToolbar from "./components/ProfileToolbar";
 const useStyles = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(2),
@@ -59,10 +58,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const UsersTable = props => {
+const ProfileTable = props => {
   const { className } = props;
 
-  const [users, setUsers] = useState([]);
+  const [profiles, setProfiles] = useState([]);
 
   const classes = useStyles();
 
@@ -91,33 +90,31 @@ const UsersTable = props => {
     });
   }
 
-  async function loadUsers(page){
+  async function loadProfile(page){
     try {
-      let url = 'user?page='+page;
-      if(searchText != ''){
-        url += '&name='+searchText;
+      let url = 'profile?page='+page;
+      if(searchText!=0){
+        url += '&fk_course_id='+searchText;
       }
       const response = await api.get(url);
       setTotal(response.data.total);
-      setUsers(response.data.data);
-      console.log(response.data);
+      setProfiles(response.data.data);
+      console.log(response.data.data);
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
     }
   }
 
   useEffect(() => {
-    loadUsers(1);
+    loadProfile(1);
   }, [searchText]);
 
   const updateSearch = (e) => {
     setSearchText(e.target.value);
-    console.log('usuário busca: '+searchText);
-    loadUsers(1);
   }
 
   const handlePageChange = (event, page) => {
-    loadUsers(page+1)
+    loadProfile(page+1)
     setPage(page);
   };
 
@@ -127,7 +124,7 @@ const UsersTable = props => {
 
   return (
     <div className={classes.root}>
-      <UsersToolbar
+      <ProfileToolbar
           onChangeSearch={updateSearch.bind(this)}
           searchText={searchText}/>
       <div className={classes.content}>
@@ -139,32 +136,22 @@ const UsersTable = props => {
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell>Nome</TableCell>
-                      <TableCell>Email</TableCell>
-                      <TableCell>Nível de Acesso</TableCell>
+                      <TableCell>Descrição</TableCell>
+                      <TableCell>Curso</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {users.map(user => (
+                    {profiles.map(profile => (
                         <TableRow
                             className={classes.tableRow}
                             hover
-                            key={user.id}>
+                            key={profile.id}>
                           <TableCell>
                             <div className={classes.nameContainer}>
-                              <Avatar
-                                  className={classes.avatar}
-                                  src={user.avatarUrl}>
-                                {getInitials(user.name)}
-                              </Avatar>
-                              <Typography variant="body1">{user.name}</Typography>
+                              <Typography variant="body1">{profile.description}</Typography>
                             </div>
                           </TableCell>
-                          <TableCell>{user.email}</TableCell>
-                          <TableCell>
-                            {user.acess_level === 1 ? "Administrador" :
-                                user.acess_level === 2 ? "Professor" : ""}
-                          </TableCell>
+                          <TableCell>{profile.course.description}</TableCell>
                         </TableRow>
                     ))}
                   </TableBody>
@@ -189,8 +176,8 @@ const UsersTable = props => {
   );
 };
 
-UsersTable.propTypes = {
+ProfileTable.propTypes = {
 
 };
 
-export default UsersTable;
+export default ProfileTable;

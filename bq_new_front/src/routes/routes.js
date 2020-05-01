@@ -12,10 +12,11 @@ import {
 
     SignUp,
     SignIn,
-    UserList,
+    UserTable,
+    ProfileTable,
     RedefinePassword,
     ResetPassword,
-    CourseList
+    CourseList,
 
 } from '../pages';
 
@@ -27,14 +28,9 @@ const Routes = () => (
             from="/"
             to="/home"
         />
+        {/*ROTAS COMUNS*/}
         <RouteWithLayout
-            component={UserList}
-            exact
-            needToBeLogged={true}
-            layout={MainLayout}
-            path="/users"/>
-        <RouteWithLayout
-          component={UserList}
+          component={UserTable}
           exact
           needToBeLogged={true}
           layout={MainLayout}
@@ -63,12 +59,25 @@ const Routes = () => (
             layout={MinimalLayout}
             needToBeLogged={false}
             path="/reset-password/:token"/>
-      <RouteWithLayout
+        {/*ROTAS DO ADMINISTRADOR*/}
+        <RouteWithLayout
             component={CourseList}
             exact
             layout={MainLayout}
             needToBeLogged={true}
             path="/courses"/>
+        <RouteWithLayout
+            component={ProfileTable}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/profiles"/>
+        <RouteWithLayout
+            component={UserTable}
+            exact
+            needToBeLogged={true}
+            layout={MainLayout}
+            path="/users"/>
 
 
       <Route path="*" component={() => <h1>Page not found</h1>} />

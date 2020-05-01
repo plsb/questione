@@ -241,8 +241,7 @@ const SignIn = props => {
               fullWidth
               size="large"
               type="submit"
-              variant="contained"
-            >
+              variant="contained">
               Entrar
             </Button>
             <Typography

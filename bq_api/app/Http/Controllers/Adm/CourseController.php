@@ -36,10 +36,19 @@ class CourseController extends Controller
     public function index(Request $request)
     {
         if($request->description){
-            $courses = Course::where('description', 'like', '%'.$request->description.'%')->paginate(10);
+            $courses = Course::where('description', 'like', '%'.$request->description.'%')
+                ->orderBy('description')
+                ->paginate(10);
         } else {
-            $courses = Course::orderBy('id')->paginate(10);
+            $courses = Course::orderBy('description')->paginate(10);
         }
+
+        return response()->json($courses, 200);
+    }
+
+    public function coursesall()
+    {
+        $courses = Course::orderBy('description')->get();
 
         return response()->json($courses, 200);
     }

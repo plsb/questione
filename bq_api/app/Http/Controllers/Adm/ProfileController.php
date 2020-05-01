@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Adm;
 
 use App\Course;
 use App\Profile;
+use App\Question;
 use Illuminate\Http\Request;
 use Validator;
 use App\Http\Controllers\Controller;
@@ -32,13 +33,15 @@ class ProfileController extends Controller
 
     public function index(Request $request)
     {
-        if(!$request->fk_course_id)
+        if($request->fk_course_id)
         {
-            return response()->json([
-                'message' => 'Informe o Curso.'
-            ], 200);
+            $profiles = Profile::where('fk_course_id', '=', $request->fk_course_id)
+                ->orderBy('description')
+                ->with('course')
+                ->paginate(10);
+        } else {
+            $profiles = Profile::orderBy('fk_course_id')->with('course')->paginate(10);
         }
-        $profiles = Profile::where('fk_course_id', '=', $request->fk_course_id)->orderBy('id')->with('course')->paginate(10);
         return response()->json($profiles);
     }
 
@@ -61,7 +64,10 @@ class ProfileController extends Controller
         $profile->fk_course_id = $request->fk_course_id;
         $profile->save();
 
-        return response()->json($profile, 201);
+        return response()->json([
+            'message' => 'Curso '.$profile->description.' cadastrado.',
+            $profile
+        ], 200);
     }
 
     public function show(int $id)
@@ -70,7 +76,7 @@ class ProfileController extends Controller
 
         $this->verifyRecord($profile);
 
-        return response()->json($profile);
+        return response()->json($profile, 200);
     }
 
     public function update(Request $request, $id)
@@ -78,13 +84,17 @@ class ProfileController extends Controller
         $validation = Validator::make($request->all(), $this->rules, $this->messages);
 
         if($validation->fails()){
-            return $validation->errors()->toJson();
+            $erros = array('errors' => array(
+                $validation->messages()
+            ));
+            $json_str = json_encode($erros);
+            return response($json_str, 202);
         }
 
         if(!$this->verifyCourse($request->fk_course_id)){
             return response()->json([
                 'message' => 'Curso não encontrado.'
-            ], 404);
+            ], 202);
         }
 
         $profile = Profile::find($id);
@@ -96,7 +106,10 @@ class ProfileController extends Controller
         $profile->save();
 
 
-        return response()->json($profile);
+        return response()->json([
+            'message' => 'Curso '.$profile->description.' atualizado.',
+            $profile
+        ], 200);
 
     }
 
@@ -106,39 +119,23 @@ class ProfileController extends Controller
 
         $this->verifyRecord($profile);
 
+        $questions = Question::where('fk_profile_id', '=', $id)->get();
+        if(sizeof($questions)>0) {
+            return response()->json(['message' => 'Operação não realizada. Existem questões para este perfil.'], 202);
+        }
+
         $profile->delete();
 
         return response()->json([
             'message' => 'Perfil '.$profile->description.' excluído!'
-        ], 202);
-    }
-
-    public function search(Request $request)
-    {
-        if(!$request->fk_course_id)
-        {
-            return response()->json([
-                'message' => 'Informe o Curso.'
-            ], 200);
-        }
-
-        $profile = Profile::where('description', 'like', '%'.$request->description.'%')
-            ->where('fk_course_id', '=', $request->fk_course_id)
-            ->with('course')
-            ->paginate(10);
-
-
-        $this->verifyRecord($profile);
-
-        return response()->json($profile, 200);
-
+        ], 200);
     }
 
     public function verifyRecord($record){
         if(!$record || $record == '[]'){
             return response()->json([
                 'message' => 'Registro não encontrado.'
-            ], 404);
+            ], 202);
         }
     }
 

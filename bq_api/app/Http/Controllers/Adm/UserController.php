@@ -16,26 +16,11 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if($request->name){
-            $users = User::where('name', 'like', '%'.$request->name.'%')->paginate(10);
+            $users = User::where('name', 'like', '%'.$request->name.'%')->orderBy('name')->paginate(10);
         } else {
-            $users = User::orderBy('id')->paginate(10);
+            $users = User::orderBy('name')->paginate(10);
         }
         return response()->json($users, 200);
-    }
-
-    public function search(Request $request)
-    {
-
-        $users = User::where('name', 'like', '%'.$request->name.'%')->paginate(10);
-
-
-        if ($users == '[]') {
-            return response()->json([
-                'message' => 'Registro não encontrado.'
-            ], 202);
-        }
-        return response()->json($users, 200);
-
     }
 
     public function isProfessor(Request $request, $id)

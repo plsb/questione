@@ -13,6 +13,7 @@ Route::post('/resetpw', 'PasswordResetController@reset');
 
 Route::group(['prefix' => 'course'], function (){
     Route::get('/', 'Adm\CourseController@index')->name('course.index');
+    Route::get('/coursesall', 'Adm\CourseController@coursesall')->name('course.coursesall');
     Route::post('/', 'Adm\CourseController@store')->name('course.store');
     Route::get('/show/{course}', 'Adm\CourseController@show')->name('course.show');
     Route::put('/{course}', 'Adm\CourseController@update')->name('course.update');
@@ -25,7 +26,6 @@ Route::group(['prefix' => 'profile'], function (){
     Route::get('/show/{profile}', 'Adm\ProfileController@show')->name('profile.show');
     Route::put('/{profile}', 'Adm\ProfileController@update')->name('profile.update');
     Route::delete('/{profile}', 'Adm\ProfileController@destroy')->name('profile.destroy');
-    Route::get('/search/', 'Adm\ProfileController@search')->name('profile.search');
 });
 
 Route::group(['prefix' => 'skill'], function (){
@@ -48,7 +48,6 @@ Route::group(['prefix' => 'object'], function (){
 
 Route::group(['prefix' => 'user'], function (){
     Route::get('/', 'Adm\UserController@index')->name('user.index');
-    Route::get('/search/', 'Adm\UserController@search')->name('user.search');
     Route::post('/isprofessor/{user}', 'Adm\UserController@isProfessor')->name('user.isProfessor');
 });
 

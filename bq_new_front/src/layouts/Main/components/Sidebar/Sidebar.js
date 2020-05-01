@@ -96,9 +96,9 @@ const Sidebar = props => {
   function handlePage(event) {
     const level_user = localStorage.getItem("@Questione-acess-level-user");
     console.log("Usuer : "+level_user);
-    if(level_user === 1){
+    if(level_user == 1){
       return pagesAdm;
-    } else if(level_user === 2){
+    } else if(level_user == 2){
       return pagesProfessor;
     }
     return pagesUser;
