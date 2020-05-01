@@ -39,6 +39,9 @@ const useStyles = makeStyles(theme => ({
   avatar: {
     marginRight: theme.spacing(2)
   },
+  headTable: {
+    fontWeight: "bold"
+  },
   actions: {
     justifyContent: 'flex-end'
   },
@@ -142,9 +145,9 @@ const UsersTable = props => {
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell>Nome</TableCell>
-                      <TableCell>Email</TableCell>
-                      <TableCell>Nível de Acesso</TableCell>
+                      <TableCell className={classes.headTable}>Nome</TableCell>
+                      <TableCell className={classes.headTable}>Email</TableCell>
+                      <TableCell className={classes.headTable}>Nível de Acesso</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>

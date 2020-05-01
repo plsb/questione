@@ -6,19 +6,24 @@ import {
   Card,
   CardActions,
   CardContent,
-  Avatar,
+  Tooltip,
+  IconButton,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
   Typography,
-  TablePagination
+  TablePagination, Button
 } from '@material-ui/core';
-import api from '../../../services/api';
-
+import api from '../../../../services/api';
 import Swal from "sweetalert2";
-import SkillToolbar from "./components/SkillToolbar";
+import ProfileToolbar from "./components/ProfileToolbar";
+import Delete from "@material-ui/icons/Delete";
+import Edit from "@material-ui/icons/Edit";
+import {DialogQuestione} from "../../../../components";
+import PropTypes from "prop-types";
+
 const useStyles = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(2),
@@ -42,10 +47,12 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-end'
   },
   row: {
-    height: '42px',
     display: 'flex',
-    alignItems: 'center',
+    flexDirection: 'row',
     marginTop: theme.spacing(1)
+  },
+  headTable: {
+    fontWeight: "bold"
   },
   spacer: {
     flexGrow: 1
@@ -58,10 +65,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const SkillTable = props => {
-  const { className } = props;
+const ProfileTable = props => {
+  const { className, history } = props;
 
-  const [skills, setSkills] = useState([]);
+  const [profiles, setProfiles] = useState([]);
 
   const classes = useStyles();
 
@@ -69,6 +76,8 @@ const SkillTable = props => {
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
   const [searchText, setSearchText] = useState('');
+  const [open, setOpen] = React.useState(false);
+  const [idProfileDelete, setIdProfileDelete] = React.useState(0);
 
   //configuration alert
   const Toast = Swal.mixin({
@@ -90,15 +99,15 @@ const SkillTable = props => {
     });
   }
 
-  async function loadSkill(page){
+  async function loadProfile(page){
     try {
-      let url = 'skill?page='+page;
+      let url = 'profile?page='+page;
       if(searchText!=0){
         url += '&fk_course_id='+searchText;
       }
       const response = await api.get(url);
       setTotal(response.data.total);
-      setSkills(response.data.data);
+      setProfiles(response.data.data);
       console.log(response.data.data);
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
@@ -106,19 +115,52 @@ const SkillTable = props => {
   }
 
   useEffect(() => {
-    loadSkill(1);
+    loadProfile(1);
   }, []);
 
   const updateSearch = (e) => {
     setSearchText(e.target.value);
   }
 
+  const onClickOpenDialog = (id) => {
+    setIdProfileDelete(id);
+    setOpen(true);
+  }
+
+  const onClickCloseDialog = () => {
+    setOpen(false);
+    setIdProfileDelete(0);
+  }
+
+  async function onDeleteProfile(){
+    try {
+      let url = 'profile/'+idProfileDelete;
+      const response = await api.delete(url);
+      if (response.status === 202) {
+        if(response.data.message){
+          loadAlert('error', response.data.message);
+        }
+      } else {
+        loadAlert('success', 'Perfil excluído.');
+        loadProfile(page+1);
+      }
+    } catch (error) {
+      loadAlert('error', 'Erro de conexão.');
+    }
+    setOpen(false);
+  }
+
+  const onClickEdit = (id) => {
+    console.log(id);
+    history.push('/profile-details/'+id);
+  }
+
   const onClickSearch = (e) => {
-    loadSkill(1);
+    loadProfile(1);
   }
 
   const handlePageChange = (event, page) => {
-    loadSkill(page+1)
+    loadProfile(page+1)
     setPage(page);
   };
 
@@ -126,9 +168,17 @@ const SkillTable = props => {
     setRowsPerPage(event.target.value);
   };
 
+  const handleClickOpenDialog = () => {
+    setOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+  };
+
   return (
     <div className={classes.root}>
-      <SkillToolbar
+      <ProfileToolbar
           onChangeSearch={updateSearch.bind(this)}
           searchText={searchText}
           onClickSearch={onClickSearch}/>
@@ -141,22 +191,39 @@ const SkillTable = props => {
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell>Descrição</TableCell>
-                      <TableCell>Curso</TableCell>
+                      <TableCell className={classes.headTable}>Descrição</TableCell>
+                      <TableCell className={classes.headTable}>Curso</TableCell>
+                      <TableCell></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {skills.map(skill => (
+                    {profiles.map(profile => (
                         <TableRow
                             className={classes.tableRow}
                             hover
-                            key={skill.id}>
+                            key={profile.id}>
                           <TableCell>
                             <div className={classes.nameContainer}>
-                              <Typography variant="body1">{skill.description}</Typography>
+                              <Typography variant="body1">{profile.description}</Typography>
                             </div>
                           </TableCell>
-                          <TableCell>{skill.course.description}</TableCell>
+                          <TableCell>{profile.course.description}</TableCell>
+                          <TableCell className={classes.row}>
+                            <Tooltip title="Deletar">
+                              <Button
+                                  className={classes.buttonDelete}
+                                  onClick={() => onClickOpenDialog(profile.id)}>
+                                <Delete fontSize="medium"/>
+                              </Button>
+                            </Tooltip>
+                            <Tooltip title="Editar">
+                              <Button
+                                className={classes.buttonEdit}
+                                onClick={() => onClickEdit(profile.id)}>
+                                <Edit fontSize="medium"/>
+                              </Button>
+                            </Tooltip>
+                          </TableCell>
                         </TableRow>
                     ))}
                   </TableBody>
@@ -177,12 +244,18 @@ const SkillTable = props => {
           </CardActions>
         </Card>
       </div>
+      <DialogQuestione handleClose={onClickCloseDialog}
+                       open={open}
+                       onClickAgree={onDeleteProfile}
+                       onClickDisagree={onClickCloseDialog}
+                       mesage={'Deseja excluir o perfil selecionado?'}
+                       title={'Excluir Perfil'}/>
     </div>
   );
 };
 
-SkillTable.propTypes = {
-
+ProfileTable.propTypes = {
+  history: PropTypes.object
 };
 
-export default SkillTable;
+export default ProfileTable;

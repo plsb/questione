@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import { Button, TextField } from '@material-ui/core';
-import api from "../../../../../services/api";
+import api from "../../../../../../services/api";
 import FindInPage from '@material-ui/icons/SearchSharp';
+import {withRouter} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -29,11 +30,16 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const SkillToolbar = props => {
-  const { className, onChangeSearch, onClickSearch, searchText, ...rest } = props;
+const ObjectToolbar = props => {
+  const { className, onChangeSearch, onClickSearch, history,
+                                searchText, ...rest } = props;
   const [courses, setCourses] = useState([{'id': '0', 'description': 'Sem filtro'}]);
 
   const classes = useStyles();
+
+  const onClickNewObject = e => {
+    history.push('/object-details');
+  }
 
   async function loadCourses(){
     try {
@@ -58,8 +64,9 @@ const SkillToolbar = props => {
         <span className={classes.spacer} />
         <Button
             color="primary"
-            variant="contained">
-          Nova Competência
+            variant="contained"
+            onClick={onClickNewObject}>
+          Novo Objeto
         </Button>
       </div>
       <div className={classes.row}>
@@ -96,11 +103,12 @@ const SkillToolbar = props => {
   );
 };
 
-SkillToolbar.propTypes = {
+ObjectToolbar.propTypes = {
   className: PropTypes.string,
   onChangeSearch: PropTypes.func,
   onClickSearch: PropTypes.func,
-  searchText: PropTypes.string
+  searchText: PropTypes.string,
+  history: PropTypes.object
 };
 
-export default SkillToolbar;
+export default withRouter(ObjectToolbar);

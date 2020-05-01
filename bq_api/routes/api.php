@@ -22,7 +22,6 @@ Route::group(['prefix' => 'user'], function (){
 
 Route::group(['prefix' => 'course'], function (){
     Route::get('/', 'Adm\CourseController@index')->name('course.index');
-    Route::get('/coursesall', 'Adm\CourseController@coursesall')->name('course.coursesall');
     Route::post('/', 'Adm\CourseController@store')->name('course.store');
     Route::get('/show/{course}', 'Adm\CourseController@show')->name('course.show');
     Route::put('/{course}', 'Adm\CourseController@update')->name('course.update');

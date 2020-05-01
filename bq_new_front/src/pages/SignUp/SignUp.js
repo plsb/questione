@@ -23,6 +23,7 @@ const schema = {
   },
   cpf: {
     presence: { allowEmpty: false, message: 'is required' },
+    pattern: '\d{3}\.\d{3}\.\d{3}-\d{2}',
     length: {
 
     }

@@ -7,13 +7,13 @@ import {
 } from 'react-router-dom';
 import { RouteWithLayout } from './../components';
 import { Main as MainLayout, Minimal as MinimalLayout } from './../layouts';
-
 import {
 
     SignUp,
     SignIn,
     UserTable,
     ProfileTable,
+    ProfileDetails,
     RedefinePassword,
     ResetPassword,
     CourseList,
@@ -21,6 +21,8 @@ import {
     ObjectTable
 
 } from '../pages';
+import SkillDetails from "../pages/Administrator/Skill/SkillDetails";
+import ObjectDetails from "../pages/Administrator/Object/ObjectDetails";
 
 const Routes = () => (
   <BrowserRouter>
@@ -75,17 +77,53 @@ const Routes = () => (
             needToBeLogged={true}
             path="/profiles"/>
         <RouteWithLayout
+            component={ProfileDetails}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/profile-details"/>
+        <RouteWithLayout
+            component={ProfileDetails}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/profile-details/:codigoProfile"/>
+        <RouteWithLayout
             component={SkillTable}
             exact
             layout={MainLayout}
             needToBeLogged={true}
             path="/skills"/>
         <RouteWithLayout
+            component={SkillDetails}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/skill-details"/>
+        <RouteWithLayout
+            component={SkillDetails}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/skill-details/:codigoSkill"/>
+        <RouteWithLayout
             component={ObjectTable}
             exact
             layout={MainLayout}
             needToBeLogged={true}
             path="/objects"/>
+        <RouteWithLayout
+            component={ObjectDetails}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/object-details"/>
+        <RouteWithLayout
+            component={ObjectDetails}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/object-details/:codigoObject"/>
         <RouteWithLayout
             component={UserTable}
             exact

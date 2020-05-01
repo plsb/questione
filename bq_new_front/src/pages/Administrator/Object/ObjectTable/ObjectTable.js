@@ -6,19 +6,22 @@ import {
   Card,
   CardActions,
   CardContent,
-  Avatar,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
   Typography,
-  TablePagination
+  TablePagination, Tooltip, Button
 } from '@material-ui/core';
-import api from '../../../services/api';
+import api from '../../../../services/api';
 
 import Swal from "sweetalert2";
 import ObjectToolbar from "./components/ObjectToolbar";
+import PropTypes from "prop-types";
+import {DialogQuestione} from "../../../../components";
+import Delete from "@material-ui/icons/Delete";
+import Edit from "@material-ui/icons/Edit";
 const useStyles = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(2),
@@ -31,6 +34,9 @@ const useStyles = makeStyles(theme => ({
   inner: {
     minWidth: 1050
   },
+  headTable: {
+    fontWeight: "bold"
+  },
   nameContainer: {
     display: 'flex',
     alignItems: 'center'
@@ -42,9 +48,8 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-end'
   },
   row: {
-    height: '42px',
     display: 'flex',
-    alignItems: 'center',
+    flexDirection: 'row',
     marginTop: theme.spacing(1)
   },
   spacer: {
@@ -59,7 +64,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ObjectTable = props => {
-  const { className } = props;
+  const { className, history } = props;
 
   const [objects, setObjects] = useState([]);
 
@@ -69,6 +74,8 @@ const ObjectTable = props => {
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
   const [searchText, setSearchText] = useState('');
+  const [open, setOpen] = React.useState(false);
+  const [idObjectDelete, setIdObjectDelete] = React.useState(0);
 
   //configuration alert
   const Toast = Swal.mixin({
@@ -109,6 +116,39 @@ const ObjectTable = props => {
     loadObject(1);
   }, []);
 
+  const onClickOpenDialog = (id) => {
+    setIdObjectDelete(id);
+    setOpen(true);
+  }
+
+  const onClickCloseDialog = () => {
+    setOpen(false);
+    setIdObjectDelete(0);
+  }
+
+  async function onDeleteObject(){
+    try {
+      let url = 'object/'+idObjectDelete;
+      const response = await api.delete(url);
+      if (response.status === 202) {
+        if(response.data.message){
+          loadAlert('error', response.data.message);
+        }
+      } else {
+        loadAlert('success', 'Perfil excluído.');
+        loadObject(page+1);
+      }
+    } catch (error) {
+      loadAlert('error', 'Erro de conexão.');
+    }
+    setOpen(false);
+  }
+
+  const onClickEdit = (id) => {
+    console.log(id);
+    history.push('/object-details/'+id);
+  }
+
   const updateSearch = (e) => {
     setSearchText(e.target.value);
   }
@@ -141,8 +181,9 @@ const ObjectTable = props => {
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell>Descrição</TableCell>
-                      <TableCell>Curso</TableCell>
+                      <TableCell className={classes.headTable}>Descrição</TableCell>
+                      <TableCell className={classes.headTable}>Curso</TableCell>
+                      <TableCell></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -157,6 +198,22 @@ const ObjectTable = props => {
                             </div>
                           </TableCell>
                           <TableCell>{object.course.description}</TableCell>
+                          <TableCell className={classes.row}>
+                            <Tooltip title="Deletar">
+                              <Button
+                                  className={classes.buttonDelete}
+                                  onClick={() => onClickOpenDialog(object.id)}>
+                                <Delete fontSize="medium"/>
+                              </Button>
+                            </Tooltip>
+                            <Tooltip title="Editar">
+                              <Button
+                                  className={classes.buttonEdit}
+                                  onClick={() => onClickEdit(object.id)}>
+                                <Edit fontSize="medium"/>
+                              </Button>
+                            </Tooltip>
+                          </TableCell>
                         </TableRow>
                     ))}
                   </TableBody>
@@ -177,12 +234,18 @@ const ObjectTable = props => {
           </CardActions>
         </Card>
       </div>
+      <DialogQuestione handleClose={onClickCloseDialog}
+                       open={open}
+                       onClickAgree={onDeleteObject}
+                       onClickDisagree={onClickCloseDialog}
+                       mesage={'Deseja excluir o objeto de conhecimento selecionado?'}
+                       title={'Excluir Objeto de Conhecimento'}/>
     </div>
   );
 };
 
 ObjectTable.propTypes = {
-
+  history: PropTypes.object
 };
 
 export default ObjectTable;

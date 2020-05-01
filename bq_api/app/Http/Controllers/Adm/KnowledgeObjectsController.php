@@ -16,7 +16,7 @@ class KnowledgeObjectsController extends Controller
     }
 
     private $rules = [
-        'description' => 'required|max:300|min:10',
+        'description' => 'required|max:300|min:5',
         'fk_course_id' => 'required',
 
     ];
@@ -24,7 +24,7 @@ class KnowledgeObjectsController extends Controller
     private $messages = [
         'description.required' => 'A DESCRIÇÃO é obrigatória.',
         'description.max' => 'O máximo de caracteres aceitáveis para a DESCRIÇÃO é 300.',
-        'description.min' => 'O minímo de caracteres aceitáveis para a DESCRIÇÃO é 10.',
+        'description.min' => 'O minímo de caracteres aceitáveis para a DESCRIÇÃO é 5.',
 
         'fk_course_id.required' => 'O CURSO é obrigatório.',
 

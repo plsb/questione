@@ -2,9 +2,10 @@ import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
-import { Button, TextField } from '@material-ui/core';
-import api from "../../../../../services/api";
-import FindInPage from '@material-ui/icons/SearchSharp';
+import {Button, Link, TextField} from '@material-ui/core';
+import api from "../../../../../../services/api";
+import SearchSharp from '@material-ui/icons/SearchSharp';
+import {withRouter} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -30,7 +31,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ProfileToolbar = props => {
-  const { className, onChangeSearch, onClickSearch, searchText, ...rest } = props;
+  const { className, onChangeSearch, onClickSearch, history, searchText, ...rest } = props;
   const [courses, setCourses] = useState([{'id': '0', 'description': 'Sem filtro'}]);
 
   const classes = useStyles();
@@ -46,6 +47,10 @@ const ProfileToolbar = props => {
     }
   }
 
+  const onClickNewProfile = e => {
+    history.push('/profile-details');
+  }
+
   useEffect(() => {
     loadCourses();
   }, []);
@@ -58,9 +63,12 @@ const ProfileToolbar = props => {
         <span className={classes.spacer} />
         <Button
             color="primary"
-            variant="contained">
+            variant="contained"
+            onClick={onClickNewProfile}>
           Novo Perfil
         </Button>
+
+
       </div>
       <div className={classes.row}>
         <div className={classes.comboboxSearch}>
@@ -89,7 +97,7 @@ const ProfileToolbar = props => {
         <Button
             className={classes.buttonSeacrh}
             onClick={onClickSearch}>
-          <FindInPage fontSize="large"/>
+          <SearchSharp fontSize="large"/>
         </Button>
       </div>
     </div>
@@ -100,7 +108,8 @@ ProfileToolbar.propTypes = {
   className: PropTypes.string,
   onChangeSearch: PropTypes.func,
   onClickSearch: PropTypes.func,
-  searchText: PropTypes.string
+  searchText: PropTypes.string,
+  history: PropTypes.object
 };
 
-export default ProfileToolbar;
+export default withRouter(ProfileToolbar);
