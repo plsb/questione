@@ -17,6 +17,8 @@ import {
     RedefinePassword,
     ResetPassword,
     CourseList,
+    SkillTable,
+    ObjectTable
 
 } from '../pages';
 
@@ -72,6 +74,18 @@ const Routes = () => (
             layout={MainLayout}
             needToBeLogged={true}
             path="/profiles"/>
+        <RouteWithLayout
+            component={SkillTable}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/skills"/>
+        <RouteWithLayout
+            component={ObjectTable}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/objects"/>
         <RouteWithLayout
             component={UserTable}
             exact

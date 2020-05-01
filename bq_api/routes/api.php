@@ -43,7 +43,6 @@ Route::group(['prefix' => 'skill'], function (){
     Route::get('/show/{profile}', 'Adm\SkillController@show')->name('skill.show');
     Route::put('/{profile}', 'Adm\SkillController@update')->name('skill.update');
     Route::delete('/{profile}', 'Adm\SkillController@destroy')->name('skill.destroy');
-    Route::get('/search/', 'Adm\SkillController@search')->name('skill.search');
 });
 
 Route::group(['prefix' => 'object'], function (){
@@ -52,7 +51,6 @@ Route::group(['prefix' => 'object'], function (){
     Route::get('/show/{profile}', 'Adm\KnowledgeObjectsController@show')->name('skill.show');
     Route::put('/{profile}', 'Adm\KnowledgeObjectsController@update')->name('skill.update');
     Route::delete('/{profile}', 'Adm\KnowledgeObjectsController@destroy')->name('skill.destroy');
-    Route::get('/search/', 'Adm\KnowledgeObjectsController@search')->name('skill.search');
 });
 
 //Rotas do usuário professor

@@ -42,7 +42,7 @@ class ProfileController extends Controller
         } else {
             $profiles = Profile::orderBy('fk_course_id')->with('course')->paginate(10);
         }
-        return response()->json($profiles);
+        return response()->json($profiles, 200);
     }
 
     public function store(Request $request)
@@ -56,7 +56,7 @@ class ProfileController extends Controller
         if(!$this->verifyCourse($request->fk_course_id)){
             return response()->json([
                 'message' => 'Curso não encontrado.'
-            ], 404);
+            ], 202);
         }
 
         $profile = new Profile();
@@ -65,7 +65,7 @@ class ProfileController extends Controller
         $profile->save();
 
         return response()->json([
-            'message' => 'Curso '.$profile->description.' cadastrado.',
+            'message' => 'Perfil '.$profile->description.' cadastrado.',
             $profile
         ], 200);
     }
@@ -93,7 +93,7 @@ class ProfileController extends Controller
 
         if(!$this->verifyCourse($request->fk_course_id)){
             return response()->json([
-                'message' => 'Curso não encontrado.'
+                'message' => 'Perfil não encontrado.'
             ], 202);
         }
 
@@ -107,7 +107,7 @@ class ProfileController extends Controller
 
 
         return response()->json([
-            'message' => 'Curso '.$profile->description.' atualizado.',
+            'message' => 'Perfil '.$profile->description.' atualizado.',
             $profile
         ], 200);
 

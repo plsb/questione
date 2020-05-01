@@ -35,7 +35,7 @@ const SearchInput = props => {
       {...rest}
       className={clsx(classes.root, className)}
       style={style}>
-      <SearchIcon className={classes.icon} />
+      {/*<SearchIcon className={classes.icon} /> */}
       <Input
         {...rest}
         className={classes.input}

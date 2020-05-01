@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import { Button } from '@material-ui/core';
+import FindInPage from '@material-ui/icons/SearchSharp';
 
 import { SearchInput } from '../../../../../components';
 
@@ -29,7 +30,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const UsersToolbar = props => {
-  const { className, onChangeSearch, searchText, ...rest } = props;
+  const { className, onClickSearch, onChangeSearch, searchText, ...rest } = props;
 
   const classes = useStyles();
 
@@ -48,6 +49,10 @@ const UsersToolbar = props => {
           onChange={onChangeSearch}
           value={searchText}
         />
+        <Button
+            onClick={onClickSearch}>
+          <FindInPage fontSize="large"/>
+        </Button>
       </div>
     </div>
   );
@@ -56,6 +61,7 @@ const UsersToolbar = props => {
 UsersToolbar.propTypes = {
   className: PropTypes.string,
   onChangeSearch: PropTypes.func,
+  onClickSearch: PropTypes.func,
   searchText: PropTypes.string
 };
 

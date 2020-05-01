@@ -108,11 +108,13 @@ const UsersTable = props => {
 
   useEffect(() => {
     loadUsers(1);
-  }, [searchText]);
+  }, []);
 
   const updateSearch = (e) => {
     setSearchText(e.target.value);
-    console.log('usuário busca: '+searchText);
+  }
+
+  const onClickSearch = (e) => {
     loadUsers(1);
   }
 
@@ -129,7 +131,8 @@ const UsersTable = props => {
     <div className={classes.root}>
       <UsersToolbar
           onChangeSearch={updateSearch.bind(this)}
-          searchText={searchText}/>
+          searchText={searchText}
+          onClickSearch={onClickSearch}/>
       <div className={classes.content}>
         <Card
             className={clsx(classes.root, className)}>

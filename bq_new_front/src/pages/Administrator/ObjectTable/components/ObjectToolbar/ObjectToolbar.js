@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const ProfileToolbar = props => {
+const ObjectToolbar = props => {
   const { className, onChangeSearch, onClickSearch, searchText, ...rest } = props;
   const [courses, setCourses] = useState([{'id': '0', 'description': 'Sem filtro'}]);
 
@@ -59,7 +59,7 @@ const ProfileToolbar = props => {
         <Button
             color="primary"
             variant="contained">
-          Novo Perfil
+          Nova Competência
         </Button>
       </div>
       <div className={classes.row}>
@@ -96,11 +96,11 @@ const ProfileToolbar = props => {
   );
 };
 
-ProfileToolbar.propTypes = {
+ObjectToolbar.propTypes = {
   className: PropTypes.string,
   onChangeSearch: PropTypes.func,
   onClickSearch: PropTypes.func,
   searchText: PropTypes.string
 };
 
-export default ProfileToolbar;
+export default ObjectToolbar;

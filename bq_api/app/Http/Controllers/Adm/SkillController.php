@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Adm;
 
+use App\Question;
 use App\Skill;
 use Illuminate\Http\Request;
 use Validator;
@@ -32,14 +33,17 @@ class SkillController extends Controller
 
     public function index(Request $request)
     {
-        if(!$request->fk_course_id)
+        if($request->fk_course_id)
         {
-            return response()->json([
-                'message' => 'Informe o Curso.'
-            ], 200);
+            $skills = Skill::where('fk_course_id', '=', $request->fk_course_id)
+                ->orderBy('description')
+                ->with('course')
+                ->paginate(10);
+        } else {
+            $skills = Skill::orderBy('fk_course_id')->with('course')->paginate(10);
         }
-        $skills = Skill::where('fk_course_id', '=', $request->fk_course_id)->orderBy('id')->with('course')->paginate(10);
-        return response()->json($skills);
+
+        return response()->json($skills, 200);
     }
 
     public function store(Request $request)
@@ -52,8 +56,8 @@ class SkillController extends Controller
 
         if(!$this->verifyCourse($request->fk_course_id)){
             return response()->json([
-                'message' => 'Curso não encontrado.'
-            ], 404);
+                'message' => 'Competência não encontrada.'
+            ], 202);
         }
 
         $skill = new Skill();
@@ -61,7 +65,10 @@ class SkillController extends Controller
         $skill->fk_course_id = $request->fk_course_id;
         $skill->save();
 
-        return response()->json($skill, 201);
+        return response()->json([
+            'message' => 'Competência '.$skill->description.' cadastrada.',
+            $skill
+        ], 200);
     }
 
     public function show(int $id)
@@ -70,7 +77,7 @@ class SkillController extends Controller
 
         $this->verifyRecord($skill);
 
-        return response()->json($skill);
+        return response()->json($skill, 200);
     }
 
     public function update(Request $request, $id)
@@ -83,8 +90,8 @@ class SkillController extends Controller
 
         if(!$this->verifyCourse($request->fk_course_id)){
             return response()->json([
-                'message' => 'Curso não encontrado.'
-            ], 404);
+                'message' => 'Comepetência não encontrada.'
+            ], 202);
         }
 
         $skill = Skill::find($id);
@@ -96,7 +103,10 @@ class SkillController extends Controller
         $skill->save();
 
 
-        return response()->json($skill);
+        return response()->json([
+            'message' => 'Comepetência '.$skill->description.' atualizada.',
+            $skill
+        ], 200);
 
     }
 
@@ -106,39 +116,23 @@ class SkillController extends Controller
 
         $this->verifyRecord($skill);
 
+        $questions = Question::where('fk_skill_id', '=', $id)->get();
+        if(sizeof($questions)>0) {
+            return response()->json(['message' => 'Operação não realizada. Existem questões para esta competência.'], 202);
+        }
+
         $skill->delete();
 
         return response()->json([
             'message' => 'Competência '.$skill->description.' excluída!'
-        ], 202);
-    }
-
-    public function search(Request $request)
-    {
-        if(!$request->fk_course_id)
-        {
-            return response()->json([
-                'message' => 'Informe o Curso.'
-            ], 200);
-        }
-
-        $skill = Skill::where('description', 'like', '%'.$request->description.'%')
-            ->where('fk_course_id', '=', $request->fk_course_id)
-            ->with('course')
-            ->paginate(10);
-
-
-        $this->verifyRecord($skill);
-
-        return response()->json($skill, 200);
-
+        ], 200);
     }
 
     public function verifyRecord($record){
         if(!$record || $record == '[]'){
             return response()->json([
                 'message' => 'Registro não encontrado.'
-            ], 404);
+            ], 202);
         }
     }
 

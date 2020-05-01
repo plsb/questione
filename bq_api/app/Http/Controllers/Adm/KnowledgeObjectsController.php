@@ -32,14 +32,17 @@ class KnowledgeObjectsController extends Controller
 
     public function index(Request $request)
     {
-        if(!$request->fk_course_id)
+        if($request->fk_course_id)
         {
-            return response()->json([
-                'message' => 'Informe o Curso.'
-            ], 200);
+            $knowledge_objects = KnowledgeObject::where('fk_course_id', '=', $request->fk_course_id)
+                ->orderBy('description')
+                ->with('course')
+                ->paginate(10);
+        } else {
+            $knowledge_objects = KnowledgeObject::orderBy('fk_course_id')->with('course')->paginate(10);
         }
-        $knowledge_objects = KnowledgeObject::where('fk_course_id', '=', $request->fk_course_id)->orderBy('id')->with('course')->paginate(10);
-        return response()->json($knowledge_objects);
+
+        return response()->json($knowledge_objects, 200);
     }
 
     public function store(Request $request)
@@ -52,8 +55,8 @@ class KnowledgeObjectsController extends Controller
 
         if(!$this->verifyCourse($request->fk_course_id)){
             return response()->json([
-                'message' => 'Curso não encontrado.'
-            ], 404);
+                'message' => 'Objeto d e Conhecimento não encontrado.'
+            ], 202);
         }
 
         $knowledge_object = new KnowledgeObject();
@@ -61,7 +64,10 @@ class KnowledgeObjectsController extends Controller
         $knowledge_object->fk_course_id = $request->fk_course_id;
         $knowledge_object->save();
 
-        return response()->json($knowledge_object, 201);
+        return response()->json([
+            'message' => 'Objeto de Conhecimento '.$knowledge_object->description.' cadastrado.',
+            $knowledge_object
+        ], 200);
     }
 
     public function show(int $id)
@@ -70,7 +76,7 @@ class KnowledgeObjectsController extends Controller
 
         $this->verifyRecord($knowledge_object);
 
-        return response()->json($knowledge_object);
+        return response()->json($knowledge_object, 200);
     }
 
     public function update(Request $request, $id)
@@ -83,8 +89,8 @@ class KnowledgeObjectsController extends Controller
 
         if(!$this->verifyCourse($request->fk_course_id)){
             return response()->json([
-                'message' => 'Curso não encontrado.'
-            ], 404);
+                'message' => 'Objeto de Conhecimento não encontrado.'
+            ], 202);
         }
 
         $knowledge_object = KnowledgeObject::find($id);
@@ -96,7 +102,10 @@ class KnowledgeObjectsController extends Controller
         $knowledge_object->save();
 
 
-        return response()->json($knowledge_object);
+        return response()->json([
+            'message' => 'Objeto de Conhecimento '.$knowledge_object->description.' atualizado.',
+            $knowledge_object
+        ], 200);
 
     }
 
@@ -110,41 +119,19 @@ class KnowledgeObjectsController extends Controller
 
         return response()->json([
             'message' => 'Objeto de Conhecimento '.$knowledge_object->description.' excluído!'
-        ], 202);
-    }
-
-    public function search(Request $request)
-    {
-        if(!$request->fk_course_id)
-        {
-            return response()->json([
-                'message' => 'Informe o Curso.'
-            ], 200);
-        }
-
-        $knowledge_object = KnowledgeObject::where('description', 'like', '%'.$request->description.'%')
-            ->where('fk_course_id', '=', $request->fk_course_id)
-            ->with('course')
-            ->paginate(10);
-
-
-        $this->verifyRecord($knowledge_object);
-
-        return response()->json($knowledge_object, 200);
-
+        ], 200);
     }
 
     public function verifyRecord($record){
         if(!$record || $record == '[]'){
             return response()->json([
                 'message' => 'Registro não encontrado.'
-            ], 404);
+            ], 202);
         }
     }
 
     private function verifyCourse($id){
         $course = Course::find($id);
-
         if(!$course){
             return false;
         }

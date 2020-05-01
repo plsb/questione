@@ -18,7 +18,7 @@ import {
 import api from '../../../services/api';
 
 import Swal from "sweetalert2";
-import ProfileToolbar from "./components/ProfileToolbar";
+import SkillToolbar from "./components/SkillToolbar";
 const useStyles = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(2),
@@ -58,10 +58,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const ProfileTable = props => {
+const SkillTable = props => {
   const { className } = props;
 
-  const [profiles, setProfiles] = useState([]);
+  const [skills, setSkills] = useState([]);
 
   const classes = useStyles();
 
@@ -90,15 +90,15 @@ const ProfileTable = props => {
     });
   }
 
-  async function loadProfile(page){
+  async function loadSkill(page){
     try {
-      let url = 'profile?page='+page;
+      let url = 'skill?page='+page;
       if(searchText!=0){
         url += '&fk_course_id='+searchText;
       }
       const response = await api.get(url);
       setTotal(response.data.total);
-      setProfiles(response.data.data);
+      setSkills(response.data.data);
       console.log(response.data.data);
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
@@ -106,7 +106,7 @@ const ProfileTable = props => {
   }
 
   useEffect(() => {
-    loadProfile(1);
+    loadSkill(1);
   }, []);
 
   const updateSearch = (e) => {
@@ -114,11 +114,11 @@ const ProfileTable = props => {
   }
 
   const onClickSearch = (e) => {
-    loadProfile(1);
+    loadSkill(1);
   }
 
   const handlePageChange = (event, page) => {
-    loadProfile(page+1)
+    loadSkill(page+1)
     setPage(page);
   };
 
@@ -128,7 +128,7 @@ const ProfileTable = props => {
 
   return (
     <div className={classes.root}>
-      <ProfileToolbar
+      <SkillToolbar
           onChangeSearch={updateSearch.bind(this)}
           searchText={searchText}
           onClickSearch={onClickSearch}/>
@@ -146,17 +146,17 @@ const ProfileTable = props => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {profiles.map(profile => (
+                    {skills.map(skill => (
                         <TableRow
                             className={classes.tableRow}
                             hover
-                            key={profile.id}>
+                            key={skill.id}>
                           <TableCell>
                             <div className={classes.nameContainer}>
-                              <Typography variant="body1">{profile.description}</Typography>
+                              <Typography variant="body1">{skill.description}</Typography>
                             </div>
                           </TableCell>
-                          <TableCell>{profile.course.description}</TableCell>
+                          <TableCell>{skill.course.description}</TableCell>
                         </TableRow>
                     ))}
                   </TableBody>
@@ -181,8 +181,8 @@ const ProfileTable = props => {
   );
 };
 
-ProfileTable.propTypes = {
+SkillTable.propTypes = {
 
 };
 
-export default ProfileTable;
+export default SkillTable;
