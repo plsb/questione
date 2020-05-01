@@ -46,13 +46,6 @@ class CourseController extends Controller
         return response()->json($courses, 200);
     }
 
-    public function coursesall()
-    {
-        $courses = Course::orderBy('description')->get();
-
-        return response()->json($courses, 200);
-    }
-
     public function store(Request $request)
     {
         $validation = Validator::make($request->all(),$this->rules, $this->messages);

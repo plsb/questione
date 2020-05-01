@@ -38,7 +38,7 @@ const ProfileToolbar = props => {
 
   async function loadCourses(){
     try {
-      const response = await api.get('course/coursesall');
+      const response = await api.get('all/courses');
       console.log()
       setCourses([...courses, ...response.data]);
 

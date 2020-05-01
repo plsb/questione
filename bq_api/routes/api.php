@@ -11,6 +11,15 @@ Route::post('/logout', 'AuthController@logout');
 Route::post('/redefinepw', 'PasswordResetController@redefinePassword');
 Route::post('/resetpw', 'PasswordResetController@reset');
 
+Route::group(['prefix' => 'all'], function (){
+    Route::get('/courses', 'ListAll@courses')->name('all.courses');
+});
+
+Route::group(['prefix' => 'user'], function (){
+    Route::get('/', 'Adm\UserController@index')->name('user.index');
+    Route::post('/isprofessor/{user}', 'Adm\UserController@isProfessor')->name('user.isProfessor');
+});
+
 Route::group(['prefix' => 'course'], function (){
     Route::get('/', 'Adm\CourseController@index')->name('course.index');
     Route::get('/coursesall', 'Adm\CourseController@coursesall')->name('course.coursesall');
@@ -44,11 +53,6 @@ Route::group(['prefix' => 'object'], function (){
     Route::put('/{profile}', 'Adm\KnowledgeObjectsController@update')->name('skill.update');
     Route::delete('/{profile}', 'Adm\KnowledgeObjectsController@destroy')->name('skill.destroy');
     Route::get('/search/', 'Adm\KnowledgeObjectsController@search')->name('skill.search');
-});
-
-Route::group(['prefix' => 'user'], function (){
-    Route::get('/', 'Adm\UserController@index')->name('user.index');
-    Route::post('/isprofessor/{user}', 'Adm\UserController@isProfessor')->name('user.isProfessor');
 });
 
 //Rotas do usuário professor
