@@ -20,6 +20,12 @@ Route::group(['prefix' => 'user'], function (){
     Route::post('/isprofessor/{user}', 'Adm\UserController@isProfessor')->name('user.isProfessor');
 });
 
+Route::group(['prefix' => 'course-professor'], function (){
+    Route::get('/', 'Adm\CourseProfessorController@index')->name('courseProfessor.index');
+    Route::get('/show/{course}', 'Adm\CourseProfessorController@show')->name('courseProfessor.show');
+    Route::put('/{codigo}', 'Adm\CourseProfessorController@update')->name('courseProfessor.update');
+});
+
 Route::group(['prefix' => 'course'], function (){
     Route::get('/', 'Adm\CourseController@index')->name('course.index');
     Route::post('/', 'Adm\CourseController@store')->name('course.store');

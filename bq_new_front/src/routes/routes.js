@@ -8,7 +8,6 @@ import {
 import { RouteWithLayout } from './../components';
 import { Main as MainLayout, Minimal as MinimalLayout } from './../layouts';
 import {
-
     SignUp,
     SignIn,
     UserTable,
@@ -18,11 +17,12 @@ import {
     ResetPassword,
     CourseList,
     SkillTable,
-    ObjectTable
-
+    ObjectTable,
+    PageNotFound, RequestUserTable
 } from '../pages';
 import SkillDetails from "../pages/Administrator/Skill/SkillDetails";
 import ObjectDetails from "../pages/Administrator/Object/ObjectDetails";
+import RequestUserDetails from "../pages/Administrator/RequestUser/RequestUserDetails";
 
 const Routes = () => (
   <BrowserRouter>
@@ -130,9 +130,22 @@ const Routes = () => (
             needToBeLogged={true}
             layout={MainLayout}
             path="/users"/>
-
-
-      <Route path="*" component={() => <h1>Page not found</h1>} />
+        <RouteWithLayout
+            component={RequestUserTable}
+            exact
+            needToBeLogged={true}
+            layout={MainLayout}
+            path="/users/requests"/>
+        <RouteWithLayout
+            component={RequestUserDetails}
+            exact
+            needToBeLogged={true}
+            layout={MainLayout}
+            path="/users/requests/:codigoCourseProfessor"/>
+      <RouteWithLayout
+          path="*"
+          layout={MinimalLayout}
+          component={PageNotFound} />
     </Switch>
   </BrowserRouter>
 );

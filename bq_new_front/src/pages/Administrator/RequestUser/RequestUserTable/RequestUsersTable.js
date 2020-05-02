@@ -6,24 +6,27 @@ import {
   Card,
   CardActions,
   CardContent,
-  Tooltip,
-  IconButton,
+  Avatar,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
   Typography,
-  TablePagination, Button
+  TablePagination, Button, Tooltip
 } from '@material-ui/core';
 import api from '../../../../services/api';
+import { StatusBullet } from '../../../../components';
 import Swal from "sweetalert2";
-import ProfileToolbar from "./components/ProfileToolbar";
-import Delete from "@material-ui/icons/Delete";
+import RequestUsersToolbar from "./components/RequestUsersToolbar";
 import Edit from "@material-ui/icons/Edit";
-import {DialogQuestione} from "../../../../components";
 import PropTypes from "prop-types";
 
+const statusColors = {
+  '1': 'success',
+  '0': 'info',
+  '-1': 'danger'
+};
 const useStyles = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(2),
@@ -43,6 +46,9 @@ const useStyles = makeStyles(theme => ({
   avatar: {
     marginRight: theme.spacing(2)
   },
+  headTable: {
+    fontWeight: "bold"
+  },
   actions: {
     justifyContent: 'flex-end'
   },
@@ -50,9 +56,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'row',
     marginTop: theme.spacing(1)
-  },
-  headTable: {
-    fontWeight: "bold"
   },
   spacer: {
     flexGrow: 1
@@ -62,22 +65,27 @@ const useStyles = makeStyles(theme => ({
   },
   searchInput: {
     marginRight: theme.spacing(1)
-  }
+  },
+  statusContainer: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  status: {
+    marginRight: theme.spacing(1)
+  },
 }));
 
-const ProfileTable = props => {
+const RequestUsersTable = props => {
   const { className, history } = props;
 
-  const [profiles, setProfiles] = useState([]);
+  const [couserProfessor, setCourseProfessor] = useState([]);
 
   const classes = useStyles();
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
-  const [searchText, setSearchText] = useState('');
-  const [open, setOpen] = React.useState(false);
-  const [idProfileDelete, setIdProfileDelete] = React.useState(0);
+  const [searchText, setSearchText] = useState(0);
 
   //configuration alert
   const Toast = Swal.mixin({
@@ -99,67 +107,32 @@ const ProfileTable = props => {
     });
   }
 
-  async function loadProfile(page){
+  async function loadCourseProfessor(page, situation){
     try {
-      let url = 'profile?page='+page;
-      if(searchText!=0){
-        url += '&fk_course_id='+searchText;
-      }
+      let url = 'course-professor?page='+page+'&valid='+situation;
       const response = await api.get(url);
       setTotal(response.data.total);
-      setProfiles(response.data.data);
-      console.log(response.data.data);
+      setCourseProfessor(response.data.data);
+      console.log(response.data);
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
     }
   }
 
   useEffect(() => {
-    loadProfile(1);
+    loadCourseProfessor(1, searchText);
   }, []);
 
   const updateSearch = (e) => {
     setSearchText(e.target.value);
   }
 
-  const onClickOpenDialog = (id) => {
-    setIdProfileDelete(id);
-    setOpen(true);
-  }
-
-  const onClickCloseDialog = () => {
-    setOpen(false);
-    setIdProfileDelete(0);
-  }
-
-  async function onDeleteProfile(){
-    try {
-      let url = 'profile/'+idProfileDelete;
-      const response = await api.delete(url);
-      if (response.status === 202) {
-        if(response.data.message){
-          loadAlert('error', response.data.message);
-        }
-      } else {
-        loadAlert('success', 'Perfil excluído.');
-        loadProfile(page+1);
-      }
-    } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
-    }
-    setOpen(false);
-  }
-
-  const onClickEdit = (id) => {
-    history.push('/profile-details/'+id);
-  }
-
   const onClickSearch = (e) => {
-    loadProfile(1);
+    loadCourseProfessor(1, searchText);
   }
 
   const handlePageChange = (event, page) => {
-    loadProfile(page+1)
+    loadCourseProfessor(page+1, searchText)
     setPage(page);
   };
 
@@ -167,9 +140,13 @@ const ProfileTable = props => {
     setRowsPerPage(event.target.value);
   };
 
+  const onClickEdit = (id) => {
+    history.push('/users/requests/'+id);
+  }
+
   return (
     <div className={classes.root}>
-      <ProfileToolbar
+      <RequestUsersToolbar
           onChangeSearch={updateSearch.bind(this)}
           searchText={searchText}
           onClickSearch={onClickSearch}/>
@@ -182,39 +159,40 @@ const ProfileTable = props => {
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell className={classes.headTable}>Descrição</TableCell>
-                      <TableCell className={classes.headTable}>Curso</TableCell>
-                      <TableCell></TableCell>
+                      <TableCell className={classes.headTable}>Nome</TableCell>
+                      <TableCell className={classes.headTable}>Email</TableCell>
+                      <TableCell className={classes.headTable}>Curso Solicitado</TableCell>
+                      <TableCell className={classes.headTable}>Situação</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {profiles.map(profile => (
+                    {couserProfessor.map(cp => (
                         <TableRow
                             className={classes.tableRow}
                             hover
-                            key={profile.id}>
-                          <TableCell>
-                            <div className={classes.nameContainer}>
-                              <Typography variant="body1">{profile.description}</Typography>
-                            </div>
-                          </TableCell>
-                          <TableCell>{profile.course.description}</TableCell>
+                            key={cp.id}>
+                          <TableCell>{cp.user.name}</TableCell>
+                          <TableCell>{cp.user.email}</TableCell>
+                          <TableCell>{cp.course.description}</TableCell>
                           <TableCell className={classes.row}>
-                            <Tooltip title="Deletar">
-                              <Button
-                                  className={classes.buttonDelete}
-                                  onClick={() => onClickOpenDialog(profile.id)}>
-                                <Delete fontSize="medium"/>
-                              </Button>
-                            </Tooltip>
+                            <div className={classes.statusContainer}>
+                              <StatusBullet
+                                  className={classes.status}
+                                  color={statusColors[cp.valid]}
+                                  size="sm"
+                              />
+                              {cp.valid == 1 ? 'Aceito' :
+                                  cp.valid == -1 ? 'Recusado' : 'Aguardando'}
+                            </div>
                             <Tooltip title="Editar">
                               <Button
-                                className={classes.buttonEdit}
-                                onClick={() => onClickEdit(profile.id)}>
+                                  className={classes.buttonEdit}
+                                  onClick={() => onClickEdit(cp.id)}>
                                 <Edit fontSize="medium"/>
                               </Button>
                             </Tooltip>
                           </TableCell>
+
                         </TableRow>
                     ))}
                   </TableBody>
@@ -235,18 +213,12 @@ const ProfileTable = props => {
           </CardActions>
         </Card>
       </div>
-      <DialogQuestione handleClose={onClickCloseDialog}
-                       open={open}
-                       onClickAgree={onDeleteProfile}
-                       onClickDisagree={onClickCloseDialog}
-                       mesage={'Deseja excluir o perfil selecionado?'}
-                       title={'Excluir Perfil'}/>
     </div>
   );
 };
 
-ProfileTable.propTypes = {
+RequestUsersTable.propTypes = {
   history: PropTypes.object
 };
 
-export default ProfileTable;
+export default RequestUsersTable;

@@ -14,41 +14,19 @@ import {
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import Swal from "sweetalert2";
-import validate from "validate.js";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-
-const schema = {
-  description: {
-    presence: { allowEmpty: false,  message: 'Escolha um curso.'},
-    length: {
-      minimum: 10,
-      maximum: 300,
-      message: 'A descrição deve conter no mínimo 10 e no máximo 300 caracteres.'
-    }
-  },
-  course: {
-    presence: { allowEmpty: false, message: 'Escolha um curso.' },
-    numericality: {
-      onlyInteger: true,
-      greaterThan: 0,
-      message: 'Escolha um curso.',
-    }
-  }
-};
 
 const useStyles = makeStyles(() => ({
   root: {}
 }));
 
-const SkillDetails = props => {
+const RequestUserDetails = props => {
   const { className, history, ...rest } = props;
-  const [courses, setCourses] = useState([{'id': '0', 'description': '- Escolha um curso -'}]);
-  const { codigoSkill } = props.match.params;
+  const { codigoCourseProfessor } = props.match.params;
 
   const classes = useStyles();
 
   const [formState, setFormState] = useState({
-    isValid: false,
     values: {},
     touched: {},
     errors: {}
@@ -74,44 +52,23 @@ const SkillDetails = props => {
     });
   }
 
-  async function loadCourses(){
+  async function updateCourseProfessorDetails(){
     try {
-      const response = await api.get('all/courses');
-      console.log()
-      setCourses([...courses, ...response.data]);
-    } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
-    }
-  }
-
-  async function saveSkillDetails(){
-    try {
-      const fk_course_id = formState.values.course;
-      const description = formState.values.description;
-      const id = formState.values.id;
+      const valid = formState.values.valid;
       const data = {
-        description, fk_course_id
+        valid
       }
-      let response= {};
-      let acao = "";
-      if(!id) {
-         response = await api.post('skill', data);
-        acao = "cadastrada";
-      } else {
-         response = await api.put('skill/'+id, data);
-        acao = "atualizada";
-      }
+      console.log(valid);
+      const response = await api.put('course-professor/'+codigoCourseProfessor, data);
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
-        } else if(response.data.errors[0].description){
-          loadAlert('error', response.data.errors[0].description);
-        } if(response.data.errors[0].fk_course_id){
-          loadAlert('error', response.data.errors[0].fk_course_id);
+        } else if(response.data.errors[0].valid){
+          loadAlert('error', response.data.errors[0].valid);
         }
       } else {
-        loadAlert('success', 'Competência '+acao+'.');
-        history.push('/skills');
+        loadAlert('success', 'Solicitação atualizada.');
+        history.push('/users/requests/');
       }
 
     } catch (error) {
@@ -119,9 +76,9 @@ const SkillDetails = props => {
     }
   }
 
-  async function findASkill(id){
+  async function findCourseProfessor(id){
     try {
-      const response = await api.get('skill/show/'+id);
+      const response = await api.get('course-professor/show/'+id);
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
@@ -129,9 +86,10 @@ const SkillDetails = props => {
       } else {
         setFormState(formState => ({
           values: {
-            'description': response.data[0].description,
-            'course' : response.data[0].fk_course_id,
-            'id': response.data[0].id
+            'user': response.data[0].user.name,
+            'course' : response.data[0].course.description,
+            'id': response.data[0].id,
+            'valid': response.data[0].valid
           },
           touched: {
             ...formState.touched,
@@ -144,23 +102,12 @@ const SkillDetails = props => {
   }
 
   useEffect(() => {
-    loadCourses();
-
-    if(codigoSkill){
-      findASkill(codigoSkill);
+    console.log('id '+codigoCourseProfessor);
+    if(codigoCourseProfessor){
+      findCourseProfessor(codigoCourseProfessor);
     }
 
   }, []);
-
-  useEffect(() => {
-    const errors = validate(formState.values, schema);
-
-    setFormState(formState => ({
-      ...formState,
-      isValid: (errors || formState.values.course==0) ? false : true,
-      errors: errors || {}
-    }));
-  }, [formState.values]);
 
   const handleChange = event => {
     setFormState({
@@ -179,6 +126,21 @@ const SkillDetails = props => {
   const hasError = field =>
       formState.touched[field] && formState.errors[field] ? true : false;
 
+  const situations = [
+    {
+      value: '0',
+      label: 'Aguardando'
+    },
+    {
+      value: '1',
+      label: 'Aceitar'
+    },
+    {
+      value: '-1',
+      label: 'Recusar'
+    }
+  ];
+
   const handleBack = () => {
     history.goBack();
   };
@@ -188,16 +150,15 @@ const SkillDetails = props => {
       {...rest}
       className={clsx(classes.root, className)}>
       <form
-        autoComplete="off"
-        onSubmit={saveSkillDetails}>
+        autoComplete="off">
         <div className={classes.contentHeader}>
           <IconButton onClick={handleBack}>
             <ArrowBackIcon />
           </IconButton>
         </div>
         <CardHeader
-          subheader=""
-          title="Competência"/>
+          subheader="O professor(a) abaixo solicitou acesso para construir questões no curso selecionado."
+          title="Permissão para curso"/>
         <Divider />
         <CardContent>
           <Grid
@@ -209,16 +170,32 @@ const SkillDetails = props => {
               xs={12}>
               <TextField
                 fullWidth
-                error={hasError('description')}
-                helperText={
-                  hasError('description') ? formState.errors.description[0] : null
-                }
-                label="Descrição"
+                label="Usuário"
                 margin="dense"
-                name="description"
+                name="user"
                 onChange={handleChange}
-                value={formState.values.description || ''}
+                value={formState.values.user || ''}
                 variant="outlined"
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+            </Grid>
+            <Grid
+                item
+                md={6}
+                xs={12}>
+              <TextField
+                  fullWidth
+                  label="Curso"
+                  margin="dense"
+                  name="course"
+                  onChange={handleChange}
+                  value={formState.values.course || ''}
+                  variant="outlined"
+                  InputProps={{
+                    readOnly: true,
+                  }}
               />
             </Grid>
             <Grid
@@ -227,24 +204,20 @@ const SkillDetails = props => {
               xs={12}>
               <TextField
                 fullWidth
-                error={hasError('course')}
-                helperText={
-                  hasError('course') ? formState.errors.course[0] : null
-                }
-                label=""
+                label="Situação"
                 margin="dense"
-                name="course"
+                name="valid"
                 onChange={handleChange}
                 select
                 // eslint-disable-next-line react/jsx-sort-props
                 SelectProps={{ native: true }}
-                value={formState.values.course}
+                value={formState.values.valid}
                 variant="outlined">
-                {courses.map(course => (
+                {situations.map(situation => (
                   <option
-                    key={course.id}
-                    value={course.id}>
-                    {course.description}
+                    key={situation.value}
+                    value={situation.value}>
+                    {situation.label}
                   </option>
                 ))}
               </TextField>
@@ -256,8 +229,7 @@ const SkillDetails = props => {
           <Button
             color="primary"
             variant="outlined"
-            onClick={saveSkillDetails}
-            disabled={!formState.isValid}>
+            onClick={updateCourseProfessorDetails}>
             Salvar
           </Button>
         </CardActions>
@@ -266,8 +238,8 @@ const SkillDetails = props => {
   );
 };
 
-SkillDetails.propTypes = {
+RequestUserDetails.propTypes = {
   className: PropTypes.string,
 };
 
-export default SkillDetails;
+export default RequestUserDetails;

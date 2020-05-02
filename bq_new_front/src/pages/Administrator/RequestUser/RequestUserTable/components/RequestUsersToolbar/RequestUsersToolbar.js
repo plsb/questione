@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
-import { Button } from '@material-ui/core';
+import {Button, TextField} from '@material-ui/core';
 import FindInPage from '@material-ui/icons/SearchSharp';
 
-import { SearchInput } from '../../../../../components';
+import { SearchInput } from '../../../../../../components';
 import {withRouter} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
@@ -27,17 +27,35 @@ const useStyles = makeStyles(theme => ({
   },
   searchInput: {
     marginRight: theme.spacing(1)
-  }
+  },
+  comboboxSearch: {
+    width: '40%'
+  },
 }));
 
-const UsersToolbar = props => {
+const RequestUsersToolbar = props => {
   const { className, onClickSearch, onChangeSearch, searchText, history, ...rest } = props;
 
   const classes = useStyles();
 
-  const onClickRequestUsers = () => {
-    history.push('/users/requests');
+  const onCLickUsers = () => {
+    history.push('/users');
   }
+
+  const situations = [
+    {
+      value: '0',
+      label: 'Aguardando'
+    },
+    {
+      value: '1',
+      label: 'Aceitos'
+    },
+    {
+      value: '-1',
+      label: 'Recusados'
+    }
+  ];
 
   return (
     <div
@@ -46,15 +64,36 @@ const UsersToolbar = props => {
       <div className={classes.row}>
         <span className={classes.spacer} />
         <Button className={classes.exportButton}
-          onClick={onClickRequestUsers}>Solicitações dos Professores</Button>
+            onClick={onCLickUsers}>Lista de Usuários</Button>
       </div>
       <div className={classes.row}>
-        <SearchInput
+        <div className={classes.comboboxSearch}>
+          <TextField
+              fullWidth
+              label="Situação"
+              margin="dense"
+              name="valid"
+              onChange={onChangeSearch}
+              select
+              // eslint-disable-next-line react/jsx-sort-props
+              SelectProps={{ native: true }}
+              value={searchText}
+              variant="outlined">
+            {situations.map(situation => (
+                <option
+                    key={situation.value}
+                    value={situation.value}>
+                  {situation.label}
+                </option>
+            ))}
+          </TextField>
+        </div>
+        {/*<SearchInput
           className={classes.searchInput}
           placeholder="Pesquisar"
           onChange={onChangeSearch}
           value={searchText}
-        />
+        />*/}
         <Button
             onClick={onClickSearch}>
           <FindInPage fontSize="large"/>
@@ -64,7 +103,7 @@ const UsersToolbar = props => {
   );
 };
 
-UsersToolbar.propTypes = {
+RequestUsersToolbar.propTypes = {
   className: PropTypes.string,
   onChangeSearch: PropTypes.func,
   onClickSearch: PropTypes.func,
@@ -72,4 +111,4 @@ UsersToolbar.propTypes = {
   history: PropTypes.object
 };
 
-export default withRouter(UsersToolbar);
+export default withRouter(RequestUsersToolbar);

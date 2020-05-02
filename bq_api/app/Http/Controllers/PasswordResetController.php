@@ -4,8 +4,8 @@ use App\Http\Controllers\Controller;
 use App\Jobs\SendEmailPasswordResert;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Notifications\PasswordResetRequest;
-use App\Notifications\PasswordResetSuccess;
+use App\Notifications\PasswordResetRequestNotifications;
+use App\Notifications\PasswordResetSuccessNotifications;
 use App\User;
 use App\PasswordReset;
 use Validator;
@@ -53,7 +53,7 @@ class PasswordResetController extends Controller
         );
         if ($user && $passwordReset)
             $user->notify(
-                new PasswordResetRequest($passwordReset->token, $user)
+                new PasswordResetRequestNotifications($passwordReset->token, $user)
             );
         return response()->json([
             'message' => 'O link de redefinição de senha será enviado para o e-mail '
@@ -137,7 +137,7 @@ class PasswordResetController extends Controller
         $user->password = $request->password;
         $user->save();
         $passwordReset->delete();
-        $user->notify(new PasswordResetSuccess($user));
+        $user->notify(new PasswordResetSuccessNotifications($user));
         return response()->json([
             'message' => 'Redefinição de senha realizada com sucesso.',
             $user], 200);

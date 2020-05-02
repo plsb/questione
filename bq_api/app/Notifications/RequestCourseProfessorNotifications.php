@@ -1,22 +1,28 @@
 <?php
 namespace App\Notifications;
+use App\Course;
+use App\CourseProfessor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-class PasswordResetSuccess extends Notification implements ShouldQueue
+class RequestCourseProfessorNotifications extends Notification implements ShouldQueue
 {
     use Queueable;
     protected $user;
+    protected $course;
+    protected $situaton;
 
     /**
     * Create a new notification instance.
     *
     * @return void
     */
-    public function __construct($user)
+    public function __construct($user, $course, $situaton)
     {
         $this->user = $user;
+        $this->course = $course;
+        $this->situaton = $situaton;
     }
     /**
     * Get the notification's delivery channels.
@@ -37,13 +43,14 @@ class PasswordResetSuccess extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         $url = "http://localhost:3000/sign-in/";
+
         return (new MailMessage)
-            ->subject('[QUESTIONE] Senha recuperada')
+            ->subject('[QUESTIONE] Soliçitação de acesso ao curso')
             ->greeting('Olá, '.$this->user->name.'.')
-            ->line('Você mudou sua senha com sucesso.')
-            ->line('Se você alterou a senha, nenhuma ação adicional será necessária.')
-            ->line('Se você não alterou a senha, proteja sua conta.')
+            ->line('Você solicitou permissão para produzir questões para ao curso de '.$this->course.'.')
+            ->line('Já temos uma decisão. Situação '.$this->situaton. '.')
             ->action('Acesse o Questione', url($url));;
+
     }
 /**
      * Get the array representation of the notification.

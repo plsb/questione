@@ -10,12 +10,13 @@ import {
   Divider,
   Grid,
   Button,
-  TextField
+  TextField, IconButton
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import Swal from "sweetalert2";
 import validate from "validate.js";
 import {cpfMask} from "../../../../common/mask";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 const schema = {
   description: {
@@ -93,10 +94,13 @@ const ProfileDetails = props => {
         description, fk_course_id
       }
       let response= {};
+      let acao = "";
       if(!id) {
          response = await api.post('profile', data);
+        acao = "cadastrado";
       } else {
          response = await api.put('profile/'+id, data);
+        acao = "atualizado";
       }
       if (response.status === 202) {
         if(response.data.message){
@@ -107,7 +111,7 @@ const ProfileDetails = props => {
           loadAlert('error', response.data.errors[0].fk_course_id);
         }
       } else {
-        loadAlert('success', 'Perfil cadastrado.');
+        loadAlert('success', 'Perfil '+acao+'.');
         history.push('/profiles');
       }
 
@@ -177,6 +181,10 @@ const ProfileDetails = props => {
   const hasError = field =>
       formState.touched[field] && formState.errors[field] ? true : false;
 
+  const handleBack = () => {
+    history.goBack();
+  };
+
   return (
     <Card
       {...rest}
@@ -184,6 +192,11 @@ const ProfileDetails = props => {
       <form
         autoComplete="off"
         onSubmit={saveProfileDetails}>
+        <div className={classes.contentHeader}>
+          <IconButton onClick={handleBack}>
+            <ArrowBackIcon />
+          </IconButton>
+        </div>
         <CardHeader
           subheader=""
           title="Perfil"/>

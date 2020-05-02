@@ -13,15 +13,15 @@ class CreateProfessorLecionaCursoTable extends Migration
      */
     public function up()
     {
-        Schema::create('professor_curso', function (Blueprint $table) {
+        Schema::create('course_professor', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('fk_usuario_id')->unsigned();
-            $table->integer('fk_curso_id')->unsigned();
-            $table->string('comprovante');
-            $table->boolean('validado');
+            $table->integer('fk_user_id')->unsigned();
+            $table->integer('fk_course_id')->unsigned();
+            $table->string('receipt');
+            $table->boolean('valid');
 
-            $table->foreign('fk_usuario_id')->references('id')->on('usuarios')->onDelete('cascade');
-            $table->foreign('fk_curso_id')->references('id')->on('cursos')->onDelete('cascade');
+            $table->foreign('fk_user_id')->references('id')->on('users');
+            $table->foreign('fk_course_id')->references('id')->on('cursos');
             $table->timestamps();
         });
     }

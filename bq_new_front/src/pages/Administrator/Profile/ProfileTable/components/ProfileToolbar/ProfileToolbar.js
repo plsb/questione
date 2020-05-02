@@ -67,8 +67,6 @@ const ProfileToolbar = props => {
             onClick={onClickNewProfile}>
           Novo Perfil
         </Button>
-
-
       </div>
       <div className={classes.row}>
         <div className={classes.comboboxSearch}>
