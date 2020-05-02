@@ -48,7 +48,7 @@ class QuestionController extends Controller
             ->with('user')
             ->with('questionItems')
             ->paginate(10);
-        return response()->json($questions);
+        return response()->json($questions, 200);
     }
 
     public function store(Request $request)
@@ -56,14 +56,18 @@ class QuestionController extends Controller
         $validation = Validator::make($request->all(),$this->rules, $this->messages);
 
         if($validation->fails()){
-            return $validation->errors()->toJson();
+            $erros = array('errors' => array(
+                $validation->messages()
+            ));
+            $json_str = json_encode($erros);
+            return response($json_str, 202);
         }
 
         $course = Course::find($request->fk_course_id);
         if(!$course){
             return response()->json([
                 'message' => 'Curso não encontrado.'
-            ], 203);
+            ], 202);
         }
         //verifica perfil
         if($request->fk_profile_id){
@@ -71,12 +75,12 @@ class QuestionController extends Controller
             if(!$profile){
                 return response()->json([
                     'message' => 'Perfil não encontrado.'
-                ], 203);
+                ], 202);
             }
             if($profile->fk_course_id != $course->id){
                 return response()->json([
                     'message' => 'Operação não permitida. O perfil não pertence ao curso informado.'
-                ], 203);
+                ], 202);
             }
         }
         //verifica competência
@@ -85,12 +89,12 @@ class QuestionController extends Controller
             if(!$skill){
                 return response()->json([
                     'message' => 'Competência não encontrada.'
-                ], 203);
+                ], 202);
             }
             if($skill->fk_course_id != $course->id){
                 return response()->json([
                     'message' => 'Operação não permitida. A Competência não pertence ao curso informado.'
-                ], 203);
+                ], 202);
             }
         }
 
@@ -107,7 +111,10 @@ class QuestionController extends Controller
         $question->fk_course_id = $request->fk_course_id;
         $question->save();
 
-        return response()->json($question, 201);
+        return response()->json([
+            'message' => 'Questão '.$question->id.' cadastrada.',
+            $question
+        ], 200);
     }
 
     public function show(int $id)
@@ -123,7 +130,7 @@ class QuestionController extends Controller
 
         $this->verifyRecord($question);
 
-        return response()->json($question);
+        return response()->json($question, 200);
     }
 
     public function update(Request $request, $id)
@@ -131,7 +138,11 @@ class QuestionController extends Controller
         $validation = Validator::make($request->all(),$this->rules, $this->messages);
 
         if($validation->fails()){
-            return $validation->errors()->toJson();
+            $erros = array('errors' => array(
+                $validation->messages()
+            ));
+            $json_str = json_encode($erros);
+            return response($json_str, 202);
         }
 
         $user = auth('api')->user();
@@ -140,21 +151,21 @@ class QuestionController extends Controller
         if($question->fk_user_id != $user->id){
             return response()->json([
                 'message' => 'Acesso não permitido para esta questão.'
-            ], 204);
+            ], 202);
         }
 
         if($question->validated == 1){
             //falta colocar validacao se a questão já tiver sido aplicada em uma avaliacao
             return response()->json([
                 'message' => 'A questão não pode ser editada.'
-            ], 203);
+            ], 202);
         }
 
         $course = Course::find($request->fk_course_id);
         if(!$course){
             return response()->json([
                 'message' => 'Curso não encontrado.'
-            ], 203);
+            ], 202);
         }
         //verifica perfil
         if($request->fk_profile_id){
@@ -162,12 +173,12 @@ class QuestionController extends Controller
             if(!$profile){
                 return response()->json([
                     'message' => 'Perfil não encontrado.'
-                ], 203);
+                ], 202);
             }
             if($profile->fk_course_id != $course->id){
                 return response()->json([
                     'message' => 'Operação não permitida. O perfil não pertence ao curso informado.'
-                ], 203);
+                ], 202);
             }
         }
         //verifica competência
@@ -176,12 +187,12 @@ class QuestionController extends Controller
             if(!$skill){
                 return response()->json([
                     'message' => 'Competência não encontrada.'
-                ], 203);
+                ], 202);
             }
             if($skill->fk_course_id != $course->id){
                 return response()->json([
                     'message' => 'Operação não permitida. A Competência não pertence ao curso informado.'
-                ], 203);
+                ], 202);
             }
         }
 
@@ -197,7 +208,10 @@ class QuestionController extends Controller
         $question->save();
 
 
-        return response()->json($question);
+        return response()->json([
+            'message' => 'Questão '.$question->id.' atualizada.',
+            $question
+        ], 200);
 
     }
 
@@ -207,10 +221,9 @@ class QuestionController extends Controller
         $question = Question::find($id);
 
         if($question->validated == 1){
-            //falta colocar validacao se a questão já tiver sido aplicada em uma avaliacao
             return response()->json([
                 'message' => 'Operação não pode ser realizada. A questão já foi validada.'
-            ], 203);
+            ], 202);
         }
 
         $user = auth('api')->user();
@@ -218,16 +231,18 @@ class QuestionController extends Controller
         if($question->fk_user_id != $user->id){
             return response()->json([
                 'message' => 'Operação não pode ser realizada. A questão pertence a outro usuário.'
-            ], 204);
+            ], 202);
         }
 
         $this->verifyRecord($question);
+
+        //falta colocar validacao se a questão já tiver sido aplicada em uma avaliacao
 
         $question->delete();
 
         return response()->json([
             'message' => 'Questão '.$question->id.' excluída!'
-        ], 202);
+        ], 200);
     }
 
     public function validateQuestion($id){
@@ -237,7 +252,7 @@ class QuestionController extends Controller
         if($question->fk_user_id != $user->id){
             return response()->json([
                 'message' => 'Acesso não permitido para esta questão.'
-            ], 204);
+            ], 202);
         }
 
         $this->verifyRecord($question);
@@ -267,14 +282,14 @@ class QuestionController extends Controller
 
         return response()->json([
             'message' => 'Questão validada!'
-        ], 202);
+        ], 200);
     }
 
     public function verifyRecord($record){
         if(!$record || $record == '[]'){
             return response()->json([
                 'message' => 'Registro não encontrado.'
-            ], 404);
+            ], 202);
         }
     }
 
