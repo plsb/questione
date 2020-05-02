@@ -18,7 +18,7 @@ class CourseController extends Controller
 
     private $rules = [
         'initials' => 'required|max:8|min:2',
-        'description' => 'required|max:50|min:4',
+        'description' => 'required|max:100|min:4',
 
     ];
 
@@ -28,7 +28,7 @@ class CourseController extends Controller
         'initials.min' => 'O minímo de caracteres aceitáveis para a SIGLA é 02.',
 
         'description.required' => 'A DESCRIÇÃO é obrigatório.',
-        'description.max' => 'O máximo de alfanuméricos aceitáveis para a DESCRIÇÃO é 50.',
+        'description.max' => 'O máximo de alfanuméricos aceitáveis para a DESCRIÇÃO é 100.',
         'description.min' => 'O minímo de alfanuméricos aceitáveis para a DESCRIÇÃO é 04.',
 
     ];

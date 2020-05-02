@@ -22,8 +22,8 @@ const schema = {
     presence: { allowEmpty: false,  message: 'A descrição é obrigatória.'},
     length: {
       minimum: 4,
-      maximum: 50,
-      message: 'A descrição deve conter no mínimo 4 e no máximo 50 caracteres.'
+      maximum: 100,
+      message: 'A descrição deve conter no mínimo 4 e no máximo 100 caracteres.'
     }
   },
   initials: {
@@ -113,7 +113,7 @@ const CourseDetails = props => {
   async function findACourse(id){
     try {
       const response = await api.get('course/show/'+id);
-      console.log(response.data);
+      console.log(response);
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
@@ -136,7 +136,6 @@ const CourseDetails = props => {
   }
 
   useEffect(() => {
-
     if(codigoCourse){
       findACourse(codigoCourse);
     }
