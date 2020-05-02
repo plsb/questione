@@ -135,7 +135,7 @@ const ObjectTable = props => {
           loadAlert('error', response.data.message);
         }
       } else {
-        loadAlert('success', 'Perfil excluído.');
+        loadAlert('success', 'Objeto de Conhecimento excluído.');
         loadObject(page+1);
       }
     } catch (error) {
@@ -154,6 +154,7 @@ const ObjectTable = props => {
   }
 
   const onClickSearch = (e) => {
+    setPage(0);
     loadObject(1);
   }
 

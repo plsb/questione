@@ -15,10 +15,11 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const schema = {
   email: {
-    presence: {allowEmpty: false, message: 'is required'},
+    presence: {allowEmpty: false, message: 'O e-mail é obrigatório.'},
     email: true,
     length: {
-      maximum: 64
+      maximum: 64,
+      message: 'O e-mail deve conter no máximo 64 caracteres.'
     }
   }
 };

@@ -15,31 +15,33 @@ import { cpfMask } from './../../common/mask'
 
 const schema = {
   name: {
-    presence: { allowEmpty: false, message: 'is required' },
+    presence: { allowEmpty: false, message: 'O nome é obrigatório.' },
     length: {
       minimum: 8,
-      maximum: 50
+      maximum: 50,
+      message: 'O nome deve conter no mínimo 8 e no máximo 50 caracteres.'
     }
   },
   cpf: {
-    presence: { allowEmpty: false, message: 'is required' },
-    pattern: '\d{3}\.\d{3}\.\d{3}-\d{2}',
+    presence: { allowEmpty: false, message: 'O cpf é obrigatório.' },
     length: {
 
     }
   },
   email: {
-    presence: { allowEmpty: false, message: 'is required' },
+    presence: { allowEmpty: false, message: 'O e-mail é obrigatório.' },
     email: true,
     length: {
-      maximum: 64
+      maximum: 64,
+      message: 'O e-mail deve conter no máximo 64 caracteres.'
     }
   },
   password: {
-    presence: { allowEmpty: false, message: 'is required' },
+    presence: { allowEmpty: false, message: 'A senha é obrigatória.' },
     length: {
       minimum: 6,
-      maximum: 10
+      maximum: 10,
+      message: 'A senha deve conter no mínimo 6 e no máximo 10 caracteres.'
     }
   },
   /*policy: {

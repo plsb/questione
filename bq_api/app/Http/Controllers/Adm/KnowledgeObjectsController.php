@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Adm;
 
 use App\KnowledgeObject;
+use App\QuestionHasKnowledgeObject;
 use Illuminate\Http\Request;
 use Validator;
 use App\Course;
@@ -114,6 +115,11 @@ class KnowledgeObjectsController extends Controller
         $knowledge_object = KnowledgeObject::find($id);
 
         $this->verifyRecord($knowledge_object);
+
+        $question_knowledge_object = QuestionHasKnowledgeObject::where('fk_knowledge_object', $id)->get();
+        if(sizeof($question_knowledge_object)>0) {
+            return response()->json(['message' => 'Operação não realizada. Existem questões para este objeto de conhecimento.'], 202);
+        }
 
         $knowledge_object->delete();
 

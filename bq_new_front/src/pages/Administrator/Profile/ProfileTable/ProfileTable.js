@@ -155,6 +155,7 @@ const ProfileTable = props => {
   }
 
   const onClickSearch = (e) => {
+    setPage(0);
     loadProfile(1);
   }
 

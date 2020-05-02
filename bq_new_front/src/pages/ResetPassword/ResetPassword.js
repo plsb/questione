@@ -14,24 +14,27 @@ import Swal from 'sweetalert2';
 
 const schema = {
   email: {
-    presence: { allowEmpty: false, message: 'is required' },
+    presence: { allowEmpty: false, message: 'O e-mail é obrigatório.' },
     email: true,
     length: {
-      maximum: 64
+      maximum: 64,
+      message: 'O e-mail deve conter no máximo 64 caracteres.'
     }
   },
   password: {
-    presence: { allowEmpty: false, message: 'is required' },
+    presence: { allowEmpty: false, message: 'A senha é obrigatória.' },
     length: {
       minimum: 6,
-      maximum: 10
+      maximum: 10,
+      message: 'A senha deve conter no mínimo 6 e no máximo 10 caracteres.'
     }
   },
   confirmPassword: {
-    presence: { allowEmpty: false, message: 'is required' },
+    presence: { allowEmpty: false, message: 'A confirmação da senha é obrigatória.' },
     length: {
       minimum: 6,
-      maximum: 10
+      maximum: 10,
+      message: 'A confirmação da senha deve conter no mínimo 6 e no máximo 10 caracteres.'
     }
   }
 };

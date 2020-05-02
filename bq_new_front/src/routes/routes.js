@@ -15,7 +15,7 @@ import {
     ProfileDetails,
     RedefinePassword,
     ResetPassword,
-    CourseList,
+    CourseTable,
     SkillTable,
     ObjectTable,
     PageNotFound, RequestUserTable
@@ -23,6 +23,7 @@ import {
 import SkillDetails from "../pages/Administrator/Skill/SkillDetails";
 import ObjectDetails from "../pages/Administrator/Object/ObjectDetails";
 import RequestUserDetails from "../pages/Administrator/RequestUser/RequestUserDetails";
+import CourseDetails from "../pages/Administrator/Course/CourseDetails";
 
 const Routes = () => (
   <BrowserRouter>
@@ -34,7 +35,7 @@ const Routes = () => (
         />
         {/*ROTAS COMUNS*/}
         <RouteWithLayout
-          component={UserTable}
+          component={CourseTable}
           exact
           needToBeLogged={true}
           layout={MainLayout}
@@ -65,11 +66,23 @@ const Routes = () => (
             path="/reset-password/:token"/>
         {/*ROTAS DO ADMINISTRADOR*/}
         <RouteWithLayout
-            component={CourseList}
+            component={CourseTable}
             exact
             layout={MainLayout}
             needToBeLogged={true}
             path="/courses"/>
+        <RouteWithLayout
+            component={CourseDetails}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/course-details"/>
+        <RouteWithLayout
+            component={CourseDetails}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/course-details/:codigoCourse"/>
         <RouteWithLayout
             component={ProfileTable}
             exact

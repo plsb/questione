@@ -13,13 +13,17 @@ import {
   TableHead,
   TableRow,
   Typography,
-  TablePagination
+  TablePagination, Tooltip, Button
 } from '@material-ui/core';
-import api from '../../../services/api';
+import api from '../../../../services/api';
 
-import { getInitials } from '../../../helpers';
+import { getInitials } from '../../../../helpers';
 import Swal from "sweetalert2";
-import UsersToolbar from "./components/UsersToolbar";
+import UsersToolbar from "./components/CourseToolbar";
+import Delete from "@material-ui/icons/Delete";
+import Edit from "@material-ui/icons/Edit";
+import {DialogQuestione} from "../../../../components";
+import PropTypes from "prop-types";
 const useStyles = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(2),
@@ -46,10 +50,8 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-end'
   },
   row: {
-    height: '42px',
     display: 'flex',
     alignItems: 'center',
-    marginTop: theme.spacing(1)
   },
   spacer: {
     flexGrow: 1
@@ -62,10 +64,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const UsersTable = props => {
-  const { className } = props;
+const CourseTable = props => {
+  const { className, history } = props;
 
-  const [users, setUsers] = useState([]);
+  const [courses, setCourses] = useState([]);
 
   const classes = useStyles();
 
@@ -73,6 +75,8 @@ const UsersTable = props => {
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
   const [searchText, setSearchText] = useState('');
+  const [open, setOpen] = React.useState(false);
+  const [idCourseDelete, setIdCourseDelete] = React.useState(0);
 
   //configuration alert
   const Toast = Swal.mixin({
@@ -94,15 +98,15 @@ const UsersTable = props => {
     });
   }
 
-  async function loadUsers(page){
+  async function loadCourses(page){
     try {
-      let url = 'user?page='+page;
+      let url = 'course?page='+page;
       if(searchText != ''){
-        url += '&name='+searchText;
+        url += '&description='+searchText;
       }
       const response = await api.get(url);
       setTotal(response.data.total);
-      setUsers(response.data.data);
+      setCourses(response.data.data);
       console.log(response.data);
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
@@ -110,7 +114,7 @@ const UsersTable = props => {
   }
 
   useEffect(() => {
-    loadUsers(1);
+    loadCourses(1);
   }, []);
 
   const updateSearch = (e) => {
@@ -119,17 +123,50 @@ const UsersTable = props => {
 
   const onClickSearch = (e) => {
     setPage(0);
-    loadUsers(1);
+    loadCourses(1);
   }
 
   const handlePageChange = (event, page) => {
-    loadUsers(page+1)
+    loadCourses(page+1)
     setPage(page);
   };
 
   const handleRowsPerPageChange = event => {
     setRowsPerPage(event.target.value);
   };
+
+  const onClickOpenDialog = (id) => {
+    setIdCourseDelete(id);
+    setOpen(true);
+  }
+
+  const onClickCloseDialog = () => {
+    setOpen(false);
+    setIdCourseDelete(0);
+  }
+
+  async function onDeleteObject(){
+    try {
+      let url = 'course/'+idCourseDelete;
+      const response = await api.delete(url);
+      if (response.status === 202) {
+        if(response.data.message){
+          loadAlert('error', response.data.message);
+        }
+      } else {
+        loadAlert('success', 'Curso excluído.');
+        loadCourses(page+1);
+      }
+    } catch (error) {
+      loadAlert('error', 'Erro de conexão.');
+    }
+    setOpen(false);
+  }
+
+  const onClickEdit = (id) => {
+    console.log(id);
+    history.push('/course-details/'+id);
+  }
 
   return (
     <div className={classes.root}>
@@ -146,31 +183,34 @@ const UsersTable = props => {
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell className={classes.headTable}>Nome</TableCell>
-                      <TableCell className={classes.headTable}>Email</TableCell>
-                      <TableCell className={classes.headTable}>Nível de Acesso</TableCell>
+                      <TableCell className={classes.headTable}>Sigla</TableCell>
+                      <TableCell className={classes.headTable}>Descrição</TableCell>
+                      <TableCell className={classes.headTable}></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {users.map(user => (
+                    {courses.map(course => (
                         <TableRow
                             className={classes.tableRow}
                             hover
-                            key={user.id}>
-                          <TableCell>
-                            <div className={classes.nameContainer}>
-                              <Avatar
-                                  className={classes.avatar}
-                                  src={user.avatarUrl}>
-                                {getInitials(user.name)}
-                              </Avatar>
-                              <Typography variant="body1">{user.name}</Typography>
-                            </div>
-                          </TableCell>
-                          <TableCell>{user.email}</TableCell>
-                          <TableCell>
-                            {user.acess_level === 1 ? "Administrador" :
-                                user.acess_level === 2 ? "Professor" : ""}
+                            key={course.id}>
+                          <TableCell>{course.initials}</TableCell>
+                          <TableCell>{course.description}</TableCell>
+                          <TableCell className={classes.row}>
+                            <Tooltip title="Deletar">
+                              <Button
+                                  className={classes.buttonDelete}
+                                  onClick={() => onClickOpenDialog(course.id)}>
+                                <Delete fontSize="medium"/>
+                              </Button>
+                            </Tooltip>
+                            <Tooltip title="Editar">
+                              <Button
+                                  className={classes.buttonEdit}
+                                  onClick={() => onClickEdit(course.id)}>
+                                <Edit fontSize="medium"/>
+                              </Button>
+                            </Tooltip>
                           </TableCell>
                         </TableRow>
                     ))}
@@ -192,12 +232,18 @@ const UsersTable = props => {
           </CardActions>
         </Card>
       </div>
+      <DialogQuestione handleClose={onClickCloseDialog}
+                       open={open}
+                       onClickAgree={onDeleteObject}
+                       onClickDisagree={onClickCloseDialog}
+                       mesage={'Deseja excluir o curso selecionado?'}
+                       title={'Excluir Curso'}/>
     </div>
   );
 };
 
-UsersTable.propTypes = {
-
+CourseTable.propTypes = {
+  history: PropTypes.object
 };
 
-export default UsersTable;
+export default CourseTable;

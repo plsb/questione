@@ -19,7 +19,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const schema = {
   description: {
-    presence: { allowEmpty: false,  message: 'Escolha um curso.'},
+    presence: { allowEmpty: false,  message: 'A descrição é obrigatória.'},
     length: {
       minimum: 5,
       maximum: 300,
@@ -27,7 +27,7 @@ const schema = {
     }
   },
   course: {
-    presence: { allowEmpty: false, message: 'Escolha um curso.' },
+    presence: { allowEmpty: false, message: 'O curso é obrigatório.' },
     numericality: {
       onlyInteger: true,
       greaterThan: 0,

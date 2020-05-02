@@ -128,6 +128,7 @@ const RequestUsersTable = props => {
   }
 
   const onClickSearch = (e) => {
+    setPage(0);
     loadCourseProfessor(1, searchText);
   }
 

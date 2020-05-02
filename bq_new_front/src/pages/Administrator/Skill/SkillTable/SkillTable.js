@@ -155,6 +155,7 @@ const SkillTable = props => {
   }
 
   const onClickSearch = (e) => {
+    setPage(0);
     loadSkill(1);
   }
 

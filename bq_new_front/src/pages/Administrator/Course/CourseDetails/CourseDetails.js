@@ -15,24 +15,23 @@ import {
 import api from "../../../../services/api";
 import Swal from "sweetalert2";
 import validate from "validate.js";
-import {cpfMask} from "../../../../common/mask";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const schema = {
   description: {
     presence: { allowEmpty: false,  message: 'A descrição é obrigatória.'},
     length: {
-      minimum: 10,
-      maximum: 300,
-      message: 'A descrição deve conter no mínimo 10 e no máximo 300 caracteres.'
+      minimum: 4,
+      maximum: 50,
+      message: 'A descrição deve conter no mínimo 4 e no máximo 50 caracteres.'
     }
   },
-  course: {
-    presence: { allowEmpty: false, message: 'O curso é obrigatório.' },
-    numericality: {
-      onlyInteger: true,
-      greaterThan: 0,
-      message: 'Escolha um curso.',
+  initials: {
+    presence: { allowEmpty: false,  message: 'A sigla é obrigatória.'},
+    length: {
+      minimum: 2,
+      maximum: 8,
+      message: 'A sigla do curso deve conter no mínimo 2 e no máximo 8 caracteres.'
     }
   }
 };
@@ -41,10 +40,9 @@ const useStyles = makeStyles(() => ({
   root: {}
 }));
 
-const ProfileDetails = props => {
+const CourseDetails = props => {
   const { className, history, ...rest } = props;
-  const [courses, setCourses] = useState([{'id': '0', 'description': '- Escolha um curso -'}]);
-  const { codigoProfile } = props.match.params;
+  const { codigoCourse } = props.match.params;
 
   const classes = useStyles();
 
@@ -75,33 +73,25 @@ const ProfileDetails = props => {
     });
   }
 
-  async function loadCourses(){
-    try {
-      const response = await api.get('all/courses');
-      console.log()
-      setCourses([...courses, ...response.data]);
-    } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
-    }
-  }
-
-  async function saveProfileDetails(){
+  async function saveCourseDetails(){
     try {
       const fk_course_id = formState.values.course;
       const description = formState.values.description;
+      const initials = formState.values.initials;
       const id = formState.values.id;
       const data = {
-        description, fk_course_id
+        description, fk_course_id, initials
       }
       let response= {};
       let acao = "";
       if(!id) {
-         response = await api.post('profile', data);
-        acao = "cadastrado";
+         response = await api.post('course', data);
+         acao = "cadastrado";
       } else {
-         response = await api.put('profile/'+id, data);
+         response = await api.put('course/'+id, data);
         acao = "atualizado";
       }
+      console.log(response);
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
@@ -111,8 +101,8 @@ const ProfileDetails = props => {
           loadAlert('error', response.data.errors[0].fk_course_id);
         }
       } else {
-        loadAlert('success', 'Perfil '+acao+'.');
-        history.push('/profiles');
+        loadAlert('success', 'Curso '+acao+'.');
+        history.push('/courses');
       }
 
     } catch (error) {
@@ -120,10 +110,10 @@ const ProfileDetails = props => {
     }
   }
 
-  async function findAProfile(id){
+  async function findACourse(id){
     try {
-      const response = await api.get('profile/show/'+id);
-      console.log(response.data[0]);
+      const response = await api.get('course/show/'+id);
+      console.log(response.data);
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
@@ -131,9 +121,9 @@ const ProfileDetails = props => {
       } else {
         setFormState(formState => ({
           values: {
-            'description': response.data[0].description,
-            'course' : response.data[0].fk_course_id,
-            'id': response.data[0].id
+            'description': response.data.description,
+            'initials': response.data.initials,
+            'id': response.data.id
           },
           touched: {
             ...formState.touched,
@@ -146,10 +136,9 @@ const ProfileDetails = props => {
   }
 
   useEffect(() => {
-    loadCourses();
 
-    if(codigoProfile){
-      findAProfile(codigoProfile);
+    if(codigoCourse){
+      findACourse(codigoCourse);
     }
 
   }, []);
@@ -190,8 +179,7 @@ const ProfileDetails = props => {
       {...rest}
       className={clsx(classes.root, className)}>
       <form
-        autoComplete="off"
-        onSubmit={saveProfileDetails}>
+        autoComplete="off">
         <div className={classes.contentHeader}>
           <IconButton onClick={handleBack}>
             <ArrowBackIcon />
@@ -199,12 +187,30 @@ const ProfileDetails = props => {
         </div>
         <CardHeader
           subheader=""
-          title="Perfil"/>
+          title="Curso"/>
         <Divider />
         <CardContent>
           <Grid
             container
             spacing={3}>
+            <Grid
+                item
+                md={6}
+                xs={12}>
+              <TextField
+                  fullWidth
+                  error={hasError('initials')}
+                  helperText={
+                    hasError('initials') ? formState.errors.initials[0] : null
+                  }
+                  label="Sigla"
+                  margin="dense"
+                  name="initials"
+                  onChange={handleChange}
+                  value={formState.values.initials || ''}
+                  variant="outlined"
+              />
+            </Grid>
             <Grid
               item
               md={6}
@@ -223,34 +229,6 @@ const ProfileDetails = props => {
                 variant="outlined"
               />
             </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}>
-              <TextField
-                fullWidth
-                error={hasError('course')}
-                helperText={
-                  hasError('course') ? formState.errors.course[0] : null
-                }
-                label=""
-                margin="dense"
-                name="course"
-                onChange={handleChange}
-                select
-                // eslint-disable-next-line react/jsx-sort-props
-                SelectProps={{ native: true }}
-                value={formState.values.course}
-                variant="outlined">
-                {courses.map(course => (
-                  <option
-                    key={course.id}
-                    value={course.id}>
-                    {course.description}
-                  </option>
-                ))}
-              </TextField>
-            </Grid>
           </Grid>
         </CardContent>
         <Divider />
@@ -258,8 +236,8 @@ const ProfileDetails = props => {
           <Button
             color="primary"
             variant="outlined"
-            onClick={saveProfileDetails}
-            disabled={!formState.isValid}>
+            disabled={!formState.isValid}
+            onClick={saveCourseDetails}>
             Salvar
           </Button>
         </CardActions>
@@ -268,8 +246,8 @@ const ProfileDetails = props => {
   );
 };
 
-ProfileDetails.propTypes = {
+CourseDetails.propTypes = {
   className: PropTypes.string,
 };
 
-export default ProfileDetails;
+export default CourseDetails;
