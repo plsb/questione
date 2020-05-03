@@ -105,7 +105,7 @@ const StartEvaluationCard = props => {
     <Card
       {...rest}
       className={clsx(classes.root, className)}>
-      <Box width="100%" height="100%" bgcolor="#3a7cf7">
+      <Box width="100%" height="100%" bgcolor="#03a9f4">
       <CardContent>
           <div className={classes.codeContainer}>
               <Grid container
@@ -119,7 +119,8 @@ const StartEvaluationCard = props => {
                       name="name"
                       placeholder="código?"
                        onKeyPress={onlynumber}
-                      onChange={handleChange}/>
+                      onChange={handleChange}
+                      autoComplete="off"/>
 
                 </Grid>
                 <Grid item>

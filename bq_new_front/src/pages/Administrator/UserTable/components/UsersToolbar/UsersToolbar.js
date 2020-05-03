@@ -22,9 +22,6 @@ const useStyles = makeStyles(theme => ({
   importButton: {
     marginRight: theme.spacing(1)
   },
-  exportButton: {
-    marginRight: theme.spacing(1)
-  },
   searchInput: {
     marginRight: theme.spacing(1)
   },

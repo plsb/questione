@@ -21,7 +21,9 @@ import {
     PageNotFound,
     RequestUserTable,
     AccountDetails,
-    Dashboard, EvaluationTable
+    Dashboard,
+    EvaluationTable,
+    EvaluationArchiveTable
 } from '../pages';
 import SkillDetails from "../pages/Administrator/Skill/SkillDetails";
 import ObjectDetails from "../pages/Administrator/Object/ObjectDetails";
@@ -171,6 +173,12 @@ const Routes = () => (
             needToBeLogged={true}
             layout={MainLayout}
             path="/evaluations"/>
+        <RouteWithLayout
+            component={EvaluationArchiveTable}
+            exact
+            needToBeLogged={true}
+            layout={MainLayout}
+            path="/evaluations-archive"/>
       <RouteWithLayout
           path="*"
           layout={MinimalLayout}

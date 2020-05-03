@@ -22,7 +22,7 @@ import Swal from "sweetalert2";
 import UsersToolbar from "./components/CourseToolbar";
 import Delete from "@material-ui/icons/Delete";
 import Edit from "@material-ui/icons/Edit";
-import {DialogQuestione} from "../../../../components";
+import {DialogQuestione, TableQuestione} from "../../../../components";
 import PropTypes from "prop-types";
 const useStyles = makeStyles(theme => ({
   root: {
@@ -169,7 +169,8 @@ const CourseTable = props => {
   }
 
   return (
-    <div className={classes.root}>
+    <div>
+      <div className={classes.root}>
       <UsersToolbar
           onChangeSearch={updateSearch.bind(this)}
           searchText={searchText}
@@ -231,13 +232,15 @@ const CourseTable = props => {
             />
           </CardActions>
         </Card>
-      </div>
-      <DialogQuestione handleClose={onClickCloseDialog}
+         <DialogQuestione handleClose={onClickCloseDialog}
                        open={open}
                        onClickAgree={onDeleteObject}
                        onClickDisagree={onClickCloseDialog}
                        mesage={'Deseja excluir o curso selecionado?'}
                        title={'Excluir Curso'}/>
+      </div>
+
+    </div>
     </div>
   );
 };

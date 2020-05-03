@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 700
   },
   avatar: {
-    backgroundColor: theme.palette.error.main,
+    backgroundColor: theme.palette.primary.main,
     height: 56,
     width: 56
   },
@@ -33,10 +33,10 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center'
   },
   differenceIcon: {
-    color: theme.palette.error.dark
+    color: theme.palette.primary.dark
   },
   differenceValue: {
-    color: theme.palette.error.dark,
+    color: theme.palette.primary.dark,
     marginRight: theme.spacing(1)
   }
 }));

@@ -39,7 +39,7 @@ const EvaluationToolbar = props => {
   const classes = useStyles();
 
   const onClickRequestUsers = () => {
-    history.push('/evaluations-archive');
+    history.push('/evaluations');
   }
 
   const onClickNewCourse = e => {
@@ -51,10 +51,10 @@ const EvaluationToolbar = props => {
       {...rest}
       className={clsx(classes.root, className)}>
       <div className={classes.row}>
-        <Typography variant="h3" className={classes.title}>{'Lista de avaliações'}</Typography>
+        <Typography variant="h3" className={classes.title}>{'Lista de avaliações arquivadas'}</Typography>
         <span className={classes.spacer} />
         <Button className={classes.exportButton}
-                onClick={onClickRequestUsers}>Avaliações arquivadas</Button>
+                onClick={onClickRequestUsers}>Avaliações ativas</Button>
         <Button
             color="primary"
             variant="contained"

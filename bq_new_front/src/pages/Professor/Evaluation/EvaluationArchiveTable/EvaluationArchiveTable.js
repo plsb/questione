@@ -19,9 +19,6 @@ import api from '../../../../services/api';
 
 import Swal from "sweetalert2";
 import UsersToolbar from "./components/EvaluationToolbar";
-import Delete from "@material-ui/icons/Delete";
-import Edit from "@material-ui/icons/Edit";
-import {DialogQuestione} from "../../../../components";
 import PropTypes from "prop-types";
 import EvaluationCard from "../EvaluationCard";
 const useStyles = makeStyles(theme => ({
@@ -64,7 +61,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const EvaluationTable = props => {
+const EvaluationArchiveTable = props => {
   const { className, history } = props;
 
   const [evaluations, setEvaluations] = useState([]);
@@ -99,11 +96,10 @@ const EvaluationTable = props => {
 
   async function loadEvaluations(page){
     try {
-      let url = 'evaluation?status=1&page='+page;
-      if(searchText != ''){
-        url += '&description='+searchText+
-              '&id_evaluation='+searchText;
-      }
+      let url = 'evaluation?status=2&page='+page;
+      /*if(searchText != ''){
+        url += '&description='+searchText;
+      }*/
       const response = await api.get(url);
       setTotal(response.data.total);
       setEvaluations(response.data.data);
@@ -174,8 +170,8 @@ const EvaluationTable = props => {
   );
 };
 
-EvaluationTable.propTypes = {
+EvaluationArchiveTable.propTypes = {
   history: PropTypes.object
 };
 
-export default EvaluationTable;
+export default EvaluationArchiveTable;

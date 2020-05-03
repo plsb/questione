@@ -9,15 +9,22 @@ import {
     Typography,
     CardContent,
     MenuItem,
-    Menu, Tooltip
+    Menu, Tooltip, Chip, colors
 } from '@material-ui/core';
 import { MoreVert, FileCopyOutlined } from '@material-ui/icons';
 import moment from 'moment';
+import api from "../../../../services/api";
+import Swal from "sweetalert2";
+import {withRouter} from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
   root: {
     margin: 10
   },
+    chip:{
+      backgroundColor: '#e57373',
+      color: '#ffebee',
+    },
   spacer: {
     flexGrow: 1
   },
@@ -29,6 +36,26 @@ const EvaluationCard = props => {
 
   const classes = useStyles();
 
+    //configuration alert
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'bottom-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        onOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
+
+    function loadAlert(icon, message) {
+        Toast.fire({
+            icon: icon,
+            title: message
+        });
+    }
+
   const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
   };
@@ -36,6 +63,29 @@ const EvaluationCard = props => {
   const handleClose = () => {
       setAnchorEl(null);
   };
+
+  async function changeStatus(status) {
+      try {
+          const data = {
+              status
+          }
+          const response = await api.put('evaluation/change-status/'+evaluation.id, data);
+          if (response.status === 200) {
+              if (status == 1){
+                  loadAlert('success', 'Avaliação '+evaluation.id+' ativa.');
+              } else {
+                  loadAlert('success', 'Avaliação '+evaluation.id+' arquivada.');
+              }
+              window.location.reload();
+          } else {
+              loadAlert('error', 'Erro ao mduar o status da avaliação.');
+          }
+
+      } catch (error) {
+          console.log(error);
+          loadAlert('error', 'Erro de conexão.');
+      }
+  }
 
   return (
     <Card
@@ -66,6 +116,8 @@ const EvaluationCard = props => {
         <Typography variant="body2" color="textSecondary" component="p">
             Data de criação da avaliação: {moment(evaluation.created_at).format('DD/MM/YYYY')}
         </Typography>
+          { evaluation.status == 2 ?
+              <Chip label="Arquivada" className={clsx(classes.chip, className)}/> : null}
       </CardContent>
         <Menu
             id="simple-menu"
@@ -73,9 +125,10 @@ const EvaluationCard = props => {
             keepMounted
             open={Boolean(anchorEl)}
             onClose={handleClose}>
-            <MenuItem onClick={handleClose}>Aplicações</MenuItem>
-            <MenuItem onClick={handleClose}>Editar</MenuItem>
-            <MenuItem onClick={handleClose}>Arquivar</MenuItem>
+            { evaluation.status == 1 ? <MenuItem onClick={handleClose}>Aplicações</MenuItem> : null}
+            { evaluation.status == 1 ? <MenuItem onClick={handleClose}>Editar</MenuItem> : null}
+            { evaluation.status == 1 ? <MenuItem onClick={() => changeStatus(2) }>Arquivar</MenuItem> : null}
+            { evaluation.status == 2 ? <MenuItem onClick={() => changeStatus(1) }>Ativar</MenuItem> : null}
         </Menu>
     </Card>
   );
@@ -83,7 +136,8 @@ const EvaluationCard = props => {
 
 EvaluationCard.propTypes = {
   className: PropTypes.string,
-  evaluation: PropTypes.object
+  evaluation: PropTypes.object,
+    history: PropTypes.object
 };
 
-export default EvaluationCard;
+export default withRouter(EvaluationCard);
