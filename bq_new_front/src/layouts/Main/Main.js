@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: 240
   },
   content: {
-    height: '100%'
+    height: '100%',
   }
 }));
 
@@ -58,8 +58,9 @@ const Main = props => {
       />
       <main className={classes.content}>
         {children}
-        <Footer />
       </main>
+      <Footer />
+
     </div>
   );
 };

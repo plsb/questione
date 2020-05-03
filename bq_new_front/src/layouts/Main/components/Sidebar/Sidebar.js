@@ -75,7 +75,7 @@ const Sidebar = props => {
     },
     {
       title: 'Avaliações',
-      href: '/evaluation',
+      href: '/evaluations',
       icon: <PeopleIcon />
     }
   ];

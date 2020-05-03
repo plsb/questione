@@ -28,10 +28,10 @@ class EvaluationController extends Controller
         $user = auth('api')->user();
 
         $evaluation = Evaluation::where('fk_user_id', '=', $user->id)
-            ->orderBy('id')
+            ->orderBy('created_at', 'desc')
             ->with('user')
             ->paginate(10);
-        return response()->json($evaluation);
+        return response()->json($evaluation, 200);
     }
 
     public function store(Request $request)
@@ -39,7 +39,11 @@ class EvaluationController extends Controller
         $validation = Validator::make($request->all(),$this->rules, $this->messages);
 
         if($validation->fails()){
-            return $validation->errors()->toJson();
+            $erros = array('errors' => array(
+                $validation->messages()
+            ));
+            $json_str = json_encode($erros);
+            return response($json_str, 202);
         }
 
         $user = auth('api')->user();
@@ -66,7 +70,10 @@ class EvaluationController extends Controller
 
         $evaluation->save();
 
-        return response()->json($evaluation, 201);
+        return response()->json([
+            'message' => 'Avaliação '.$evaluation->id_evaluation.' cadastrada.',
+            $evaluation
+        ], 200);
     }
 
     public function show(int $id)
@@ -78,7 +85,7 @@ class EvaluationController extends Controller
 
         $this->verifyRecord($evaluation);
 
-        return response()->json($evaluation);
+        return response()->json($evaluation, 200);
     }
 
     public function update(Request $request, $id)
@@ -87,7 +94,11 @@ class EvaluationController extends Controller
         $validation = Validator::make($request->all(),$this->rules, $this->messages);
 
         if($validation->fails()){
-            return $validation->errors()->toJson();
+            $erros = array('errors' => array(
+                $validation->messages()
+            ));
+            $json_str = json_encode($erros);
+            return response($json_str, 202);
         }
 
         $user = auth('api')->user();
@@ -96,7 +107,7 @@ class EvaluationController extends Controller
         if($evaluation->fk_user_id != $user->id){
             return response()->json([
                 'message' => 'Operação não pode ser realizada. A avaliação pertence a outro usuário.'
-            ], 204);
+            ], 202);
         }
 
         $this->verifyRecord($evaluation);
@@ -120,7 +131,10 @@ class EvaluationController extends Controller
         $evaluation->save();
 
 
-        return response()->json($evaluation);
+        return response()->json([
+            'message' => 'Avaliação '.$evaluation->id_evaluation.' atualizada.',
+            $evaluation
+        ], 200);
 
     }
 
@@ -133,7 +147,7 @@ class EvaluationController extends Controller
         if(!$record || $record == '[]'){
             return response()->json([
                 'message' => 'Registro não encontrado.'
-            ], 404);
+            ], 202);
         }
     }
 

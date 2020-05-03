@@ -11,8 +11,16 @@ Route::post('/logout', 'AuthController@logout');
 Route::post('/redefinepw', 'PasswordResetController@redefinePassword');
 Route::post('/resetpw', 'PasswordResetController@reset');
 
+Route::group(['prefix' => 'public'], function (){
+    Route::get('/total-questions', 'FuncionalitiesPublics@totalQuestionsValid')->name('public.totalQuestions');
+    Route::get('/total-professors', 'FuncionalitiesPublics@totalProfessors')->name('public.totalProfessors');
+    Route::get('/total-students', 'FuncionalitiesPublics@totalStudents')->name('public.totalStudents');
+    Route::get('/total-evaluations', 'FuncionalitiesPublics@totalEvaluations')->name('public.totalEvaluations');
+});
+
 Route::group(['prefix' => 'all'], function (){
-    Route::get('/courses', 'ListAll@courses')->name('all.courses');
+    Route::get('/courses', 'AllUsers@courses')->name('all.courses');
+    Route::put('/update-profile-user', 'AllUsers@updateProfileUser')->name('all.updateProfileUser');
 });
 
 Route::group(['prefix' => 'user'], function (){

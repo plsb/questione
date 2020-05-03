@@ -18,7 +18,10 @@ import {
     CourseTable,
     SkillTable,
     ObjectTable,
-    PageNotFound, RequestUserTable
+    PageNotFound,
+    RequestUserTable,
+    AccountDetails,
+    Dashboard, EvaluationTable
 } from '../pages';
 import SkillDetails from "../pages/Administrator/Skill/SkillDetails";
 import ObjectDetails from "../pages/Administrator/Object/ObjectDetails";
@@ -35,7 +38,7 @@ const Routes = () => (
         />
         {/*ROTAS COMUNS*/}
         <RouteWithLayout
-          component={CourseTable}
+          component={Dashboard}
           exact
           needToBeLogged={true}
           layout={MainLayout}
@@ -64,6 +67,12 @@ const Routes = () => (
             layout={MinimalLayout}
             needToBeLogged={false}
             path="/reset-password/:token"/>
+        <RouteWithLayout
+            component={AccountDetails}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/account"/>
         {/*ROTAS DO ADMINISTRADOR*/}
         <RouteWithLayout
             component={CourseTable}
@@ -155,6 +164,13 @@ const Routes = () => (
             needToBeLogged={true}
             layout={MainLayout}
             path="/users/requests/:codigoCourseProfessor"/>
+        {/*ROTAS DO PROFESSOR*/}
+        <RouteWithLayout
+            component={EvaluationTable}
+            exact
+            needToBeLogged={true}
+            layout={MainLayout}
+            path="/evaluations"/>
       <RouteWithLayout
           path="*"
           layout={MinimalLayout}

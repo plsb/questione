@@ -1,14 +1,16 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import { Avatar, Typography } from '@material-ui/core';
+import {Avatar, Link, Typography} from '@material-ui/core';
 import {getInitials} from "../../../../../../helpers";
+import {Link as RouterLink} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'center',
     alignItems: 'center',
     minHeight: 'fit-content'
   },
@@ -46,11 +48,21 @@ const Profile = props => {
         </Avatar>
       <Typography
         className={classes.name}
-        variant="h5">
+        variant="h6">
         {user.name}
       </Typography>
       <Typography variant="body2">{user.email}</Typography>
       <Typography variant="body2">{user.level}</Typography>
+      <Typography
+          variant="body2">
+        Atualize seu Perfil {' '}
+        <Link
+            component={RouterLink}
+            to="/account"
+            variant="body2">
+          clicando aqui.
+        </Link>
+      </Typography>
     </div>
   );
 };

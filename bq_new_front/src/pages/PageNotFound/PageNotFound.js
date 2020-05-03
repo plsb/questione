@@ -98,7 +98,7 @@ const PageNotFound = props => {
               <div className={classes.logoImage}>
                 <img
                     alt="Logo"
-                    src="/images/logo_orange_black.png"/>
+                    src="/images/logo_black_blue_270.png"/>
               </div>
             </div>
           </div>

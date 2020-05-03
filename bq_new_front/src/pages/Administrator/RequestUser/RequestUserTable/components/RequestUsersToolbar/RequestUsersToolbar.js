@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
-import {Button, TextField} from '@material-ui/core';
+import {Button, TextField, Typography} from '@material-ui/core';
 import FindInPage from '@material-ui/icons/SearchSharp';
 
 import { SearchInput } from '../../../../../../components';
@@ -31,6 +31,9 @@ const useStyles = makeStyles(theme => ({
   comboboxSearch: {
     width: '40%'
   },
+  title: {
+    fontWeight: 'bold'
+  }
 }));
 
 const RequestUsersToolbar = props => {
@@ -62,6 +65,7 @@ const RequestUsersToolbar = props => {
       {...rest}
       className={clsx(classes.root, className)}>
       <div className={classes.row}>
+        <Typography variant="h3" className={classes.title}>{'Lista de Solicitações dos Usuários'}</Typography>
         <span className={classes.spacer} />
         <Button className={classes.exportButton}
             onClick={onCLickUsers}>Lista de Usuários</Button>

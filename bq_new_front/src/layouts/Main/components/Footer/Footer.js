@@ -6,7 +6,7 @@ import { Typography, Link } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(4)
+    padding: theme.spacing(4),
   }
 }));
 
@@ -18,21 +18,19 @@ const Footer = props => {
   return (
     <div
       {...rest}
-      className={clsx(classes.root, className)}
-    >
+      className={clsx(classes.root, className)}>
       <Typography variant="body1">
         &copy;{' '}
         <Link
           component="a"
           href="https://www.ifce.edu.br/"
-          target="_blank"
-        >
+          target="_blank">
           IFCE
         </Link>
         . 2020
       </Typography>
       <Typography variant="caption">
-        Desenvolvido com recursos do Instituto Federal de Educação, Ciência e Tecnologia do Ceará.
+        Desenvolvido com recurso do Instituto Federal de Educação, Ciência e Tecnologia do Ceará.
       </Typography>
     </div>
   );

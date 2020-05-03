@@ -10,7 +10,7 @@ import {
   Divider,
   Grid,
   Button,
-  TextField, IconButton
+  TextField, IconButton, MenuItem
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import Swal from "sweetalert2";
@@ -140,6 +140,7 @@ const ProfileDetails = props => {
           }
         }));
       }
+      console.log(response.data[0]);
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
     }
@@ -203,8 +204,8 @@ const ProfileDetails = props => {
         <Divider />
         <CardContent>
           <Grid
-            container
-            spacing={3}>
+              container
+              spacing={3}>
             <Grid
               item
               md={6}
@@ -223,11 +224,11 @@ const ProfileDetails = props => {
                 variant="outlined"
               />
             </Grid>
-            <Grid
+          <Grid
               item
               md={6}
               xs={12}>
-              <TextField
+            <TextField
                 fullWidth
                 error={hasError('course')}
                 helperText={
@@ -242,17 +243,18 @@ const ProfileDetails = props => {
                 SelectProps={{ native: true }}
                 value={formState.values.course}
                 variant="outlined">
-                {courses.map(course => (
+              {courses.map(course => (
                   <option
-                    key={course.id}
-                    value={course.id}>
+                      key={course.id}
+                      value={course.id}>
                     {course.description}
                   </option>
-                ))}
-              </TextField>
-            </Grid>
+              ))}
+            </TextField>
+          </Grid>
           </Grid>
         </CardContent>
+
         <Divider />
         <CardActions>
           <Button

@@ -177,7 +177,8 @@ const SignIn = props => {
         }
       } else {
         login(response.data.token, response.data[0].name,
-                response.data[0].email, response.data[0].acess_level);
+                response.data[0].email, response.data[0].acess_level,
+                response.data[0].id);
         console.log(response.data[0].acess_level)
         loadAlert('success', response.data[0].name+', seja bem-vindo!');
         history.push('/home');
