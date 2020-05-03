@@ -19,8 +19,12 @@ import {withRouter} from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
   root: {
-    margin: 10
+    margin: 8,
   },
+    head: {
+        paddingBottom: 0,
+        paddingTop: 6
+    },
     chip:{
       backgroundColor: '#e57373',
       color: '#ffebee',
@@ -64,6 +68,26 @@ const EvaluationCard = props => {
       setAnchorEl(null);
   };
 
+  const edit = () => {
+      history.push('/evaluation-details/'+evaluation.id);
+  }
+
+  async function duplicate(){
+      try {
+          const response = await api.post('evaluation/duplicate/'+evaluation.id);
+          if (response.status === 200) {
+              loadAlert('success', 'Avaliação cadastrada(duplicada).');
+              window.location.reload();
+          } else {
+              loadAlert('error', 'Erro ao mduar o status da avaliação.');
+          }
+
+      } catch (error) {
+          console.log(error);
+          loadAlert('error', 'Erro de conexão.');
+      }
+  }
+
   async function changeStatus(status) {
       try {
           const data = {
@@ -72,9 +96,9 @@ const EvaluationCard = props => {
           const response = await api.put('evaluation/change-status/'+evaluation.id, data);
           if (response.status === 200) {
               if (status == 1){
-                  loadAlert('success', 'Avaliação '+evaluation.id+' ativa.');
+                  loadAlert('success', 'Avaliação ativa.');
               } else {
-                  loadAlert('success', 'Avaliação '+evaluation.id+' arquivada.');
+                  loadAlert('success', 'Avaliação arquivada.');
               }
               window.location.reload();
           } else {
@@ -90,14 +114,15 @@ const EvaluationCard = props => {
   return (
     <Card
       {...rest}
-      className={clsx(classes.root, className)}>
+      className={classes.root}>
           <CardHeader
+              className={classes.head}
               action={
                   <div>
                       <Tooltip title="Duplicar Avaliação">
                           <IconButton
                               aria-label="copy"
-                              onClick={handleClick}>
+                              onClick={duplicate}>
                               <FileCopyOutlined />
                           </IconButton>
                       </Tooltip>
@@ -110,12 +135,22 @@ const EvaluationCard = props => {
                       </Tooltip>
                   </div>
               }
-              subheader={'Descrição: '+evaluation.description}
-              title={'Código: '+evaluation.id_evaluation}/>
+
+              title={
+                  evaluation.id < 10 ? '00000' + evaluation.id :
+                      evaluation.id < 100 ? '0000' + evaluation.id :
+                          evaluation.id < 1000 ? '000' + evaluation.id :
+                              evaluation.id < 10000 ? '00' + evaluation.id :
+                                  evaluation.id < 100000 ? '0' + evaluation.id :
+                                      evaluation.id
+              }/>
       <CardContent>
-        <Typography variant="body2" color="textSecondary" component="p">
-            Data de criação da avaliação: {moment(evaluation.created_at).format('DD/MM/YYYY')}
+        <Typography variant="h4" color="textSecondary" component="h2">
+            {'Descrição: '+evaluation.description}
         </Typography>
+          <Typography color="textSecondary" variant="h6">
+              {'Data de criação da avaliação: '+ moment(evaluation.created_at).format('DD/MM/YYYY')}
+          </Typography>
           { evaluation.status == 2 ?
               <Chip label="Arquivada" className={clsx(classes.chip, className)}/> : null}
       </CardContent>
@@ -126,7 +161,7 @@ const EvaluationCard = props => {
             open={Boolean(anchorEl)}
             onClose={handleClose}>
             { evaluation.status == 1 ? <MenuItem onClick={handleClose}>Aplicações</MenuItem> : null}
-            { evaluation.status == 1 ? <MenuItem onClick={handleClose}>Editar</MenuItem> : null}
+            { evaluation.status == 1 ? <MenuItem onClick={edit}>Editar</MenuItem> : null}
             { evaluation.status == 1 ? <MenuItem onClick={() => changeStatus(2) }>Arquivar</MenuItem> : null}
             { evaluation.status == 2 ? <MenuItem onClick={() => changeStatus(1) }>Ativar</MenuItem> : null}
         </Menu>

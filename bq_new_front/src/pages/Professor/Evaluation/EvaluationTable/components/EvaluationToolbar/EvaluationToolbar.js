@@ -43,7 +43,7 @@ const EvaluationToolbar = props => {
   }
 
   const onClickNewCourse = e => {
-    history.push('/course-details');
+    history.push('/evaluation-details');
   }
 
   return (

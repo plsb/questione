@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Professor;
 
 use App\Evaluation;
+use App\EvaluationHasQuestions;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Validator;
+use DB;
 
 class EvaluationController extends Controller
 {
@@ -19,11 +21,13 @@ class EvaluationController extends Controller
     }
 
     private $rules = [
-        'description' => 'required',
+        'description' => 'required|max:300|min:4',
     ];
 
     private $messages = [
         'description.required' => 'A DESCRIÇÃO é obrigatória.',
+        'description.max' => 'O máximo de alfanuméricos aceitáveis para a DESCRIÇÃO é 300.',
+        'description.min' => 'O minímo de alfanuméricos aceitáveis para a DESCRIÇÃO é 04.',
     ];
 
     public function index(Request $request)
@@ -35,13 +39,17 @@ class EvaluationController extends Controller
             ], 202);
         }
         $user = auth('api')->user();
+        DB::enableQueryLog();
 
         //pesquisa por codigo ou descrição
+        //dd($request->id_evaluation);
         if($request->id_evaluation || $request->description){
             $evaluation = Evaluation::where('fk_user_id', '=', $user->id)
                 ->where('status', $request->status)
-                ->Where('id_evaluation', $request->id_evaluation)
-                ->orWhere('description', 'like', '%'.$request->description.'%')
+                ->where(
+                function ($query) use ($request) {
+                    $query->where('description', 'like', $request->description ? '%'.$request->description.'%' : null);
+                     })
                 ->orderBy('created_at', 'desc')
                 ->with('user')
                 ->paginate(10);
@@ -52,6 +60,10 @@ class EvaluationController extends Controller
                 ->with('user')
                 ->paginate(10);
         }
+
+        $queries = DB::getQueryLog();
+        //dd($queries);
+
         return response()->json($evaluation, 200);
     }
 
@@ -73,26 +85,14 @@ class EvaluationController extends Controller
         $evaluation->description = $request->description;
 
         //ano 		Horas/minutos/segundos e id PRofessor
-        $evaluation->id_evaluation = date('Y')."".date('Gis')."".$user->id;
-        $evaluation->status = 1; //status 1 é ativa
+       // $evaluation->id_evaluation = substr(date('Y'), -2)."".date('Gis')."".$user->id;
+        $evaluation->status = 1;
         $evaluation->fk_user_id = $user->id;
-
-        if($request->students_can_see_fedback){
-            $evaluation->students_can_see_fedback = $request->students_can_see_fedback;
-        } else {
-            $evaluation->students_can_see_fedback = 0;
-        }
-
-        if($request->studentes_can_see_comments_items){
-            $evaluation->studentes_can_see_comments_items = $request->studentes_can_see_comments_items;
-        } else {
-            $evaluation->studentes_can_see_comments_items = 0;
-        }
 
         $evaluation->save();
 
         return response()->json([
-            'message' => 'Avaliação '.$evaluation->id_evaluation.' cadastrada.',
+            'message' => 'Avaliação cadastrada.',
             $evaluation
         ], 200);
     }
@@ -101,8 +101,16 @@ class EvaluationController extends Controller
     {
         $evaluation = Evaluation::where('id', '=', $id)
             ->with('user')
-           // ->with('questions')
+            ->with('questions')
             ->get();
+
+        $user = auth('api')->user();
+
+        if($evaluation[0]->fk_user_id != $user->id){
+            return response()->json([
+                'message' => 'Operação não pode ser realizada. A avaliação pertence a outro usuário.'
+            ], 202);
+        }
 
         $this->verifyRecord($evaluation);
 
@@ -111,7 +119,6 @@ class EvaluationController extends Controller
 
     public function update(Request $request, $id)
     {
-        //return response()->json($request);
         $validation = Validator::make($request->all(),$this->rules, $this->messages);
 
         if($validation->fails()){
@@ -132,28 +139,13 @@ class EvaluationController extends Controller
         }
 
         $this->verifyRecord($evaluation);
-        $students_can_see_fedback = $evaluation->students_can_see_fedback;
-        $studentes_can_see_comments_items = $evaluation->studentes_can_see_comments_items;
-
-
         $evaluation->description = $request->description;
-        if($request->students_can_see_fedback){
-            $evaluation->students_can_see_fedback = $request->students_can_see_fedback;
-        } else {
-            $evaluation->students_can_see_fedback = 0;
-        }
 
-        if($request->studentes_can_see_comments_items){
-            $evaluation->studentes_can_see_comments_items = $request->studentes_can_see_comments_items;
-        } else {
-            $evaluation->studentes_can_see_comments_items = 0;
-        }
-       // return response()->json( $evaluation->students_can_see_fedback);
         $evaluation->save();
 
 
         return response()->json([
-            'message' => 'Avaliação '.$evaluation->id_evaluation.' atualizada.',
+            'message' => 'Avaliação atualizada.',
             $evaluation
         ], 200);
 
@@ -161,17 +153,11 @@ class EvaluationController extends Controller
 
     public function destroy($id)
     {
-        //falta fazer funcao
+        //verficar a necessidade
     }
 
     public function changeStatus($id, Request $request)
     {
-        if(!$request->status){
-            return response()->json([
-                'message' => 'Informe o status: (1)Ativa ou (2)Arquivada.'
-            ], 202);
-        }
-
         $user = auth('api')->user();
         $evaluation = Evaluation::find($id);
 
@@ -181,14 +167,55 @@ class EvaluationController extends Controller
             ], 202);
         }
 
+        if(!$request->status){
+            return response()->json([
+                'message' => 'Informe o status: (1)Ativa ou (2)Arquivada.'
+            ], 202);
+        }
+
         $evaluation->status = $request->status;
         $evaluation->save();
 
         return response()->json([
-            'message' => 'Avaliação '.$evaluation->id_evaluation.' arquivada.',
+            'message' => 'Avaliação arquivada.',
             $evaluation
         ], 200);
 
+    }
+
+    public function duplicate($id, Request $request){
+        $user = auth('api')->user();
+        $evaluationDuplicate = Evaluation::find($id);
+        $questionsDuplicate = EvaluationHasQuestions::where('fk_evaluation_id',
+                    $evaluationDuplicate->id)->get();
+
+
+        if($evaluationDuplicate->fk_user_id != $user->id){
+            return response()->json([
+                'message' => 'Operação não pode ser realizada. A avaliação pertence a outro usuário.'
+            ], 202);
+        }
+
+        $evaluation = new Evaluation();
+        $evaluation->description = $evaluationDuplicate->description;
+
+        $evaluation->status = 1; //status 1 é ativa
+        $evaluation->fk_user_id = $user->id;
+
+        $evaluation->save();
+
+        //duplica questoes da avaliação
+        foreach($questionsDuplicate as $question){
+            $evaluation_question = new EvaluationHasQuestions();
+            $evaluation_question->fk_question_id = $question->fk_question_id;
+            $evaluation_question->fk_evaluation_id = $evaluation->id;
+            $evaluation_question->save();
+        }
+
+        return response()->json([
+            'message' => 'Avaliação cadastrada(duplciada).',
+            $evaluation
+        ], 200);
     }
 
     public function verifyRecord($record){

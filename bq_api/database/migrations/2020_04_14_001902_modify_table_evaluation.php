@@ -15,10 +15,10 @@ class ModifyTableEvaluation extends Migration
     {
         Schema::table('evaluations', function (Blueprint $table) {
             $table->renameColumn('descricao', 'description');
-            $table->renameColumn('codigo_avaliacao', 'id_evaluation');
             $table->renameColumn('fk_usuario_id', 'fk_user_id');
-            $table->renameColumn('pode_ve_feedback', 'students_can_see_fedback');
-            $table->renameColumn('pode_ve_comentarios_itens', 'studentes_can_see_comments_items');
+            $table->dropColumn(['pode_ve_feedback']);
+            $table->dropColumn(['pode_ve_comentarios_itens']);
+            $table->dropColumn(['codigo_avaliacao']);
         });
     }
 

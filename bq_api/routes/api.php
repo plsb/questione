@@ -87,7 +87,9 @@ Route::group(['prefix' => 'questionitem'], function (){
 
 Route::group(['prefix' => 'evaluation'], function (){
     Route::get('/', 'Professor\EvaluationController@index')->name('evaluation.index');
+    Route::get('/show/{evaluation}', 'Professor\EvaluationController@show')->name('evaluation.show');
     Route::post('/', 'Professor\EvaluationController@store')->name('evaluation.store');
+    Route::post('/duplicate/{evaluation}', 'Professor\EvaluationController@duplicate')->name('evaluation.duplicate');
     Route::put('/{evaluation}', 'Professor\EvaluationController@update')->name('evaluation.update');
     Route::put('/change-status/{evaluation}', 'Professor\EvaluationController@changeStatus')->name('evaluation.changeStatus');
     Route::post('/addquestion/', 'Professor\EvaluationHasQuestionsController@addQuestion')->name('evaluation.addQuestion');

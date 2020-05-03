@@ -97,9 +97,9 @@ const EvaluationArchiveTable = props => {
   async function loadEvaluations(page){
     try {
       let url = 'evaluation?status=2&page='+page;
-      /*if(searchText != ''){
+      if(searchText != ''){
         url += '&description='+searchText;
-      }*/
+      }
       const response = await api.get(url);
       setTotal(response.data.total);
       setEvaluations(response.data.data);

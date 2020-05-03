@@ -101,8 +101,7 @@ const EvaluationTable = props => {
     try {
       let url = 'evaluation?status=1&page='+page;
       if(searchText != ''){
-        url += '&description='+searchText+
-              '&id_evaluation='+searchText;
+        url += '&description='+searchText;
       }
       const response = await api.get(url);
       setTotal(response.data.total);

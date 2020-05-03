@@ -19,19 +19,11 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const schema = {
   description: {
-    presence: { allowEmpty: false,  message: 'A descrição é obrigatória.'},
+    presence: {allowEmpty: false, message: 'A descrição é obrigatória.'},
     length: {
       minimum: 4,
-      maximum: 100,
-      message: 'A descrição deve conter no mínimo 4 e no máximo 100 caracteres.'
-    }
-  },
-  initials: {
-    presence: { allowEmpty: false,  message: 'A sigla é obrigatória.'},
-    length: {
-      minimum: 2,
-      maximum: 8,
-      message: 'A sigla do curso deve conter no mínimo 2 e no máximo 8 caracteres.'
+      maximum: 300,
+      message: 'A descrição deve conter no mínimo 4 e no máximo 300 caracteres.'
     }
   }
 };
@@ -40,9 +32,9 @@ const useStyles = makeStyles(() => ({
   root: {}
 }));
 
-const CourseDetails = props => {
+const EvaluationDetails = props => {
   const { className, history, ...rest } = props;
-  const { codigoCourse } = props.match.params;
+  const { codigoEvaluation } = props.match.params;
 
   const classes = useStyles();
 
@@ -73,23 +65,22 @@ const CourseDetails = props => {
     });
   }
 
-  async function saveCourseDetails(){
+  async function saveEvaluationDetails(){
     try {
-      const fk_course_id = formState.values.course;
       const description = formState.values.description;
-      const initials = formState.values.initials;
+      console.log('des '+description);
       const id = formState.values.id;
       const data = {
-        description, fk_course_id, initials
+        description
       }
       let response= {};
       let acao = "";
       if(!id) {
-         response = await api.post('course', data);
-         acao = "cadastrado";
+         response = await api.post('evaluation', data);
+         acao = "cadastrada";
       } else {
-         response = await api.put('course/'+id, data);
-        acao = "atualizado";
+         response = await api.put('evaluation/'+id, data);
+        acao = "atualizada";
       }
       console.log(response);
       if (response.status === 202) {
@@ -97,12 +88,10 @@ const CourseDetails = props => {
           loadAlert('error', response.data.message);
         } else if(response.data.errors[0].description){
           loadAlert('error', response.data.errors[0].description);
-        } if(response.data.errors[0].fk_course_id){
-          loadAlert('error', response.data.errors[0].fk_course_id);
         }
       } else {
-        loadAlert('success', 'Curso '+acao+'.');
-        history.push('/courses');
+        loadAlert('success', 'Avaluação '+acao+'.');
+        history.push('/evaluations');
       }
 
     } catch (error) {
@@ -110,9 +99,9 @@ const CourseDetails = props => {
     }
   }
 
-  async function findACourse(id){
+  async function findAEvaluation(id){
     try {
-      const response = await api.get('course/show/'+id);
+      const response = await api.get('evaluation/show/'+id);
       console.log(response);
       if (response.status === 202) {
         if(response.data.message){
@@ -121,14 +110,14 @@ const CourseDetails = props => {
       } else {
         setFormState(formState => ({
           values: {
-            'description': response.data.description,
-            'initials': response.data.initials,
-            'id': response.data.id
+            'description': response.data[0].description,
+            'id': response.data[0].id
           },
           touched: {
             ...formState.touched,
           }
         }));
+        console.log(formState.values);
       }
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
@@ -136,8 +125,8 @@ const CourseDetails = props => {
   }
 
   useEffect(() => {
-    if(codigoCourse){
-      findACourse(codigoCourse);
+    if(codigoEvaluation){
+      findAEvaluation(codigoEvaluation);
     }
 
   }, []);
@@ -186,30 +175,12 @@ const CourseDetails = props => {
         </div>
         <CardHeader
           subheader=""
-          title="Curso"/>
+          title="Avaliação"/>
         <Divider />
         <CardContent>
           <Grid
             container
             spacing={3}>
-            <Grid
-                item
-                md={6}
-                xs={12}>
-              <TextField
-                  fullWidth
-                  error={hasError('initials')}
-                  helperText={
-                    hasError('initials') ? formState.errors.initials[0] : null
-                  }
-                  label="Sigla"
-                  margin="dense"
-                  name="initials"
-                  onChange={handleChange}
-                  value={formState.values.initials || ''}
-                  variant="outlined"
-              />
-            </Grid>
             <Grid
               item
               md={6}
@@ -236,7 +207,7 @@ const CourseDetails = props => {
             color="primary"
             variant="outlined"
             disabled={!formState.isValid}
-            onClick={saveCourseDetails}>
+            onClick={saveEvaluationDetails}>
             Salvar
           </Button>
         </CardActions>
@@ -245,8 +216,8 @@ const CourseDetails = props => {
   );
 };
 
-CourseDetails.propTypes = {
+EvaluationDetails.propTypes = {
   className: PropTypes.string,
 };
 
-export default CourseDetails;
+export default EvaluationDetails;

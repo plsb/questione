@@ -55,12 +55,6 @@ const EvaluationToolbar = props => {
         <span className={classes.spacer} />
         <Button className={classes.exportButton}
                 onClick={onClickRequestUsers}>Avaliações ativas</Button>
-        <Button
-            color="primary"
-            variant="contained"
-            onClick={onClickNewCourse}>
-          Nova Avaliação
-        </Button>
       </div>
       <div className={classes.row}>
         <SearchInput

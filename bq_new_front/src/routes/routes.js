@@ -23,12 +23,9 @@ import {
     AccountDetails,
     Dashboard,
     EvaluationTable,
-    EvaluationArchiveTable
+    EvaluationArchiveTable, EvaluationDetails,
+    SkillDetails, ObjectDetails, RequestUserDetails, CourseDetails
 } from '../pages';
-import SkillDetails from "../pages/Administrator/Skill/SkillDetails";
-import ObjectDetails from "../pages/Administrator/Object/ObjectDetails";
-import RequestUserDetails from "../pages/Administrator/RequestUser/RequestUserDetails";
-import CourseDetails from "../pages/Administrator/Course/CourseDetails";
 
 const Routes = () => (
   <BrowserRouter>
@@ -179,6 +176,18 @@ const Routes = () => (
             needToBeLogged={true}
             layout={MainLayout}
             path="/evaluations-archive"/>
+        <RouteWithLayout
+            component={EvaluationDetails}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/evaluation-details"/>
+        <RouteWithLayout
+            component={EvaluationDetails}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/evaluation-details/:codigoEvaluation"/>
       <RouteWithLayout
           path="*"
           layout={MinimalLayout}
