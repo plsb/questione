@@ -16,6 +16,7 @@ import moment from 'moment';
 import api from "../../../../services/api";
 import Swal from "sweetalert2";
 import {withRouter} from "react-router-dom";
+import {DialogQuestione} from "../../../../components";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -37,6 +38,7 @@ const useStyles = makeStyles(() => ({
 const EvaluationCard = props => {
   const { className, history, evaluation, ...rest } = props;
   const [anchorEl, setAnchorEl] = React.useState(null);
+    const [open, setOpen] = React.useState(false);
 
   const classes = useStyles();
 
@@ -68,7 +70,7 @@ const EvaluationCard = props => {
       setAnchorEl(null);
   };
 
-  const edit = () => {
+  const onEdit = () => {
       history.push('/evaluation-details/'+evaluation.id);
   }
 
@@ -111,6 +113,32 @@ const EvaluationCard = props => {
       }
   }
 
+    const onClickOpenDialog = () => {
+        setOpen(true);
+    }
+
+    const onClickCloseDialog = () => {
+        setOpen(false);
+    }
+
+    async function onDelete(){
+        try {
+            let url = 'evaluation/'+evaluation.id;
+            const response = await api.delete(url);
+            if (response.status === 202) {
+                if(response.data.message){
+                    loadAlert('error', response.data.message);
+                }
+            } else {
+                loadAlert('success', 'Avaliação excluída.');
+                window.location.reload();
+            }
+        } catch (error) {
+            loadAlert('error', 'Erro de conexão.');
+        }
+        setOpen(false);
+    }
+
   return (
     <Card
       {...rest}
@@ -152,7 +180,7 @@ const EvaluationCard = props => {
               {'Data de criação da avaliação: '+ moment(evaluation.created_at).format('DD/MM/YYYY')}
           </Typography>
           { evaluation.status == 2 ?
-              <Chip label="Arquivada" className={clsx(classes.chip, className)}/> : null}
+              <Chip label="Arquivada" className={clsx(classes.chip, className)} size="small"/> : null}
       </CardContent>
         <Menu
             id="simple-menu"
@@ -161,10 +189,17 @@ const EvaluationCard = props => {
             open={Boolean(anchorEl)}
             onClose={handleClose}>
             { evaluation.status == 1 ? <MenuItem onClick={handleClose}>Aplicações</MenuItem> : null}
-            { evaluation.status == 1 ? <MenuItem onClick={edit}>Editar</MenuItem> : null}
+            { evaluation.status == 1 ? <MenuItem onClick={onEdit}>Editar</MenuItem> : null}
             { evaluation.status == 1 ? <MenuItem onClick={() => changeStatus(2) }>Arquivar</MenuItem> : null}
             { evaluation.status == 2 ? <MenuItem onClick={() => changeStatus(1) }>Ativar</MenuItem> : null}
+            { evaluation.status == 2 ? <MenuItem onClick={onClickOpenDialog}>Deletar</MenuItem> : null}
         </Menu>
+        <DialogQuestione handleClose={onClickCloseDialog}
+                         open={open}
+                         onClickAgree={onDelete}
+                         onClickDisagree={onClickCloseDialog}
+                         mesage={'Deseja excluir a avaliação selecionada?'}
+                         title={'Excluir Avaliação'}/>
     </Card>
   );
 };

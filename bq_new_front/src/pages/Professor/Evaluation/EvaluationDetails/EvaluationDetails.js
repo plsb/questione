@@ -10,12 +10,15 @@ import {
   Divider,
   Grid,
   Button,
-  TextField, IconButton
+  TextField, IconButton, TableBody, Table, TableCell, TableRow, TableHead, Fab, Tooltip,
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import Swal from "sweetalert2";
 import validate from "validate.js";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import AddIcon from '@material-ui/icons/Add';
+import EvaluationCard from "../EvaluationCard/EvaluationCard";
+import QuestionCard from "../QuestionCard";
 
 const schema = {
   description: {
@@ -29,7 +32,14 @@ const schema = {
 };
 
 const useStyles = makeStyles(() => ({
-  root: {}
+  root: {},
+  headTable: {
+    fontWeight: "bold"
+  },
+  fab:{
+    backgroundColor: '#009688',
+    color: '#e0f2f1',
+  },
 }));
 
 const EvaluationDetails = props => {
@@ -37,6 +47,8 @@ const EvaluationDetails = props => {
   const { codigoEvaluation } = props.match.params;
 
   const classes = useStyles();
+
+  const [questions, setQuestions] = useState([]);
 
   const [formState, setFormState] = useState({
     isValid: false,
@@ -110,6 +122,7 @@ const EvaluationDetails = props => {
       } else {
         setFormState(formState => ({
           values: {
+            'questions': response.data[0].questions,
             'description': response.data[0].description,
             'id': response.data[0].id
           },
@@ -117,7 +130,8 @@ const EvaluationDetails = props => {
             ...formState.touched,
           }
         }));
-        console.log(formState.values);
+        setQuestions(response.data[0].questions);
+        console.log(response.data[0].questions);
       }
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
@@ -133,13 +147,14 @@ const EvaluationDetails = props => {
 
   useEffect(() => {
     const errors = validate(formState.values, schema);
+    console.log(formState.values.questions);
 
     setFormState(formState => ({
       ...formState,
       isValid: (errors || formState.values.course==0) ? false : true,
       errors: errors || {}
     }));
-  }, [formState.values]);
+  }, [formState.values, questions]);
 
   const handleChange = event => {
     setFormState({
@@ -180,10 +195,10 @@ const EvaluationDetails = props => {
         <CardContent>
           <Grid
             container
-            spacing={3}>
+            spacing={1}>
             <Grid
               item
-              md={6}
+              md={12}
               xs={12}>
               <TextField
                 fullWidth
@@ -200,6 +215,40 @@ const EvaluationDetails = props => {
               />
             </Grid>
           </Grid>
+          { codigoEvaluation ?
+          <Grid
+              container
+              spacing={1}>
+            <Grid
+                item
+                md={12}
+                xs={12}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell className={classes.headTable}>Questões da avaliação</TableCell>
+                    <TableCell>
+                      {/*<Tooltip title="Adicionar Questão">
+                        <Fab className={clsx(classes.fab, className)}
+                             aria-label="add">
+                          <AddIcon />
+                        </Fab>
+                      </Tooltip>*/}
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {questions.map(question => (
+                      <QuestionCard
+                          question={question}
+                          id_evaluation={codigoEvaluation}/>
+                  ))}
+                </TableBody>
+              </Table>
+            </Grid>
+          </Grid>
+              : null
+          }
         </CardContent>
         <Divider />
         <CardActions>

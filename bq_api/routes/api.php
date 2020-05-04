@@ -92,8 +92,10 @@ Route::group(['prefix' => 'evaluation'], function (){
     Route::post('/duplicate/{evaluation}', 'Professor\EvaluationController@duplicate')->name('evaluation.duplicate');
     Route::put('/{evaluation}', 'Professor\EvaluationController@update')->name('evaluation.update');
     Route::put('/change-status/{evaluation}', 'Professor\EvaluationController@changeStatus')->name('evaluation.changeStatus');
+    Route::delete('/{evaluation}', 'Professor\EvaluationController@destroy')->name('evaluation.destroy');
+    //questões
     Route::post('/addquestion/', 'Professor\EvaluationHasQuestionsController@addQuestion')->name('evaluation.addQuestion');
-    Route::delete('/deletequestion/', 'Professor\EvaluationHasQuestionsController@deleteQuestion')->name('evaluation.deleteQuestion');
+    Route::delete('/deletequestion/{question}', 'Professor\EvaluationHasQuestionsController@deleteQuestion')->name('evaluation.deleteQuestion');
 });
 
 

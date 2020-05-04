@@ -5,9 +5,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Divider, Drawer } from '@material-ui/core';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import PeopleIcon from '@material-ui/icons/People';
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import EmojiObjects from '@material-ui/icons/EmojiObjects';
-import Note from '@material-ui/icons/Note';
+import { Note, Ballot, EmojiObjects, AccountBox } from '@material-ui/icons';
 
 import { Profile, SidebarNavAdm } from './components';
 
@@ -63,7 +61,7 @@ const Sidebar = props => {
     {
       title: 'Usuários',
       href: '/users',
-      icon: <AccountBoxIcon />
+      icon: <AccountBox />
     },
   ];
 
@@ -76,7 +74,7 @@ const Sidebar = props => {
     {
       title: 'Avaliações',
       href: '/evaluations',
-      icon: <PeopleIcon />
+      icon: <Ballot />
     }
   ];
 

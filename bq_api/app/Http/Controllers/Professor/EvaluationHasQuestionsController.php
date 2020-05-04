@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Professor;
 
 use App\Course;
 use App\Evaluation;
+use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
 use App\Question;
 use Illuminate\Http\Request;
@@ -83,47 +84,46 @@ class EvaluationHasQuestionsController extends Controller
 
     }
 
-    public function deleteQuestion(Request $request){
+    public function deleteQuestion(Request $request, $id){
         //falta verificar se a avaliação não foi aplicada, se já tiver sido, ela não pode deletar itens
         //return response()->json($request);
-        $validation = Validator::make($request->all(),$this->rules, $this->messages);
 
-        if($validation->fails()){
-            return $validation->errors()->toJson();
-        }
-
-        $question = Question::find($request->fk_question_id);
+        $question = Question::find($id);
         if(!$question){
             return response()->json([
                 'message' => 'Operação não permitida. A questão não foi encontrada.'
-            ], 203);
+            ], 202);
         }
 
         $evaluation = Evaluation::find($request->fk_evaluation_id);
         //return response()->json($evaluation);
+        //dd($evaluation);
 
         if(!$evaluation){
             return response()->json([
                 'message' => 'Operação não permitida. A avaliação não foi encontrada.'
-            ], 203);
+            ], 202);
+        }
+
+        $application = EvaluationApplication::where('fk_evaluation_id', '=', $evaluation->id)->get();
+        if(sizeof($application)>0) {
+            return response()->json(['message' => 'Operação não permitida. Existem aplicações para esta avaliação.'], 202);
         }
 
         $user = auth('api')->user();
         if($user->id != $evaluation->fk_user_id){
             return response()->json([
                 'message' => 'Operação não permitida. A avaliação pertence a um outro usuário.'
-            ], 203);
+            ], 202);
         }
 
-        $verifyQuestionStored = EvaluationHasQuestions::where('fk_question_id', "=", $request->fk_question_id)
-            ->where('fk_evaluation_id', "=", $request->fk_evaluation_id)->get();
-        foreach ($verifyQuestionStored as $value) {
-            $value->delete();
-        }
+        $question_evaluation = EvaluationHasQuestions::where('fk_question_id', "=", $question->id)
+            ->where('fk_evaluation_id', "=", $evaluation->id)->first();
+        $question_evaluation->delete();
 
         return response()->json([
             'message' => 'Questão excluída!'
-        ], 202);
+        ], 200);
     }
 
 

@@ -51,7 +51,7 @@ const EvaluationToolbar = props => {
       {...rest}
       className={clsx(classes.root, className)}>
       <div className={classes.row}>
-        <Typography variant="h3" className={classes.title}>{'Lista de avaliações'}</Typography>
+        <Typography variant="h3" className={classes.title}>{'Avaliações'}</Typography>
         <span className={classes.spacer} />
         <Button className={classes.exportButton}
                 onClick={onClickRequestUsers}>Avaliações arquivadas</Button>

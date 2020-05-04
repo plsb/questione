@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Professor;
 
 use App\Evaluation;
+use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -153,7 +154,28 @@ class EvaluationController extends Controller
 
     public function destroy($id)
     {
-        //verficar a necessidade
+        $user = auth('api')->user();
+        $evaluation = Evaluation::find($id);
+
+        $this->verifyRecord($evaluation);
+
+        if($evaluation->fk_user_id != $user->id){
+            return response()->json([
+                'message' => 'Operação não pode ser realizada. A avaliação pertence a outro usuário.'
+            ], 202);
+        }
+
+        $application = EvaluationApplication::where('fk_evaluation_id', '=', $id)->get();
+        if(sizeof($application)>0) {
+            return response()->json(['message' => 'Operação não realizada. Existem aplicações para esta avaliação.'], 202);
+        }
+
+        $evaluation->delete();
+
+        return response()->json([
+            'message' => 'Avaliação excluída.',
+            $evaluation
+        ], 200);
     }
 
     public function changeStatus($id, Request $request)

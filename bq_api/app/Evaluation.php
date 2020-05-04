@@ -15,12 +15,17 @@ class Evaluation extends Model
                     'fk_evaluation_id', 'fk_question_id')
         	->as('questions')
             ->withPivot('id')
+            ->with('course')
+            ->with('questionItems')
+            ->with('skill')
+            ->with('profile')
+            ->with('knowledgeObjects')
             ->withTimestamps();
     }
 
-    /*public function aplicacoes(){
-    	return $this->hasMany(AplicacaoAvaliacao::class, 'fk_avaliacao_id');
-    }*/
+    public function applications(){
+    	return $this->hasMany(EvaluationApplication::class, 'fk_evaluation_id');
+    }
 
     public function user(){
         return $this->belongsTo(User::class, 'fk_user_id');

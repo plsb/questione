@@ -13,7 +13,7 @@ class CreateAplicacaoAvaliacaosTable extends Migration
      */
     public function up()
     {
-        Schema::create('aplicacao_avaliacao', function (Blueprint $table) {
+        Schema::create('evaluation_application', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('fk_avaliacao_id')->unsigned();
             $table->foreign('fk_avaliacao_id')->references('id')->on('avaliacoes')->onDelete('cascade');
