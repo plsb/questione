@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Course;
 use App\CourseProfessor;
+use App\Notifications\RequestCourseProfessorToAdmNotifications;
+use App\User;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -73,6 +75,17 @@ class UserCourseProfessorController extends Controller
         $course_professor->valid = 0;
         $course_professor->receipt = '';
         $course_professor->save();
+
+        //notifica por e-mail
+        $course = Course::where('id',$request->fk_course_id)->first();
+
+        $user_adm = User::find(2);
+        //$user_adm->email = 'pedro.barbosa@ifce.edu.br';
+
+        $description = $course->description;
+        $user_adm->notify(
+            new RequestCourseProfessorToAdmNotifications($user, $description)
+        );
 
         return response()->json([
             'message' => 'Solicitação cadastrada.',

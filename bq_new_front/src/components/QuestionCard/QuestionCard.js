@@ -13,14 +13,15 @@ import {
     Tooltip,
     Collapse,
     Paper,
-    Divider, Chip
+    Divider, Chip,
+    Switch
 } from '@material-ui/core';
-import { MoreVert, FavoriteRounded, ShareRounded, ExpandMoreRounded } from '@material-ui/icons';
+import {MoreVert, FavoriteRounded, PlaylistAdd, ExpandMoreRounded, Edit} from '@material-ui/icons';
 import Swal from "sweetalert2";
 import {withRouter} from "react-router-dom";
 import ReactHtmlParser from 'react-html-parser';
-import api from "../../../../services/api";
-import {DialogQuestione} from "../../../../components";
+import api from "../../services/api";
+import {DialogQuestione} from "../index";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -66,8 +67,9 @@ const QuestionCard = props => {
   const { className, history, question, id_evaluation, ...rest } = props;
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [expanded, setExpanded] = React.useState(false);
-    const [open, setOpen] = React.useState(false);
-
+    const [openDeleteQuestionEvaluation, setOpenDeleteQuestionEvaluation] = React.useState(false);
+    const [openDeleteQuestion, setOpenDeleteQuestion] = React.useState(false);
+    const [openEnableQuestion, setOpenEnableQuestion] = React.useState(false);
   const classes = useStyles();
 
     useEffect(() => {
@@ -106,21 +108,34 @@ const QuestionCard = props => {
         setAnchorEl(null);
     };
 
-    const onClickOpenDialog = () => {
-        setOpen(true);
+    const onClickOpenDialogQEvaluation = () => {
+        setOpenDeleteQuestionEvaluation(true);
     }
 
-    const onClickCloseDialog = () => {
-        setOpen(false);
+    const onClickCloseDialogQEvaluation = () => {
+        setOpenDeleteQuestionEvaluation(false);
     }
 
-    async function deleteQuestion() {
+    const onClickOpenDialogQuestion = () => {
+        setOpenDeleteQuestion(true);
+    }
+
+    const onClickCloseDialogQuestion = () => {
+        setOpenDeleteQuestion(false);
+    }
+
+    const onClickOpenDialogEnableQuestion = () => {
+        setOpenEnableQuestion(true);
+    }
+
+    const onClickCloseDialogEnableQuestion = () => {
+        setOpenEnableQuestion(false);
+    }
+
+    async function deleteQuestion(){
         try {
-            let url = 'evaluation/deletequestion/'+question.id+'+?fk_evaluation_id='+id_evaluation;
-            const fk_evaluation_id = id_evaluation;
-            const data = {
-                fk_evaluation_id
-            }
+            let url = 'question/'+question.id;
+
             console.log(url);
             const response = await api.delete(url);
             if (response.status === 202) {
@@ -134,7 +149,77 @@ const QuestionCard = props => {
         } catch (error) {
             loadAlert('error', 'Erro de conexão.');
         }
-        setOpen(false);
+        setOpenDeleteQuestionEvaluation(false);
+    }
+
+    async function deleteQuestionEvaluation() {
+        try {
+            let url = 'evaluation/deletequestion/'+question.id+'+?fk_evaluation_id='+id_evaluation;
+            const fk_evaluation_id = id_evaluation;
+            const data = {
+                fk_evaluation_id
+            }
+            console.log(url);
+            const response = await api.delete(url);
+            if (response.status === 202) {
+                if(response.data.message){
+                    loadAlert('error', response.data.message);
+                }
+            } else {
+                loadAlert('success', 'Questão excluída da avaliação.');
+                window.location.reload();
+            }
+        } catch (error) {
+            loadAlert('error', 'Erro de conexão.');
+        }
+        setOpenDeleteQuestionEvaluation(false);
+    }
+
+    const onEdit = () => {
+
+    }
+
+    const onApplyQuestionInEvaluation = () => {
+
+    }
+
+    async function handleChangeValidated() {
+        if(question.validated == 1){
+            loadAlert('error', 'Uma questão que já foi habilitada não pode ser desabilitada.');
+            return ;
+        }
+        try {
+            let url = 'question/validate/'+question.id;
+            const response = await api.put(url);
+            if (response.status === 202) {
+                if(response.data.message){
+                    loadAlert('error', response.data.message);
+                }
+            } else {
+                loadAlert('success', 'Questão habilitada.');
+                window.location.reload();
+            }
+        } catch (error) {
+            loadAlert('error', 'Erro de conexão.');
+        }
+        setOpenEnableQuestion(false);
+    }
+
+    async function duplicateQuestion() {
+        try {
+            let url = 'question/duplicate/'+question.id;
+            const response = await api.post(url);
+            if (response.status === 202) {
+                if(response.data.message){
+                    loadAlert('error', response.data.message);
+                }
+            } else {
+                loadAlert('success', 'Questão duplicada.');
+                window.location.reload();
+            }
+        } catch (error) {
+            loadAlert('error', 'Erro de conexão.');
+        }
     }
 
   return (
@@ -143,12 +228,40 @@ const QuestionCard = props => {
       className={classes.root}>
         <CardHeader
             action={
-                <Tooltip title="Opções">
-                    <IconButton aria-label="settings"
-                                onClick={handleClick}>
-                        <MoreVert />
-                    </IconButton>
-                </Tooltip>
+                <div>
+                    { !id_evaluation ?
+                    <Tooltip title="Aplicar questão em avaliaçãoo">
+                        <IconButton
+                            aria-label="copy"
+                            onClick={onEdit}>
+                            <PlaylistAdd />
+                        </IconButton>
+                    </Tooltip> : null }
+                    { question.validated == 0 && question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
+                    <Tooltip title="Habilite a questão para aplicações">
+                        <Switch
+                            checked={question.validated}
+                            onChange={onClickOpenDialogEnableQuestion}
+                            color="primary"
+                            name="checkedB"
+                            inputProps={{ 'aria-label': 'primary checkbox' }}
+                        />
+                    </Tooltip> : null }
+                    { question.validated == 0 && question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
+                        <Tooltip title="Editar Questão">
+                            <IconButton
+                                aria-label="copy"
+                                onClick={onApplyQuestionInEvaluation}>
+                                <Edit />
+                            </IconButton>
+                        </Tooltip> : null }
+                    <Tooltip title="Opções">
+                        <IconButton aria-label="settings"
+                                    onClick={handleClick}>
+                            <MoreVert />
+                        </IconButton>
+                    </Tooltip>
+                </div>
             }
             title={
                 question.id < 10 ? 'Questão - 00000' + question.id :
@@ -164,15 +277,24 @@ const QuestionCard = props => {
             { question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
                 <Chip label="Inserida por você" className={clsx(classes.chipGreen, className)} size="small"/> : null}
             { question.validated == 1 ?
-                <Chip label="Validada" className={clsx(classes.chipGreen, className)} size="small"/> : null}
+                <Chip label="Habilitada" className={clsx(classes.chipGreen, className)} size="small"/> : null}
             </div>
             <br />
+            { question.reference != "" && question.reference != null ?
+                <div>
+                    <Typography variant="button" color="textSecondary" component="p">
+                        Referência:
+                    </Typography>
+                    <div> { question.reference } </div>
+                    <br />
+                </div>
+                : null}
             { question.profile.length != 0 ?
             <div>
                 <Typography variant="button" color="textSecondary" component="p">
                 Perfil:
                 </Typography>
-                <div> { ReactHtmlParser (question.profile.description) } </div>
+                <div> { question.profile.description } </div>
                 <br />
             </div>
             : null}
@@ -181,7 +303,7 @@ const QuestionCard = props => {
                     <Typography variant="button" color="textSecondary" component="p">
                         Competência:
                     </Typography>
-                    <div> { ReactHtmlParser (question.skill.description) } </div>
+                    <div> { question.skill.description } </div>
                     <br />
                 </div>
                 : null}
@@ -242,14 +364,33 @@ const QuestionCard = props => {
             keepMounted
             open={Boolean(anchorEl)}
             onClose={handleClose}>
-            <MenuItem onClick={onClickOpenDialog}>Excluir</MenuItem>
+            { !id_evaluation ? <MenuItem onClick={duplicateQuestion}>Duplicar</MenuItem> : null }
+            {/* exclui de questão de avaliação */}
+            { id_evaluation ? <MenuItem onClick={onClickOpenDialogQEvaluation}>Excluir da Avaliação</MenuItem> : null }
+            {/* exclui de questão */}
+            { !id_evaluation && question.validated == 0
+                    && question.fk_user_id == localStorage.getItem("@Questione-id-user")
+                ? <MenuItem onClick={onClickOpenDialogQuestion}>Excluir</MenuItem> : null }
         </Menu>
-        <DialogQuestione handleClose={onClickCloseDialog}
-                         open={open}
-                         onClickAgree={deleteQuestion}
-                         onClickDisagree={onClickCloseDialog}
+        <DialogQuestione handleClose={onClickCloseDialogQEvaluation}
+                         open={openDeleteQuestionEvaluation}
+                         onClickAgree={deleteQuestionEvaluation}
+                         onClickDisagree={onClickCloseDialogQEvaluation}
                          mesage={'Deseja excluir a questão selecionada da avaliação?'}
+                         title={'Excluir Questão da Avaliaçao'}/>
+        <DialogQuestione handleClose={onClickCloseDialogQuestion}
+                         open={openDeleteQuestion}
+                         onClickAgree={deleteQuestion}
+                         onClickDisagree={onClickCloseDialogQuestion}
+                         mesage={'Deseja excluir a questão selecionada?'}
                          title={'Excluir Questão'}/>
+        <DialogQuestione handleClose={onClickCloseDialogEnableQuestion}
+                         open={openEnableQuestion}
+                         onClickAgree={handleChangeValidated}
+                         onClickDisagree={onClickCloseDialogEnableQuestion}
+                         mesage={'Depois de habilitada, a questão não poderá ser excluída nem editada. Deseja habilitar?'}
+                         title={'Habilitar Questão'}/>
+
     </Card>
   );
 };

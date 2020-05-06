@@ -6,23 +6,21 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-class RequestCourseProfessorNotifications extends Notification implements ShouldQueue
+class RequestCourseProfessorToAdmNotifications extends Notification implements ShouldQueue
 {
     use Queueable;
     protected $user;
     protected $course;
-    protected $situaton;
 
     /**
     * Create a new notification instance.
     *
     * @return void
     */
-    public function __construct($user, $course, $situaton)
+    public function __construct($userRequester, $course)
     {
-        $this->user = $user;
+        $this->user = $userRequester;
         $this->course = $course;
-        $this->situaton = $situaton;
     }
     /**
     * Get the notification's delivery channels.
@@ -45,10 +43,9 @@ class RequestCourseProfessorNotifications extends Notification implements Should
         $url = "http://localhost:3000/sign-in/";
 
         return (new MailMessage)
-            ->subject('[QUESTIONE] Solicitação de acesso ao curso')
-            ->greeting('Olá, '.$this->user->name.'.')
-            ->line('Você solicitou permissão para produzir questões para ao curso de '.$this->course.'.')
-            ->line('Já temos uma decisão. Situação '.$this->situaton. '.')
+            ->subject('[QUESTIONE] Solicitação de usuário')
+            ->greeting('Olá, ADM. O usuário '.$this->user->name.' solicitou acesso a um curso.')
+            ->line('O curso solicitado foi '.$this->course.'.')
             ->action('Acesse o Questione', url($url));;
 
     }

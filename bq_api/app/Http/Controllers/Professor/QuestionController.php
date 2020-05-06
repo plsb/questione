@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Professor;
 
 use App\Course;
+use App\EvaluationHasQuestions;
+use App\KnowledgeObject;
 use App\Profile;
 use App\Question;
 use App\QuestionHasKnowledgeObject;
@@ -40,7 +42,7 @@ class QuestionController extends Controller
         $user = auth('api')->user();
 
         $questions = Question::where('fk_user_id', '=', $user->id)
-            ->orderBy('id')
+            ->orderBy('id', 'desc')
             ->with('course')
             ->with('profile')
             ->with('skill')
@@ -259,12 +261,11 @@ class QuestionController extends Controller
 
         $knowledge_objects = QuestionHasKnowledgeObject::where('fk_question_id', '=', $id)->get();
 
-        if(sizeof($knowledge_objects)==0){
+        /*if(sizeof($knowledge_objects)==0){
             return response()->json([
                 'message' => 'Operação não pode ser executada. A questão não possui Objetos de Conhecimento cadastrados.'
             ], 202);
-        }
-
+        }*/
 
         $count_items_stored_correct = QuestionItem::where('fk_question_id', '=', $question->id)
                                 ->where('correct_item', '=', '1')->count();
@@ -283,6 +284,51 @@ class QuestionController extends Controller
         return response()->json([
             'message' => 'Questão validada!'
         ], 200);
+    }
+
+    public function duplicate($id){
+        $user = auth('api')->user();
+        $question = Question::find($id);
+
+        $this->verifyRecord($question);
+
+        $questions_itens = QuestionItem::where('fk_question_id',
+            $question->id)->get();
+
+        $objects = QuestionHasKnowledgeObject::where('fk_question_id', $question->id)->get();
+        $new_question = new Question();
+        $new_question->base_text = $question->base_text;
+        $new_question->stem = $question->stem;
+        $new_question->validated = 0;
+        $new_question->reference = $question->reference;
+        $new_question->fk_profile_id = $question->fk_profile_id;
+        $new_question->fk_skill_id = $question->fk_skill_id;
+        $new_question->fk_user_id = $user->id;
+        $new_question->fk_course_id = $question->fk_course_id;
+        $new_question->save();
+
+        //duplica alternativas da questão
+        foreach($questions_itens as $item){
+            $new_question_item = new QuestionItem();
+            $new_question_item->description = $item->description;
+            $new_question_item->correct_item = $item->correct_item;
+            $new_question_item->fk_question_id = $new_question->id;
+            $new_question_item->save();
+        }
+
+        //duplica objetos de conhecimento da avaliação
+        foreach($objects as $object){
+            $new_object = new QuestionHasKnowledgeObject();
+            $new_object->fk_question_id = $new_question->id;
+            $new_object->fk_knowledge_object = $object->fk_knowledge_object;
+            $new_object->save();
+        }
+
+        return response()->json([
+            'message' => 'Questão cadastrada (duplicada).',
+            $new_question
+        ], 200);
+
     }
 
     public function verifyRecord($record){

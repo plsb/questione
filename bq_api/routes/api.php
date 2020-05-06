@@ -78,6 +78,7 @@ Route::group(['prefix' => 'question'], function (){
     Route::get('/show/{question}', 'Professor\QuestionController@show')->name('question.show');
     Route::delete('/{question}', 'Professor\QuestionController@destroy')->name('question.destroy');
     Route::put('/validate/{question}', 'Professor\QuestionController@validateQuestion')->name('question.validateQuestion');
+    Route::post('/duplicate/{question}', 'Professor\QuestionController@duplicate')->name('question.duplicate');
     Route::post('/addobject/', 'Professor\QuestionHasKnowledgeObjectController@addKnowledgeObject')->name('question.addKnowledgeObject');
     Route::put('/deleteobject/', 'Professor\QuestionHasKnowledgeObjectController@deleteKnowledgeObject')->name('question.deleteKnowledgeObject');
 });

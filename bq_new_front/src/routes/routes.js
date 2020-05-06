@@ -28,6 +28,7 @@ import {
     UserRequestCourse
 } from '../pages';
 import UserRequestCourseDetails from "../pages/UserRequestCourse/UserRequestCourseDetails";
+import QuestionTable from "../pages/Professor/Question/QuestionTable";
 
 const Routes = () => (
   <BrowserRouter>
@@ -202,6 +203,12 @@ const Routes = () => (
             layout={MainLayout}
             needToBeLogged={true}
             path="/evaluation-details/:codigoEvaluation"/>
+        <RouteWithLayout
+            component={QuestionTable}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/questions"/>
       <RouteWithLayout
           path="*"
           layout={MinimalLayout}

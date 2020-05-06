@@ -235,7 +235,7 @@ class EvaluationController extends Controller
         }
 
         return response()->json([
-            'message' => 'Avaliação cadastrada(duplciada).',
+            'message' => 'Avaliação cadastrada (duplicada).',
             $evaluation
         ], 200);
     }
