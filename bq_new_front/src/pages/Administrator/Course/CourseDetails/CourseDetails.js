@@ -10,7 +10,7 @@ import {
   Divider,
   Grid,
   Button,
-  TextField, IconButton
+  TextField, IconButton, Tooltip
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import Swal from "sweetalert2";
@@ -232,13 +232,15 @@ const CourseDetails = props => {
         </CardContent>
         <Divider />
         <CardActions>
-          <Button
-            color="primary"
-            variant="outlined"
-            disabled={!formState.isValid}
-            onClick={saveCourseDetails}>
-            Salvar
-          </Button>
+          <Tooltip title="Clique aqui para solicitar acesso para cursos" aria-label="add">
+            <Button
+              color="primary"
+              variant="outlined"
+              disabled={!formState.isValid}
+              onClick={saveCourseDetails}>
+              Salvar
+            </Button>
+          </Tooltip>
         </CardActions>
       </form>
     </Card>

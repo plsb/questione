@@ -29,9 +29,13 @@ Route::group(['prefix' => 'user'], function (){
 });
 
 Route::group(['prefix' => 'course-professor'], function (){
+    //rotas ADM
     Route::get('/', 'Adm\CourseProfessorController@index')->name('courseProfessor.index');
     Route::get('/show/{course}', 'Adm\CourseProfessorController@show')->name('courseProfessor.show');
     Route::put('/{codigo}', 'Adm\CourseProfessorController@update')->name('courseProfessor.update');
+    //rotas para usuário comum
+    Route::get('/user', 'UserCourseProfessorController@index')->name('userCourseProfessor.index');
+    Route::post('/', 'UserCourseProfessorController@store')->name('userCourseProfessor.store');
 });
 
 Route::group(['prefix' => 'course'], function (){
@@ -97,7 +101,6 @@ Route::group(['prefix' => 'evaluation'], function (){
     Route::post('/addquestion/', 'Professor\EvaluationHasQuestionsController@addQuestion')->name('evaluation.addQuestion');
     Route::delete('/deletequestion/{question}', 'Professor\EvaluationHasQuestionsController@deleteQuestion')->name('evaluation.deleteQuestion');
 });
-
 
 
 

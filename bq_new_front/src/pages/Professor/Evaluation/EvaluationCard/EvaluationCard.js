@@ -11,7 +11,7 @@ import {
     MenuItem,
     Menu, Tooltip, Chip, colors
 } from '@material-ui/core';
-import { MoreVert, FileCopyOutlined } from '@material-ui/icons';
+import { MoreVert, FileCopyOutlined, Edit } from '@material-ui/icons';
 import moment from 'moment';
 import api from "../../../../services/api";
 import Swal from "sweetalert2";
@@ -147,14 +147,15 @@ const EvaluationCard = props => {
               className={classes.head}
               action={
                   <div>
-                      <Tooltip title="Duplicar Avaliação">
+                      { evaluation.status == 1 ?
+                      <Tooltip title="Editar Avaliação">
                           <IconButton
                               aria-label="copy"
-                              onClick={duplicate}>
-                              <FileCopyOutlined />
+                              onClick={onEdit}>
+                              <Edit />
                           </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Opções da Avaliação">
+                      </Tooltip> : null }
+                          <Tooltip title="Opções da Avaliação">
                           <IconButton
                                 aria-label="settings"
                                 onClick={handleClick}>
@@ -189,7 +190,7 @@ const EvaluationCard = props => {
             open={Boolean(anchorEl)}
             onClose={handleClose}>
             { evaluation.status == 1 ? <MenuItem onClick={handleClose}>Aplicações</MenuItem> : null}
-            { evaluation.status == 1 ? <MenuItem onClick={onEdit}>Editar</MenuItem> : null}
+            <MenuItem onClick={duplicate}>Duplicar</MenuItem>
             { evaluation.status == 1 ? <MenuItem onClick={() => changeStatus(2) }>Arquivar</MenuItem> : null}
             { evaluation.status == 2 ? <MenuItem onClick={() => changeStatus(1) }>Ativar</MenuItem> : null}
             { evaluation.status == 2 ? <MenuItem onClick={onClickOpenDialog}>Deletar</MenuItem> : null}

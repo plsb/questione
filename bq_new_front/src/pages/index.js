@@ -1,5 +1,6 @@
 export { default as PageNotFound } from './PageNotFound';
 export { default as AccountDetails } from './AccountDetails';
+export { default as UserRequestCourse } from './UserRequestCourse';
 export { default as Dashboard } from './Dashboard';
 export { default as SignIn } from './SignIn';
 export { default as SignUp } from './SignUp';

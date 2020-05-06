@@ -11,7 +11,7 @@ import {
   Grid,
   Button,
   TextField,
-  IconButton
+  IconButton, Typography
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import api from "../../services/api";
@@ -19,6 +19,7 @@ import Swal from "sweetalert2";
 import validate from "validate.js";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import {login, updateNameUser} from "../../services/auth";
+import QuestionAnswer from "@material-ui/icons/QuestionAnswer";
 
 const schema = {
   name: {
@@ -213,35 +214,53 @@ const AccountDetails = props => {
           </Grid>
         </CardContent>
         <CardContent>
-          <Grid
-              item
-              md={6}
-              xs={12}>
-            <TextField
-                fullWidth
-                error={hasError('password')}
-                helperText={
-                  hasError('password') ? formState.errors.password[0] : null
-                }
-                label="Nova Senha"
-                margin="dense"
-                name="password"
-                onChange={handleChange}
-                value={formState.values.password || ''}
-                variant="outlined"
-                type="password"/>
-          </Grid>
+            <Grid
+                item
+                md={6}
+                xs={6}>
+              <TextField
+                  fullWidth
+                  error={hasError('password')}
+                  helperText={
+                    hasError('password') ? formState.errors.password[0] : null
+                  }
+                  label="Nova Senha"
+                  margin="dense"
+                  name="password"
+                  onChange={handleChange}
+                  value={formState.values.password || ''}
+                  variant="outlined"
+                  type="password"/>
+            </Grid>
+
         </CardContent>
 
         <Divider />
         <CardActions>
-          <Button
-            color="primary"
-            variant="outlined"
-            onClick={saveDetails}
-            disabled={!formState.isValid}>
-            Salvar
-          </Button>
+          <Grid
+              container
+              justify="space-between">
+            <Grid
+                className={classes.statsItem}
+                item>
+              <Button
+                  color="primary"
+                  variant="outlined"
+                  onClick={saveDetails}
+                  disabled={!formState.isValid}>
+                Salvar
+              </Button>
+            </Grid>
+            <Grid
+                className={classes.statsItem}
+                item>
+              <Button color="primary" href="/requests">
+                Solicitar Acesso para cursos
+              </Button>
+            </Grid>
+
+          </Grid>
+
         </CardActions>
       </form>
     </Card>

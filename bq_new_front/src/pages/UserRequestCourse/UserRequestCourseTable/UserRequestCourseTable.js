@@ -15,13 +15,12 @@ import {
   Typography,
   TablePagination, Button, Tooltip
 } from '@material-ui/core';
-import api from '../../../../services/api';
-import { StatusBullet } from '../../../../components';
+import moment from 'moment';
+import api from '../../../services/api';
+import { StatusBullet } from '../../../components';
 import Swal from "sweetalert2";
-import RequestUsersToolbar from "./components/RequestUsersToolbar";
-import Edit from "@material-ui/icons/Edit";
+import RequestUsersToolbar from "./components/UserRequestCourseToolbar";
 import PropTypes from "prop-types";
-import moment from "moment";
 
 const statusColors = {
   '1': 'success',
@@ -76,7 +75,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const RequestUsersTable = props => {
+const UserRequestCourseTable = props => {
   const { className, history } = props;
 
   const [couserProfessor, setCourseProfessor] = useState([]);
@@ -110,7 +109,7 @@ const RequestUsersTable = props => {
 
   async function loadCourseProfessor(page, situation){
     try {
-      let url = 'course-professor?page='+page+'&valid='+situation;
+      let url = 'course-professor/user?page='+page;
       const response = await api.get(url);
       setTotal(response.data.total);
       setCourseProfessor(response.data.data);
@@ -161,9 +160,7 @@ const RequestUsersTable = props => {
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell className={classes.headTable}>Nome</TableCell>
-                      <TableCell className={classes.headTable}>Email</TableCell>
-                      <TableCell className={classes.headTable}>Curso Solicitado</TableCell>
+                      <TableCell className={classes.headTable}>Curso</TableCell>
                       <TableCell className={classes.headTable}>Dt. Solicitação</TableCell>
                       <TableCell className={classes.headTable}>Situação</TableCell>
                     </TableRow>
@@ -174,8 +171,6 @@ const RequestUsersTable = props => {
                             className={classes.tableRow}
                             hover
                             key={cp.id}>
-                          <TableCell>{cp.user.name}</TableCell>
-                          <TableCell>{cp.user.email}</TableCell>
                           <TableCell>{cp.course.description}</TableCell>
                           <TableCell>{moment(cp.created_at).format('DD/MM/YYYY')}</TableCell>
                           <TableCell className={classes.row}>
@@ -188,13 +183,6 @@ const RequestUsersTable = props => {
                               {cp.valid == 1 ? 'Aceito' :
                                   cp.valid == -1 ? 'Recusado' : 'Aguardando'}
                             </div>
-                            <Tooltip title="Editar">
-                              <Button
-                                  className={classes.buttonEdit}
-                                  onClick={() => onClickEdit(cp.id)}>
-                                <Edit fontSize="medium"/>
-                              </Button>
-                            </Tooltip>
                           </TableCell>
 
                         </TableRow>
@@ -221,8 +209,8 @@ const RequestUsersTable = props => {
   );
 };
 
-RequestUsersTable.propTypes = {
+UserRequestCourseTable.propTypes = {
   history: PropTypes.object
 };
 
-export default RequestUsersTable;
+export default UserRequestCourseTable;

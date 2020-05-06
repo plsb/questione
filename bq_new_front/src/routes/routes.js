@@ -24,8 +24,10 @@ import {
     Dashboard,
     EvaluationTable,
     EvaluationArchiveTable, EvaluationDetails,
-    SkillDetails, ObjectDetails, RequestUserDetails, CourseDetails
+    SkillDetails, ObjectDetails, RequestUserDetails, CourseDetails,
+    UserRequestCourse
 } from '../pages';
+import UserRequestCourseDetails from "../pages/UserRequestCourse/UserRequestCourseDetails";
 
 const Routes = () => (
   <BrowserRouter>
@@ -72,6 +74,18 @@ const Routes = () => (
             layout={MainLayout}
             needToBeLogged={true}
             path="/account"/>
+        <RouteWithLayout
+            component={UserRequestCourse}
+            exact
+            needToBeLogged={true}
+            layout={MainLayout}
+            path="/requests"/>
+        <RouteWithLayout
+            component={UserRequestCourseDetails}
+            exact
+            needToBeLogged={true}
+            layout={MainLayout}
+            path="/new-request"/>
         {/*ROTAS DO ADMINISTRADOR*/}
         <RouteWithLayout
             component={CourseTable}
