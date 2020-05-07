@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Professor;
 
 use App\Course;
+use App\CourseProfessor;
 use App\EvaluationHasQuestions;
 use App\KnowledgeObject;
 use App\Profile;
@@ -36,12 +37,60 @@ class QuestionController extends Controller
 
     ];
 
-    public function index()
+    public function index(Request $request)
     {
         //retorna todas as questões do usuário ativo
         $user = auth('api')->user();
 
-        $questions = Question::where('fk_user_id', '=', $user->id)
+        $course = $request->fk_course_id;
+        /*
+         * Variável opção
+            S - do usuário
+            T - de todos os usuários
+        */
+        $opcao = $request->user;
+        $course = $request->fk_course_id;
+        $object = $request->fk_object_id;
+        //dd($course);
+        $questions = Question::when($opcao == "S", function ($query, $opcao) {
+                //pega todas as questões do usuário logado
+                $user = auth('api')->user();
+                return $query->where('fk_user_id', '=', $user->id);
+            })
+            ->when($opcao == "T", function ($query) {
+                //pega questões validadas de todos os usuário
+                return $query->where('validated', '=', 1);
+            })
+            ->when($course > 0, function ($query) use ($course){
+                //pega questão de um curso específicp
+                //dd($course);
+                return $query->where('fk_course_id', '=', $course);
+
+            })
+            ->when($course == 0 || $course == null, function ($query) {
+                //pega questões de todos os cursos que o usuário tem permissão
+                $user = auth('api')->user();
+                $courses_user = CourseProfessor::where('fk_user_id', $user->id)
+                    ->where('valid', 1)->get();
+                $arr = array();
+                foreach ($courses_user as $courses_u){
+                    //dd($enaq);
+                    $arr[] = $courses_u->fk_course_id;
+                }
+                return $query->whereIn('fk_course_id', $arr);
+            })
+            ->when($object > 0, function ($query) use ($object) {
+                //pega questões de todos os cursos
+                $user = auth('api')->user();
+                $questions_objects = QuestionHasKnowledgeObject::where('fk_knowledge_object', $object)
+                    ->get();
+                $arr = array();
+                foreach ($questions_objects as $object){
+                    //dd($enaq);
+                    $arr[] = $object->fk_question_id;
+                }
+                return $query->whereIn('id', $arr);
+            })
             ->orderBy('id', 'desc')
             ->with('course')
             ->with('profile')
@@ -49,7 +98,9 @@ class QuestionController extends Controller
             ->with('knowledgeObjects')
             ->with('user')
             ->with('questionItems')
-            ->paginate(10);
+            ->paginate(5);
+
+        //dd($questions);
         return response()->json($questions, 200);
     }
 

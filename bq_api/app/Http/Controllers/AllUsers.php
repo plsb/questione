@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Course;
+use App\CourseProfessor;
+use App\KnowledgeObject;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -18,6 +20,20 @@ class AllUsers extends Controller
         $courses = Course::orderBy('description')->get();
 
         return response()->json($courses, 200);
+    }
+
+    public function knowledgeObjects(Request $request)
+    {
+        if(!$request->fk_course_id){
+            return response()->json([
+                'message' => 'Informe o curso.'
+            ], 202);
+        }
+        $objects = KnowledgeObject::where('fk_course_id', $request->fk_course_id)
+            ->orderBy('description')
+            ->get();
+
+        return response()->json($objects, 200);
     }
 
     private $rulesUser = [
@@ -56,5 +72,19 @@ class AllUsers extends Controller
             'message' => 'Usuário atualizado.',
             $user
         ], 200);
+    }
+
+    public function coursesUser(){
+        $user = auth('api')->user();
+        $courses_user = CourseProfessor::where('fk_user_id', $user->id)
+            ->where('valid', 1)->get();
+        $arr = array();
+        foreach ($courses_user as $courses_u){
+            //dd($enaq);
+            $arr[] = $courses_u->fk_course_id;
+        }
+        //dd($courses_user);
+        $courses = Course::whereIn('id', $arr)->get();
+        return response()->json($courses, 202);
     }
 }

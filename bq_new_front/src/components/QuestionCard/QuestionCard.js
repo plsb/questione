@@ -13,8 +13,12 @@ import {
     Tooltip,
     Collapse,
     Paper,
-    Divider, Chip,
-    Switch
+    Chip,
+    Switch, ListItem, ListItemText,
+    ListItemAvatar,
+    List,
+    DialogTitle,
+    Dialog, Avatar, AppBar, Toolbar
 } from '@material-ui/core';
 import {MoreVert, FavoriteRounded, PlaylistAdd, ExpandMoreRounded, Edit} from '@material-ui/icons';
 import Swal from "sweetalert2";
@@ -22,6 +26,9 @@ import {withRouter} from "react-router-dom";
 import ReactHtmlParser from 'react-html-parser';
 import api from "../../services/api";
 import {DialogQuestione} from "../index";
+import AddIcon from '@material-ui/icons/Add';
+import moment from "moment";
+import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -60,7 +67,16 @@ const useStyles = makeStyles(theme => ({
     paperRight: {
         backgroundColor: '#80cbc4',
         color: '#212121',
-    }
+    },
+    appBar: {
+        position: 'relative',
+    },
+    title: {
+        marginLeft: theme.spacing(2),
+        flex: 1,
+        fontWeight: 'bold',
+        color: '#ffffff'
+    },
 }));
 
 const QuestionCard = props => {
@@ -70,10 +86,25 @@ const QuestionCard = props => {
     const [openDeleteQuestionEvaluation, setOpenDeleteQuestionEvaluation] = React.useState(false);
     const [openDeleteQuestion, setOpenDeleteQuestion] = React.useState(false);
     const [openEnableQuestion, setOpenEnableQuestion] = React.useState(false);
+    const [evaluations, setEvaluations] = React.useState([]);
+
   const classes = useStyles();
 
-    useEffect(() => {
+    async function loadEvaluations(){
+        try {
+            let url = '/evaluation/choose';
 
+            const response = await api.get(url);
+            setEvaluations(response.data);
+            console.log(response.data);
+        } catch (error) {
+            console.log(error);
+            setEvaluations([]);
+        }
+    }
+
+    useEffect(() => {
+        loadEvaluations();
     }, []);
 
     //configuration alert
@@ -175,10 +206,6 @@ const QuestionCard = props => {
         setOpenDeleteQuestionEvaluation(false);
     }
 
-    const onEdit = () => {
-
-    }
-
     const onApplyQuestionInEvaluation = () => {
 
     }
@@ -222,6 +249,45 @@ const QuestionCard = props => {
         }
     }
 
+    //teste
+    const [openEvalationChoose, setOpenEvalationChoose] = React.useState(false);
+
+    const handleChooseEvaluation = () => {
+        setOpenEvalationChoose(true);
+    };
+
+    const handleChooseEvaluationExit = () => {
+        setOpenEvalationChoose(false);
+    }
+
+    async function handleListItemClick (evaluation) {
+
+        try {
+            let url = '/evaluation/addquestion';
+            const fk_question_id = question.id;
+            const fk_evaluation_id = evaluation.id;
+            const data = {
+                fk_question_id, fk_evaluation_id
+            }
+
+            const response = await api.post(url, data);
+
+            if (response.status === 202) {
+                if(response.data.message){
+                    loadAlert('error', response.data.message);
+                }
+            } else {
+                loadAlert('success', 'Questão adicionada na avaliação.');
+            }
+        } catch (error) {
+            loadAlert('error', 'Erro de conexão.');
+        }
+
+        setOpenEvalationChoose(false);
+
+        console.log(evaluation);
+    };
+
   return (
     <Card
       {...rest}
@@ -229,11 +295,11 @@ const QuestionCard = props => {
         <CardHeader
             action={
                 <div>
-                    { !id_evaluation ?
+                    { !id_evaluation && question.validated == 1 ?
                     <Tooltip title="Aplicar questão em avaliaçãoo">
                         <IconButton
                             aria-label="copy"
-                            onClick={onEdit}>
+                            onClick={handleChooseEvaluation}>
                             <PlaylistAdd />
                         </IconButton>
                     </Tooltip> : null }
@@ -390,6 +456,27 @@ const QuestionCard = props => {
                          onClickDisagree={onClickCloseDialogEnableQuestion}
                          mesage={'Depois de habilitada, a questão não poderá ser excluída nem editada. Deseja habilitar?'}
                          title={'Habilitar Questão'}/>
+        {/* Dialog de escolha da avaliação */}
+        <Dialog fullScreen onClose={handleChooseEvaluationExit} aria-labelledby="simple-dialog-title" open={openEvalationChoose}>
+            <AppBar className={classes.appBar}>
+                <Toolbar>
+                    <IconButton edge="start" color="inherit" onClick={handleChooseEvaluationExit} aria-label="close">
+                        <CloseIcon />
+                    </IconButton>
+                    <Typography variant="h5" className={classes.title}>
+                        Selecione a avaliação para aplicar a questão
+                    </Typography>
+                </Toolbar>
+            </AppBar>
+            <List>
+                {evaluations.map((evaluation) => (
+                    <ListItem button onClick={() => handleListItemClick(evaluation)} key={evaluation.id}>
+                        <ListItemText primary={"Descrição: "+evaluation.description}
+                                      secondary={"Criada em: "+  moment(evaluation.created_at).format('DD/MM/YYYY')}/>
+                    </ListItem>
+                ))}
+            </List>
+        </Dialog>
 
     </Card>
   );
@@ -399,6 +486,7 @@ QuestionCard.propTypes = {
   className: PropTypes.string,
   question: PropTypes.object,
   id_evaluation: PropTypes.object,
+  evaluations: PropTypes.object,
     history: PropTypes.object
 };
 

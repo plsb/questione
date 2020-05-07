@@ -45,11 +45,11 @@ class EvaluationHasQuestionsController extends Controller
         if(!$question){
             return response()->json([
                 'message' => 'Operação não permitida. A questão não foi encontrada.'
-            ], 203);
+            ], 202);
         } else if($question->validated == 0){
             return response()->json([
                 'message' => 'Operação não permitida. A questão não foi validada.'
-            ], 203);
+            ], 202);
         }
 
         $evaluation = Evaluation::find($request->fk_evaluation_id);
@@ -57,30 +57,35 @@ class EvaluationHasQuestionsController extends Controller
         if(!$evaluation){
             return response()->json([
                 'message' => 'Operação não permitida. A avaliação não foi encontrada.'
-            ], 203);
+            ], 202);
         }
 
         $user = auth('api')->user();
         if($user->id != $evaluation->fk_user_id){
             return response()->json([
                 'message' => 'Operação não permitida. A avaliação pertence a um outro usuário.'
-            ], 203);
+            ], 202);
         }
 
         $verifyQuestionStored = EvaluationHasQuestions::where('fk_question_id', "=", $request->fk_question_id)
             ->where('fk_evaluation_id', "=", $request->fk_evaluation_id)->get();
+
         if(sizeof($verifyQuestionStored)>0){
             return response()->json([
                 'message' => 'Operação não permitida. A questão já foi cadastrada para esta avaliação.'
-            ], 203);
+            ], 202);
         }
+        //dd($verifyQuestionStored);
 
         $evaluation_question = new EvaluationHasQuestions();
         $evaluation_question->fk_question_id = $request->fk_question_id;
         $evaluation_question->fk_evaluation_id = $request->fk_evaluation_id;
         $evaluation_question->save();
 
-        return response()->json($evaluation_question);
+        return response()->json([
+            'message' => 'Questão adicionada na avaliação.',
+            $evaluation_question
+        ], 200);
 
     }
 

@@ -71,10 +71,10 @@ const QuestionTable = props => {
 
   const classes = useStyles();
 
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState([]);
   const [open, setOpen] = React.useState(false);
 
   //configuration alert
@@ -100,15 +100,28 @@ const QuestionTable = props => {
   async function loadQuestions(page){
     try {
       let url = 'question?page='+page;
+      if(searchText[0].value == "S"){
+        url += '&user=S';
+      } else {
+        url += '&user=T';
+      }
+      if(searchText[1].fk_course_id > 0){
+        url += '&fk_course_id='+searchText[1].fk_course_id;
 
+        if(searchText[2].fk_object_id > 0){
+          url += '&fk_object_id='+searchText[2].fk_object_id;
+        }
+      }
+      console.log('URL='+url);
       const response = await api.get(url);
       setTotal(response.data.total);
+      console.log(response);
       setQuestions(response.data.data);
-      console.log(response.data);
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
     }
   }
+
 
   useEffect(() => {
     loadQuestions(1);
@@ -200,7 +213,7 @@ const QuestionTable = props => {
                 onChangeRowsPerPage={handleRowsPerPageChange}
                 page={page}
                 rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[10]}
+                rowsPerPageOptions={[5]}
             />
           </CardActions>
         </Card>

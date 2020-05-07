@@ -240,6 +240,32 @@ class EvaluationController extends Controller
         ], 200);
     }
 
+    //função que retorna asavaliações que podem ser adicionadas questões
+    public function evaluationsToChoose()
+    {
+        $user = auth('api')->user();
+
+        //pega as avaliações que não podem ser inseridas questões
+        $evaluations_not_add_questions = DB::table('evaluations')
+            ->join('evaluation_application', 'evaluations.id', '=', 'evaluation_application.fk_evaluation_id')
+            ->where('evaluations.fk_user_id', $user->id)
+            ->where('evaluations.status', 1)
+            ->select('evaluations.id')->get();
+        $arr = array();
+        foreach ($evaluations_not_add_questions as $enaq){
+            //dd($enaq);
+            $arr[] = $enaq->id;
+        }
+        //pega asvaliaçõesque podem ser inseridas questões
+        $evaluations = Evaluation::where('evaluations.fk_user_id', $user->id)
+            ->where('evaluations.status', 1)
+            ->whereNotIn('id', $arr)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($evaluations, 200);
+    }
+
     public function verifyRecord($record){
         if(!$record || $record == '[]'){
             return response()->json([

@@ -20,7 +20,9 @@ Route::group(['prefix' => 'public'], function (){
 
 Route::group(['prefix' => 'all'], function (){
     Route::get('/courses', 'AllUsers@courses')->name('all.courses');
+    Route::get('/objects', 'AllUsers@knowledgeObjects')->name('all.knowledgeObjects');
     Route::put('/update-profile-user', 'AllUsers@updateProfileUser')->name('all.updateProfileUser');
+    Route::get('/courses-user', 'AllUsers@coursesUser')->name('all.coursesUser');
 });
 
 Route::group(['prefix' => 'user'], function (){
@@ -93,6 +95,7 @@ Route::group(['prefix' => 'questionitem'], function (){
 Route::group(['prefix' => 'evaluation'], function (){
     Route::get('/', 'Professor\EvaluationController@index')->name('evaluation.index');
     Route::get('/show/{evaluation}', 'Professor\EvaluationController@show')->name('evaluation.show');
+    Route::get('/choose', 'Professor\EvaluationController@evaluationsToChoose')->name('evaluation.choose');
     Route::post('/', 'Professor\EvaluationController@store')->name('evaluation.store');
     Route::post('/duplicate/{evaluation}', 'Professor\EvaluationController@duplicate')->name('evaluation.duplicate');
     Route::put('/{evaluation}', 'Professor\EvaluationController@update')->name('evaluation.update');
