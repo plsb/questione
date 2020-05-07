@@ -37,7 +37,11 @@ class EvaluationHasQuestionsController extends Controller
         $validation = Validator::make($request->all(),$this->rules, $this->messages);
 
         if($validation->fails()){
-            return $validation->errors()->toJson();
+            $erros = array('errors' => array(
+                $validation->messages()
+            ));
+            $json_str = json_encode($erros);
+            return response($json_str, 202);
         }
 
         $question = Question::find($request->fk_question_id);

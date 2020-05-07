@@ -85,8 +85,6 @@ class EvaluationController extends Controller
         $evaluation = new Evaluation();
         $evaluation->description = $request->description;
 
-        //ano 		Horas/minutos/segundos e id PRofessor
-       // $evaluation->id_evaluation = substr(date('Y'), -2)."".date('Gis')."".$user->id;
         $evaluation->status = 1;
         $evaluation->fk_user_id = $user->id;
 

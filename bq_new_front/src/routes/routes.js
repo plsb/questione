@@ -25,10 +25,11 @@ import {
     EvaluationTable,
     EvaluationArchiveTable, EvaluationDetails,
     SkillDetails, ObjectDetails, RequestUserDetails, CourseDetails,
-    UserRequestCourse
+    UserRequestCourse, EvaluationApplicationTable
 } from '../pages';
 import UserRequestCourseDetails from "../pages/UserRequestCourse/UserRequestCourseDetails";
 import QuestionTable from "../pages/Professor/Question/QuestionTable";
+import QuestionDetails from "../pages/Professor/Question/QuestionDetails";
 
 const Routes = () => (
   <BrowserRouter>
@@ -204,11 +205,23 @@ const Routes = () => (
             needToBeLogged={true}
             path="/evaluation-details/:codigoEvaluation"/>
         <RouteWithLayout
+            component={EvaluationApplicationTable}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/applications-evaluation"/>
+        <RouteWithLayout
             component={QuestionTable}
             exact
             layout={MainLayout}
             needToBeLogged={true}
             path="/questions"/>
+        <RouteWithLayout
+            component={QuestionDetails}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/question-details"/>
       <RouteWithLayout
           path="*"
           layout={MinimalLayout}

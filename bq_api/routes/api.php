@@ -104,6 +104,10 @@ Route::group(['prefix' => 'evaluation'], function (){
     //questões
     Route::post('/addquestion/', 'Professor\EvaluationHasQuestionsController@addQuestion')->name('evaluation.addQuestion');
     Route::delete('/deletequestion/{question}', 'Professor\EvaluationHasQuestionsController@deleteQuestion')->name('evaluation.deleteQuestion');
+    //aplicacao da avaliação
+    Route::get('/list-applications/', 'Professor\EvaluationApplicationsController@index')->name('evaluationApplication.index');
+    Route::post('/add-application/', 'Professor\EvaluationApplicationsController@store')->name('evaluationApplication.store');
+    Route::put('/change-status-application/{id_application}', 'Professor\EvaluationApplicationsController@changeStatus')->name('evaluationApplication.changeStatus');
 });
 
 

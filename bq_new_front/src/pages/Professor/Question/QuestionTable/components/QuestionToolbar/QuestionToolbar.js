@@ -56,12 +56,9 @@ const QuestionToolbar = props => {
 
   const classes = useStyles();
 
-  const onClickRequestUsers = () => {
-    history.push('/users/requests');
-  }
 
   const onClickNewCourse = e => {
-    history.push('');
+    history.push('/question-details');
   }
 
   const onChangeCourse = (e) =>{
