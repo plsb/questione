@@ -84,37 +84,10 @@ const StartEvaluationCard = props => {
   }
 
   async function onClickButton() {
-    try {
-      const response = await api.get('evaluation/get-application/'+codigo);
-      console.log(response);
-      if(response.status == 200){
-        if(response.data.status == 0){
-          loadAlert('error', 'A avaliação está inativa.');
-          return ;
-        }
-      } else {
-        loadAlert('error', 'Avaliação não encontrada.');
-        return ;
-      }
-    } catch (error) {
-      console.log(error);
-    }
     if(codigo == ''){
       loadAlert('error', 'Informe o código da avaliação.');
     } else {
       history.push('/code/'+codigo);
-    }
-  }
-
-  function onlynumber(evt) {
-    var theEvent = evt || window.event;
-    var key = theEvent.keyCode || theEvent.which;
-    key = String.fromCharCode( key );
-    //var regex = /^[0-9.,]+$/;
-    var regex = /^[0-9.]+$/;
-    if( !regex.test(key) ) {
-      theEvent.returnValue = false;
-      if(theEvent.preventDefault) theEvent.preventDefault();
     }
   }
 

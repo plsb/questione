@@ -15,4 +15,10 @@ class EvaluationApplication extends Model
             ->with('user');
             //->with('questions');
     }
+
+    public function evaluationWithQuestions(){
+        return $this->belongsTo(Evaluation::class, 'fk_evaluation_id')
+            ->with('user')
+            ->with('questions');
+    }
 }

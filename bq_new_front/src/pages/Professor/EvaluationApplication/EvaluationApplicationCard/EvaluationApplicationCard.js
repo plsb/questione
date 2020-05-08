@@ -111,6 +111,7 @@ const EvaluationApplicationCard = props => {
                   className={classes.head}
                   action={
                       <div>
+                          {evaluationApplication.evaluation.status == 1 ?
                           <Tooltip title="Habilite a questão para aplicações">
                               <Switch
                                   checked={evaluationApplication.status}
@@ -119,7 +120,7 @@ const EvaluationApplicationCard = props => {
                                   name="checkedB"
                                   inputProps={{ 'aria-label': 'primary checkbox' }}
                               />
-                          </Tooltip>
+                          </Tooltip> : null }
 
 
                       </div>
@@ -131,9 +132,14 @@ const EvaluationApplicationCard = props => {
                   <Typography variant="h5" color="textSecondary" component="h2">
                       {'Descrição da aplicação: '+evaluationApplication.description }
                   </Typography>
+                  {evaluationApplication.evaluation.status == 1 ?
                   <Typography variant="body1" color="textSecondary" component="h2">
-                      {'Descrição da avaliação: '+evaluationApplication.evaluation.id+' - '+evaluationApplication.evaluation.description}
-                  </Typography>
+                      {'Avaliação: '+evaluationApplication.evaluation.id+' - '+evaluationApplication.evaluation.description}
+                  </Typography> :
+                  <Typography variant="body1" color="textSecondary" component="h2">
+                      {'ARQUIVADA Avaliação: '+evaluationApplication.evaluation.id+' - '+evaluationApplication.evaluation.description}
+                  </Typography>  }
+
 
                   <Typography color="body2" variant="h6">
                       {'Data de criação da aplicação: '+ moment(evaluationApplication.created_at).format('DD/MM/YYYY')}

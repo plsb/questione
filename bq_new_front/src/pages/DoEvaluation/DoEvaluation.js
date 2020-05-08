@@ -20,6 +20,7 @@ import {getInitials} from "../../helpers";
 import ReactHtmlParser from "react-html-parser";
 import clsx from "clsx";
 import Swal from "sweetalert2";
+import {DialogQuestione} from "../../components";
 
 const useStyles = makeStyles({
   root: {
@@ -48,7 +49,8 @@ const DoEvaluation = props => {
   const { codeAplication } = props.match.params;
   const [application, setApplication] = useState([]);
   const [answers, setAnswers] = useState([]);
-  const [idQuestion, setIdQuestion] = useState(0);
+  const [dialogStart, setDialogStart] = useState(false);
+  const [dialogFinish, setDialogFinish] = useState(false);
   const [enableButtonStart, setEnableButtonStart] = useState(true);
   const [checked, setChecked] = React.useState([0]);
 
@@ -81,11 +83,13 @@ const DoEvaluation = props => {
       if(response.status == 200){
         if(response.data.status == 0){
           loadAlert('error', 'Avaliação está desabilitada.');
+          history.push('/home');
           return ;
         }
         setApplication(response.data);
       } else {
         loadAlert('error', 'Ocorreu um erro ao buscar a avaliação.');
+        history.push('/home');
         return ;
       }
     } catch (error) {
@@ -105,19 +109,39 @@ const DoEvaluation = props => {
       } else if(response.status == 200){
           if(response.data.status == 0){
             loadAlert('error', 'Avaliação está desabilitada.');
+            history.push('/home');
             return ;
           }
-          setAnswers(response.data);
+          setAnswers(response.data[0].answer);
           setEnableButtonStart(false);
       }
 
     } catch (error) {
+      console.log(error);
       loadAlert('error', 'Erro de conexão.');
     }
+    setDialogStart(false);
   }
 
   async function finshEvaluation(){
-    history.push('/home');
+    try {
+      const response = await api.put('evaluation/finish/'+codeAplication);
+      console.log(response);
+      if (response.status === 202) {
+        if(response.data.message){
+          loadAlert('error', response.data.message);
+        }
+      } else if(response.status == 200){
+        loadAlert('success', 'Avaliação respondida com sucesso!')
+        history.push('/home');
+      }
+
+    } catch (error) {
+      console.log(error);
+      loadAlert('error', 'Erro de conexão.');
+    }
+    setDialogFinish(false);
+
   }
 
   useEffect(() => {
@@ -129,6 +153,7 @@ const DoEvaluation = props => {
   }, []);
 
   async function handleListItemClick (event, answerId, item_question) {
+    console.log('resposta', answerId, item_question);
     try {
       const id = answerId;
       const answer =   item_question;
@@ -180,6 +205,22 @@ const DoEvaluation = props => {
     setChecked(newChecked);
   };
 
+  const onClickCloseDialogStart = () => {
+    setDialogStart(false);
+  }
+
+  const onClickOpenDialogStart = () => {
+    setDialogStart(true);
+  }
+
+  const onClickOpenDialogFinsh = () => {
+    setDialogFinish(true);
+  }
+
+  const onClickCloseDialogFinish = () => {
+    setDialogFinish(false);
+  }
+
   return (
       <div>
         { application.id ?
@@ -195,7 +236,10 @@ const DoEvaluation = props => {
                 subheader={'Avaliação: '+application.evaluation.description}
             />
             <CardContent>
-              <Typography variant="body2" color="textSecondary" component="p">
+              <Typography variant="body1" color="textSecondary" component="p">
+                {'Código da aplicação: '+application.id_application}
+              </Typography>
+              <Typography variant="body1" color="textSecondary" component="p">
                 {'Professor(a): '+application.evaluation.user.name}
               </Typography>
             </CardContent>
@@ -203,7 +247,7 @@ const DoEvaluation = props => {
               <div >
                 {enableButtonStart ?
                 <Button className={classes.buttons} variant="contained" color="primary"
-                    onClick={startEvaluation}>
+                    onClick={onClickOpenDialogStart}>
                   Iniciar
                 </Button> :
                 <Button className={classes.buttons} variant="contained" color="primary"
@@ -216,7 +260,7 @@ const DoEvaluation = props => {
                   Finalizar
                 </Button> :
                 <Button className={clsx(classes.chipRed, className)} variant="contained" color="#e57373"
-                    onClick={finshEvaluation}>
+                    onClick={onClickOpenDialogFinsh}>
                   Finalizar
                 </Button>}
               </div>
@@ -224,8 +268,8 @@ const DoEvaluation = props => {
             </CardActions>
           </Card>
 
-          {answers.map((answer, i) => (
-              <ExpansionPanel key={answer.id}>
+          {answers.map((data, i) => (
+              <ExpansionPanel key={data.id}>
                 <ExpansionPanelSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-label="Expand"
@@ -236,40 +280,41 @@ const DoEvaluation = props => {
                       onClick={(event) => event.stopPropagation()}
                       onFocus={(event) => event.stopPropagation()}
                       control={<Checkbox
-                                checked={answer.answer != null}
+                                checked={data.answer != null}
                               />}
                       label={'Questão '+ (i + 1) <10 ? ('Questão 00' + (i + 1)) :
                               (i + 1) <100 ? ('Questão 0' + (i + 1)) : (i + 1)}
                   />
                 </ExpansionPanelSummary>
-                <ExpansionPanelDetails key={answer.id}>
+                <ExpansionPanelDetails key={data.id}>
                   <div className={classes.lineQuestion}>
                     <Typography variant="button" color="textSecondary" component="p">
                       Texto base:
                     </Typography>
-                    <div> { ReactHtmlParser (answer.evaluation_question.question.base_text) } </div>
+                    <div> { ReactHtmlParser (data.evaluation_question.question.base_text) } </div>
                     <br/>
                     <Typography variant="button" color="textSecondary" component="p">
                       Enunciado:
                     </Typography>
-                    <div> { ReactHtmlParser (answer.evaluation_question.question.stem) } </div>
+                    <div> { ReactHtmlParser (data.evaluation_question.question.stem) } </div>
                     <br />
                     <Typography variant="button" color="textSecondary" component="p">
                       Alternativas:
                     </Typography>
                     <br />
-                    {answer.evaluation_question.question.question_items.map(item => (
+                    {data.evaluation_question.question.question_items.map(item => (
                         <List className={classes.lineItemQuestion}
                               key={item.id}
-                              onClick={handleToggle(item.id, answer.evaluation_question.question.question_items)}
+                              onClick={handleToggle(item.id, data.evaluation_question.question.question_items)}
                               component="nav" aria-label="secondary mailbox folder">
                           <ListItem key={item.id}
-                                    selected={answer.answer == item.id}
-                              button onClick={(event) => handleListItemClick(event, answer.id, item.id)}>
+                                    selected={data.answer == item.id}
+                              button onClick={(event) => handleListItemClick(event, data.id, item.id)}>
                             { ReactHtmlParser (item.description)  }
                           </ListItem>
                         </List>
                     ))}
+
                   </div>
                 </ExpansionPanelDetails>
               </ExpansionPanel>
@@ -277,6 +322,18 @@ const DoEvaluation = props => {
 
         </div>
               : null}
+        <DialogQuestione handleClose={onClickCloseDialogStart}
+                         open={dialogStart}
+                         onClickAgree={startEvaluation}
+                         onClickDisagree={onClickCloseDialogStart}
+                         mesage={'Deseja iniciar a avaliação?'}
+                         title={'Iniciar Avaliação'}/>
+        <DialogQuestione handleClose={onClickCloseDialogFinish}
+                         open={dialogFinish}
+                         onClickAgree={finshEvaluation}
+                         onClickDisagree={onClickCloseDialogFinish}
+                         mesage={'Deseja finalizar a avaliação?'}
+                         title={'Finalizar Avaliação'}/>
       </div>
   );
 };

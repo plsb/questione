@@ -11,8 +11,8 @@ class AnswersEvaluation extends Model
     		'id',
     		'answer',
     		'fk_evaluation_question_id',
-    		'fk_user_id',
-    		'fk_aplication_evaluation_id'];
+    		'fk_aplication_evaluation_id', //nova versão não vai mais precisar desse campo, será mantido para ter compatiibilidade com avaliações anteriores
+            'fk_answers_head_id'];
 
     protected $hidden = [];
 

@@ -111,6 +111,7 @@ Route::group(['prefix' => 'evaluation'], function (){
     //resolução da avaliação
     Route::get('/get-application/{id_application}', 'DoEvaluation@getApplication')->name('evaluationApplication.getApplication');
     Route::post('/start/{id_application}', 'DoEvaluation@startEvaluation')->name('evaluationApplication.startEvaluation');
+    Route::put('/finish/{id_application}', 'DoEvaluation@finishEvaluation')->name('evaluationApplication.finishEvaluation');
     Route::put('/answer/{id_application}', 'DoEvaluation@answer')->name('evaluationApplication.answer');
 });
 
