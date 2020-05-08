@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class HeadAnswersEvaluation extends Model
+class AnswersHeadEvaluation extends Model
 {
     protected $table = 'answers_head';
     protected $fillable = [
@@ -21,6 +21,11 @@ class HeadAnswersEvaluation extends Model
     }
 
     public function evaluationApplication(){
+        return $this->belongsTo(EvaluationApplication::class, 'fk_application_evaluation_id')
+            ->with('evaluation');
+    }
+
+    public function evaluationApplicationWithQuestions(){
         return $this->belongsTo(EvaluationApplication::class, 'fk_application_evaluation_id')
             ->with('evaluationWithQuestions');
     }

@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers\Professor;
 
+use App\AnswersEvaluation;
 use App\Course;
 use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
+use App\AnswersHeadEvaluation;
 use App\Question;
+use App\QuestionItem;
+use App\User;
 use Illuminate\Http\Request;
 use Validator;
 use App\Http\Controllers\Controller;
+use function Sodium\add;
 
 class EvaluationApplicationsController extends Controller
 {
@@ -74,14 +79,14 @@ class EvaluationApplicationsController extends Controller
 
         if(!$evaluation){
             return response()->json([
-                'message' => 'Operação não permitida. A avaliação não foi encontrada.'
+                'message' => 'A avaliação não foi encontrada.'
             ], 202);
         }
 
         $user = auth('api')->user();
         if($user->id != $evaluation->fk_user_id){
             return response()->json([
-                'message' => 'Operação não permitida. A avaliação pertence a um outro usuário.'
+                'message' => 'A avaliação pertence a um outro usuário.'
             ], 202);
         }
 
@@ -90,7 +95,7 @@ class EvaluationApplicationsController extends Controller
 
         if(sizeof($evaluation_question)==0){
             return response()->json([
-                'message' => 'Operação não permitida. A avaliação não tem questões.'
+                'message' => 'A avaliação não tem questões.'
             ], 202);
         }
         //dd($evaluation_question);
@@ -116,13 +121,58 @@ class EvaluationApplicationsController extends Controller
 
     }
 
+    public function update(Request $request, $id){
+
+        $validation = Validator::make($request->all(),$this->rules, $this->messages);
+
+        if(!$request->description) {
+            return response()->json([
+                'message' => 'Informe a descrição.'
+            ], 200);
+        }
+
+        $evaluation_application = EvaluationApplication::find($id);
+
+        if(!$evaluation_application){
+            return response()->json([
+                'message' => 'A aplicação da avaliação não foi encontrada.'
+            ], 202);
+        }
+
+        $evaluation = Evaluation::where('id', $evaluation_application->fk_evaluation_id)->first();
+        //dd($evaluation_application);
+        $user = auth('api')->user();
+        if($user->id != $evaluation->fk_user_id){
+            return response()->json([
+                'message' => 'A avaliação pertence a um outro usuário.'
+            ], 202);
+        }
+
+        if($evaluation->status == 2){
+            $evaluation_application->status = 0;
+            $evaluation_application->save();
+            return response()->json([
+                'message' => 'A avaliação está arquivada.'
+            ], 202);
+        }
+
+        $evaluation_application->description = $request->description;
+        $evaluation_application->save();
+
+        return response()->json([
+            'message' => 'Aplicação da avaliação atualizada.',
+            $evaluation_application
+        ], 200);
+
+    }
+
     public function changeStatus(Request $request, $id){
 
         $evaluation_application = EvaluationApplication::find($id);
 
         if(!$evaluation_application){
             return response()->json([
-                'message' => 'Operação não permitida. A aplicação da avaliação não foi encontrada.'
+                'message' => 'A aplicação da avaliação não foi encontrada.'
             ], 202);
         }
 
@@ -131,7 +181,7 @@ class EvaluationApplicationsController extends Controller
         $user = auth('api')->user();
         if($user->id != $evaluation->fk_user_id){
             return response()->json([
-                'message' => 'Operação não permitida. A avaliação pertence a um outro usuário.'
+                'message' => 'A avaliação pertence a um outro usuário.'
             ], 202);
         }
 
@@ -139,7 +189,7 @@ class EvaluationApplicationsController extends Controller
             $evaluation_application->status = 0;
             $evaluation_application->save();
             return response()->json([
-                'message' => 'Operação não permitida. A avaliação está arquivada.'
+                'message' => 'A avaliação está arquivada.'
             ], 202);
         }
 
@@ -158,6 +208,161 @@ class EvaluationApplicationsController extends Controller
             'message' => 'Status da aplicação da avaliação mudado.',
             $evaluation_application
         ], 200);
+
+    }
+
+    public function show(int $id)
+    {
+        $application = EvaluationApplication::where('id', '=', $id)
+            ->first();
+
+        if(!$application){
+            return response()->json([
+                'message' => 'Aplicação não encontrada.'
+            ], 202);
+        }
+
+        $evaluation = Evaluation::where('id', $application->fk_evaluation_id)->first();
+
+        $user = auth('api')->user();
+
+        if($evaluation->fk_user_id != $user->id){
+            return response()->json([
+                'message' => 'A avaliação pertence a outro usuário.'
+            ], 202);
+        }
+
+        return response()->json($application, 200);
+    }
+
+    public function resultAnswerStudents($idApplication){
+        $answerHead = AnswersHeadEvaluation::where('fk_application_evaluation_id', '=', $idApplication)
+            ->get();
+
+        if(sizeof($answerHead)==0){
+            return response()->json([
+                'message' => 'Sem dados de aplicação.'
+            ], 202);
+        }
+       // return response()->json($answers, 202);
+        $result = array();
+        foreach ($answerHead as $head) {
+            $resultStudent = new \ArrayObject();
+
+            $answers = AnswersEvaluation::where('fk_answers_head_id', $head->id)
+                ->get();
+
+            $student = User::where('id',$head->fk_user_id)->first();
+
+            $questions = array();
+            $total_questions = 0;
+            $count_corret_student = 0;
+            foreach ($answers as $ans) {
+                $total_questions++;
+
+                $evaluation_question = EvaluationHasQuestions::where('id', $ans->fk_evaluation_question_id)
+                    ->first();
+
+                $question = Question::where('id', $evaluation_question->fk_question_id)->first();
+                $itens_question = QuestionItem::where('fk_question_id', $question->id)
+                    ->where('correct_item', 1)->first();
+                //dd($itens_question->id);
+                if ($ans->answer == $itens_question->id) {
+
+                    $object = (object)[
+                        'questionId' => $question->id,
+                        'itemCorrect' => $itens_question->id,
+                        'itemSelected' => $ans->answer,
+                        'correct' => 1,
+                    ];
+                    $count_corret_student++;
+                } else {
+                    $object = (object)[
+                        'questionId' => $question->id,
+                        'itemCorrect' => $itens_question->id,
+                        'itemSelected' => $ans->answer,
+                        'correct' => 0,
+                    ];
+                }
+                $questions[] = $object;
+            }
+            $percentage = ($count_corret_student*100)/$total_questions;
+            $resultStudent = (object)[
+                'student' => $student->name,
+                'questions' => $questions,
+                't_question' => $total_questions,
+                't_correct' => $count_corret_student,
+                'percentage_correct' => round($percentage),
+            ];
+            $result[] = $resultStudent;
+        }
+        usort(
+
+            $result,
+
+            function( $a, $b ) {
+
+                if( $a->student == $b->student ) return 0;
+
+                return ( ( $a->student < $b->student ) ? -1 : 1 );
+            }
+        );
+
+        return response()->json($result, 200);
+    }
+
+    public function resultQuestionEvaluation($idApplication){
+        $application = EvaluationApplication::where('id', $idApplication)->first();
+
+        if(!$application){
+            return response()->json([
+                'message' => 'Aplicação não encontrada.'
+            ], 202);
+        }
+
+        $evaluation = Evaluation::where('id', $application->fk_evaluation_id)->first();
+
+        if(!$evaluation){
+            return response()->json([
+                'message' => 'Avaliação não encontrada.'
+            ], 202);
+        }
+
+        $evaluation_question = EvaluationHasQuestions::where('fk_evaluation_id', $evaluation->id)->get();
+
+        if(sizeof($evaluation_question)==0){
+            return response()->json([
+                'message' => 'Nenhuma questão foi encontrada.'
+            ], 202);
+        }
+
+        $cont_students_answer = AnswersHeadEvaluation::where('fk_application_evaluation_id', $application->id)
+            ->count();
+
+        $result = array();
+        $resultQuestions = array();
+        foreach ($evaluation_question as $ev_question){
+            $question = Question::where('id', $ev_question->fk_question_id)->first();
+            $item_correct = QuestionItem::where('fk_question_id', $question->id)
+                            ->where('correct_item', 1)->first();
+            $answer = AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)
+                ->where('answer', $item_correct->id)
+                ->count();
+            $percentage = ($answer*100)/$cont_students_answer;
+            $auxQuestion= (object)[
+                'question' => $question->id,
+                'qtdCorrect' => $answer,
+                'percentageCorrect' => round($percentage)
+            ];
+            $resultQuestions[] = $auxQuestion;
+        }
+        $auxEvaluation= (object)[
+            'evaluation' => $evaluation->id,
+            'description' => $evaluation->description,
+            'questions' => $resultQuestions
+        ];
+        $result[] = $auxEvaluation;
+        return response()->json($result, 200);
 
     }
 

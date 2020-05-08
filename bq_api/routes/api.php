@@ -106,8 +106,13 @@ Route::group(['prefix' => 'evaluation'], function (){
     Route::delete('/deletequestion/{question}', 'Professor\EvaluationHasQuestionsController@deleteQuestion')->name('evaluation.deleteQuestion');
     //aplicacao da avaliação
     Route::get('/list-applications/', 'Professor\EvaluationApplicationsController@index')->name('evaluationApplication.index');
+    Route::get('/applications/show/{idApplication}', 'Professor\EvaluationApplicationsController@show')->name('evaluationApplication.show');
+    Route::put('/applications/{idApplication}', 'Professor\EvaluationApplicationsController@update')->name('evaluationApplication.update');
     Route::post('/add-application/', 'Professor\EvaluationApplicationsController@store')->name('evaluationApplication.store');
-    Route::put('/change-status-application/{id_application}', 'Professor\EvaluationApplicationsController@changeStatus')->name('evaluationApplication.changeStatus');
+    Route::put('/change-status-application/{idApplication}', 'Professor\EvaluationApplicationsController@changeStatus')->name('evaluationApplication.changeStatus');
+    //relatórios
+    Route::get('/applications/result-answer-students/{idApplication}', 'Professor\EvaluationApplicationsController@resultAnswerStudents')->name('evaluationApplication.resultAnswerStudents');
+    Route::get('/applications/result-question-evaluation/{idApplication}', 'Professor\EvaluationApplicationsController@resultQuestionEvaluation')->name('evaluationApplication.resultQuestionEvaluation');
     //resolução da avaliação
     Route::get('/get-application/{id_application}', 'DoEvaluation@getApplication')->name('evaluationApplication.getApplication');
     Route::post('/start/{id_application}', 'DoEvaluation@startEvaluation')->name('evaluationApplication.startEvaluation');

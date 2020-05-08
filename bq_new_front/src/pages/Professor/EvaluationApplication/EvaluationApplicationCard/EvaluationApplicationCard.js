@@ -13,7 +13,7 @@ import moment from 'moment';
 import Swal from "sweetalert2";
 import {withRouter} from "react-router-dom";
 import api from "../../../../services/api";
-import {render} from "react-dom";
+import { Edit, FormatListBulleted } from "@material-ui/icons";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -72,8 +72,12 @@ const EvaluationApplicationCard = props => {
         });
     }
 
-  const onEdit = () => {
-      //history.push('/evaluation-details/'+evaluation.id);
+  const onEdit = (id) => {
+      history.push('/applications-evaluation/details/'+id);
+  }
+
+  const results = (id) => {
+      history.push('/applications-evaluation/results/'+id);
   }
 
     async function onClickOpenDialogEnableApplication() {
@@ -111,6 +115,7 @@ const EvaluationApplicationCard = props => {
                   className={classes.head}
                   action={
                       <div>
+
                           {evaluationApplication.evaluation.status == 1 ?
                           <Tooltip title="Habilite a questão para aplicações">
                               <Switch
@@ -121,6 +126,21 @@ const EvaluationApplicationCard = props => {
                                   inputProps={{ 'aria-label': 'primary checkbox' }}
                               />
                           </Tooltip> : null }
+                          <Tooltip title="Visualizar resultados">
+                              <IconButton
+                                  aria-label="copy"
+                                  onClick={() => results(evaluationApplication.id)}>
+                                  <FormatListBulleted />
+                              </IconButton>
+                          </Tooltip>
+                          {evaluationApplication.evaluation.status == 1 ?
+                              <Tooltip title="Clique para editar">
+                                  <IconButton
+                                      aria-label="copy"
+                                      onClick={() => onEdit(evaluationApplication.id)}>
+                                      <Edit />
+                                  </IconButton>
+                              </Tooltip> : null }
 
 
                       </div>
@@ -137,17 +157,21 @@ const EvaluationApplicationCard = props => {
                       {'Avaliação: '+evaluationApplication.evaluation.id+' - '+evaluationApplication.evaluation.description}
                   </Typography> :
                   <Typography variant="body1" color="textSecondary" component="h2">
-                      {'ARQUIVADA Avaliação: '+evaluationApplication.evaluation.id+' - '+evaluationApplication.evaluation.description}
+                      {'ARQUIVADA - Avaliação: '+evaluationApplication.evaluation.id+' - '+evaluationApplication.evaluation.description}
                   </Typography>  }
 
 
                   <Typography color="body2" variant="h6">
                       {'Data de criação da aplicação: '+ moment(evaluationApplication.created_at).format('DD/MM/YYYY')}
                   </Typography>
-                  { evaluationApplication.status == 0 ?
-                      <Chip label="Desativada" className={clsx(classes.chipred, className)} size="small"/> :
-                      <Chip label="Ativada" className={clsx(classes.chipgreen, className)} size="small"/>
+                  { evaluationApplication.status == 1 ?
+                      <Chip label="Ativada" className={clsx(classes.chipgreen, className)} size="small"/> :
+                        evaluationApplication.evaluation.status == 2 ?
+                          <Chip label="Avaliação Arquivada" className={clsx(classes.chipred, className)} size="small"/> :
+                            <Chip label="Desativada" className={clsx(classes.chipred, className)} size="small"/>
+
                   }
+
 
 
               </CardContent>

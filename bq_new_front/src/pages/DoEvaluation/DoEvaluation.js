@@ -282,7 +282,7 @@ const DoEvaluation = props => {
                       control={<Checkbox
                                 checked={data.answer != null}
                               />}
-                      label={'Questão '+ (i + 1) <10 ? ('Questão 00' + (i + 1)) :
+                      label={(i + 1) <10 ? ('Questão 00' + (i + 1)) :
                               (i + 1) <100 ? ('Questão 0' + (i + 1)) : (i + 1)}
                   />
                 </ExpansionPanelSummary>

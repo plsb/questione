@@ -7,7 +7,7 @@ use App\Course;
 use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
-use App\HeadAnswersEvaluation;
+use App\AnswersHeadEvaluation;
 use App\Question;
 use Illuminate\Http\Request;
 use Validator;
@@ -59,7 +59,7 @@ class DoEvaluation extends Controller
         }
 
         //procura o cabeçalho da avaliação
-        $head_answer = HeadAnswersEvaluation::where('fk_user_id', $user->id)
+        $head_answer = AnswersHeadEvaluation::where('fk_user_id', $user->id)
             ->where('fk_application_evaluation_id', $application->id)->first();
 
         if($head_answer){
@@ -71,7 +71,7 @@ class DoEvaluation extends Controller
             }
         } else {
             //senão tem avaliação, então cria nova
-            $head_answer = new HeadAnswersEvaluation();
+            $head_answer = new AnswersHeadEvaluation();
             $head_answer->fk_application_evaluation_id = $application->id;
             $head_answer->fk_user_id = $user->id;
             $head_answer->finalized_at = null;
@@ -95,7 +95,7 @@ class DoEvaluation extends Controller
 
         }
         //dd($head_answer);
-        $return = HeadAnswersEvaluation::where('fk_user_id', $user->id)
+        $return = AnswersHeadEvaluation::where('fk_user_id', $user->id)
             ->where('fk_application_evaluation_id', $application->id)
             ->with('answer')
             ->get();
@@ -126,7 +126,7 @@ class DoEvaluation extends Controller
             ], 202);
         }
 
-        $answer_head = HeadAnswersEvaluation::where('id', $answer->fk_answers_head_id)->first();
+        $answer_head = AnswersHeadEvaluation::where('id', $answer->fk_answers_head_id)->first();
         if(!$answer_head){
             return response()->json([
                 'message' => 'Cabeçalho da avaliação não encontrado.'
@@ -176,7 +176,7 @@ class DoEvaluation extends Controller
             ], 202);
         }
 
-        $answer_head = HeadAnswersEvaluation::where('fk_user_id', $user->id)
+        $answer_head = AnswersHeadEvaluation::where('fk_user_id', $user->id)
             ->where('fk_application_evaluation_id', $application->id)
             ->first();
         if(!$answer_head){

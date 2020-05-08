@@ -295,7 +295,7 @@ const QuestionCard = props => {
             action={
                 <div>
                     { !id_evaluation && question.validated == 1 ?
-                    <Tooltip title="Aplicar questão em avaliaçãoo">
+                    <Tooltip title="Aplicar questão em avaliação">
                         <IconButton
                             aria-label="copy"
                             onClick={handleChooseEvaluation}>

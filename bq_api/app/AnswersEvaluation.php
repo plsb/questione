@@ -25,7 +25,9 @@ class AnswersEvaluation extends Model
         return $this->belongsTo(EvaluationApplication::class, 'fk_aplication_evaluation_id');
     }
 
-    public function user(){
-        return $this->belongsTo(User::class, 'fk_user_id');
+    public function head(){
+        return $this->belongsTo(AnswersHeadEvaluation::class, 'fk_answers_head_id')
+            ->with('user');
     }
+
 }

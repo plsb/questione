@@ -23,9 +23,17 @@ import {
     AccountDetails,
     Dashboard,
     EvaluationTable,
-    EvaluationArchiveTable, EvaluationDetails,
-    SkillDetails, ObjectDetails, RequestUserDetails, CourseDetails,
-    UserRequestCourse, EvaluationApplicationTable, DoEvaluation
+    EvaluationArchiveTable,
+    EvaluationDetails,
+    SkillDetails,
+    ObjectDetails,
+    RequestUserDetails,
+    CourseDetails,
+    UserRequestCourse,
+    EvaluationApplicationTable,
+    DoEvaluation,
+    EvaluationApplicationDetails,
+    EvaluationApplicationResults
 } from '../pages';
 import UserRequestCourseDetails from "../pages/UserRequestCourse/UserRequestCourseDetails";
 import QuestionTable from "../pages/Professor/Question/QuestionTable";
@@ -210,6 +218,18 @@ const Routes = () => (
             layout={MainLayout}
             needToBeLogged={true}
             path="/applications-evaluation"/>
+        <RouteWithLayout
+            component={EvaluationApplicationDetails}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/applications-evaluation/details/:idApplication"/>
+        <RouteWithLayout
+            component={EvaluationApplicationResults}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/applications-evaluation/results/:idApplication"/>
         <RouteWithLayout
             component={QuestionTable}
             exact
