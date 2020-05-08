@@ -28,8 +28,8 @@ class EvaluationApplicationsController extends Controller
         'fk_evaluation_id.required' => 'A AVALIAÇÃO é obrigatória.',
 
         'description.required' => 'A DESCRIÇÃO DA APLICAÇÃO é obrigatória.',
-        'description.max' => 'A DESCRIÇÃO DA APLICAÇÃO tem que ter no mínimo 04 caracteres.',
-        'description.min' => 'A DESCRIÇÃO DA APLICAÇÃO tem que ter no máximo 300 caracteres.',
+        'description.min' => 'A DESCRIÇÃO DA APLICAÇÃO tem que ter no mínimo 04 caracteres.',
+        'description.max' => 'A DESCRIÇÃO DA APLICAÇÃO tem que ter no máximo 300 caracteres.',
 
     ];
 
@@ -84,6 +84,16 @@ class EvaluationApplicationsController extends Controller
                 'message' => 'Operação não permitida. A avaliação pertence a um outro usuário.'
             ], 202);
         }
+
+        $evaluation_question = EvaluationHasQuestions::where('fk_evaluation_id', $evaluation->id)
+                    ->get();
+
+        if(sizeof($evaluation_question)==0){
+            return response()->json([
+                'message' => 'Operação não permitida. A avaliação não tem questões.'
+            ], 202);
+        }
+        //dd($evaluation_question);
 
         do{
             //ano 		Horas/minutos/segundos e id PRofessor
@@ -140,6 +150,9 @@ class EvaluationApplicationsController extends Controller
             $evaluation_application->status = 0;
         }
         $evaluation_application->save();
+
+        $evaluation_application = EvaluationApplication::where('id', $evaluation_application->id)
+            ->with('evaluation')->first();
 
         return response()->json([
             'message' => 'Status da aplicação da avaliação mudado.',

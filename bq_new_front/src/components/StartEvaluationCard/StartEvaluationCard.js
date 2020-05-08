@@ -14,6 +14,8 @@ import {
 import QuestionAnswer from '@material-ui/icons/QuestionAnswer';
 import CropFree from '@material-ui/icons/CropFree';
 import Swal from "sweetalert2";
+import {withRouter} from "react-router-dom";
+import api from "../../services/api";
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -65,8 +67,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const StartEvaluationCard = props => {
-  const { className, product, ...rest } = props;
-  const [codigo, setCodigo] = useState(0);
+  const { className, history, ...rest } = props;
+  const [codigo, setCodigo] = useState('');
 
   const classes = useStyles();
 
@@ -81,11 +83,26 @@ const StartEvaluationCard = props => {
     setCodigo(event.target.value);
   }
 
-  const onClickButton = () => {
-    if(codigo == 0){
+  async function onClickButton() {
+    try {
+      const response = await api.get('evaluation/get-application/'+codigo);
+      console.log(response);
+      if(response.status == 200){
+        if(response.data.status == 0){
+          loadAlert('error', 'A avaliação está inativa.');
+          return ;
+        }
+      } else {
+        loadAlert('error', 'Avaliação não encontrada.');
+        return ;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    if(codigo == ''){
       loadAlert('error', 'Informe o código da avaliação.');
     } else {
-      loadAlert('success', 'A avaliação iniciará em instantes.');
+      history.push('/code/'+codigo);
     }
   }
 
@@ -118,7 +135,6 @@ const StartEvaluationCard = props => {
                       type="text"
                       name="name"
                       placeholder="código?"
-                       onKeyPress={onlynumber}
                       onChange={handleChange}
                       autoComplete="off"/>
 
@@ -170,7 +186,7 @@ const StartEvaluationCard = props => {
 
 StartEvaluationCard.propTypes = {
   className: PropTypes.string,
-  product: PropTypes.object.isRequired
+  history: PropTypes.object
 };
 
-export default StartEvaluationCard;
+export default withRouter(StartEvaluationCard);

@@ -11,6 +11,8 @@ class EvaluationApplication extends Model
     protected $hidden = [];
 
     public function evaluation(){
-        return $this->belongsTo(Evaluation::class, 'fk_evaluation_id');
+        return $this->belongsTo(Evaluation::class, 'fk_evaluation_id')
+            ->with('user');
+            //->with('questions');
     }
 }

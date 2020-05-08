@@ -9,7 +9,7 @@ import {
     Typography,
     CardContent,
     MenuItem,
-    Menu, Tooltip, Chip, colors
+    Menu, Tooltip, Chip, colors, Dialog, AppBar, Toolbar, List, ListItem, ListItemText, TextField, Button
 } from '@material-ui/core';
 import { MoreVert, FileCopyOutlined, Edit } from '@material-ui/icons';
 import moment from 'moment';
@@ -17,6 +17,8 @@ import api from "../../../../services/api";
 import Swal from "sweetalert2";
 import {withRouter} from "react-router-dom";
 import {DialogQuestione} from "../../../../components";
+import CloseIcon from "@material-ui/icons/Close";
+import {fiFI} from "@material-ui/core/locale";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -33,12 +35,25 @@ const useStyles = makeStyles(() => ({
   spacer: {
     flexGrow: 1
   },
+    appBar: {
+        position: 'relative',
+    },
+    title: {
+        marginLeft: 2,
+        flex: 1,
+        fontWeight: 'bold',
+        color: '#ffffff'
+    },
+    fieldsDialog: {
+      marginTop: 20
+    }
 }));
 
 const EvaluationCard = props => {
   const { className, history, evaluation, ...rest } = props;
   const [anchorEl, setAnchorEl] = React.useState(null);
     const [open, setOpen] = React.useState(false);
+    const [descriptionNewApplication, setDescriptionNewApplication] = React.useState('');
 
   const classes = useStyles();
 
@@ -139,6 +154,45 @@ const EvaluationCard = props => {
         setOpen(false);
     }
 
+    async function saveNewApplication(){
+        try {
+            const fk_evaluation_id = evaluation.id;
+            const description = descriptionNewApplication;
+            const data = {
+                description, fk_evaluation_id
+            }
+            const response = await api.post('evaluation/add-application', data);
+            if (response.status === 202) {
+                if(response.data.message){
+                    loadAlert('error', response.data.message);
+                } 
+                setOpenNewApplication(false);
+            } else {
+                loadAlert('success', 'Nova aplicação cadastrada.');
+                setDescriptionNewApplication('');
+                history.push('/applications-evaluation');
+            }
+
+        } catch (error) {
+            loadAlert('error', 'Erro de conexão.');
+        }
+    }
+
+    //dialog de nova aplicação
+    const [openNewApplication, setOpenNewApplication] = React.useState(false);
+
+    const handleNewApplication = () => {
+        setOpenNewApplication(true);
+    };
+
+    const handleNewApplicationExit = () => {
+        setOpenNewApplication(false);
+    }
+
+    const handleChangeDescriptionNewApplication = (e) => {
+        setDescriptionNewApplication(e.target.value);
+    }
+
   return (
     <Card
       {...rest}
@@ -189,7 +243,7 @@ const EvaluationCard = props => {
             keepMounted
             open={Boolean(anchorEl)}
             onClose={handleClose}>
-            { evaluation.status == 1 ? <MenuItem onClick={handleClose}>Aplicações</MenuItem> : null}
+            { evaluation.status == 1 ? <MenuItem onClick={handleNewApplication}>Nova Aplicação</MenuItem> : null}
             <MenuItem onClick={duplicate}>Duplicar</MenuItem>
             { evaluation.status == 1 ? <MenuItem onClick={() => changeStatus(2) }>Arquivar</MenuItem> : null}
             { evaluation.status == 2 ? <MenuItem onClick={() => changeStatus(1) }>Ativar</MenuItem> : null}
@@ -201,6 +255,37 @@ const EvaluationCard = props => {
                          onClickDisagree={onClickCloseDialog}
                          mesage={'Deseja excluir a avaliação selecionada?'}
                          title={'Excluir Avaliação'}/>
+        {/* Dialog de cadastro de aplicação */}
+        <Dialog fullScreen onClose={handleNewApplicationExit} aria-labelledby="simple-dialog-title" open={openNewApplication}>
+            <AppBar className={classes.appBar}>
+                <Toolbar>
+                    <IconButton edge="start" color="inherit" onClick={handleNewApplicationExit} aria-label="close">
+                        <CloseIcon />
+                    </IconButton>
+                    <Typography variant="h5" className={classes.title}>
+                        Informe a descrição para a aplicação
+                    </Typography>
+                </Toolbar>
+            </AppBar>
+            <TextField
+                fullWidth
+                label="Descrição"
+                margin="dense"
+                name="description"
+                variant="outlined"
+                onChange={handleChangeDescriptionNewApplication}
+                value={descriptionNewApplication}
+                className={classes.fieldsDialog}
+            />
+            <Button
+                color="primary"
+                variant="outlined"
+                className={classes.fieldsDialog}
+                onClick={saveNewApplication}>
+                Salvar
+            </Button>
+
+        </Dialog>
     </Card>
   );
 };

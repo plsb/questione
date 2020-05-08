@@ -13,15 +13,13 @@ class CreateRespostasAvaliacaoAlunosTable extends Migration
      */
     public function up()
     {
-        Schema::create('respostas', function (Blueprint $table) {
+        Schema::create('answers', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('resposta');
-            
+
             $table->integer('fk_avaliacao_questao_id')->unsigned();
             $table->foreign('fk_avaliacao_questao_id')->references('id')->on('avaliacao_questao')->onDelete('cascade');
 
-            $table->integer('fk_aluno_id')->unsigned();
-            $table->foreign('fk_aluno_id')->references('id')->on('alunos');
 
             $table->integer('fk_aplicacao_avaliacao_id')->unsigned();
             $table->foreign('fk_aplicacao_avaliacao_id')->references('id')->on('aplicacao_avaliacao')->onDelete('cascade');

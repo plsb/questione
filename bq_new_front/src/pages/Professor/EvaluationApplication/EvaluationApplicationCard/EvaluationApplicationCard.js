@@ -80,13 +80,18 @@ const EvaluationApplicationCard = props => {
         try {
             let url = 'evaluation/change-status-application/'+evaluationApplication.id;
             const response = await api.put(url);
-            console.log(response);
             if (response.status === 202) {
                 if(response.data.message){
                     loadAlert('error', response.data.message);
                 }
             } else {
+                //console.log(evaluationApplication);
+                //console.log(response.data);
+                const new_evaluation = response.data[0];
+                console.log(new_evaluation);
                 console.log(evaluationApplication);
+                setEvaluationApplication(new_evaluation);
+
                 loadAlert('success', 'Modificado o status da aplicação.');
             }
             //window.location.reload();
@@ -97,46 +102,55 @@ const EvaluationApplicationCard = props => {
     }
 
   return (
+      <div>
+          { evaluationApplication.id ?
+          <Card
+              {...rest}
+              className={classes.root}>
+              <CardHeader
+                  className={classes.head}
+                  action={
+                      <div>
+                          <Tooltip title="Habilite a questão para aplicações">
+                              <Switch
+                                  checked={evaluationApplication.status}
+                                  onChange={onClickOpenDialogEnableApplication}
+                                  color="primary"
+                                  name="checkedB"
+                                  inputProps={{ 'aria-label': 'primary checkbox' }}
+                              />
+                          </Tooltip>
 
-      <Card
-      {...rest}
-      className={classes.root}>
-        <CardHeader
-            className={classes.head}
-            action={
-                <div>
 
-                    <Tooltip title="Habilite a questão para aplicações">
-                        <Switch
-                            checked={evaluationApplication.status}
-                            onChange={onClickOpenDialogEnableApplication}
-                            color="primary"
-                            name="checkedB"
-                            inputProps={{ 'aria-label': 'primary checkbox' }}
-                        />
-                    </Tooltip>
+                      </div>
+                  }
+                  title={'Código: '+evaluationApplication.id_application}/>
+
+              <CardContent>
+
+                  <Typography variant="h5" color="textSecondary" component="h2">
+                      {'Descrição da aplicação: '+evaluationApplication.description }
+                  </Typography>
+                  <Typography variant="body1" color="textSecondary" component="h2">
+                      {'Descrição da avaliação: '+evaluationApplication.evaluation.id+' - '+evaluationApplication.evaluation.description}
+                  </Typography>
+
+                  <Typography color="body2" variant="h6">
+                      {'Data de criação da aplicação: '+ moment(evaluationApplication.created_at).format('DD/MM/YYYY')}
+                  </Typography>
+                  { evaluationApplication.status == 0 ?
+                      <Chip label="Desativada" className={clsx(classes.chipred, className)} size="small"/> :
+                      <Chip label="Ativada" className={clsx(classes.chipgreen, className)} size="small"/>
+                  }
 
 
-                </div>
-            }
-            title={'Código: '+evaluationApplication.id_application}/>
+              </CardContent>
+          </Card>
+              : null }
 
-        <CardContent>
-            <Typography variant="h5" color="textSecondary" component="h2">
-                {'Descrição da aplicação: '+evaluationApplication.description}
-            </Typography>
-            <Typography variant="body1" color="textSecondary" component="h2">
-                {'Descrição da avaliação: '+evaluationApplication.evaluation.description}
-            </Typography>
-            <Typography color="body2" variant="h6">
-                {'Data de criação da aplicação: '+ moment(evaluationApplication.created_at).format('DD/MM/YYYY')}
-            </Typography>
-            { evaluationApplication.status == 0 ?
-                <Chip label="Desativada" className={clsx(classes.chipred, className)} size="small"/> :
-                <Chip label="Ativada" className={clsx(classes.chipgreen, className)} size="small"/>
-            }
-        </CardContent>
-    </Card>
+      </div>
+
+
 
   );
 };

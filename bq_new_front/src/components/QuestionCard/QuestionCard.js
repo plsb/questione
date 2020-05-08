@@ -249,7 +249,6 @@ const QuestionCard = props => {
         }
     }
 
-    //teste
     const [openEvalationChoose, setOpenEvalationChoose] = React.useState(false);
 
     const handleChooseEvaluation = () => {
