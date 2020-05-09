@@ -8,8 +8,13 @@ use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
 use App\AnswersHeadEvaluation;
+use App\Http\Controllers\Adm\ProfileController;
+use App\KnowledgeObject;
+use App\Profile;
 use App\Question;
+use App\QuestionHasKnowledgeObject;
 use App\QuestionItem;
+use App\Skill;
 use App\User;
 use Illuminate\Http\Request;
 use Validator;
@@ -292,7 +297,7 @@ class EvaluationApplicationsController extends Controller
                 'questions' => $questions,
                 't_question' => $total_questions,
                 't_correct' => $count_corret_student,
-                'percentage_correct' => round($percentage),
+                'percentage_correct' => number_format($percentage, 2),
             ];
             $result[] = $resultStudent;
         }
@@ -364,6 +369,117 @@ class EvaluationApplicationsController extends Controller
         $result[] = $auxEvaluation;
         return response()->json($result, 200);
 
+    }
+
+    public function resultPercentageQuestions($idApplication){
+        $application = EvaluationApplication::where('id', $idApplication)->first();
+
+        if(!$application){
+            return response()->json([
+                'message' => 'Aplicação não encontrada.'
+            ], 202);
+        }
+
+        $evaluation = Evaluation::where('id', $application->fk_evaluation_id)->first();
+
+        if(!$evaluation){
+            return response()->json([
+                'message' => 'Avaliação não encontrada.'
+            ], 202);
+        }
+
+        $evaluation_question = EvaluationHasQuestions::where('fk_evaluation_id', $evaluation->id)->get();
+
+        if(sizeof($evaluation_question)==0){
+            return response()->json([
+                'message' => 'Nenhuma questão foi encontrada.'
+            ], 202);
+        }
+
+        $result = array();
+        $resultQuestions = array();
+
+        foreach ($evaluation_question as $ev_question){
+            $question = Question::where('id', $ev_question->fk_question_id)->first();
+            //verifica qual o item correto
+            $item_correct = QuestionItem::where('fk_question_id', $question->id)
+                ->where('correct_item', 1)->first();
+            //total de pessoas que responderam a questão
+            $count_total_answer_question = AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)->count();
+            //pega todos os itens da questão
+            $itens_question = QuestionItem::where('fk_question_id',$question->id)->get();
+
+            //quantidade de pessoas que acertaram a questão
+            $answer = AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)
+                ->where('answer', $item_correct->id)
+                ->count();
+            //porcentagem de pessoas que acertam a questão
+            $percentageCorrectQuestion = ($answer * 100)/$count_total_answer_question;
+
+            $resultItens = array();
+            foreach($itens_question as $iq){
+                //conta quantas pessoas responderam esse item
+                $count_total_answer_item = AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)
+                    ->where('answer', $iq->id)
+                    ->count();
+                //porcentagem de acerto do item
+                $percentageAnswerItem = ($count_total_answer_item * 100)/$count_total_answer_question;
+                if($iq->id == $item_correct->id){
+                    $auxItem= (object)[
+                        'description' => $iq->description,
+                        'total_answer_item' => $count_total_answer_item,
+                        'percentage_answer' => number_format($percentageAnswerItem, 2),
+                        'correct' => 1,
+                    ];
+                } else {
+                    $auxItem= (object)[
+                        'description' => $iq->description,
+                        'total_answer_item' => $count_total_answer_item,
+                        'percentage_answer' => number_format($percentageAnswerItem, 2),
+                        'correct' => 0,
+                    ];
+                }
+
+                $resultItens[] = $auxItem;
+            }
+            $perfil = Profile::where('id', $question->fk_profile_id)->first();
+            $skill = Skill::where('id', $question->fk_skill_id)->first();
+            $course = Course::where('id', $question->fk_course_id)->first();
+            $objectsHasQuestion = QuestionHasKnowledgeObject::where('fk_question_id', $question->id)->get();
+
+            $resultObjects = array();
+            foreach ($objectsHasQuestion as $ob_has){
+                $obj = KnowledgeObject::where('id', $ob_has->fk_knowledge_object)->first();
+                $auxObject= (object)[
+                    'description' => $obj->description,
+                ];
+                $resultObjects[] = $auxObject;
+            }
+
+            $auxQuestion= (object)[
+                'id' => $question->id,
+                'base_text' => $question->base_text,
+                'stem' => $question->stem,
+                'reference' => $question->reference,
+                'profile' => $perfil->description,
+                'skill' => $skill->description,
+                'course' => $course->description,
+                'total_asnwer' => $count_total_answer_question,
+                'percentage_correct' => number_format($percentageCorrectQuestion, 2),
+                'objects' => $resultObjects,
+                'itens' => $resultItens,
+
+            ];
+
+
+            $resultQuestions[] = $auxQuestion;
+        }
+        $auxEvaluation= (object)[
+            'application' => $application->id,
+            'questions' => $resultQuestions
+        ];
+        $result[] = $auxEvaluation;
+        return response()->json($result, 200);
     }
 
 }

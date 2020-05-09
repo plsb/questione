@@ -63,10 +63,14 @@ const useStyles = makeStyles(theme => ({
     paperWrong: {
         backgroundColor: '#ef9a9a',
         color: '#212121',
+        margin: 3,
+        padding: 8
     },
     paperRight: {
         backgroundColor: '#80cbc4',
         color: '#212121',
+        margin: 3,
+        padding: 8
     },
     appBar: {
         position: 'relative',

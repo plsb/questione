@@ -113,6 +113,7 @@ Route::group(['prefix' => 'evaluation'], function (){
     //relatórios
     Route::get('/applications/result-answer-students/{idApplication}', 'Professor\EvaluationApplicationsController@resultAnswerStudents')->name('evaluationApplication.resultAnswerStudents');
     Route::get('/applications/result-question-evaluation/{idApplication}', 'Professor\EvaluationApplicationsController@resultQuestionEvaluation')->name('evaluationApplication.resultQuestionEvaluation');
+    Route::get('/applications/result-percentage-question/{idApplication}', 'Professor\EvaluationApplicationsController@resultPercentageQuestions')->name('evaluationApplication.resultPercentageQuestions');
     //resolução da avaliação
     Route::get('/get-application/{id_application}', 'DoEvaluation@getApplication')->name('evaluationApplication.getApplication');
     Route::post('/start/{id_application}', 'DoEvaluation@startEvaluation')->name('evaluationApplication.startEvaluation');
