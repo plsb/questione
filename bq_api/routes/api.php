@@ -112,13 +112,14 @@ Route::group(['prefix' => 'evaluation'], function (){
     Route::put('/change-status-application/{idApplication}', 'Professor\EvaluationApplicationsController@changeStatus')->name('evaluationApplication.changeStatus');
     //relatórios
     Route::get('/applications/result-answer-students/{idApplication}', 'Professor\EvaluationApplicationsController@resultAnswerStudents')->name('evaluationApplication.resultAnswerStudents');
-    Route::get('/applications/result-question-evaluation/{idApplication}', 'Professor\EvaluationApplicationsController@resultQuestionEvaluation')->name('evaluationApplication.resultQuestionEvaluation');
     Route::get('/applications/result-percentage-question/{idApplication}', 'Professor\EvaluationApplicationsController@resultPercentageQuestions')->name('evaluationApplication.resultPercentageQuestions');
-    //resolução da avaliação
+    //resolução da avaliação pelo student
     Route::get('/get-application/{id_application}', 'DoEvaluation@getApplication')->name('evaluationApplication.getApplication');
     Route::post('/start/{id_application}', 'DoEvaluation@startEvaluation')->name('evaluationApplication.startEvaluation');
     Route::put('/finish/{id_application}', 'DoEvaluation@finishEvaluation')->name('evaluationApplication.finishEvaluation');
     Route::put('/answer/{id_application}', 'DoEvaluation@answer')->name('evaluationApplication.answer');
+    //resultados da avaliação studen
+    Route::get('/student/result/evaluations', 'ResultEvaluationStudent@evaluations')->name('evaluationApplication.evaluations');
 });
 
 

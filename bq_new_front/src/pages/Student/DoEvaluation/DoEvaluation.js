@@ -15,12 +15,12 @@ import {
   CardActions, List, ListItem, Button
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import api from "../../services/api";
-import {getInitials} from "../../helpers";
+import api from "../../../services/api";
+import {getInitials} from "../../../helpers";
 import ReactHtmlParser from "react-html-parser";
 import clsx from "clsx";
 import Swal from "sweetalert2";
-import {DialogQuestione} from "../../components";
+import {DialogQuestione} from "../../../components";
 
 const useStyles = makeStyles({
   root: {

@@ -29,8 +29,23 @@ const useStyles = makeStyles(() => ({
     padding: 0
   },
   headStudent: {
-    width: '100%',
-    height: '70px',
+    width: '250px ',
+    height: '90px',
+    backgroundColor: '#FFF',
+    color: '#393A68',
+    paddingLeft: '12px',
+    boxSizing: 'border-box',
+    border: '1px solid #f2f2f2',
+    lineHeight: '40px',
+    fontSize: '14px',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    fontFamily: 'Open Sans, sans-serif, Helvetica, Arial'
+  },
+  headPercentage: {
+    width: '40px',
+    height: '90px',
     backgroundColor: '#FFF',
     color: '#393A68',
     paddingLeft: '12px',
@@ -44,8 +59,8 @@ const useStyles = makeStyles(() => ({
     fontFamily: 'Open Sans, sans-serif, Helvetica, Arial'
   },
   bodyStudent: {
-    width: '100%',
-    height: '70px',
+    width: '250px',
+    height: '60px',
     backgroundColor: '#FFF',
     color: '#393A68',
     paddingLeft: '12px',
@@ -58,11 +73,10 @@ const useStyles = makeStyles(() => ({
     overflow: 'auto',
     textOverflow: 'ellipsis',
     fontFamily: 'Open Sans, sans-serif, Helvetica, Arial',
-    display: 'inline-block'
   },
   bodyPercentage: {
-    width: '50px',
-    height: '70px',
+    width: '20%',
+    height: '60px',
     textAlign: 'center',
     backgroundColor: '#FFF',
     color: '#393A68',
@@ -210,23 +224,13 @@ const EvaluationApplicationResults = props => {
   const { className, history, ...rest } = props;
   const { idApplication } = props.match.params;
   const [ answerStudents, setAnswerStudents ] = useState([]);
-  const [ evaluationQuestions, setEvaluationQuestions ] = useState([]);
   const [ overviewQuestions, setOverviewQuestions ] = useState([]);
-  const [expanded, setExpanded] = React.useState(false);
-  const [value, setValueTab] = React.useState(0);
+  const [ overviewQuestionsHead, setOverviewQuestionsHead ] = useState([]);
+  const [ expanded, setExpanded] = React.useState(false);
+  const [ value, setValueTab] = React.useState(0);
 
   const classes = useStyles();
 
-  async function findEvaluation(id){
-    try {
-      const response = await api.get('/evaluation/applications/result-question-evaluation/'+id);
-      if (response.status === 200) {
-        setEvaluationQuestions(response.data[0].questions);
-      }
-    } catch (error) {
-
-    }
-  }
 
   async function findOverviewQuestions(id){
     try {
@@ -234,6 +238,7 @@ const EvaluationApplicationResults = props => {
       console.log(response.data);
       if (response.status === 200) {
         setOverviewQuestions(response.data[0].questions);
+        setOverviewQuestionsHead(response.data[0]);
       }
     } catch (error) {
 
@@ -258,7 +263,6 @@ const EvaluationApplicationResults = props => {
   useEffect(() => {
     if(idApplication){
       findResults(idApplication);
-      findEvaluation(idApplication);
       findOverviewQuestions(idApplication);
     }
 
@@ -290,76 +294,120 @@ const EvaluationApplicationResults = props => {
               subheader=""
               title="Resultado da Aplicação"/>
           <Divider />
-          <CardContent className={classes.content}>
-              <AppBar position="static">
-                <Tabs
-                    variant="fullWidth"
-                    value={value}
-                    onChange={handleChange}
-                    aria-label="nav tabs example">
-                  <LinkTab label="Visão Geral" href="/drafts" {...a11yProps(0)} />
-                  <LinkTab label="Questões" href="/trash" {...a11yProps(1)} />
-                  <LinkTab label="Gráficos" href="/spam" {...a11yProps(2)} />
-                </Tabs>
-              </AppBar>
-              <TabPanel value={value} index={0}>
-                  <PerfectScrollbar>
-                    <div className={classes.inner}>
-                      <Table>
-                        <TableHead>
-                          <TableRow>
-                            <TableCell  className={classes.headStudent}>Aluno(a)</TableCell>
-                            <TableCell className={classes.bodyPercentage}>% de Acerto</TableCell>
-                            {evaluationQuestions.map((result, i) => (
-                                <TableCell className={classes.headQuestion}>
-                                  {'Q' + (i+1)}
-                                  {result.percentageCorrect < 30 ?
-                                      <span className={classes.percentageRed}>{result.percentageCorrect+'%'}</span>
-                                      : result.percentageCorrect < 70 ?
-                                          <span className={classes.percentageOrange}>{result.percentageCorrect+'%'}</span>
-                                          : <span className={classes.percentageGreen}>{result.percentageCorrect+'%'}</span> }
-                                </TableCell>
+          <Card className={classes.root}>
+            <CardContent>
+              <Typography variant="h5" color="textSecondary" component="p">
+                {overviewQuestionsHead.description_application!= null ? 'Descrição da aplicação: '+overviewQuestionsHead.description_application : null }
+              </Typography>
+              <Typography variant="h5" color="textSecondary" component="p">
+                {overviewQuestionsHead.description_evaluation!= null ? 'Descrição da avaliação: '+overviewQuestionsHead.description_evaluation : null }
+              </Typography>
+              { overviewQuestionsHead.description_evaluation!=null && !answerStudents[0] ?
+                  <span className={classes.percentageRed}>SEM RESULTADO</span>
+                 : null }
+            </CardContent>
+          </Card>
+          { answerStudents[0] ?
+            <CardContent className={classes.content}>
+                <AppBar position="static">
+                  <Tabs
+                      variant="fullWidth"
+                      value={value}
+                      onChange={handleChange}
+                      aria-label="nav tabs example">
+                    <LinkTab label="Visão Geral" href="/drafts" {...a11yProps(0)} />
+                    <LinkTab label="Questões" href="/trash" {...a11yProps(1)} />
+                    {/*<LinkTab label="Gráficos" href="/spam" {...a11yProps(2)} />*/}
+                  </Tabs>
+                </AppBar>
+                <TabPanel value={value} index={0}>
+                  <Box
+                      display="flex"
+                      flexWrap="nowrap"
+                      p={1}
+                      m={1}
+                      bgcolor="background.paper">
+                      <Box p={1}>
+                        <Table>
+                          <TableHead>
+                            <TableRow>
+                              <TableCell  className={classes.headStudent}>Aluno(a)</TableCell>
+                              <TableCell className={classes.headPercentage}>% de Acerto</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {answerStudents.map(result => (
+                                <TableRow
+                                    className={classes.tableRow}
+                                    hover
+                                    key={result.fk_user_id}>
+                                  <TableCell className={classes.bodyStudent}>{result.student}</TableCell>
+                                  <TableCell className={classes.bodyPercentage}>{result.percentage_correct + '%'}</TableCell>
+                                </TableRow>
                             ))}
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {answerStudents.map(result => (
-                              <TableRow
-                                  className={classes.tableRow}
-                                  hover
-                                  key={result.fk_user_id}>
-                                <TableCell className={classes.bodyStudent}>{result.student}</TableCell>
-                                <TableCell className={classes.bodyPercentage}>{result.percentage_correct + '%'}</TableCell>
-                                {result.questions.map(quest => (
-                                    quest.correct == 1 ?
-                                        <TableCell className={classes.answerCorrect}>
-                                          <Done />
-                                        </TableCell> :
-                                        <TableCell className={classes.answerIncorrect}>
-                                          <Close />
+                          </TableBody>
+                        </Table>
+                      </Box>
+                    <PerfectScrollbar>
+                      <Box
+                           p={1}
+                           >
+
+                            <div className={classes.inner}>
+                              <Table>
+                                <TableHead>
+                                  <TableRow>
+                                    {overviewQuestions.map((result, i) => (
+                                        <TableCell className={classes.headQuestion}>
+                                          {'Q' + (i+1)}
+                                          {result.percentage_correct_round < 30 ?
+                                              <span className={classes.percentageRed}>{result.percentage_correct_round+'%'}</span>
+                                              : result.percentage_correct_round < 70 ?
+                                                  <span className={classes.percentageOrange}>{result.percentage_correct_round+'%'}</span>
+                                                  : <span className={classes.percentageGreen}>{result.percentage_correct_round+'%'}</span> }
                                         </TableCell>
-                                ))}
+                                    ))}
+                                  </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                  {answerStudents.map(result => (
+                                      <TableRow
+                                          className={classes.tableRow}
+                                          hover
+                                          key={result.fk_user_id}>
+                                        {result.questions.map(quest => (
+                                            quest.correct == 1 ?
+                                                <TableCell className={classes.answerCorrect}>
+                                                  <Done />
+                                                </TableCell> :
+                                                <TableCell className={classes.answerIncorrect}>
+                                                  <Close />
+                                                </TableCell>
+                                        ))}
 
-                              </TableRow>
-                          ))}
-                        </TableBody>
+                                      </TableRow>
+                                  ))}
+                                </TableBody>
+                              </Table>
+                            </div>
 
-                      </Table>
-                    </div>
-                  </PerfectScrollbar>
-              </TabPanel>
-             {/*visão geral das questões */}
-              <TabPanel value={value} index={1}>
-                { overviewQuestions.map((result, i) => (
-                  <EvaluationApplicationResultsOverviewQuestion
-                                                    result={result} numberQuestion={i}/>
-                    ))}
-              </TabPanel>
-              <TabPanel value={value} index={2}>
-                Page Three
-              </TabPanel>
-        </CardContent>
-      </Card>
+                      </Box>
+                    </PerfectScrollbar>
+                  </Box>
+                </TabPanel>
+               {/*visão geral das questões */}
+                <TabPanel value={value} index={1}>
+                  { overviewQuestions.map((result, i) => (
+                    <EvaluationApplicationResultsOverviewQuestion
+                                                      result={result} numberQuestion={i}/>
+                      ))}
+                </TabPanel>
+                <TabPanel value={value} index={2}>
+                  Page Three
+                </TabPanel>
+          </CardContent>
+              : null }
+       </Card>
       </div>
   );
 };

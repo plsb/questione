@@ -87,8 +87,10 @@ class CourseProfessorController extends Controller
         if($request->valid == 0){
             $situaton = "AGUARDANDO";
         } else if($request->valid == 1){
+            $user->acess_level = 2;
+            $user->save();
             $situaton = "APROVADA";
-        } else if($request->valid == 0){
+        } else if($request->valid == -1){
             $situaton = "RECUSADA";
         }
         $description = $course->description;

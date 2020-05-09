@@ -23,4 +23,6 @@ export { default as EvaluationDetails } from './Professor/Evaluation/EvaluationD
 export { default as EvaluationApplicationTable } from './Professor/EvaluationApplication/EvaluationApplicationTable';
 export { default as EvaluationApplicationDetails } from './Professor/EvaluationApplication/EvaluationApplicationDetails';
 export { default as EvaluationApplicationResults } from './Professor/EvaluationApplication/EvaluationApplicationResults';
-export { default as DoEvaluation } from './DoEvaluation';
+export { default as DoEvaluation } from './Student/DoEvaluation';
+export { default as StartEvaluation } from './Student/StartEvaluation';
+export { default as EvaluationsResultStudent } from './Student/EvaluationsResult/EvaluationsResultTable/EvaluationsResultStudentTable';

@@ -5,7 +5,7 @@ import {
   Route,
     Redirect
 } from 'react-router-dom';
-import { RouteWithLayout } from './../components';
+import {RouteWithLayout} from './../components';
 import { Main as MainLayout, Minimal as MinimalLayout } from './../layouts';
 import {
     SignUp,
@@ -33,7 +33,8 @@ import {
     EvaluationApplicationTable,
     DoEvaluation,
     EvaluationApplicationDetails,
-    EvaluationApplicationResults
+    EvaluationApplicationResults,
+    StartEvaluation, EvaluationsResultStudent
 } from '../pages';
 import UserRequestCourseDetails from "../pages/UserRequestCourse/UserRequestCourseDetails";
 import QuestionTable from "../pages/Professor/Question/QuestionTable";
@@ -96,6 +97,18 @@ const Routes = () => (
             needToBeLogged={true}
             layout={MainLayout}
             path="/new-request"/>
+        <RouteWithLayout
+            component={StartEvaluation}
+            exact
+            layout={MinimalLayout}
+            needToBeLogged={true}
+            path="/student/start-evaluation"/>
+            <RouteWithLayout
+            component={EvaluationsResultStudent}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/student/result-evaluations"/>
         {/*ROTAS DO ADMINISTRADOR*/}
         <RouteWithLayout
             component={CourseTable}

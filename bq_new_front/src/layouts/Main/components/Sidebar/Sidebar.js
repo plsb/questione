@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Divider, Drawer } from '@material-ui/core';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import PeopleIcon from '@material-ui/icons/People';
-import { Note, Ballot, EmojiObjects, AccountBox, Assignment } from '@material-ui/icons';
+import { Note, Ballot, EmojiObjects, AccountBox, Assignment, Assessment } from '@material-ui/icons';
 
 import { Profile, SidebarNavAdm } from './components';
 
@@ -80,19 +80,24 @@ const Sidebar = props => {
       title: 'Aplicações',
       href: '/applications-evaluation',
       icon: <Assignment />
+    },
+    {
+      title: 'Avaliações respondidas',
+      href: '/student/result-evaluations',
+      icon: <Assessment />
     }
   ];
 
   const pagesUser = [
     {
       title: 'Realizar Avaliação',
-      href: '/courses',
+      href: '/student/start-evaluation',
       icon: <DashboardIcon />
     },
     {
       title: 'Minhas Avaliações',
-      href: '/profiles',
-      icon: <PeopleIcon />
+      href: '/student/result-evaluations',
+      icon: <Assessment />
     }
   ];
 

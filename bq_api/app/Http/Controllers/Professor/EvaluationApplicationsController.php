@@ -316,63 +316,9 @@ class EvaluationApplicationsController extends Controller
         return response()->json($result, 200);
     }
 
-    public function resultQuestionEvaluation($idApplication){
-        $application = EvaluationApplication::where('id', $idApplication)->first();
-
-        if(!$application){
-            return response()->json([
-                'message' => 'Aplicação não encontrada.'
-            ], 202);
-        }
-
-        $evaluation = Evaluation::where('id', $application->fk_evaluation_id)->first();
-
-        if(!$evaluation){
-            return response()->json([
-                'message' => 'Avaliação não encontrada.'
-            ], 202);
-        }
-
-        $evaluation_question = EvaluationHasQuestions::where('fk_evaluation_id', $evaluation->id)->get();
-
-        if(sizeof($evaluation_question)==0){
-            return response()->json([
-                'message' => 'Nenhuma questão foi encontrada.'
-            ], 202);
-        }
-
-        $cont_students_answer = AnswersHeadEvaluation::where('fk_application_evaluation_id', $application->id)
-            ->count();
-
-        $result = array();
-        $resultQuestions = array();
-        foreach ($evaluation_question as $ev_question){
-            $question = Question::where('id', $ev_question->fk_question_id)->first();
-            $item_correct = QuestionItem::where('fk_question_id', $question->id)
-                            ->where('correct_item', 1)->first();
-            $answer = AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)
-                ->where('answer', $item_correct->id)
-                ->count();
-            $percentage = ($answer*100)/$cont_students_answer;
-            $auxQuestion= (object)[
-                'question' => $question->id,
-                'qtdCorrect' => $answer,
-                'percentageCorrect' => round($percentage)
-            ];
-            $resultQuestions[] = $auxQuestion;
-        }
-        $auxEvaluation= (object)[
-            'evaluation' => $evaluation->id,
-            'description' => $evaluation->description,
-            'questions' => $resultQuestions
-        ];
-        $result[] = $auxEvaluation;
-        return response()->json($result, 200);
-
-    }
-
     public function resultPercentageQuestions($idApplication){
         $application = EvaluationApplication::where('id', $idApplication)->first();
+
 
         if(!$application){
             return response()->json([
@@ -466,6 +412,7 @@ class EvaluationApplicationsController extends Controller
                 'course' => $course->description,
                 'total_asnwer' => $count_total_answer_question,
                 'percentage_correct' => number_format($percentageCorrectQuestion, 2),
+                'percentage_correct_round' => round($percentageCorrectQuestion),
                 'objects' => $resultObjects,
                 'itens' => $resultItens,
 
@@ -476,6 +423,8 @@ class EvaluationApplicationsController extends Controller
         }
         $auxEvaluation= (object)[
             'application' => $application->id,
+            'description_application' => $application->description,
+            'description_evaluation' => $evaluation->description,
             'questions' => $resultQuestions
         ];
         $result[] = $auxEvaluation;
