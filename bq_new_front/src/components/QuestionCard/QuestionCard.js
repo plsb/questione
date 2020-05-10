@@ -18,7 +18,7 @@ import {
     ListItemAvatar,
     List,
     DialogTitle,
-    Dialog, Avatar, AppBar, Toolbar,
+    Dialog, Avatar, AppBar, Toolbar, Box
 } from '@material-ui/core';
 import Rating from '@material-ui/lab/Rating';
 import {MoreVert, FavoriteRounded, PlaylistAdd, ExpandMoreRounded, Edit} from '@material-ui/icons';
@@ -82,6 +82,9 @@ const useStyles = makeStyles(theme => ({
         fontWeight: 'bold',
         color: '#ffffff'
     },
+    labelRank: {
+      textAlign: 'right'
+    }
 }));
 
 const QuestionCard = props => {
@@ -93,6 +96,7 @@ const QuestionCard = props => {
     const [openEnableQuestion, setOpenEnableQuestion] = React.useState(false);
     const [evaluations, setEvaluations] = React.useState([]);
     const [rank, setRank] = React.useState(0);
+    const [qtRank, setQtRank] = React.useState(0);
 
   const classes = useStyles();
 
@@ -113,10 +117,14 @@ const QuestionCard = props => {
             let response = await api.get('/rank/by-user?fk_question_id='+question.id);
             console.log('/rank/by-user?fk_question_id='+question.id);
             //verifica se usuário já classificou
-            if(response.data == 0){
+            let rank = response.data;
+            if(rank > 0){
                 response = await api.get('/rank/by-question?fk_question_id='+question.id);
+                rank = response.data[0].avg;
+                setQtRank(response.data[0].count);
             }
-            setRank(response.data);
+            setRank(rank);
+
         } catch (error) {
             console.log(error);
         }
@@ -352,20 +360,31 @@ const QuestionCard = props => {
         <CardHeader
             action={
                 <div>
+                    <Box display="flex" flexDirection="flex-end" p={1} m={1} bgcolor="background.paper">
+                        <Tooltip title="Avaliação da questão">
+                            {question.fk_user_id != localStorage.getItem("@Questione-id-user") && rank == 0 ?
+                                <div>
+                                    <Rating
+                                    name={question.id}
+                                    value={rank}
+                                    onChange={(event, newValue) => {
+                                        modifyRank(newValue);
+                                    }}/>
 
-                    <Tooltip title="Avaliação da questão">
-                        {question.fk_user_id != localStorage.getItem("@Questione-id-user") && rank == 0 ?
-                        <Rating
-                            name={question.id}
-                            value={rank}
-                            onChange={(event, newValue) => {
-                                modifyRank(newValue);
-                            }}/> :
-                            <Rating
-                                name="simple-controlled"
-                                value={rank}
-                                precision={1} disabled/> }
-                    </Tooltip>
+                                </div>   :
+                                <div>
+                                    <Rating
+                                        name="simple-controlled"
+                                        value={rank}
+                                        precision={1} disabled/>
+                                    <Typography className={classes.labelRank} variant="caption" color="textSecondary" component="p">
+                                        { qtRank < 2 ?  qtRank + ' Classificação.' : qtRank + ' Classificações.'}
+                                    </Typography>
+                                </div> }
+
+                        </Tooltip>
+                    </Box>
+
                     { !id_evaluation && question.validated == 1 ?
                     <Tooltip title="Aplicar questão em avaliação">
                         <IconButton

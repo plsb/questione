@@ -114,14 +114,20 @@ class RankQuestionController extends Controller
         }
 
         $rank = RankQuestion::where('fk_question_id', $request->fk_question_id)->avg('rank');
+        $rank_count = RankQuestion::where('fk_question_id', $request->fk_question_id)->count();
 
-        $rank_value = 0;
+        $rank_avg = 0;
         if($rank){
-            $rank_value = $rank;
+            $rank_avg = $rank;
         }
-        dd(round($rank_value));
+        $result = array();
+        $aux= (object)[
+            'count' => $rank_count,
+            'avg' => round($rank_avg),
+        ];
+        $result[] = $aux;
 
-        return response()->json($rank_value, 200);
+        return response()->json($result, 200);
     }
 
 
