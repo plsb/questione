@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
 
 const QuestionToolbar = props => {
   const { className, onClickSearch, onChangeSearch, searchText, history, ...rest } = props;
-  const [courses, setCourses] = useState([{'id': '0', 'description': 'Todos os cursos'}]);
+  const [courses, setCourses] = useState([{'id': '0', 'description': 'Todos as áreas'}]);
   const [objects, setObjects] = useState([]);
   const [courseSelect, setCourseSelect] = useState([]);
   const [objectSelect, setObjectSelect] = useState([]);
@@ -146,10 +146,10 @@ const QuestionToolbar = props => {
         <TextField
             id="filled-select-currency"
             select
-            label="Selecione o curso"
+            label="Selecione o área"
             value={courseSelect}
             onChange={onChangeCourse}
-            helperText="Selecione o curso que deseja pesquisar."
+            helperText="Selecione o área que deseja pesquisar."
             variant="outlined"
             margin="dense">
           {courses.map((option) => (

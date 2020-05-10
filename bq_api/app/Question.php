@@ -11,7 +11,6 @@ class Question extends Model
                                         'fk_skill_id', 'fk_user_id', 'fk_course_id'];
     protected $hidden = [];
 
-    //RELATION SHIP - Inverso ==> através de um perfil, irá retornar seu curso responsável
     public function profile(){
     	return $this->belongsTo(Profile::class, 'fk_profile_id');
     }
@@ -40,6 +39,13 @@ class Question extends Model
         return $this->hasMany(QuestionItem::class, 'fk_question_id');
     }
 
+    public function rank(){
+        return $this->belongsToMany(User::class, 'rank_question',
+            'fk_question_id', 'fk_user_id')
+            ->withPivot('rank')
+            ->withTimestamps();
+    }
+
     /*
     public function professores_valida_questao(){
         return $this->belongsToMany(User::class, 'professor_valida_questao',
@@ -48,13 +54,6 @@ class Question extends Model
             ->withPivot('aceita')
             ->withPivot('rejeitada')
             ->withPivot('modificacao_solicitada')
-            ->withTimestamps();
-    }
-
-    public function classificacao_usuario(){
-        return $this->belongsToMany(User::class, 'classificacao_questoes',
-            'fk_questao_id', 'fk_usuario_id')
-            ->withPivot('classificacao')
             ->withTimestamps();
     }
 

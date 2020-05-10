@@ -9,10 +9,11 @@ import CourseDetails from "../../Administrator/Course/CourseDetails";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(4)
+    margin: theme.spacing(3),
   },
-  gridStartEvaluation: {
-    paddingBottom: theme.spacing(4)
+  startEvaluation: {
+    marginTop: theme.spacing(6),
+    paddingBottom: theme.spacing(20)
   }
 }));
 
@@ -25,23 +26,15 @@ const StartEvaluation = props => {
   };
 
   return (
-    <div className={classes.root}>
-      <div className={classes.contentHeader}>
+    <div  className={classes.root}>
+      <div>
         <IconButton onClick={handleBack}>
           <ArrowBackIcon />
         </IconButton>
       </div>
-      <Grid
-          container
-          spacing={1}
-          className={classes.gridStartEvaluation}>
-        <Grid
-            item
-            xs={12}>
-          <StartEvaluationCard />
-        </Grid>
-
-      </Grid>
+      <div className={classes.startEvaluation}>
+        <StartEvaluationCard colorBox="#ff9800"/>
+      </div>
     </div>
   );
 };

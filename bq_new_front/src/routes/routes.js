@@ -34,7 +34,7 @@ import {
     DoEvaluation,
     EvaluationApplicationDetails,
     EvaluationApplicationResults,
-    StartEvaluation, EvaluationsResultStudent
+    StartEvaluation, EvaluationsResultStudent, EvaluationsResultStudentDetails
 } from '../pages';
 import UserRequestCourseDetails from "../pages/UserRequestCourse/UserRequestCourseDetails";
 import QuestionTable from "../pages/Professor/Question/QuestionTable";
@@ -103,12 +103,18 @@ const Routes = () => (
             layout={MinimalLayout}
             needToBeLogged={true}
             path="/student/start-evaluation"/>
-            <RouteWithLayout
+        <RouteWithLayout
             component={EvaluationsResultStudent}
             exact
             layout={MainLayout}
             needToBeLogged={true}
             path="/student/result-evaluations"/>
+        <RouteWithLayout
+            component={EvaluationsResultStudentDetails}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/student/result-evaluations/details/:idHead"/>
         {/*ROTAS DO ADMINISTRADOR*/}
         <RouteWithLayout
             component={CourseTable}

@@ -125,6 +125,7 @@ class DoEvaluation extends Controller
                 'message' => 'Código de resposta não encontrado.'
             ], 202);
         }
+        //dd($answer);
 
         $answer_head = AnswersHeadEvaluation::where('id', $answer->fk_answers_head_id)->first();
         if(!$answer_head){

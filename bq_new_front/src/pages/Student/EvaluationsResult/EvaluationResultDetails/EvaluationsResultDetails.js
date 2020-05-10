@@ -8,11 +8,14 @@ import {
   CardContent,
   Divider,
   IconButton,
-  Typography
+  Typography, Box, Table, TableHead, TableRow, TableCell, TableBody
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import EvaluationsResultStudentOverviewQuestion from "../EvaluationsResultStudentOverViewQuestion";
+import EvaluationCard from "../../../Professor/Evaluation/EvaluationCard/EvaluationCard";
+import {Close, Done} from "@material-ui/icons";
+import PerfectScrollbar from "react-perfect-scrollbar";
 //import EvaluationsResultStudentOverviewQuestion from "./EvaluationsResultStudentOverviewQuestion";
 
 const useStyles = makeStyles(() => ({
@@ -169,36 +172,20 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const EvaluationsResultStudent = props => {
+const EvaluationsResultDetails = props => {
   const { className, history, ...rest } = props;
-  const { idApplication } = props.match.params;
-  const [ answerStudents, setAnswerStudents ] = useState([]);
-  const [ overviewQuestions, setOverviewQuestions ] = useState([]);
-  const [ overviewQuestionsHead, setOverviewQuestionsHead ] = useState([]);
-  const [ expanded, setExpanded] = React.useState(false);
-  const [ value, setValueTab] = React.useState(0);
-  const [ evaluations, setEvaluations ] = useState([]);
+  const { idHead } = props.match.params;
+  const [ questions, setQuestions ] = useState([]);
 
   const classes = useStyles();
 
-  async function findOverviewQuestions(id){
+  async function findHead(){
     try {
-      const response = await api.get('/evaluation/applications/result-percentage-question/'+id);
-      console.log(response.data);
-      if (response.status === 200) {
-        setOverviewQuestions(response.data[0].questions);
-        setOverviewQuestionsHead(response.data[0]);
-      }
-    } catch (error) {
 
-    }
-  }
-
-  async function findEvaluations(){
-    try {
-      const response = await api.get('/evaluation/student/result/evaluations');
+      const response = await api.get('/evaluation/student/result/evaluations-specific/'+idHead);
+      console.log(response);
       if (response.status === 200) {
-        setEvaluations(response.data);
+        setQuestions(response.data.questions);
       }
     } catch (error) {
 
@@ -206,21 +193,9 @@ const EvaluationsResultStudent = props => {
   }
 
   useEffect(() => {
-
-  }, [answerStudents]);
-
-  useEffect(() => {
-    findEvaluations();
+    findHead();
 
   }, []);
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
-
-  const handleChange = (event, newValue) => {
-    setValueTab(newValue);
-  };
 
   const handleBack = () => {
     history.goBack();
@@ -231,38 +206,55 @@ const EvaluationsResultStudent = props => {
         <Card
             {...rest}
             className={clsx(classes.root, className)}>
+          <div className={classes.contentHeader}>
+            <IconButton onClick={handleBack}>
+              <ArrowBackIcon />
+            </IconButton>
+          </div>
           <CardHeader
               subheader=""
-              title="Avaliações"/>
+              title="Avaliação"/>
           <Divider />
-          <Card className={classes.root}>
             <CardContent>
-              <Typography variant="h5" color="textSecondary" component="p">
-                {overviewQuestionsHead.description_application!= null ? 'Descrição da aplicação: '+overviewQuestionsHead.description_application : null }
-              </Typography>
-              <Typography variant="h5" color="textSecondary" component="p">
-                {overviewQuestionsHead.description_evaluation!= null ? 'Descrição da avaliação: '+overviewQuestionsHead.description_evaluation : null }
-              </Typography>
-              { overviewQuestionsHead.description_evaluation!=null && !answerStudents[0] ?
-                  <span className={classes.percentageRed}>SEM RESULTADO</span>
-                 : null }
+                  <PerfectScrollbar>
+                      <div className={classes.inner}>
+                        <Table>
+                          <TableHead>
+                            <TableRow>
+                              {questions.map((result, i) => (
+                                  <TableCell className={classes.headQuestion}>
+                                    {'Questão ' + (i+1)}
+                                  </TableCell>
+                              ))}
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            <TableRow
+                                className={classes.tableRow}
+                                hover>
+                                {questions.map(result => (
+                                      result.correct == 1 ?
+                                          <TableCell className={classes.answerCorrect}>
+                                            <Done />
+                                          </TableCell> :
+                                          <TableCell className={classes.answerIncorrect}>
+                                            <Close />
+                                          </TableCell>
+                                ))}
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </div>
+
+                  </PerfectScrollbar>
             </CardContent>
-          </Card>
-          { answerStudents[0] ?
-            <CardContent className={classes.content}>
-              { overviewQuestions.map((result, i) => (
-                  <EvaluationsResultStudentOverviewQuestion
-                      result={result} numberQuestion={i}/>
-              ))}
-            </CardContent>
-              : null }
        </Card>
       </div>
   );
 };
 
-EvaluationsResultStudent.propTypes = {
+EvaluationsResultDetails.propTypes = {
   className: PropTypes.string,
 };
 
-export default EvaluationsResultStudent;
+export default EvaluationsResultDetails;

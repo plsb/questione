@@ -144,9 +144,9 @@ const DoEvaluation = props => {
 
   }
 
-  useEffect(() => {
-
-  }, [enableButtonStart, checked, answers]);
+  /*useEffect(() => {
+    console.log('teste '+answers);
+  }, [enableButtonStart]);*/
 
   useEffect(() => {
     listApplication();
@@ -171,13 +171,15 @@ const DoEvaluation = props => {
       }
 
     } catch (error) {
+      console.log(error)
       loadAlert('error', 'Erro de conexão.');
     }
     //console.log('questao', question, item_question);
   };
 
-  const handleToggle = (value, questionItens) => () => {
-    const arr = [0];
+  const handleToggle = (value) => () => {
+    console.log(value)
+    /*const arr = [0];
     let item, c;
     for(item of questionItens){
       if(item.id != value){
@@ -202,7 +204,7 @@ const DoEvaluation = props => {
       newChecked.splice(currentIndex, 1);
     }
 
-    setChecked(newChecked);
+    setChecked(newChecked);*/
   };
 
   const onClickCloseDialogStart = () => {
@@ -305,7 +307,7 @@ const DoEvaluation = props => {
                     {data.evaluation_question.question.question_items.map(item => (
                         <List className={classes.lineItemQuestion}
                               key={item.id}
-                              onClick={handleToggle(item.id, data.evaluation_question.question.question_items)}
+                              onClick={handleToggle(item.id)}
                               component="nav" aria-label="secondary mailbox folder">
                           <ListItem key={item.id}
                                     selected={data.answer == item.id}

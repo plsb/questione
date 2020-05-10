@@ -13,7 +13,7 @@ class CreateComentarioItemQuestaosTable extends Migration
      */
     public function up()
     {
-        Schema::create('comentario_item_questaos', function (Blueprint $table) {
+        Schema::create('rank_question', function (Blueprint $table) {
             $table->increments('id');
             $table->text('comentario', 4000);
             $table->integer('fk_itens_questao_id')->unsigned()->nullable();;

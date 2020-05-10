@@ -92,6 +92,12 @@ Route::group(['prefix' => 'questionitem'], function (){
     Route::delete('/{questionitem}', 'Professor\QuestionItemController@destroy')->name('questionitem.destroy');
 });
 
+Route::group(['prefix' => 'rank'], function (){
+    Route::get('/by-user/', 'Professor\RankQuestionController@rankByUser')->name('rank.rankByUser');
+    Route::get('/by-question/', 'Professor\RankQuestionController@rankByQuestion')->name('rank.rankByQuestion');
+    Route::post('/', 'Professor\RankQuestionController@storeUpdate')->name('rank.storeUpdate');
+});
+
 Route::group(['prefix' => 'evaluation'], function (){
     Route::get('/', 'Professor\EvaluationController@index')->name('evaluation.index');
     Route::get('/show/{evaluation}', 'Professor\EvaluationController@show')->name('evaluation.show');
@@ -120,6 +126,7 @@ Route::group(['prefix' => 'evaluation'], function (){
     Route::put('/answer/{id_application}', 'DoEvaluation@answer')->name('evaluationApplication.answer');
     //resultados da avaliação studen
     Route::get('/student/result/evaluations', 'ResultEvaluationStudent@evaluations')->name('evaluationApplication.evaluations');
+    Route::get('/student/result/evaluations-specific/{idHead}', 'ResultEvaluationStudent@applicationSpecific')->name('evaluationApplication.applicationSpecific');
 });
 
 

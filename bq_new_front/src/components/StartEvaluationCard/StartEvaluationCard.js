@@ -18,7 +18,9 @@ import {withRouter} from "react-router-dom";
 import api from "../../services/api";
 
 const useStyles = makeStyles(theme => ({
-  root: {},
+  root: {
+    height: '100%',
+  },
   codeContainer: {
     margin: 20
   },
@@ -67,7 +69,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const StartEvaluationCard = props => {
-  const { className, history, ...rest } = props;
+  const { className, history, colorBox, ...rest } = props;
   const [codigo, setCodigo] = useState('');
 
   const classes = useStyles();
@@ -95,7 +97,7 @@ const StartEvaluationCard = props => {
     <Card
       {...rest}
       className={clsx(classes.root, className)}>
-      <Box width="100%" height="100%" bgcolor="#03a9f4">
+      <Box width="100%" height="100%" bgcolor={colorBox}>
       <CardContent>
           <div className={classes.codeContainer}>
               <Grid container
@@ -159,7 +161,8 @@ const StartEvaluationCard = props => {
 
 StartEvaluationCard.propTypes = {
   className: PropTypes.string,
-  history: PropTypes.object
+  history: PropTypes.object,
+  colorBox: PropTypes.string
 };
 
 export default withRouter(StartEvaluationCard);

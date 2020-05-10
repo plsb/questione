@@ -18,8 +18,9 @@ import {
     ListItemAvatar,
     List,
     DialogTitle,
-    Dialog, Avatar, AppBar, Toolbar
+    Dialog, Avatar, AppBar, Toolbar,
 } from '@material-ui/core';
+import Rating from '@material-ui/lab/Rating';
 import {MoreVert, FavoriteRounded, PlaylistAdd, ExpandMoreRounded, Edit} from '@material-ui/icons';
 import Swal from "sweetalert2";
 import {withRouter} from "react-router-dom";
@@ -91,6 +92,7 @@ const QuestionCard = props => {
     const [openDeleteQuestion, setOpenDeleteQuestion] = React.useState(false);
     const [openEnableQuestion, setOpenEnableQuestion] = React.useState(false);
     const [evaluations, setEvaluations] = React.useState([]);
+    const [rank, setRank] = React.useState(0);
 
   const classes = useStyles();
 
@@ -100,7 +102,49 @@ const QuestionCard = props => {
 
             const response = await api.get(url);
             setEvaluations(response.data);
-            console.log(response.data);
+        } catch (error) {
+            console.log(error);
+            setEvaluations([]);
+        }
+    }
+
+    async function loadRank(){
+        try {
+            let response = await api.get('/rank/by-user?fk_question_id='+question.id);
+            console.log('/rank/by-user?fk_question_id='+question.id);
+            //verifica se usuário já classificou
+            if(response.data == 0){
+                response = await api.get('/rank/by-question?fk_question_id='+question.id);
+            }
+            setRank(response.data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function modifyRank(rank){
+        console.log('passou rank', rank);
+        setRank(rank);
+        try {
+            const fk_question_id = question.id;
+            const data = {
+                fk_question_id,
+                rank
+            }
+            let url = '/rank/';
+
+            const response = await api.post(url, data);
+            if (response.status === 202) {
+                if(response.data.message){
+                    loadAlert('error', response.data.message);
+                } else if(response.data.errors[0].rank){
+                    loadAlert('error', response.data.errors[0].rank);
+                } if(response.data.errors[0].fk_question_id){
+                    loadAlert('error', response.data.errors[0].fk_question_id);
+                }
+            } else {
+                loadAlert('success', 'Classificação cadastrada.');
+            }
         } catch (error) {
             console.log(error);
             setEvaluations([]);
@@ -108,7 +152,13 @@ const QuestionCard = props => {
     }
 
     useEffect(() => {
+        loadRank();
+    }, [question, rank]);
+
+    useEffect(() => {
+        loadRank();
         loadEvaluations();
+
     }, []);
 
     //configuration alert
@@ -256,6 +306,10 @@ const QuestionCard = props => {
     const [openEvalationChoose, setOpenEvalationChoose] = React.useState(false);
 
     const handleChooseEvaluation = () => {
+        if(question.fk_user_id != localStorage.getItem("@Questione-id-user") && rank == 0){
+            loadAlert('error', 'Antes de aplicar a questão, você deve classificá-la.')
+            return;
+        }
         setOpenEvalationChoose(true);
     };
 
@@ -289,7 +343,7 @@ const QuestionCard = props => {
         setOpenEvalationChoose(false);
 
         console.log(evaluation);
-    };
+    }
 
   return (
     <Card
@@ -298,6 +352,20 @@ const QuestionCard = props => {
         <CardHeader
             action={
                 <div>
+
+                    <Tooltip title="Avaliação da questão">
+                        {question.fk_user_id != localStorage.getItem("@Questione-id-user") && rank == 0 ?
+                        <Rating
+                            name={question.id}
+                            value={rank}
+                            onChange={(event, newValue) => {
+                                modifyRank(newValue);
+                            }}/> :
+                            <Rating
+                                name="simple-controlled"
+                                value={rank}
+                                precision={1} disabled/> }
+                    </Tooltip>
                     { !id_evaluation && question.validated == 1 ?
                     <Tooltip title="Aplicar questão em avaliação">
                         <IconButton
@@ -330,6 +398,7 @@ const QuestionCard = props => {
                             <MoreVert />
                         </IconButton>
                     </Tooltip>
+
                 </div>
             }
             title={
@@ -340,7 +409,7 @@ const QuestionCard = props => {
                                 question.id < 100000 ? 'Questão - 0' + question.id :
                                     question.id
             }
-            subheader={'Curso de origem: '+question.course.description}/>
+            subheader={'Área de origem: '+question.course.description}/>
         <CardContent>
             <div>
             { question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
