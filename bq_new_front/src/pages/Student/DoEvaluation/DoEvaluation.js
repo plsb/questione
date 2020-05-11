@@ -12,7 +12,8 @@ import {
   CardHeader,
   Avatar,
   CardContent,
-  CardActions, List, ListItem, Button
+  CardActions, List, ListItem, Button, CircularProgress,
+    Backdrop
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import api from "../../../services/api";
@@ -29,7 +30,8 @@ const useStyles = makeStyles({
   lineQuestion: {
     display: 'flex',
     flexDirection: 'column',
-    width: '100%'
+    width: '100%',
+    margin: 30
   },
   lineItemQuestion: {
     width: '100%'
@@ -52,7 +54,8 @@ const DoEvaluation = props => {
   const [dialogStart, setDialogStart] = useState(false);
   const [dialogFinish, setDialogFinish] = useState(false);
   const [enableButtonStart, setEnableButtonStart] = useState(true);
-  const [checked, setChecked] = React.useState([0]);
+  const [openBackdrop, setOpenBackdrop] = React.useState(false);
+  const timer = React.useRef();
 
   const classes = useStyles();
 
@@ -99,14 +102,16 @@ const DoEvaluation = props => {
   }
 
   async function startEvaluation(){
+    setOpenBackdrop(true);
     try {
       const response = await api.post('evaluation/start/'+codeAplication);
       console.log(response);
-      if (response.status === 202) {
-        if(response.data.message){
-          loadAlert('error', response.data.message);
-        }
-      } else if(response.status == 200){
+      timer.current = setTimeout(() => {
+        if (response.status === 202) {
+          if(response.data.message){
+            loadAlert('error', response.data.message);
+          }
+        } else if(response.status == 200){
           if(response.data.status == 0){
             loadAlert('error', 'Avaliação está desabilitada.');
             history.push('/home');
@@ -114,8 +119,9 @@ const DoEvaluation = props => {
           }
           setAnswers(response.data[0].answer);
           setEnableButtonStart(false);
-      }
-
+          setOpenBackdrop(false);
+        }
+      }, 1300);
     } catch (error) {
       console.log(error);
       loadAlert('error', 'Erro de conexão.');
@@ -132,10 +138,9 @@ const DoEvaluation = props => {
           loadAlert('error', response.data.message);
         }
       } else if(response.status == 200){
-        loadAlert('success', 'Avaliação respondida com sucesso!')
+        loadAlert('success', 'Avaliação respondida com sucesso!');
         history.push('/home');
       }
-
     } catch (error) {
       console.log(error);
       loadAlert('error', 'Erro de conexão.');
@@ -223,8 +228,21 @@ const DoEvaluation = props => {
     setDialogFinish(false);
   }
 
+  const [expanded, setExpanded] = React.useState(false);
+
+  const handleChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
+
+  const handleCloseBackdrop = () => {
+    setOpenBackdrop(false);
+  };
+
   return (
       <div>
+        <Backdrop className={classes.backdrop} open={openBackdrop} onClick={handleCloseBackdrop}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
         { application.id ?
         <div className={classes.root}>
           <Card className={classes.root}>
@@ -271,7 +289,7 @@ const DoEvaluation = props => {
           </Card>
 
           {answers.map((data, i) => (
-              <ExpansionPanel key={data.id}>
+              <ExpansionPanel expanded={expanded === i} key={data.id} onChange={handleChange(i)}>
                 <ExpansionPanelSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-label="Expand"

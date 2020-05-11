@@ -71,7 +71,7 @@ const QuestionTable = props => {
 
   const classes = useStyles();
 
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(8);
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
   const [searchText, setSearchText] = useState([]);
@@ -213,7 +213,7 @@ const QuestionTable = props => {
                 onChangeRowsPerPage={handleRowsPerPageChange}
                 page={page}
                 rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[5]}
+                rowsPerPageOptions={[8]}
             />
           </CardActions>
         </Card>

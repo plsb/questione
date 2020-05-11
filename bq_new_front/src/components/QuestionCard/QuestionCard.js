@@ -84,7 +84,10 @@ const useStyles = makeStyles(theme => ({
     },
     labelRank: {
       textAlign: 'right'
-    }
+    },
+    lineQuestion: {
+        marginLeft: 20,
+    },
 }));
 
 const QuestionCard = props => {
@@ -360,16 +363,53 @@ const QuestionCard = props => {
         <CardHeader
             action={
                 <div>
-                    <Box display="flex" flexDirection="flex-end" p={1} m={1} bgcolor="background.paper">
+                    <Box display="flex" justifyContent="flex-end" p={1} m={1} bgcolor="background.paper">
+                        { !id_evaluation && question.validated == 1 ?
+                        <Tooltip title="Aplicar questão em avaliação">
+                            <IconButton
+                                className={classes.labelRank}
+                                aria-label="copy"
+                                onClick={handleChooseEvaluation}>
+                                <PlaylistAdd />
+                            </IconButton>
+                        </Tooltip> : null }
+                        { question.validated == 0 && question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
+                        <Tooltip title="Habilite a questão para aplicações">
+                                <Switch
+                                    checked={question.validated}
+                                    onChange={onClickOpenDialogEnableQuestion}
+                                    color="primary"
+                                    name="checkedB"
+                                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                                />
+                        </Tooltip> : null }
+                        { question.validated == 0 && question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
+                            <Tooltip title="Editar Questão">
+                                <IconButton className={classes.labelRank}
+                                    aria-label="copy"
+                                    onClick={onApplyQuestionInEvaluation}>
+                                    <Edit />
+                                </IconButton>
+                            </Tooltip> : null }
+                        <Tooltip title="Opções">
+                            <Box flexDirection="row" alignSelf="flex-end">
+                                <IconButton className={classes.labelRank} aria-label="settings"
+                                            onClick={handleClick}>
+                                    <MoreVert />
+                                </IconButton>
+                            </Box>
+                        </Tooltip>
+                    </Box>
+                    <Box display="flex" flexDirection="flex-end" p={1} m={1}>
                         <Tooltip title="Avaliação da questão">
                             {question.fk_user_id != localStorage.getItem("@Questione-id-user") && rank == 0 ?
                                 <div>
                                     <Rating
-                                    name={question.id}
-                                    value={rank}
-                                    onChange={(event, newValue) => {
-                                        modifyRank(newValue);
-                                    }}/>
+                                        name={question.id}
+                                        value={rank}
+                                        onChange={(event, newValue) => {
+                                            modifyRank(newValue);
+                                        }}/>
 
                                 </div>   :
                                 <div>
@@ -384,40 +424,6 @@ const QuestionCard = props => {
 
                         </Tooltip>
                     </Box>
-
-                    { !id_evaluation && question.validated == 1 ?
-                    <Tooltip title="Aplicar questão em avaliação">
-                        <IconButton
-                            aria-label="copy"
-                            onClick={handleChooseEvaluation}>
-                            <PlaylistAdd />
-                        </IconButton>
-                    </Tooltip> : null }
-                    { question.validated == 0 && question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
-                    <Tooltip title="Habilite a questão para aplicações">
-                        <Switch
-                            checked={question.validated}
-                            onChange={onClickOpenDialogEnableQuestion}
-                            color="primary"
-                            name="checkedB"
-                            inputProps={{ 'aria-label': 'primary checkbox' }}
-                        />
-                    </Tooltip> : null }
-                    { question.validated == 0 && question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
-                        <Tooltip title="Editar Questão">
-                            <IconButton
-                                aria-label="copy"
-                                onClick={onApplyQuestionInEvaluation}>
-                                <Edit />
-                            </IconButton>
-                        </Tooltip> : null }
-                    <Tooltip title="Opções">
-                        <IconButton aria-label="settings"
-                                    onClick={handleClick}>
-                            <MoreVert />
-                        </IconButton>
-                    </Tooltip>
-
                 </div>
             }
             title={
@@ -430,57 +436,59 @@ const QuestionCard = props => {
             }
             subheader={'Área de origem: '+question.course.description}/>
         <CardContent>
-            <div>
-            { question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
-                <Chip label="Inserida por você" className={clsx(classes.chipGreen, className)} size="small"/> : null}
-            { question.validated == 1 ?
-                <Chip label="Habilitada" className={clsx(classes.chipGreen, className)} size="small"/> : null}
-            </div>
-            <br />
-            { question.reference != "" && question.reference != null ?
+            <div className={classes.lineQuestion}>
                 <div>
-                    <Typography variant="button" color="textSecondary" component="p">
-                        Referência:
-                    </Typography>
-                    <div> { question.reference } </div>
-                    <br />
+                { question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
+                    <Chip label="Inserida por você" className={clsx(classes.chipGreen, className)} size="small"/> : null}
+                { question.validated == 1 ?
+                    <Chip label="Habilitada" className={clsx(classes.chipGreen, className)} size="small"/> : null}
                 </div>
-                : null}
-            { question.profile.length != 0 ?
-            <div>
-                <Typography variant="button" color="textSecondary" component="p">
-                Perfil:
-                </Typography>
-                <div> { question.profile.description } </div>
                 <br />
-            </div>
-            : null}
-            { question.skill.length != 0 ?
+                { question.reference != "" && question.reference != null ?
+                    <div>
+                        <Typography variant="button" color="textSecondary" component="p">
+                            Referência:
+                        </Typography>
+                        <div> { question.reference } </div>
+                        <br />
+                    </div>
+                    : null}
+                { question.profile.length != 0 ?
                 <div>
                     <Typography variant="button" color="textSecondary" component="p">
-                        Competência:
+                    Perfil:
                     </Typography>
-                    <div> { question.skill.description } </div>
+                    <div> { question.profile.description } </div>
                     <br />
                 </div>
                 : null}
-            { question.knowledge_objects.length != 0 ?
-                <div>
-                    <Typography variant="button" color="textSecondary" component="p">
-                        Objeto(s) de Conhecimento:
-                    </Typography>
-                    {question.knowledge_objects.map(item => (
-                        <div> { ReactHtmlParser (item.description) } </div>
-                    ))}
-                    <br />
-                </div>
-                : null}
+                { question.skill.length != 0 ?
+                    <div>
+                        <Typography variant="button" color="textSecondary" component="p">
+                            Competência:
+                        </Typography>
+                        <div> { question.skill.description } </div>
+                        <br />
+                    </div>
+                    : null}
+                { question.knowledge_objects.length != 0 ?
+                    <div>
+                        <Typography variant="button" color="textSecondary" component="p">
+                            Objeto(s) de Conhecimento:
+                        </Typography>
+                        {question.knowledge_objects.map(item => (
+                            <div> { ReactHtmlParser (item.description) } </div>
+                        ))}
+                        <br />
+                    </div>
+                    : null}
 
-            <Typography variant="button" color="textSecondary" component="p">
-            Texto base:
-            </Typography>
-            <br />
-            <div> { ReactHtmlParser (question.base_text) } </div>
+                <Typography variant="button" color="textSecondary" component="p">
+                Texto base:
+                </Typography>
+                <br />
+                <div> { ReactHtmlParser (question.base_text) } </div>
+            </div>
         </CardContent>
         <CardActions disableSpacing>
             <Tooltip title="Expandir a questão">
@@ -496,7 +504,7 @@ const QuestionCard = props => {
             </Tooltip>
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
-            <CardContent>
+            <CardContent className={classes.lineQuestion}>
                 <Typography variant="button" color="textSecondary" component="p">
                     Enunciado:
                 </Typography>

@@ -98,7 +98,7 @@ class QuestionController extends Controller
             ->with('knowledgeObjects')
             ->with('user')
             ->with('questionItems')
-            ->paginate(5);
+            ->paginate(8);
 
         //dd($questions);
         return response()->json($questions, 200);

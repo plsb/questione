@@ -13,6 +13,7 @@ class UserCourseProfessorController extends Controller
 {
     private $rules = [
         'fk_course_id' => 'required',
+        'receipt' => 'required',
 
     ];
 
@@ -69,11 +70,28 @@ class UserCourseProfessorController extends Controller
             ], 202);
         }
 
+        $file = $request->file('receipt');
+
+        if (!$file) {
+            return response()->json([
+                'message' => 'O comprovante não é válido.'
+            ], 202);
+        }
+
+        if($request->receipt->extension() != 'pdf'){
+            return response()->json([
+                'message' => 'Informe um comprovante no formato pdf.'
+            ], 202);
+        }
+        $name_receipt = 'U:'.$user->id.'_C:'.$request->fk_course_id.'.pdf';
+        $upload = $request->receipt->storeAs('receipt_professor',
+            $name_receipt, 'public');
+
         $course_professor = new CourseProfessor();
         $course_professor->fk_user_id = $user->id;
         $course_professor->fk_course_id = $request->fk_course_id;
         $course_professor->valid = 0;
-        $course_professor->receipt = '';
+        $course_professor->receipt = $name_receipt;
         $course_professor->save();
 
         //notifica por e-mail

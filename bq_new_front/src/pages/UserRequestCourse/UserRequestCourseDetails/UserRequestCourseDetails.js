@@ -10,12 +10,13 @@ import {
   Divider,
   Grid,
   Button,
-  TextField, IconButton
+  TextField, IconButton, Typography
 } from '@material-ui/core';
 import api from "../../../services/api";
 import Swal from "sweetalert2";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import validate from "validate.js";
+import {DropzoneDialog} from 'material-ui-dropzone'
 
 const schema = {
   fk_course_id: {
@@ -34,6 +35,9 @@ const useStyles = makeStyles(() => ({
 const UserRequestCourseDetails = props => {
   const { className, history, ...rest } = props;
   const [courses, setCourses] = useState([{'id': '0', 'description': '- Escolha um curso -'}]);
+  const [reader,setReader] = useState(false);
+  const [file, setFile] = useState('');
+  const [targetFile, setTargetFile] = useState('');
 
   const classes = useStyles();
 
@@ -74,6 +78,14 @@ const UserRequestCourseDetails = props => {
   }
 
   async function storeCourseProfessorDetails(){
+    if(!formState.values.fk_course_id){
+      loadAlert('error', 'Informe o curso.');
+      return ;
+    }
+    if(file == ''){
+      loadAlert('error', 'Selecione o comprovante.');
+      return ;
+    }
     try {
       const fk_course_id = formState.values.fk_course_id;
       console.log(fk_course_id);
@@ -95,6 +107,10 @@ const UserRequestCourseDetails = props => {
       loadAlert('error', 'Erro de conexão.');
     }
   }
+
+  useEffect(() => {
+    console.log(file, reader);
+    }, [file, reader]);
 
   useEffect(() => {
     loadCourses();
@@ -130,6 +146,17 @@ const UserRequestCourseDetails = props => {
   const handleBack = () => {
     history.goBack();
   };
+
+
+  const handleSaveFile = (event) => {
+    const reader = new FileReader();
+    setFile(event.target.value);
+    reader.readAsDataURL(event.target.files[0]);
+    setReader(reader);
+    setTargetFile(event.target.files[0]);
+
+    console.log(event.target.files[0]);
+  }
 
   return (
     <Card
@@ -177,6 +204,10 @@ const UserRequestCourseDetails = props => {
                   </option>
                 ))}
               </TextField>
+              <div>
+                <input type="file" accept=".pdf" name="file" value={file} onChange={handleSaveFile} />
+
+              </div>
             </Grid>
           </Grid>
         </CardContent>
