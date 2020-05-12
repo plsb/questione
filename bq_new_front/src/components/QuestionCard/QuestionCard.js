@@ -33,7 +33,11 @@ import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    margin: 8,
+    marginTop: 4,
+    marginBottom: 10,
+      marginRigth: 2,
+      marginLeft: 2,
+      width: '98%'
   },
     head: {
         paddingBottom: 0,
@@ -100,6 +104,8 @@ const QuestionCard = props => {
     const [evaluations, setEvaluations] = React.useState([]);
     const [rank, setRank] = React.useState(0);
     const [qtRank, setQtRank] = React.useState(0);
+    //constante definirá nota de classificação para a questão
+    const [rankUserQuestion, setRankUserQuestion] = React.useState(0);
 
   const classes = useStyles();
 
@@ -118,10 +124,13 @@ const QuestionCard = props => {
     async function loadRank(){
         try {
             let response = await api.get('/rank/by-user?fk_question_id='+question.id);
-            console.log('/rank/by-user?fk_question_id='+question.id);
             //verifica se usuário já classificou
-            let rank = response.data;
-            if(rank > 0){
+            let rank = 0;
+            if(response.data.id){
+                rank = response.data.rank;
+                setRankUserQuestion(response.data.rank);
+            }
+            if(rank > 0 || question.fk_user_id == localStorage.getItem("@Questione-id-user")){
                 response = await api.get('/rank/by-question?fk_question_id='+question.id);
                 rank = response.data[0].avg;
                 setQtRank(response.data[0].count);
@@ -162,6 +171,18 @@ const QuestionCard = props => {
         }
     }
 
+   /* function loadRank(){
+        console.log('passou rank');
+        if(question.rank_avg.length != 0){
+            setRank(question.rank_avg[0].rank_avg);
+        }
+        if(question.rank_by_user_active.length == 0 &&
+            question.fk_user_id != localStorage.getItem("@Questione-id-user")) {
+            setRank(0)
+        }
+        setQtRank(question.rank_count);
+    }*/
+
     useEffect(() => {
         loadRank();
     }, [question, rank]);
@@ -171,6 +192,7 @@ const QuestionCard = props => {
         loadEvaluations();
 
     }, []);
+
 
     //configuration alert
     const Toast = Swal.mixin({
@@ -420,6 +442,9 @@ const QuestionCard = props => {
                                     <Typography className={classes.labelRank} variant="caption" color="textSecondary" component="p">
                                         { qtRank < 2 ?  qtRank + ' Classificação.' : qtRank + ' Classificações.'}
                                     </Typography>
+                                    <Typography className={classes.labelRank} variant="caption" color="textSecondary" component="p">
+                                        { rankUserQuestion > 0 ?  'Sua classificação: ' + rankUserQuestion + '.' : ''}
+                                    </Typography>
                                 </div> }
 
                         </Tooltip>
@@ -453,15 +478,6 @@ const QuestionCard = props => {
                         <br />
                     </div>
                     : null}
-                { question.profile.length != 0 ?
-                <div>
-                    <Typography variant="button" color="textSecondary" component="p">
-                    Perfil:
-                    </Typography>
-                    <div> { question.profile.description } </div>
-                    <br />
-                </div>
-                : null}
                 { question.skill.length != 0 ?
                     <div>
                         <Typography variant="button" color="textSecondary" component="p">

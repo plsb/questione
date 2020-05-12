@@ -21,6 +21,7 @@ Route::group(['prefix' => 'public'], function (){
 Route::group(['prefix' => 'all'], function (){
     Route::get('/courses', 'AllUsers@courses')->name('all.courses');
     Route::get('/objects', 'AllUsers@knowledgeObjects')->name('all.knowledgeObjects');
+    Route::get('/skills', 'AllUsers@skills')->name('all.skills');
     Route::put('/update-profile-user', 'AllUsers@updateProfileUser')->name('all.updateProfileUser');
     Route::get('/courses-user', 'AllUsers@coursesUser')->name('all.coursesUser');
 });
@@ -35,6 +36,7 @@ Route::group(['prefix' => 'course-professor'], function (){
     Route::get('/', 'Adm\CourseProfessorController@index')->name('courseProfessor.index');
     Route::get('/show/{course}', 'Adm\CourseProfessorController@show')->name('courseProfessor.show');
     Route::put('/{codigo}', 'Adm\CourseProfessorController@update')->name('courseProfessor.update');
+    Route::get('/download-receipt', 'Adm\CourseProfessorController@downloadReceiptProfessor')->name('courseProfessor.downloadReceiptProfessor');
     //rotas para usuário comum
     Route::get('/user', 'UserCourseProfessorController@index')->name('userCourseProfessor.index');
     Route::post('/', 'UserCourseProfessorController@store')->name('userCourseProfessor.store');
@@ -48,13 +50,14 @@ Route::group(['prefix' => 'course'], function (){
     Route::delete('/{course}', 'Adm\CourseController@destroy')->name('course.destroy');
 });
 
-Route::group(['prefix' => 'profile'], function (){
+/*NÃO SERÁ MAIS NECESSÁRIO O PERFIL
+ * Route::group(['prefix' => 'profile'], function (){
     Route::get('/', 'Adm\ProfileController@index')->name('profile.index');
     Route::post('/', 'Adm\ProfileController@store')->name('profile.store');
     Route::get('/show/{profile}', 'Adm\ProfileController@show')->name('profile.show');
     Route::put('/{profile}', 'Adm\ProfileController@update')->name('profile.update');
     Route::delete('/{profile}', 'Adm\ProfileController@destroy')->name('profile.destroy');
-});
+});*/
 
 Route::group(['prefix' => 'skill'], function (){
     Route::get('/', 'Adm\SkillController@index')->name('skill.index');

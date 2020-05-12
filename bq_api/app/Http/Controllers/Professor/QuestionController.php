@@ -10,6 +10,7 @@ use App\Profile;
 use App\Question;
 use App\QuestionHasKnowledgeObject;
 use App\QuestionItem;
+use App\RankQuestion;
 use App\Skill;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -51,6 +52,8 @@ class QuestionController extends Controller
         $opcao = $request->user;
         $course = $request->fk_course_id;
         $object = $request->fk_object_id;
+        $skill = $request->fk_skill_id;
+        $base_text = $request->base_text;
         //dd($course);
         $questions = Question::when($opcao == "S", function ($query, $opcao) {
                 //pega todas as questões do usuário logado
@@ -65,6 +68,18 @@ class QuestionController extends Controller
                 //pega questão de um curso específicp
                 //dd($course);
                 return $query->where('fk_course_id', '=', $course);
+
+            })
+            ->when($skill > 0, function ($query) use ($skill){
+                //pega questão de um curso específicp
+                //dd($course);
+                return $query->where('fk_skill_id', '=', $skill);
+
+            })
+            ->when($base_text, function ($query) use ($base_text){
+                //pega questão de um curso específicp
+                //dd($course);
+                return $query->where('base_text', 'like', '%'.$base_text.'%');
 
             })
             ->when($course == 0 || $course == null, function ($query) {
@@ -92,6 +107,9 @@ class QuestionController extends Controller
                 return $query->whereIn('id', $arr);
             })
             ->orderBy('id', 'desc')
+            ->withCount('rank')
+            ->with('rankAvg')
+            ->with('rankByUserActive')
             ->with('course')
             ->with('profile')
             ->with('skill')
@@ -275,15 +293,23 @@ class QuestionController extends Controller
 
         if($question->validated == 1){
             return response()->json([
-                'message' => 'Operação não pode ser realizada. A questão já foi validada.'
+                'message' => 'A questão já foi validada.'
             ], 202);
         }
 
         $user = auth('api')->user();
 
+        $rank = RankQuestion::where('fk_question_id', $question->id)->get();
+
+        if(sizeof($rank)>0){
+            return response()->json([
+                'message' => 'A questão possui classificação.'
+            ], 202);
+        }
+
         if($question->fk_user_id != $user->id){
             return response()->json([
-                'message' => 'Operação não pode ser realizada. A questão pertence a outro usuário.'
+                'message' => 'A questão pertence a outro usuário.'
             ], 202);
         }
 

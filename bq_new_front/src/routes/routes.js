@@ -140,12 +140,12 @@ const Routes = () => (
             layout={MainLayout}
             needToBeLogged={true}
             path="/profiles"/>
-        <RouteWithLayout
+        {/*<RouteWithLayout
             component={ProfileDetails}
             exact
             layout={MainLayout}
             needToBeLogged={true}
-            path="/profile-details"/>
+            path="/profile-details"/>*/}
         <RouteWithLayout
             component={ProfileDetails}
             exact

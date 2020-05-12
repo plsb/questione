@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Course;
 use App\CourseProfessor;
 use App\KnowledgeObject;
+use App\Skill;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -20,6 +21,20 @@ class AllUsers extends Controller
         $courses = Course::orderBy('description')->get();
 
         return response()->json($courses, 200);
+    }
+
+    public function skills(Request $request)
+    {
+        if(!$request->fk_course_id){
+            return response()->json([
+                'message' => 'Informe o curso.'
+            ], 202);
+        }
+        $skill = Skill::where('fk_course_id', $request->fk_course_id)
+            ->orderBy('description')
+            ->get();
+
+        return response()->json($skill, 200);
     }
 
     public function knowledgeObjects(Request $request)

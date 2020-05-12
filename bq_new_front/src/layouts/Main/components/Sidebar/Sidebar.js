@@ -43,11 +43,11 @@ const Sidebar = props => {
       href: '/courses',
       icon: <DashboardIcon />
     },
-    {
+    /*{
       title: 'Perfis',
       href: '/profiles',
       icon: <PeopleIcon />
-    },
+    },*/
     {
       title: 'Competências',
       href: '/skills',

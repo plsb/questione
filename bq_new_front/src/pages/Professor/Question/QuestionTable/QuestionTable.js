@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2)
   },
   inner: {
-    minWidth: 1050
+    minWidth: '100%'
   },
   nameContainer: {
     display: 'flex',
@@ -111,6 +111,14 @@ const QuestionTable = props => {
         if(searchText[2].fk_object_id > 0){
           url += '&fk_object_id='+searchText[2].fk_object_id;
         }
+
+        if(searchText[3].fk_skill_id > 0){
+          url += '&fk_skill_id='+searchText[3].fk_skill_id;
+        }
+
+      }
+      if(searchText[4].base_text != ''){
+        url += '&base_text='+searchText[4].base_text;
       }
       console.log('URL='+url);
       const response = await api.get(url);
@@ -186,15 +194,11 @@ const QuestionTable = props => {
       <div className={classes.content}>
         <Card
             className={clsx(classes.root, className)}>
-          <CardContent className={classes.content}>
+          <CardContent>
             <PerfectScrollbar>
               <div className={classes.inner}>
                 <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell className={classes.headTable}>Questões</TableCell>
-                    </TableRow>
-                  </TableHead>
+
                   <TableBody>
                     {questions.map(question => (
                         <QuestionCard

@@ -8,6 +8,7 @@ use App\Notifications\RequestCourseProfessorNotifications;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use Validator;
 
 class CourseProfessorController extends Controller
@@ -81,7 +82,7 @@ class CourseProfessorController extends Controller
         $courseProfessor->save();
 
         //notifica por e-mail
-        $user = User::where('id',$courseProfessor->fk_user_id)->first();;
+        $user = User::where('id',$courseProfessor->fk_user_id)->first();
         $course = Course::where('id',$courseProfessor->fk_course_id)->first();
         $situaton = "";
         if($request->valid == 0){
@@ -111,6 +112,13 @@ class CourseProfessorController extends Controller
                 'message' => 'Registro não encontrado.'
             ], 202);
         }
+    }
+
+    public function downloadReceiptProfessor(Request $request){
+        $file = $request->file;
+
+        //return response(Storage::url('receipt_professor/'.$file),200);
+        return response()->file(storage_path("app/public/receipt_professor/".$file));
     }
 
 }

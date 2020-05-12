@@ -93,7 +93,7 @@ class RankQuestionController extends Controller
         }
 
         $user = auth('api')->user();
-
+        //dd($user->id);
         $rank = RankQuestion::where('fk_user_id', $user->id)
             ->where('fk_question_id', $request->fk_question_id)->first();
 
@@ -102,7 +102,7 @@ class RankQuestionController extends Controller
             $rank_value = $rank->rank;
         }
 
-        return response()->json($rank_value, 200);
+        return response()->json($rank, 200);
     }
 
     public function rankByQuestion(Request $request)

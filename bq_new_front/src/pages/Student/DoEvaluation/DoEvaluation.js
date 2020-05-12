@@ -103,25 +103,30 @@ const DoEvaluation = props => {
 
   async function startEvaluation(){
     setOpenBackdrop(true);
+    timer.current = setTimeout(() => {
+     updateEvaluation();
+    }, 1300);
+    setDialogStart(false);
+  }
+
+  async function updateEvaluation(){
     try {
       const response = await api.post('evaluation/start/'+codeAplication);
       console.log(response);
-      timer.current = setTimeout(() => {
-        if (response.status === 202) {
-          if(response.data.message){
-            loadAlert('error', response.data.message);
-          }
-        } else if(response.status == 200){
-          if(response.data.status == 0){
-            loadAlert('error', 'Avaliação está desabilitada.');
-            history.push('/home');
-            return ;
-          }
-          setAnswers(response.data[0].answer);
-          setEnableButtonStart(false);
-          setOpenBackdrop(false);
+      if (response.status === 202) {
+        if(response.data.message){
+          loadAlert('error', response.data.message);
         }
-      }, 1300);
+      } else if(response.status == 200){
+        if(response.data.status == 0){
+          loadAlert('error', 'Avaliação está desabilitada.');
+          history.push('/home');
+          return ;
+        }
+        setAnswers(response.data[0].answer);
+        setEnableButtonStart(false);
+        setOpenBackdrop(false);
+      }
     } catch (error) {
       console.log(error);
       loadAlert('error', 'Erro de conexão.');
@@ -172,7 +177,7 @@ const DoEvaluation = props => {
           loadAlert('error', response.data.message);
         }
       }  else if(response.status == 200){
-        startEvaluation();
+        updateEvaluation();
       }
 
     } catch (error) {

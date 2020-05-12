@@ -10,19 +10,20 @@ import {
   Divider,
   Grid,
   Button,
-  TextField, IconButton
+  TextField, IconButton, Link
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import Swal from "sweetalert2";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const useStyles = makeStyles(() => ({
-  root: {}
+  root: {},
 }));
 
 const RequestUserDetails = props => {
   const { className, history, ...rest } = props;
   const { codigoCourseProfessor } = props.match.params;
+  const [recepit, setReceipt] = useState('');
 
   const classes = useStyles();
 
@@ -60,7 +61,7 @@ const RequestUserDetails = props => {
       }
       console.log(valid);
       const response = await api.put('course-professor/'+codigoCourseProfessor, data);
-      if (response.status === 202) {
+      if (response.status == 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
         } else if(response.data.errors[0].valid){
@@ -76,6 +77,31 @@ const RequestUserDetails = props => {
     }
   }
 
+  async function viewReceipt(){
+    console.log('passou');
+    try {
+      api.get('course-professor/download-receipt?file='+recepit,
+          {
+            responseType: 'arraybuffer',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/pdf'
+            }
+          })
+          .then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'comprovante_questione.pdf'); //or any other extension
+            document.body.appendChild(link);
+            link.click();
+          })
+          .catch((error) => console.log(error));
+    } catch (error) {
+      loadAlert('error', 'Erro de conexão.');
+    }
+  }
+
   async function findCourseProfessor(id){
     try {
       const response = await api.get('course-professor/show/'+id);
@@ -84,6 +110,7 @@ const RequestUserDetails = props => {
           loadAlert('error', response.data.message);
         }
       } else {
+        setReceipt(response.data[0].receipt);
         setFormState(formState => ({
           values: {
             'user': response.data[0].user.name,
@@ -221,6 +248,16 @@ const RequestUserDetails = props => {
                   </option>
                 ))}
               </TextField>
+
+            </Grid>
+            <Grid
+                item
+                md={12}
+                xs={12}>
+              {recepit ?
+                  <Link href="#" onClick={viewReceipt}>
+                    Clique aqui para visualizar o comprovante
+                  </Link> : null }
             </Grid>
           </Grid>
         </CardContent>

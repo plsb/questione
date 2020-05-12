@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Question extends Model
 {
@@ -40,10 +41,20 @@ class Question extends Model
     }
 
     public function rank(){
-        return $this->belongsToMany(User::class, 'rank_question',
-            'fk_question_id', 'fk_user_id')
-            ->withPivot('rank')
-            ->withTimestamps();
+       return $this->hasMany(RankQuestion::class, 'fk_question_id');
+    }
+
+    public function rankAvg(){
+        return $this->hasMany(RankQuestion::class, 'fk_question_id')
+            ->selectRaw('ROUND(avg(rank)) as rank_avg, fk_question_id')
+            ->groupBy('fk_question_id');
+    }
+
+    public function rankByUserActive(){
+        $user = auth('api')->user();
+        $teste = $this->hasMany(RankQuestion::class, 'fk_question_id')
+            ->where('fk_user_id', [$user->id]);
+        return $teste;
     }
 
     /*

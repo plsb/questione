@@ -10,13 +10,14 @@ import {
   Divider,
   Grid,
   Button,
-  TextField, IconButton, Typography
+  TextField, IconButton
 } from '@material-ui/core';
 import api from "../../../services/api";
 import Swal from "sweetalert2";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import validate from "validate.js";
-import {DropzoneDialog} from 'material-ui-dropzone'
+import Dropzone from 'react-dropzone-uploader';
+import 'react-dropzone-uploader/dist/styles.css';
 
 const schema = {
   fk_course_id: {
@@ -35,9 +36,7 @@ const useStyles = makeStyles(() => ({
 const UserRequestCourseDetails = props => {
   const { className, history, ...rest } = props;
   const [courses, setCourses] = useState([{'id': '0', 'description': '- Escolha um curso -'}]);
-  const [reader,setReader] = useState(false);
-  const [file, setFile] = useState('');
-  const [targetFile, setTargetFile] = useState('');
+  const [file, setFile] = useState(null);
 
   const classes = useStyles();
 
@@ -82,16 +81,25 @@ const UserRequestCourseDetails = props => {
       loadAlert('error', 'Informe o curso.');
       return ;
     }
-    if(file == ''){
+    console.log(file)
+    if(file == null){
       loadAlert('error', 'Selecione o comprovante.');
       return ;
     }
     try {
       const fk_course_id = formState.values.fk_course_id;
-      console.log(fk_course_id);
-      const response = await api.post('course-professor', {
-        fk_course_id
-      });
+      const formData = new FormData();
+      const config = {
+        headers: {
+          'content-type': 'multipart/form-data'
+        }
+      }
+      formData.append('fk_course_id', fk_course_id);
+      formData.append('receipt', file);
+      console.log('file ',file);
+      console.log('dados ',formData);
+      const response = await api.post('course-professor', formData, config);
+      console.log('response ', response);
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
@@ -107,10 +115,6 @@ const UserRequestCourseDetails = props => {
       loadAlert('error', 'Erro de conexão.');
     }
   }
-
-  useEffect(() => {
-    console.log(file, reader);
-    }, [file, reader]);
 
   useEffect(() => {
     loadCourses();
@@ -147,15 +151,15 @@ const UserRequestCourseDetails = props => {
     history.goBack();
   };
 
+  const getUploadParams = () => {
+    return { url: 'https://httpbin.org/post' }
+  }
 
-  const handleSaveFile = (event) => {
-    const reader = new FileReader();
-    setFile(event.target.value);
-    reader.readAsDataURL(event.target.files[0]);
-    setReader(reader);
-    setTargetFile(event.target.files[0]);
+  const handleChangeStatus = (event, { meta }, status) => {
+    if(status[0]) {
+      setFile(status[0].file);
+    }
 
-    console.log(event.target.files[0]);
   }
 
   return (
@@ -205,7 +209,17 @@ const UserRequestCourseDetails = props => {
                 ))}
               </TextField>
               <div>
-                <input type="file" accept=".pdf" name="file" value={file} onChange={handleSaveFile} />
+                <Dropzone
+                    getUploadParams={getUploadParams}
+                    onChangeStatus={handleChangeStatus}
+                    maxSizeBytes={3000000}
+                    submitButtonContent="Salvar"
+                    maxFiles={1}
+                    inputContent="Arraste arquivos ou clique para procurar"
+                    inputWithFilesContent="Adicionar Arquivo"
+                    accept="application/pdf"
+                    styles={{ dropzone: { minHeight: 100, maxHeight: 250 } }}
+                />
 
               </div>
             </Grid>

@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2)
   },
   inner: {
-    minWidth: 1050
+    minWidth: '100%'
   },
   nameContainer: {
     display: 'flex',

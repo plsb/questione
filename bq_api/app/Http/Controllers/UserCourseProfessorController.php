@@ -83,7 +83,7 @@ class UserCourseProfessorController extends Controller
                 'message' => 'Informe um comprovante no formato pdf.'
             ], 202);
         }
-        $name_receipt = 'U:'.$user->id.'_C:'.$request->fk_course_id.'.pdf';
+        $name_receipt = 'U'.$user->id.'C:'.$request->fk_course_id.'.pdf';
         $upload = $request->receipt->storeAs('receipt_professor',
             $name_receipt, 'public');
 

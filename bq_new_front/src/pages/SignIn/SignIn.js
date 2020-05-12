@@ -165,6 +165,14 @@ const SignIn = props => {
       const email = formState.values.email;
       const password = formState.values.password;
 
+      const DADOS_CRIPTOGRAFAR = {
+        algoritmo : "aes256",
+        segredo : "chaves"
+      };
+      const crypto = require("crypto");
+      const cipher = crypto.createCipher(DADOS_CRIPTOGRAFAR.algoritmo, DADOS_CRIPTOGRAFAR.segredo);
+
+
       const data = {
         name, cpf, email, password
       };
