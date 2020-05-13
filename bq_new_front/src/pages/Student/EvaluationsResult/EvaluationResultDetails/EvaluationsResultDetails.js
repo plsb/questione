@@ -12,11 +12,8 @@ import {
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import EvaluationsResultStudentOverviewQuestion from "../EvaluationsResultStudentOverViewQuestion";
-import EvaluationCard from "../../../Professor/Evaluation/EvaluationCard/EvaluationCard";
-import {Close, Done} from "@material-ui/icons";
+import {Close, Done, Block} from "@material-ui/icons";
 import PerfectScrollbar from "react-perfect-scrollbar";
-//import EvaluationsResultStudentOverviewQuestion from "./EvaluationsResultStudentOverviewQuestion";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -156,6 +153,20 @@ const useStyles = makeStyles(() => ({
     fontWeight: 'bold',
     fontSize: '14px'
   },
+  answerNull: {
+    width: '90.0px',
+    backgroundColor: '#cfd8dc',
+    //display: 'inline-block',
+    color: '#393A68',
+    textAlign: 'center',
+    height: '70px',
+    boxSizing: 'border-box',
+    border: '1px solid #F2F2F2',
+    minWidth: '80px',
+    padding: '12px',
+    fontWeight: 'bold',
+    fontSize: '14px'
+  },
   paperWrong: {
     width: '88%',
     backgroundColor: '#ef9a9a',
@@ -233,7 +244,12 @@ const EvaluationsResultDetails = props => {
                                 className={classes.tableRow}
                                 hover>
                                 {questions.map(result => (
-                                      result.correct == 1 ?
+                                    result.answer == null ?
+                                        <TableCell className={classes.answerNull}>
+                                          <Block />
+                                        </TableCell>
+                                        :
+                                    result.correct == 1 ?
                                           <TableCell className={classes.answerCorrect}>
                                             <Done />
                                           </TableCell> :

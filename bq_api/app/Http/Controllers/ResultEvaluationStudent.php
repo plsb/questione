@@ -78,6 +78,7 @@ class ResultEvaluationStudent extends Controller
             $auxAnswer= (object)[
                 'question' => $question->id,
                 'correct' => $correct,
+                'answer' => $as->answer,
             ];
             $resultAnswer[] = $auxAnswer;
         }

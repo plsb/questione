@@ -7,6 +7,7 @@ use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
 use App\Question;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Validator;
 use App\Http\Controllers\Controller;
@@ -48,11 +49,11 @@ class EvaluationHasQuestionsController extends Controller
 
         if(!$question){
             return response()->json([
-                'message' => 'Operação não permitida. A questão não foi encontrada.'
+                'message' => 'A questão não foi encontrada.'
             ], 202);
         } else if($question->validated == 0){
             return response()->json([
-                'message' => 'Operação não permitida. A questão não foi validada.'
+                'message' => 'A questão não foi validada.'
             ], 202);
         }
 
@@ -60,14 +61,14 @@ class EvaluationHasQuestionsController extends Controller
 
         if(!$evaluation){
             return response()->json([
-                'message' => 'Operação não permitida. A avaliação não foi encontrada.'
+                'message' => 'A avaliação não foi encontrada.'
             ], 202);
         }
 
         $user = auth('api')->user();
         if($user->id != $evaluation->fk_user_id){
             return response()->json([
-                'message' => 'Operação não permitida. A avaliação pertence a um outro usuário.'
+                'message' => 'A avaliação pertence a um outro usuário.'
             ], 202);
         }
 
@@ -76,7 +77,7 @@ class EvaluationHasQuestionsController extends Controller
 
         if(sizeof($verifyQuestionStored)>0){
             return response()->json([
-                'message' => 'Operação não permitida. A questão já foi cadastrada para esta avaliação.'
+                'message' => 'A questão já foi cadastrada para esta avaliação.'
             ], 202);
         }
         //dd($verifyQuestionStored);
@@ -100,7 +101,7 @@ class EvaluationHasQuestionsController extends Controller
         $question = Question::find($id);
         if(!$question){
             return response()->json([
-                'message' => 'Operação não permitida. A questão não foi encontrada.'
+                'message' => 'A questão não foi encontrada.'
             ], 202);
         }
 
@@ -110,19 +111,19 @@ class EvaluationHasQuestionsController extends Controller
 
         if(!$evaluation){
             return response()->json([
-                'message' => 'Operação não permitida. A avaliação não foi encontrada.'
+                'message' => 'A avaliação não foi encontrada.'
             ], 202);
         }
 
         $application = EvaluationApplication::where('fk_evaluation_id', '=', $evaluation->id)->get();
         if(sizeof($application)>0) {
-            return response()->json(['message' => 'Operação não permitida. Existem aplicações para esta avaliação.'], 202);
+            return response()->json(['message' => 'Existem aplicações para esta avaliação.'], 202);
         }
 
         $user = auth('api')->user();
         if($user->id != $evaluation->fk_user_id){
             return response()->json([
-                'message' => 'Operação não permitida. A avaliação pertence a um outro usuário.'
+                'message' => 'A avaliação pertence a um outro usuário.'
             ], 202);
         }
 
@@ -133,6 +134,36 @@ class EvaluationHasQuestionsController extends Controller
         return response()->json([
             'message' => 'Questão excluída!'
         ], 200);
+    }
+
+    public function cancelOrNot($idEvaluationQuestion){
+        $application_question = EvaluationHasQuestions::where('id', $idEvaluationQuestion)
+            ->first();
+
+        if(!$application_question){
+            return response()->json([
+                'message' => 'Questão não encontrada.'
+            ], 202);
+        }
+
+        $evaluation = Evaluation::where('id', $application_question->fk_evaluation_id)->first();
+
+        $user = auth('api')->user();
+        if($user->id != $evaluation->fk_user_id){
+            return response()->json([
+                'message' => 'A avaliação pertence a um outro usuário.'
+            ], 202);
+        }
+
+        if($application_question->cancel == 0){
+            $application_question->cancel = 1;
+        } else {
+            $application_question->cancel = 0;
+        }
+        $application_question->save();
+
+        return response()->json($application_question, 200);
+
     }
 
 

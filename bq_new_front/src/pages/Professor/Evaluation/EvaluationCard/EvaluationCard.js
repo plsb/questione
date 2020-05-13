@@ -22,11 +22,11 @@ import {fiFI} from "@material-ui/core/locale";
 
 const useStyles = makeStyles(() => ({
   root: {
-    margin: 8,
+    marginBottom: 8,
   },
     head: {
         paddingBottom: 0,
-        paddingTop: 6
+        paddingTop: 10
     },
     chip:{
       backgroundColor: '#e57373',
@@ -165,7 +165,7 @@ const EvaluationCard = props => {
             if (response.status === 202) {
                 if(response.data.message){
                     loadAlert('error', response.data.message);
-                } 
+                }
                 setOpenNewApplication(false);
             } else {
                 loadAlert('success', 'Nova aplicação cadastrada.');

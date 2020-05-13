@@ -33,11 +33,11 @@ import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    marginTop: 4,
+    marginTop: 5,
     marginBottom: 10,
-      marginRigth: 2,
-      marginLeft: 2,
-      width: '98%'
+      marginRigth: 0,
+      marginLeft: 5,
+      width: '100%'
   },
     head: {
         paddingBottom: 0,
@@ -46,6 +46,11 @@ const useStyles = makeStyles(theme => ({
     chipGreen:{
       backgroundColor: '#4db6ac',
       color: '#ffffff',
+        marginRight: 2
+    },
+    chipRed:{
+        backgroundColor: '#f44336',
+        color: '#ffffff',
         marginRight: 2
     },
   spacer: {
@@ -383,6 +388,31 @@ const QuestionCard = props => {
       {...rest}
       className={classes.root}>
         <CardHeader
+            avatar={
+                <div>
+                    <Typography variant="h5" color="textSecondary" component="h2">
+                        {
+                            question.id < 10 ? 'Questão - 00000' + question.id :
+                                question.id < 100 ? 'Questão - 0000' + question.id :
+                                    question.id < 1000 ? 'Questão - 000' + question.id :
+                                        question.id < 10000 ? 'Questão - 00' + question.id :
+                                            question.id < 100000 ? 'Questão - 0' + question.id :
+                                                question.id
+                        }
+                    </Typography>
+                    <Typography variant="button" color="textSecondary" component="h2">
+                        {'Área de origem: '+question.course.description}
+                    </Typography>
+                    <div>
+                        { question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
+                            <Chip label="Inserida por você" className={clsx(classes.chipGreen, className)} size="small"/> : null}
+                        { question.validated == 1 ?
+                            <Chip label="Ativa" className={clsx(classes.chipGreen, className)} size="small"/> :
+                            <Chip label="Inativa" className={clsx(classes.chipRed, className)} size="small"/>}
+                    </div>
+
+                </div>
+            }
             action={
                 <div>
                     <Box display="flex" justifyContent="flex-end" p={1} m={1} bgcolor="background.paper">
@@ -450,25 +480,9 @@ const QuestionCard = props => {
                         </Tooltip>
                     </Box>
                 </div>
-            }
-            title={
-                question.id < 10 ? 'Questão - 00000' + question.id :
-                    question.id < 100 ? 'Questão - 0000' + question.id :
-                        question.id < 1000 ? 'Questão - 000' + question.id :
-                            question.id < 10000 ? 'Questão - 00' + question.id :
-                                question.id < 100000 ? 'Questão - 0' + question.id :
-                                    question.id
-            }
-            subheader={'Área de origem: '+question.course.description}/>
+            }/>
         <CardContent>
             <div className={classes.lineQuestion}>
-                <div>
-                { question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
-                    <Chip label="Inserida por você" className={clsx(classes.chipGreen, className)} size="small"/> : null}
-                { question.validated == 1 ?
-                    <Chip label="Habilitada" className={clsx(classes.chipGreen, className)} size="small"/> : null}
-                </div>
-                <br />
                 { question.reference != "" && question.reference != null ?
                     <div>
                         <Typography variant="button" color="textSecondary" component="p">

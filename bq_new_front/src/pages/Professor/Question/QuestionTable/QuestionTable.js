@@ -13,7 +13,7 @@ import {
   TableHead,
   TableRow,
   Typography,
-  TablePagination, Tooltip, Button
+  TablePagination, Tooltip, Button, Grid, IconButton, CardHeader, Divider, TextField, Chip, Box, Switch
 } from '@material-ui/core';
 import api from '../../../../services/api';
 
@@ -24,14 +24,17 @@ import Edit from "@material-ui/icons/Edit";
 import {DialogQuestione, TableQuestione} from "../../../../components";
 import PropTypes from "prop-types";
 import QuestionCard from "../../../../components/QuestionCard/QuestionCard";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import {MoreVert, PlaylistAdd} from "@material-ui/icons";
+import Rating from "@material-ui/lab/Rating";
 const useStyles = makeStyles(theme => ({
   root: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1)
   },
   content: {
     padding: 0,
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(1)
   },
   inner: {
     minWidth: '100%'
@@ -185,52 +188,69 @@ const QuestionTable = props => {
   }
 
   return (
-    <div>
       <div className={classes.root}>
-      <UsersToolbar
-          onChangeSearch={updateSearch.bind(this)}
-          searchText={searchText}
-          onClickSearch={onClickSearch}/>
-      <div className={classes.content}>
-        <Card
-            className={clsx(classes.root, className)}>
-          <CardContent>
-            <PerfectScrollbar>
-              <div className={classes.inner}>
-                <Table>
+          <UsersToolbar
+              onChangeSearch={updateSearch.bind(this)}
+              searchText={searchText}
+              onClickSearch={onClickSearch}/>
+        <div className={classes.content}>
+          <Card
+              className={clsx(classes.root, className)}>
+            <CardHeader
+                avatar={
+                  <div>
 
-                  <TableBody>
-                    {questions.map(question => (
-                        <QuestionCard
-                            question={question}/>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </PerfectScrollbar>
-          </CardContent>
-          <CardActions className={classes.actions}>
-            <TablePagination
-                component="div"
-                count={total}
-                onChangePage={handlePageChange}
-                onChangeRowsPerPage={handleRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[8]}
-            />
-          </CardActions>
-        </Card>
-         <DialogQuestione handleClose={onClickCloseDialog}
-                       open={open}
-                       onClickAgree={onDeleteQuestion}
-                       onClickDisagree={onClickCloseDialog}
-                       mesage={'Deseja excluir a questão selecionada?'}
-                       title={'Excluir Questão'}/>
+                  </div>
+                }
+                action={
+                  <TablePagination
+                      component="div"
+                      count={total}
+                      onChangePage={handlePageChange}
+                      onChangeRowsPerPage={handleRowsPerPageChange}
+                      page={page}
+                      rowsPerPage={rowsPerPage}
+                      rowsPerPageOptions={[8]}/>
+
+                }/>
+              <CardContent>
+                    <Grid
+                        container
+                        spacing={1}>
+                      <Grid
+                          item
+                          md={12}
+                          xs={12}>
+                        <Table>
+                          <TableBody>
+                            {questions.map(question => (
+                                <QuestionCard
+                                    question={question}/>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </Grid>
+                    </Grid>
+              </CardContent>
+            <CardActions className={classes.actions}>
+              <TablePagination
+                  component="div"
+                  count={total}
+                  onChangePage={handlePageChange}
+                  onChangeRowsPerPage={handleRowsPerPageChange}
+                  page={page}
+                  rowsPerPage={rowsPerPage}
+                  rowsPerPageOptions={[8]}/>
+            </CardActions>
+          </Card>
+        </div>
+        <DialogQuestione handleClose={onClickCloseDialog}
+                         open={open}
+                         onClickAgree={onDeleteQuestion}
+                         onClickDisagree={onClickCloseDialog}
+                         mesage={'Deseja excluir a questão selecionada?'}
+                         title={'Excluir Questão'}/>
       </div>
-
-    </div>
-    </div>
   );
 };
 

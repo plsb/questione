@@ -164,10 +164,10 @@ const EvaluationApplicationCard = props => {
                   <Typography color="body2" variant="h6">
                       {'Data de criação da aplicação: '+ moment(evaluationApplication.created_at).format('DD/MM/YYYY')}
                   </Typography>
-                  { evaluationApplication.status == 1 ?
-                      <Chip label="Ativada" className={clsx(classes.chipgreen, className)} size="small"/> :
-                        evaluationApplication.evaluation.status == 2 ?
-                          <Chip label="Avaliação Arquivada" className={clsx(classes.chipred, className)} size="small"/> :
+                  { evaluationApplication.evaluation.status == 2 ?
+                      <Chip label="Avaliação Arquivada" className={clsx(classes.chipred, className)} size="small"/> :
+                      evaluationApplication.status == 1 ?
+                          <Chip label="Ativada" className={clsx(classes.chipgreen, className)} size="small"/> :
                             <Chip label="Desativada" className={clsx(classes.chipred, className)} size="small"/>
 
                   }

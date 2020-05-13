@@ -183,7 +183,7 @@ class EvaluationController extends Controller
 
         if($evaluation->fk_user_id != $user->id){
             return response()->json([
-                'message' => 'Operação não pode ser realizada. A avaliação pertence a outro usuário.'
+                'message' => 'A avaliação pertence a outro usuário.'
             ], 202);
         }
 
@@ -192,9 +192,11 @@ class EvaluationController extends Controller
                 'message' => 'Informe o status: (1)Ativa ou (2)Arquivada.'
             ], 202);
         }
-
         $evaluation->status = $request->status;
         $evaluation->save();
+        if($request->status == 2){
+
+        }
 
         return response()->json([
             'message' => 'Avaliação arquivada.',
@@ -216,12 +218,13 @@ class EvaluationController extends Controller
             ], 202);
         }
 
+
         $evaluation = new Evaluation();
         $evaluation->description = $evaluationDuplicate->description;
 
         $evaluation->status = 1; //status 1 é ativa
         $evaluation->fk_user_id = $user->id;
-
+        //dd($questionsDuplicate);
         $evaluation->save();
 
         //duplica questoes da avaliação

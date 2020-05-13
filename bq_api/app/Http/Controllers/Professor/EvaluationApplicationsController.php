@@ -272,23 +272,21 @@ class EvaluationApplicationsController extends Controller
                 $itens_question = QuestionItem::where('fk_question_id', $question->id)
                     ->where('correct_item', 1)->first();
                 //dd($itens_question->id);
-                if ($ans->answer == $itens_question->id) {
-
-                    $object = (object)[
-                        'questionId' => $question->id,
-                        'itemCorrect' => $itens_question->id,
-                        'itemSelected' => $ans->answer,
-                        'correct' => 1,
-                    ];
+                $correct = -1;
+                if($ans->answer == null){
+                    $correct = -1;
+                } else if ($ans->answer == $itens_question->id) {
+                    $correct = 1;
                     $count_corret_student++;
                 } else {
-                    $object = (object)[
-                        'questionId' => $question->id,
-                        'itemCorrect' => $itens_question->id,
-                        'itemSelected' => $ans->answer,
-                        'correct' => 0,
-                    ];
+                    $correct = 0;
                 }
+                $object = (object)[
+                    'questionId' => $question->id,
+                    'itemCorrect' => $itens_question->id,
+                    'itemSelected' => $ans->answer,
+                    'correct' => $correct,
+                ];
                 $questions[] = $object;
             }
             $percentage = ($count_corret_student*100)/$total_questions;
@@ -342,8 +340,17 @@ class EvaluationApplicationsController extends Controller
             ], 202);
         }
 
+        $head_question = AnswersHeadEvaluation::where('fk_application_evaluation_id', $application->id)
+            ->get();
+        $arrHead = array();
+        foreach ($head_question as $head){
+            //dd($enaq);
+            $arrHead[] = $head->id;
+        }
+
         $result = array();
         $resultQuestions = array();
+
 
         foreach ($evaluation_question as $ev_question){
             $question = Question::where('id', $ev_question->fk_question_id)->first();
@@ -351,25 +358,40 @@ class EvaluationApplicationsController extends Controller
             $item_correct = QuestionItem::where('fk_question_id', $question->id)
                 ->where('correct_item', 1)->first();
             //total de pessoas que responderam a questão
-            $count_total_answer_question = AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)->count();
+            $count_total_answer_question = AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)
+                ->whereIn('fk_answers_head_id', $arrHead)
+                ->whereNotNull('answer')
+                ->count();
+
             //pega todos os itens da questão
             $itens_question = QuestionItem::where('fk_question_id',$question->id)->get();
 
             //quantidade de pessoas que acertaram a questão
             $answer = AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)
+                ->whereIn('fk_answers_head_id', $arrHead)
                 ->where('answer', $item_correct->id)
                 ->count();
+
             //porcentagem de pessoas que acertam a questão
-            $percentageCorrectQuestion = ($answer * 100)/$count_total_answer_question;
+            $percentageCorrectQuestion = 0;
+            if($count_total_answer_question != 0){
+                $percentageCorrectQuestion = ($answer * 100)/$count_total_answer_question;
+            }
 
             $resultItens = array();
             foreach($itens_question as $iq){
                 //conta quantas pessoas responderam esse item
                 $count_total_answer_item = AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)
                     ->where('answer', $iq->id)
+                    ->whereIn('fk_answers_head_id', $arrHead)
+                    ->whereNotNull('answer')
                     ->count();
+
                 //porcentagem de acerto do item
-                $percentageAnswerItem = ($count_total_answer_item * 100)/$count_total_answer_question;
+                $percentageAnswerItem = 0;
+                if($count_total_answer_question != 0) {
+                    $percentageAnswerItem = ($count_total_answer_item * 100) / $count_total_answer_question;
+                }
                 if($iq->id == $item_correct->id){
                     $auxItem= (object)[
                         'description' => $iq->description,
@@ -403,7 +425,9 @@ class EvaluationApplicationsController extends Controller
             }
 
             $auxQuestion= (object)[
+                'idApplication' => $ev_question->id,
                 'id' => $question->id,
+                'cancel' => $ev_question->cancel,
                 'base_text' => $question->base_text,
                 'stem' => $question->stem,
                 'reference' => $question->reference,
@@ -421,6 +445,7 @@ class EvaluationApplicationsController extends Controller
 
             $resultQuestions[] = $auxQuestion;
         }
+        //dd($evaluation_question);
         $auxEvaluation= (object)[
             'application' => $application->id,
             'description_application' => $application->description,

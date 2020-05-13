@@ -13,7 +13,7 @@ import {
 import api from "../../../../services/api";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import PerfectScrollbar from "react-perfect-scrollbar";
-import { Done, Close, ExpandMoreRounded } from "@material-ui/icons";
+import { Done, Close, Block } from "@material-ui/icons";
 import ReactHtmlParser from "react-html-parser";
 import EvaluationApplicationResultsOverviewQuestion from "./EvaluationApplicationResultsOverViewQuestion";
 
@@ -72,7 +72,7 @@ const useStyles = makeStyles(() => ({
   },
   bodyPercentage: {
     width: '20%',
-    height: '60px',
+    height: '70px',
     textAlign: 'center',
     backgroundColor: '#FFF',
     color: '#393A68',
@@ -133,7 +133,7 @@ const useStyles = makeStyles(() => ({
     //display: 'inline-block',
     color: '#393A68',
     textAlign: 'center',
-    height: '60px',
+    height: '70px',
     boxSizing: 'border-box',
     border: '1px solid #F2F2F2',
     minWidth: '80px',
@@ -147,7 +147,21 @@ const useStyles = makeStyles(() => ({
     //display: 'inline-block',
     color: '#393A68',
     textAlign: 'center',
-    height: '60px',
+    height: '70px',
+    boxSizing: 'border-box',
+    border: '1px solid #F2F2F2',
+    minWidth: '80px',
+    padding: '12px',
+    fontWeight: 'bold',
+    fontSize: '14px'
+  },
+  answerNull: {
+    width: '90.0px',
+    backgroundColor: '#cfd8dc',
+    //display: 'inline-block',
+    color: '#393A68',
+    textAlign: 'center',
+    height: '70px',
     boxSizing: 'border-box',
     border: '1px solid #F2F2F2',
     minWidth: '80px',
@@ -338,7 +352,13 @@ const EvaluationApplicationResults = props => {
                                     hover
                                     key={result.fk_user_id}>
                                   <TableCell className={classes.bodyStudent}>{result.student}</TableCell>
-                                  <TableCell className={classes.bodyPercentage}>{result.percentage_correct + '%'}</TableCell>
+                                  <TableCell className={classes.bodyPercentage}>
+                                    {result.percentage_correct < 30 ?
+                                        <span className={classes.percentageRed}>{result.percentage_correct+'%'}</span>
+                                        : result.percentage_correct < 70 ?
+                                            <span className={classes.percentageOrange}>{result.percentage_correct+'%'}</span>
+                                            : <span className={classes.percentageGreen}>{result.percentage_correct+'%'}</span> }
+                                  </TableCell>
                                 </TableRow>
                             ))}
                           </TableBody>
@@ -372,6 +392,11 @@ const EvaluationApplicationResults = props => {
                                           hover
                                           key={result.fk_user_id}>
                                         {result.questions.map(quest => (
+                                            quest.itemSelected == null ?
+                                                <TableCell className={classes.answerNull}>
+                                                  <Block />
+                                                </TableCell>
+                                                :
                                             quest.correct == 1 ?
                                                 <TableCell className={classes.answerCorrect}>
                                                   <Done />

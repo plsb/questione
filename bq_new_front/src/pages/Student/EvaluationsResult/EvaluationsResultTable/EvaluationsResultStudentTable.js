@@ -8,7 +8,7 @@ import {
   CardContent,
   Divider,
   IconButton,
-  Typography, Table, TableBody, CardActions, TablePagination, Tooltip, Switch, Chip
+  Typography, Table, TableBody, CardActions, TablePagination, Tooltip, Switch, Chip, Grid
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import ToolbarEvaluation
@@ -16,6 +16,10 @@ import ToolbarEvaluation
 import PerfectScrollbar from "react-perfect-scrollbar";
 import moment from "moment";
 import {FormatListBulleted} from "@material-ui/icons";
+import UsersToolbar
+  from "../../../Professor/EvaluationApplication/EvaluationApplicationTable/components/EvaluationApplicationToolbar/EvaluationApplicationToolbar";
+import EvaluationApplicationCard
+  from "../../../Professor/EvaluationApplication/EvaluationApplicationCard/EvaluationApplicationCard";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -91,9 +95,33 @@ const EvaluationsResultStudentTable = props => {
         <div className={classes.content}>
           <Card
               className={clsx(classes.root, className)}>
-            <CardContent className={classes.content}>
-              <PerfectScrollbar>
-                <div className={classes.inner}>
+            <CardHeader
+                avatar={
+                  <div>
+
+
+                  </div>
+                }
+                action={
+                  <TablePagination
+                      component="div"
+                      count={total}
+                      onChangePage={handlePageChange}
+                      onChangeRowsPerPage={handleRowsPerPageChange}
+                      page={page}
+                      rowsPerPage={rowsPerPage}
+                      rowsPerPageOptions={[10]}
+                  />
+
+                }/>
+            <CardContent>
+              <Grid
+                  container
+                  spacing={1}>
+                <Grid
+                    item
+                    md={12}
+                    xs={12}>
                   <Table>
                     <TableBody>
                       {evaluations.map(application => (
@@ -102,6 +130,22 @@ const EvaluationsResultStudentTable = props => {
                               className={classes.root}>
                             <CardHeader
                                 className={classes.head}
+                                avatar={
+                                  <div>
+                                    <Typography variant="h5" color="textSecondary" component="h2">
+                                      {'Descrição da avaliação: '+application.evaluation_application.evaluation.description }
+                                    </Typography>
+                                    <Typography variant="h5" color="textSecondary" component="h2">
+                                      {'Descrição da aplicação: '+application.evaluation_application.description }
+                                    </Typography>
+                                    <Typography variant="h5" color="textSecondary" component="h2">
+                                      {'Professor(a): '+application.evaluation_application.evaluation.user.name }
+                                    </Typography>
+                                    <Typography variant="h6" color="textSecondary" component="h2">
+                                      {'Data da avaliação: '+moment(application.updated_at).format('DD/MM/YYYY') }
+                                    </Typography>
+                                  </div>
+                                }
                                 action={
                                   <Tooltip title="Visualizar resultados">
                                     <IconButton
@@ -111,27 +155,12 @@ const EvaluationsResultStudentTable = props => {
                                     </IconButton>
                                   </Tooltip>
                                 }/>
-                            <CardContent>
-                              <Typography variant="h5" color="textSecondary" component="h2">
-                                {'Descrição da avaliação: '+application.evaluation_application.evaluation.description }
-                              </Typography>
-                              <Typography variant="h5" color="textSecondary" component="h2">
-                                {'Descrição da aplicação: '+application.evaluation_application.description }
-                              </Typography>
-                              <Typography variant="h5" color="textSecondary" component="h2">
-                                {'Professor(a): '+application.evaluation_application.evaluation.user.name }
-                              </Typography>
-                              <Typography variant="h6" color="textSecondary" component="h2">
-                                {'Data da avaliação: '+moment(application.updated_at).format('DD/MM/YYYY') }
-                              </Typography>
-
-                            </CardContent>
                           </Card>
                       ))}
                     </TableBody>
                   </Table>
-                </div>
-              </PerfectScrollbar>
+                </Grid>
+              </Grid>
             </CardContent>
             <CardActions className={classes.actions}>
               <TablePagination

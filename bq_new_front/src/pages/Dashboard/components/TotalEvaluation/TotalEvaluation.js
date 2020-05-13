@@ -40,7 +40,7 @@ const TotalEvaluation = props => {
 
   async function load(){
     try {
-      const response = await api.get('public/total-professors');
+      const response = await api.get('public/total-evaluations');
       //console.log(response.data);
       setTotal(response.data);
     } catch (error) {

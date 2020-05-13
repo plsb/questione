@@ -13,7 +13,7 @@ import {
   Avatar,
   CardContent,
   CardActions, List, ListItem, Button, CircularProgress,
-    Backdrop
+    Backdrop, Grid
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import api from "../../../services/api";
@@ -101,12 +101,14 @@ const DoEvaluation = props => {
 
   }
 
-  async function startEvaluation(){
+  async function startEvaluation(event){
     setOpenBackdrop(true);
     timer.current = setTimeout(() => {
-     updateEvaluation();
+      updateEvaluation();
     }, 1300);
     setDialogStart(false);
+    event.preventDefault();
+
   }
 
   async function updateEvaluation(){
@@ -114,6 +116,7 @@ const DoEvaluation = props => {
       const response = await api.post('evaluation/start/'+codeAplication);
       console.log(response);
       if (response.status === 202) {
+        setOpenBackdrop(false);
         if(response.data.message){
           loadAlert('error', response.data.message);
         }
@@ -189,32 +192,6 @@ const DoEvaluation = props => {
 
   const handleToggle = (value) => () => {
     console.log(value)
-    /*const arr = [0];
-    let item, c;
-    for(item of questionItens){
-      if(item.id != value){
-        arr.push(item.id);
-      }
-    }
-    const currentIndex = checked.indexOf(value);
-    //const newChecked = [...checked];
-    const newChecked = [0];
-    for(c of checked){
-      for(item of arr) {
-        if (checked != arr) {
-          newChecked.push(checked);
-        }
-      }
-    }
-    console.log(newChecked, checked, arr);
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    setChecked(newChecked);*/
   };
 
   const onClickCloseDialogStart = () => {
@@ -253,21 +230,25 @@ const DoEvaluation = props => {
           <Card className={classes.root}>
             <CardHeader
                 avatar={
-                  <Avatar aria-label="recipe" className={classes.avatar}>
-                    {getInitials(localStorage.getItem("@Questione-name-user"))}
-                  </Avatar>
+                  <div>
+                    <Avatar aria-label="recipe" className={classes.avatar}>
+                      {getInitials(localStorage.getItem("@Questione-name-user"))}
+                    </Avatar>
+                    <Typography variant="button" color="textSecondary" component="p">
+                    {'Aluno(a): '+localStorage.getItem("@Questione-name-user") }
+                    </Typography>
+                    <Typography variant="button" color="textSecondary" component="p">
+                      {'Avaliação: '+application.evaluation.description}
+                    </Typography>
+                    <Typography variant="button" color="textSecondary" component="p">
+                      {'Código da aplicação: '+application.id_application}
+                    </Typography>
+                    <Typography variant="button" color="textSecondary" component="p">
+                      {'Professor(a): '+application.evaluation.user.name}
+                    </Typography>
+                  </div>
                 }
-                title={'Aluno(a): '+localStorage.getItem("@Questione-name-user") }
-                subheader={'Avaliação: '+application.evaluation.description}
             />
-            <CardContent>
-              <Typography variant="body1" color="textSecondary" component="p">
-                {'Código da aplicação: '+application.id_application}
-              </Typography>
-              <Typography variant="body1" color="textSecondary" component="p">
-                {'Professor(a): '+application.evaluation.user.name}
-              </Typography>
-            </CardContent>
             <CardActions disableSpacing>
               <div >
                 {enableButtonStart ?

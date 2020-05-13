@@ -113,6 +113,7 @@ Route::group(['prefix' => 'evaluation'], function (){
     //questões
     Route::post('/addquestion/', 'Professor\EvaluationHasQuestionsController@addQuestion')->name('evaluation.addQuestion');
     Route::delete('/deletequestion/{question}', 'Professor\EvaluationHasQuestionsController@deleteQuestion')->name('evaluation.deleteQuestion');
+    Route::put('/cancel-or-not/{question}', 'Professor\EvaluationHasQuestionsController@cancelOrNot')->name('evaluation.cancelOrNot');
     //aplicacao da avaliação
     Route::get('/list-applications/', 'Professor\EvaluationApplicationsController@index')->name('evaluationApplication.index');
     Route::get('/applications/show/{idApplication}', 'Professor\EvaluationApplicationsController@show')->name('evaluationApplication.show');
@@ -127,7 +128,7 @@ Route::group(['prefix' => 'evaluation'], function (){
     Route::post('/start/{id_application}', 'DoEvaluation@startEvaluation')->name('evaluationApplication.startEvaluation');
     Route::put('/finish/{id_application}', 'DoEvaluation@finishEvaluation')->name('evaluationApplication.finishEvaluation');
     Route::put('/answer/{id_application}', 'DoEvaluation@answer')->name('evaluationApplication.answer');
-    //resultados da avaliação studen
+    //resultados da avaliação student
     Route::get('/student/result/evaluations', 'ResultEvaluationStudent@evaluations')->name('evaluationApplication.evaluations');
     Route::get('/student/result/evaluations-specific/{idHead}', 'ResultEvaluationStudent@applicationSpecific')->name('evaluationApplication.applicationSpecific');
 });

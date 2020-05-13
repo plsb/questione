@@ -13,7 +13,7 @@ import {
   TableHead,
   TableRow,
   Typography,
-  TablePagination, Tooltip, Button
+  TablePagination, Tooltip, Button, CardHeader, Grid
 } from '@material-ui/core';
 import api from '../../../../services/api';
 
@@ -21,6 +21,7 @@ import Swal from "sweetalert2";
 import UsersToolbar from "./components/EvaluationApplicationToolbar";
 import PropTypes from "prop-types";
 import EvaluationApplicationCard from "../EvaluationApplicationCard";
+import EvaluationCard from "../../Evaluation/EvaluationCard/EvaluationCard";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -133,41 +134,65 @@ const EvaluationApplicationTable = props => {
   };
 
   return (
-    <div className={classes.root}>
-      <UsersToolbar
-          onChangeSearch={updateSearch.bind(this)}
-          searchText={searchText}
-          onClickSearch={onClickSearch}/>
-      <div className={classes.content}>
-        <Card
-            className={clsx(classes.root, className)}>
-          <CardContent className={classes.content}>
-            <PerfectScrollbar>
-              <div className={classes.inner}>
-                <Table>
-                  <TableBody>
-                    {evaluationsApplications.map(application => (
-                        <EvaluationApplicationCard application={application}/>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </PerfectScrollbar>
-          </CardContent>
-          <CardActions className={classes.actions}>
-            <TablePagination
-                component="div"
-                count={total}
-                onChangePage={handlePageChange}
-                onChangeRowsPerPage={handleRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[10]}
-            />
-          </CardActions>
-        </Card>
+      <div className={classes.root}>
+        <UsersToolbar
+            onChangeSearch={updateSearch.bind(this)}
+            searchText={searchText}
+            onClickSearch={onClickSearch}/>
+        <div className={classes.content}>
+          <Card
+              className={clsx(classes.root, className)}>
+            <CardHeader
+                avatar={
+                  <div>
+
+
+                  </div>
+                }
+                action={
+                  <TablePagination
+                      component="div"
+                      count={total}
+                      onChangePage={handlePageChange}
+                      onChangeRowsPerPage={handleRowsPerPageChange}
+                      page={page}
+                      rowsPerPage={rowsPerPage}
+                      rowsPerPageOptions={[10]}
+                  />
+
+                }/>
+            <CardContent>
+              <Grid
+                  container
+                  spacing={1}>
+                <Grid
+                    item
+                    md={12}
+                    xs={12}>
+                  <Table>
+                    <TableBody>
+                      {evaluationsApplications.map(application => (
+                          <EvaluationApplicationCard application={application}/>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Grid>
+              </Grid>
+            </CardContent>
+            <CardActions className={classes.actions}>
+              <TablePagination
+                  component="div"
+                  count={total}
+                  onChangePage={handlePageChange}
+                  onChangeRowsPerPage={handleRowsPerPageChange}
+                  page={page}
+                  rowsPerPage={rowsPerPage}
+                  rowsPerPageOptions={[10]}
+              />
+            </CardActions>
+          </Card>
+        </div>
       </div>
-    </div>
   );
 };
 

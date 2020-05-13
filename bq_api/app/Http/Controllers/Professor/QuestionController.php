@@ -82,7 +82,7 @@ class QuestionController extends Controller
                 return $query->where('base_text', 'like', '%'.$base_text.'%');
 
             })
-            ->when($course == 0 || $course == null, function ($query) {
+            ->when(($opcao == "T") && ($course == 0 || $course == null), function ($query) {
                 //pega questões de todos os cursos que o usuário tem permissão
                 $user = auth('api')->user();
                 $courses_user = CourseProfessor::where('fk_user_id', $user->id)
