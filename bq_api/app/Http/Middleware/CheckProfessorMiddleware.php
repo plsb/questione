@@ -19,7 +19,7 @@ class CheckProfessorMiddleware
         if($user->acess_level != 2){
             return response()->json([
                 'message' => 'O usuário não tem permissão para o recurso solicitado.'
-            ], 404);
+            ], 401);
         } else {
             return $next($request);
         }

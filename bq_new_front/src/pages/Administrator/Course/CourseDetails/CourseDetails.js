@@ -85,10 +85,10 @@ const CourseDetails = props => {
       let response= {};
       let acao = "";
       if(!id) {
-         response = await api.post('course', data);
-         acao = "cadastrado";
+        response = await api.post('course', data);
+        acao = "cadastrado";
       } else {
-         response = await api.put('course/'+id, data);
+        response = await api.put('course/'+id, data);
         acao = "atualizado";
       }
       console.log(response);
@@ -174,76 +174,76 @@ const CourseDetails = props => {
   };
 
   return (
-    <Card
-      {...rest}
-      className={clsx(classes.root, className)}>
-      <form
-        autoComplete="off">
-        <div className={classes.contentHeader}>
-          <IconButton onClick={handleBack}>
-            <ArrowBackIcon />
-          </IconButton>
-        </div>
-        <CardHeader
-          subheader=""
-          title="Curso"/>
-        <Divider />
-        <CardContent>
-          <Grid
-            container
-            spacing={3}>
+      <Card
+          {...rest}
+          className={clsx(classes.root, className)}>
+        <form
+            autoComplete="off">
+          <div className={classes.contentHeader}>
+            <IconButton onClick={handleBack}>
+              <ArrowBackIcon />
+            </IconButton>
+          </div>
+          <CardHeader
+              subheader=""
+              title="Curso"/>
+          <Divider />
+          <CardContent>
             <Grid
-                item
-                md={6}
-                xs={12}>
-              <TextField
-                  fullWidth
-                  error={hasError('initials')}
-                  helperText={
-                    hasError('initials') ? formState.errors.initials[0] : null
-                  }
-                  label="Sigla"
-                  margin="dense"
-                  name="initials"
-                  onChange={handleChange}
-                  value={formState.values.initials || ''}
+                container
+                spacing={3}>
+              <Grid
+                  item
+                  md={6}
+                  xs={12}>
+                <TextField
+                    fullWidth
+                    error={hasError('initials')}
+                    helperText={
+                      hasError('initials') ? formState.errors.initials[0] : null
+                    }
+                    label="Sigla"
+                    margin="dense"
+                    name="initials"
+                    onChange={handleChange}
+                    value={formState.values.initials || ''}
+                    variant="outlined"
+                />
+              </Grid>
+              <Grid
+                  item
+                  md={6}
+                  xs={12}>
+                <TextField
+                    fullWidth
+                    error={hasError('description')}
+                    helperText={
+                      hasError('description') ? formState.errors.description[0] : null
+                    }
+                    label="Descrição"
+                    margin="dense"
+                    name="description"
+                    onChange={handleChange}
+                    value={formState.values.description || ''}
+                    variant="outlined"
+                />
+              </Grid>
+            </Grid>
+          </CardContent>
+          <Divider />
+          <CardActions>
+            <Tooltip title="Clique aqui para solicitar acesso para cursos" aria-label="add">
+              <Button
+                  color="primary"
                   variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}>
-              <TextField
-                fullWidth
-                error={hasError('description')}
-                helperText={
-                  hasError('description') ? formState.errors.description[0] : null
-                }
-                label="Descrição"
-                margin="dense"
-                name="description"
-                onChange={handleChange}
-                value={formState.values.description || ''}
-                variant="outlined"
-              />
-            </Grid>
-          </Grid>
-        </CardContent>
-        <Divider />
-        <CardActions>
-          <Tooltip title="Clique aqui para solicitar acesso para cursos" aria-label="add">
-            <Button
-              color="primary"
-              variant="outlined"
-              disabled={!formState.isValid}
-              onClick={saveCourseDetails}>
-              Salvar
-            </Button>
-          </Tooltip>
-        </CardActions>
-      </form>
-    </Card>
+                  disabled={!formState.isValid}
+                  onClick={saveCourseDetails}>
+                Salvar
+              </Button>
+            </Tooltip>
+          </CardActions>
+        </form>
+      </Card>
   );
 };
 

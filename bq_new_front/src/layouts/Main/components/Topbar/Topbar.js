@@ -11,7 +11,8 @@ import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    boxShadow: 'none'
+    boxShadow: 'none',
+    backgroundColor: '#3a7cf7',
   },
   flexGrow: {
     flexGrow: 1
@@ -39,7 +40,6 @@ const Topbar = props => {
     <AppBar
       {...rest}
       className={clsx(classes.root, className)}
-      color="secondary"
     >
       <Toolbar>
         <RouterLink to="/">
