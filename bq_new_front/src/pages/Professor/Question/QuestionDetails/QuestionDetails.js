@@ -1,254 +1,161 @@
-import React, {useEffect, useState} from 'react';
-import clsx from 'clsx';
-import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/styles';
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardActions,
-  Divider,
-  Grid,
-  Button,
-  TextField, IconButton, Tooltip
-} from '@material-ui/core';
-import api from "../../../../services/api";
-import Swal from "sweetalert2";
-import validate from "validate.js";
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import React, {useEffect} from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import {Box, Grid, TextField, Typography} from "@material-ui/core";
+import PropTypes from "prop-types";
+import PerfectScrollbar from "react-perfect-scrollbar";
+import {Block, Close, Done} from "@material-ui/icons";
+import {withRouter} from "react-router-dom";
+import QuestionCourse from "./QuestionCourse";
+import QuestionItens from "./QuestionItens";
+import { Editor } from '@tinymce/tinymce-react';
 
-const schema = {
-  description: {
-    presence: { allowEmpty: false,  message: 'A descrição é obrigatória.'},
-    length: {
-      minimum: 4,
-      maximum: 100,
-      message: 'A descrição deve conter no mínimo 4 e no máximo 100 caracteres.'
-    }
+const useStyles = makeStyles({
+  root: {
+    flexGrow: 1,
   },
-  initials: {
-    presence: { allowEmpty: false,  message: 'A sigla é obrigatória.'},
-    length: {
-      minimum: 2,
-      maximum: 8,
-      message: 'A sigla do curso deve conter no mínimo 2 e no máximo 8 caracteres.'
-    }
-  }
+});
+
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`nav-tabpanel-${index}`}
+            aria-labelledby={`nav-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box p={3}>
+                    <Typography>{children}</Typography>
+                </Box>
+            )}
+        </div>
+    );
+}
+
+TabPanel.propTypes = {
+    children: PropTypes.node,
+    index: PropTypes.any.isRequired,
+    value: PropTypes.any.isRequired,
 };
 
-const useStyles = makeStyles(() => ({
-  root: {}
-}));
+function a11yProps(index) {
+    return {
+        id: `nav-tab-${index}`,
+        'aria-controls': `nav-tabpanel-${index}`,
+    };
+}
+
+function LinkTab(props) {
+    return (
+        <Tab
+            component="a"
+            onClick={(event) => {
+                event.preventDefault();
+            }}
+            {...props}
+        />
+    );
+}
 
 const QuestionDetails = props => {
-  const { className, history, ...rest } = props;
-  const { codigoCourse } = props.match.params;
-
   const classes = useStyles();
+  const [value, setValue] = React.useState(0);
 
-  const [formState, setFormState] = useState({
-    isValid: false,
-    values: {},
-    touched: {},
-    errors: {}
-  });
-
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
-  async function saveCourseDetails(){
-    try {
-      const fk_course_id = formState.values.course;
-      const description = formState.values.description;
-      const initials = formState.values.initials;
-      const id = formState.values.id;
-      const data = {
-        description, fk_course_id, initials
-      }
-      let response= {};
-      let acao = "";
-      if(!id) {
-         response = await api.post('course', data);
-         acao = "cadastrado";
-      } else {
-         response = await api.put('course/'+id, data);
-        acao = "atualizado";
-      }
-      console.log(response);
-      if (response.status === 202) {
-        if(response.data.message){
-          loadAlert('error', response.data.message);
-        } else if(response.data.errors[0].description){
-          loadAlert('error', response.data.errors[0].description);
-        } if(response.data.errors[0].fk_course_id){
-          loadAlert('error', response.data.errors[0].fk_course_id);
-        }
-      } else {
-        loadAlert('success', 'Curso '+acao+'.');
-        history.push('/courses');
-      }
-
-    } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
-    }
-  }
-
-  async function findACourse(id){
-    try {
-      const response = await api.get('course/show/'+id);
-      console.log(response);
-      if (response.status === 202) {
-        if(response.data.message){
-          loadAlert('error', response.data.message);
-        }
-      } else {
-        setFormState(formState => ({
-          values: {
-            'description': response.data.description,
-            'initials': response.data.initials,
-            'id': response.data.id
-          },
-          touched: {
-            ...formState.touched,
-          }
-        }));
-      }
-    } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
-    }
-  }
-
-  useEffect(() => {
-    if(codigoCourse){
-      findACourse(codigoCourse);
-    }
-
-  }, []);
-
-  useEffect(() => {
-    const errors = validate(formState.values, schema);
-
-    setFormState(formState => ({
-      ...formState,
-      isValid: (errors || formState.values.course==0) ? false : true,
-      errors: errors || {}
-    }));
-  }, [formState.values]);
-
-  const handleChange = event => {
-    setFormState({
-      ...formState,
-      values: {
-        ...formState.values,
-        [event.target.name]: event.target.value
-      },
-      touched: {
-        ...formState.touched,
-        [event.target.name]: true
-      }
-    });
-  };
-
-  const hasError = field =>
-      formState.touched[field] && formState.errors[field] ? true : false;
-
-  const handleBack = () => {
-    history.goBack();
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
   };
 
   return (
-    <Card
-      {...rest}
-      className={clsx(classes.root, className)}>
-      <form
-        autoComplete="off">
-        <div className={classes.contentHeader}>
-          <IconButton onClick={handleBack}>
-            <ArrowBackIcon />
-          </IconButton>
-        </div>
-        <CardHeader
-          subheader=""
-          title="Curso"/>
-        <Divider />
-        <CardContent>
-          <Grid
-            container
-            spacing={3}>
-            <Grid
-                item
-                md={6}
-                xs={12}>
-              <TextField
-                  fullWidth
-                  error={hasError('initials')}
-                  helperText={
-                    hasError('initials') ? formState.errors.initials[0] : null
-                  }
-                  label="Sigla"
-                  margin="dense"
-                  name="initials"
-                  onChange={handleChange}
-                  value={formState.values.initials || ''}
-                  variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}>
-              <TextField
-                fullWidth
-                error={hasError('description')}
-                helperText={
-                  hasError('description') ? formState.errors.description[0] : null
-                }
-                label="Descrição"
-                margin="dense"
-                name="description"
-                onChange={handleChange}
-                value={formState.values.description || ''}
-                variant="outlined"
-              />
-            </Grid>
-          </Grid>
-        </CardContent>
-        <Divider />
-        <CardActions>
-          <Tooltip title="Clique aqui para solicitar acesso para cursos" aria-label="add">
-            <Button
-              color="primary"
-              variant="outlined"
-              disabled={!formState.isValid}
-              onClick={saveCourseDetails}>
-              Salvar
-            </Button>
-          </Tooltip>
-        </CardActions>
-      </form>
-    </Card>
+      <Paper className={classes.root}>
+          <Tabs
+              variant="fullWidth"
+              value={value}
+              onChange={handleChange}
+              aria-label="nav tabs example">
+              <LinkTab label="Texto base & Enunciado" href="/drafts" {...a11yProps(0)} />
+              <LinkTab label="Itens" href="/trash" {...a11yProps(1)} />
+              <LinkTab label="Competência" href="/spam" {...a11yProps(2)} />
+          </Tabs>
+          {/*texto base e enunciado*/}
+          <TabPanel value={value} index={0}>
+              <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center">
+                  <TextField
+                      fullWidth
+                      label="Referência"
+                      margin="dense"
+                      name="reference"
+                      variant="outlined"
+                      style={{width: '90%', justifyContent: 'center'}}
+                  />
+              </Grid>
+              <div style={{padding: "30px"}}>
+                  <b className="item1">Enunciado</b>
+                  <Editor
+                      apiKey="ndvo85oqtt9mclsdb6g3jc5inqot9gxupxd0scnyypzakm18"
+                      init={{
+                          height: 200,
+                          menubar: false,
+                          file_picker_types: 'image',
+                          images_upload_url: 'postAcceptor.php',
+                          automatic_uploads: false,
+                          plugins: [
+                              'textpattern advlist autolink lists link image charmap print',
+                              ' preview hr anchor pagebreak code media save',
+                              'table contextmenu FMathEditor charmap'
+                          ],
+                          toolbar:
+                              'insertfile undo redo | fontselect fontsizeselect | bold italic superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview FMathEditor  charmap'
+                      }}
+                      name="base_text"/>
+              </div>
+              <div style={{padding: "30px"}}>
+                  <b className="item1">Texto Base</b>
+                  <Editor
+                      apiKey="ndvo85oqtt9mclsdb6g3jc5inqot9gxupxd0scnyypzakm18"
+                      init={{
+                          height: 200,
+                          menubar: false,
+                          file_picker_types: 'image',
+                          images_upload_url: 'postAcceptor.php',
+                          automatic_uploads: false,
+                          plugins: [
+                              'textpattern advlist autolink lists link image charmap print',
+                              ' preview hr anchor pagebreak code media save',
+                              'table contextmenu FMathEditor charmap'
+                          ],
+                          toolbar:
+                              'insertfile undo redo | fontselect fontsizeselect | bold italic superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview FMathEditor  charmap'
+                      }}
+                      name="stem"/>
+              </div>
+
+          </TabPanel>
+          {/* INTES */}
+          <TabPanel value={value} index={1}>
+            <QuestionItens />
+
+          </TabPanel>
+          {/* CURSO E COMPETÊNCIA*/}
+          <TabPanel value={value} index={2}>
+            <QuestionCourse />
+          </TabPanel>
+
+      </Paper>
   );
-};
+}
 
 QuestionDetails.propTypes = {
-  className: PropTypes.string,
+    className: PropTypes.string,
 };
 
-export default QuestionDetails;
+export default withRouter(QuestionDetails);

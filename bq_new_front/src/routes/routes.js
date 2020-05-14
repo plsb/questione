@@ -38,6 +38,7 @@ import {
 } from '../pages';
 import UserRequestCourseDetails from "../pages/UserRequestCourse/UserRequestCourseDetails";
 import QuestionTable from "../pages/Professor/Question/QuestionTable";
+import QuestionItens from "../pages/Professor/Question/QuestionDetails/_QuestionItens";
 import QuestionDetails from "../pages/Professor/Question/QuestionDetails";
 
 const Routes = () => (
