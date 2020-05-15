@@ -158,7 +158,7 @@ const ResetPassword = props => {
 
   async function handleResetPassword(event) {
     event.preventDefault();
-    console.log(token);
+
     try {
       const email = formState.values.email;
       const password = formState.values.password;

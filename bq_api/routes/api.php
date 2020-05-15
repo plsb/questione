@@ -80,12 +80,16 @@ Route::group(['prefix' => 'question'], function (){
     Route::get('/', 'Professor\QuestionController@index')->name('question.index');
     Route::post('/', 'Professor\QuestionController@store')->name('question.store');
     Route::put('/{question}', 'Professor\QuestionController@update')->name('question.update');
+    Route::put('/update-course-skill/{question}', 'Professor\QuestionController@updateCourseSkill')->name('question.updateCourseSkill');
     Route::get('/show/{question}', 'Professor\QuestionController@show')->name('question.show');
     Route::delete('/{question}', 'Professor\QuestionController@destroy')->name('question.destroy');
     Route::put('/validate/{question}', 'Professor\QuestionController@validateQuestion')->name('question.validateQuestion');
     Route::post('/duplicate/{question}', 'Professor\QuestionController@duplicate')->name('question.duplicate');
+    //objects
+    Route::get('/object-question/{idQuestion}', 'Professor\QuestionHasKnowledgeObjectController@index')->name('question.index');
     Route::post('/addobject/', 'Professor\QuestionHasKnowledgeObjectController@addKnowledgeObject')->name('question.addKnowledgeObject');
-    Route::put('/deleteobject/', 'Professor\QuestionHasKnowledgeObjectController@deleteKnowledgeObject')->name('question.deleteKnowledgeObject');
+    Route::put('/update-object/{id}', 'Professor\QuestionHasKnowledgeObjectController@update')->name('question.update');
+    Route::delete('/deleteobject/{id}', 'Professor\QuestionHasKnowledgeObjectController@deleteKnowledgeObject')->name('question.deleteKnowledgeObject');
 });
 
 Route::group(['prefix' => 'questionitem'], function (){

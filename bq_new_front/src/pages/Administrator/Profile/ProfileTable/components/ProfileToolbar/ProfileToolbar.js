@@ -42,11 +42,11 @@ const ProfileToolbar = props => {
   async function loadCourses(){
     try {
       const response = await api.get('all/courses');
-      console.log()
+
       setCourses([...courses, ...response.data]);
 
     } catch (error) {
-      console.log(error);
+
     }
   }
 

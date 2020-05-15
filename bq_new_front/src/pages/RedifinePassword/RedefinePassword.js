@@ -141,7 +141,6 @@ const RedefinePassword = props => {
 
   async function handleRedefinePassword(event) {
     event.preventDefault();
-    console.log(id);
     try {
       const email = formState.values.email;
 

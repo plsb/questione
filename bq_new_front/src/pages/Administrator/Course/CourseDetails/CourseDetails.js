@@ -91,7 +91,6 @@ const CourseDetails = props => {
         response = await api.put('course/'+id, data);
         acao = "atualizado";
       }
-      console.log(response);
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
@@ -113,7 +112,6 @@ const CourseDetails = props => {
   async function findACourse(id){
     try {
       const response = await api.get('course/show/'+id);
-      console.log(response);
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);

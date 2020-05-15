@@ -13,20 +13,16 @@ import {
   TableHead,
   TableRow,
   Typography,
-  TablePagination, Tooltip, Button, Grid, IconButton, CardHeader, Divider, TextField, Chip, Box, Switch
+  TablePagination, Grid, IconButton, CardHeader
 } from '@material-ui/core';
 import api from '../../../../services/api';
 
 import Swal from "sweetalert2";
 import UsersToolbar from "./components/QuestionToolbar";
-import Delete from "@material-ui/icons/Delete";
-import Edit from "@material-ui/icons/Edit";
 import {DialogQuestione, TableQuestione} from "../../../../components";
 import PropTypes from "prop-types";
 import QuestionCard from "../../../../components/QuestionCard/QuestionCard";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import {MoreVert, PlaylistAdd} from "@material-ui/icons";
-import Rating from "@material-ui/lab/Rating";
+
 const useStyles = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(1),
@@ -123,10 +119,8 @@ const QuestionTable = props => {
       if(searchText[4].base_text != ''){
         url += '&base_text='+searchText[4].base_text;
       }
-      console.log('URL='+url);
       const response = await api.get(url);
       setTotal(response.data.total);
-      console.log(response);
       setQuestions(response.data.data);
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
@@ -183,7 +177,6 @@ const QuestionTable = props => {
   }
 
   const onClickEdit = (id) => {
-    console.log(id);
     history.push('/question-details/'+id);
   }
 

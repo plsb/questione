@@ -59,7 +59,7 @@ const RequestUserDetails = props => {
       const data = {
         valid
       }
-      console.log(valid);
+
       const response = await api.put('course-professor/'+codigoCourseProfessor, data);
       if (response.status == 202) {
         if(response.data.message){
@@ -78,7 +78,6 @@ const RequestUserDetails = props => {
   }
 
   async function viewReceipt(){
-    console.log('passou');
     try {
       api.get('course-professor/download-receipt?file='+recepit,
           {
@@ -129,7 +128,6 @@ const RequestUserDetails = props => {
   }
 
   useEffect(() => {
-    console.log('id '+codigoCourseProfessor);
     if(codigoCourseProfessor){
       findCourseProfessor(codigoCourseProfessor);
     }

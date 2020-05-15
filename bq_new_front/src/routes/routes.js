@@ -29,7 +29,7 @@ import {
     ObjectDetails,
     RequestUserDetails,
     CourseDetails,
-    UserRequestCourse,
+    UserRequestCourseTable,
     EvaluationApplicationTable,
     DoEvaluation,
     EvaluationApplicationDetails,
@@ -38,7 +38,6 @@ import {
 } from '../pages';
 import UserRequestCourseDetails from "../pages/UserRequestCourse/UserRequestCourseDetails";
 import QuestionTable from "../pages/Professor/Question/QuestionTable";
-import QuestionItens from "../pages/Professor/Question/QuestionDetails/_QuestionItens";
 import QuestionDetails from "../pages/Professor/Question/QuestionDetails";
 
 const Routes = () => (
@@ -87,7 +86,7 @@ const Routes = () => (
             needToBeLogged={true}
             path="/account"/>
         <RouteWithLayout
-            component={UserRequestCourse}
+            component={UserRequestCourseTable}
             exact
             needToBeLogged={true}
             layout={MainLayout}
@@ -262,6 +261,12 @@ const Routes = () => (
             layout={MainLayout}
             needToBeLogged={true}
             path="/question-details"/>
+        <RouteWithLayout
+            component={QuestionDetails}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/question-details/:idQuestion"/>
         <RouteWithLayout
             component={DoEvaluation}
             exact

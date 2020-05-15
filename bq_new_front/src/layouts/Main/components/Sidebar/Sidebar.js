@@ -8,6 +8,8 @@ import PeopleIcon from '@material-ui/icons/People';
 import { Note, Ballot, EmojiObjects, AccountBox, Assignment, Assessment } from '@material-ui/icons';
 
 import { Profile, SidebarNavAdm } from './components';
+import {logout} from "../../../../services/auth";
+import {withRouter} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -33,7 +35,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Sidebar = props => {
-  const { open, variant, onClose, className, ...rest } = props;
+  const { open, variant, onClose, history, className, ...rest } = props;
 
   const classes = useStyles();
 
@@ -103,7 +105,6 @@ const Sidebar = props => {
 
   function handlePage(event) {
     const level_user = localStorage.getItem("@Questione-acess-level-user");
-    console.log("Usuer : "+level_user);
     if(level_user == 1){
       return pagesAdm;
     } else if(level_user == 2){
@@ -140,4 +141,4 @@ Sidebar.propTypes = {
   variant: PropTypes.string.isRequired
 };
 
-export default Sidebar;
+export default withRouter(Sidebar);

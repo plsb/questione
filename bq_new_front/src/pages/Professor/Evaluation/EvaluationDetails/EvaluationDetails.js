@@ -78,7 +78,7 @@ const EvaluationDetails = props => {
   async function saveEvaluationDetails(){
     try {
       const description = formState.values.description;
-      console.log('des '+description);
+
       const id = formState.values.id;
       const data = {
         description
@@ -92,7 +92,6 @@ const EvaluationDetails = props => {
          response = await api.put('evaluation/'+id, data);
         acao = "atualizada";
       }
-      console.log(response);
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
@@ -112,7 +111,6 @@ const EvaluationDetails = props => {
   async function findAEvaluation(id){
     try {
       const response = await api.get('evaluation/show/'+id);
-      console.log(response);
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
@@ -129,7 +127,6 @@ const EvaluationDetails = props => {
           }
         }));
         setQuestions(response.data[0].questions);
-        console.log(response.data[0].questions);
       }
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
@@ -145,7 +142,6 @@ const EvaluationDetails = props => {
 
   useEffect(() => {
     const errors = validate(formState.values, schema);
-    console.log(formState.values.questions);
 
     setFormState(formState => ({
       ...formState,

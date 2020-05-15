@@ -51,10 +51,10 @@ const TotalProfessor = props => {
   async function load(){
     try {
       const response = await api.get('public/total-professors');
-      //console.log(response.data);
+
       setTotal(response.data);
     } catch (error) {
-      console.log(error);
+
     }
   }
 

@@ -107,7 +107,6 @@ const SkillTable = props => {
       const response = await api.get(url);
       setTotal(response.data.total);
       setSkills(response.data.data);
-      console.log(response.data.data);
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
     }
@@ -150,7 +149,6 @@ const SkillTable = props => {
   }
 
   const onClickEdit = (id) => {
-    console.log(id);
     history.push('/skill-details/'+id);
   }
 

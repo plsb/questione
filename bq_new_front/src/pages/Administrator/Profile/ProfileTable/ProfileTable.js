@@ -108,7 +108,6 @@ const ProfileTable = props => {
       const response = await api.get(url);
       setTotal(response.data.total);
       setProfiles(response.data.data);
-      console.log(response.data.data);
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
     }

@@ -91,7 +91,6 @@ const EvaluationApplicationDetails = props => {
   async function findAApplication(id){
     try {
       const response = await api.get('/evaluation/applications/show/'+id);
-      console.log(response.data[0]);
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);

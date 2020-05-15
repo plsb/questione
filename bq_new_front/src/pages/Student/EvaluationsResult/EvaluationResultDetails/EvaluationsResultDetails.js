@@ -194,7 +194,7 @@ const EvaluationsResultDetails = props => {
     try {
 
       const response = await api.get('/evaluation/student/result/evaluations-specific/'+idHead);
-      console.log(response);
+
       if (response.status === 200) {
         setQuestions(response.data.questions);
       }

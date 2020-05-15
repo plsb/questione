@@ -1,16 +1,21 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import {Box, Grid, TextField, Typography} from "@material-ui/core";
+import {
+    Box, Grid, IconButton, TextField, Typography,
+    Button, Icon, MenuItem
+} from "@material-ui/core";
 import PropTypes from "prop-types";
-import PerfectScrollbar from "react-perfect-scrollbar";
-import {Block, Close, Done} from "@material-ui/icons";
 import {withRouter} from "react-router-dom";
-import QuestionCourse from "./QuestionCourse";
 import QuestionItens from "./QuestionItens";
 import { Editor } from '@tinymce/tinymce-react';
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import Save from "@material-ui/icons/Save";
+import api from "../../../../services/api";
+import Swal from "sweetalert2";
+import QuestionSkill from "./QuestionSkill";
 
 const useStyles = makeStyles({
   root: {
@@ -27,8 +32,7 @@ function TabPanel(props) {
             hidden={value !== index}
             id={`nav-tabpanel-${index}`}
             aria-labelledby={`nav-tab-${index}`}
-            {...other}
-        >
+            {...other}>
             {value === index && (
                 <Box p={3}>
                     <Typography>{children}</Typography>
@@ -64,23 +68,164 @@ function LinkTab(props) {
 }
 
 const QuestionDetails = props => {
-  const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+    const { className, history, ...rest } = props;
+    const { idQuestion } = props.match.params;
 
-  const handleChange = (event, newValue) => {
+    const classes = useStyles();
+    const [value, setValue] = React.useState(0);
+    //visibilidade das abas
+    const [tabItens, setTabItens] = React.useState(false);
+    const [tabSkill, setTabSkill] = React.useState(false);
+    //campos
+    const [baseText, setBaseText] = React.useState('');
+    const [stem, setStem] = React.useState('');
+    const [reference, setReference] = React.useState('');
+    //utilizado pra quando for nova questão
+    const [idQuestionNew, setIdQuestionNew] = React.useState(0);
+
+    //configuration alert
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'bottom-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        onOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
+
+    function loadAlert(icon, message) {
+        Toast.fire({
+            icon: icon,
+            title: message
+        });
+    }
+
+  const handleChangeTab = (event, newValue) => {
     setValue(newValue);
   };
 
+    const handleBack = () => {
+        history.goBack();
+    };
+
+    async function saveQuestion(){
+        try {
+            const base_text = baseText;
+            const data = {
+                base_text, stem, reference
+            }
+            let response = {};
+            let acao = "";
+            if(!idQuestion){
+                response= await api.post('question', data);
+                acao = "cadastrada";
+            } else {
+                response= await api.put('question/'+idQuestion, data);
+                acao = "atualizada";
+            }
+
+            if(response.status === 200){
+                loadAlert('success', 'Questão '+acao+'.');
+                setIdQuestionNew(response.data[0].id);
+            } else if (response.status === 202) {
+                if(response.data.message){
+                    loadAlert('error', response.data.message);
+                } else if(response.data.errors[0].description){
+                    loadAlert('error', response.data.errors[0].description);
+                }
+            }
+
+
+        } catch (error) {
+            loadAlert('error', 'Erro de conexão.');
+        }
+    }
+
+    const onClickTab1 = () => {
+        if(baseText === ''){
+            loadAlert('error', 'Informe o texto base.');
+            return ;
+        } else if(stem === ''){
+            loadAlert('error', 'Informe o enunciado.');
+            return ;
+        }
+        saveQuestion();
+        if(idQuestion){
+
+        } else {
+            history.push('/questions')
+        }
+
+    }
+
+    const onClickTab2 = () => {
+        setTabSkill(true);
+        setValue(2);
+    }
+
+    async function findAQuestion(id){
+        try {
+            const response = await api.get('question/show/'+id);
+            if (response.status === 202) {
+                if(response.data.message){
+                    loadAlert('error', response.data.message);
+                }
+            } else {
+                setReference(response.data[0].reference);
+                setBaseText(response.data[0].base_text);
+                setStem(response.data[0].stem);
+            }
+        } catch (error) {
+            loadAlert('error', 'Erro de conexão.');
+        }
+    }
+
+    useEffect(() => {
+        if(idQuestion){
+            findAQuestion(idQuestion);
+            setTabItens(true);
+            setTabSkill(true);
+        }
+    }, []);
+
+    useEffect(() => {
+
+    }, [tabItens, value, idQuestionNew]);
+
+    const handleChangeReference = (event) =>{
+        setReference(event.target.value);
+    }
+
+    const handleChangeBaseText = (event) => {
+        setBaseText(event);
+    };
+
+    const handleChangeStem = (event) => {
+        setStem(event);
+    };
+
   return (
       <Paper className={classes.root}>
+          <div className={classes.contentHeader}>
+              <IconButton onClick={handleBack}>
+                  <ArrowBackIcon />
+              </IconButton>
+          </div>
           <Tabs
               variant="fullWidth"
               value={value}
-              onChange={handleChange}
+              onChange={handleChangeTab}
               aria-label="nav tabs example">
               <LinkTab label="Texto base & Enunciado" href="/drafts" {...a11yProps(0)} />
-              <LinkTab label="Itens" href="/trash" {...a11yProps(1)} />
-              <LinkTab label="Competência" href="/spam" {...a11yProps(2)} />
+              { tabItens==true ?
+              <LinkTab label="Alternativas" href="#"  {...a11yProps(1)} />
+                   : null  }
+              { tabSkill==true ?
+              <LinkTab label="Área de Conhecimento" href="#" {...a11yProps(2)} />
+                    :  null }
           </Tabs>
           {/*texto base e enunciado*/}
           <TabPanel value={value} index={0}>
@@ -90,14 +235,40 @@ const QuestionDetails = props => {
                   justify="center"
                   alignItems="center">
                   <TextField
+                      key="reference"
                       fullWidth
                       label="Referência"
                       margin="dense"
                       name="reference"
                       variant="outlined"
+                      value={reference}
+                      onChange={handleChangeReference}
                       style={{width: '90%', justifyContent: 'center'}}
                   />
               </Grid>
+              <div style={{padding: "30px"}}>
+                  <b className="item1">Texto base</b>
+                  <Editor
+                      apiKey="ndvo85oqtt9mclsdb6g3jc5inqot9gxupxd0scnyypzakm18"
+                      init={{
+                          height: 200,
+                          menubar: false,
+                          file_picker_types: 'image',
+                          images_upload_url: 'postAcceptor.php',
+                          automatic_uploads: false,
+                          plugins: [
+                              'textpattern advlist autolink lists link image charmap print',
+                              ' preview hr anchor pagebreak code media save',
+                              'table contextmenu FMathEditor charmap'
+                          ],
+                          toolbar:
+                              'insertfile undo redo | fontselect fontsizeselect | bold italic superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview FMathEditor  charmap'
+                      }}
+                      value={baseText}
+                      onEditorChange={handleChangeBaseText}
+                      name="base_text"
+                      key="base_text"/>
+              </div>
               <div style={{padding: "30px"}}>
                   <b className="item1">Enunciado</b>
                   <Editor
@@ -116,38 +287,36 @@ const QuestionDetails = props => {
                           toolbar:
                               'insertfile undo redo | fontselect fontsizeselect | bold italic superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview FMathEditor  charmap'
                       }}
-                      name="base_text"/>
+                      value={stem}
+                      onEditorChange={handleChangeStem}
+                      name="stem"
+                        key="stem"/>
               </div>
-              <div style={{padding: "30px"}}>
-                  <b className="item1">Texto Base</b>
-                  <Editor
-                      apiKey="ndvo85oqtt9mclsdb6g3jc5inqot9gxupxd0scnyypzakm18"
-                      init={{
-                          height: 200,
-                          menubar: false,
-                          file_picker_types: 'image',
-                          images_upload_url: 'postAcceptor.php',
-                          automatic_uploads: false,
-                          plugins: [
-                              'textpattern advlist autolink lists link image charmap print',
-                              ' preview hr anchor pagebreak code media save',
-                              'table contextmenu FMathEditor charmap'
-                          ],
-                          toolbar:
-                              'insertfile undo redo | fontselect fontsizeselect | bold italic superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview FMathEditor  charmap'
-                      }}
-                      name="stem"/>
-              </div>
+              <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center">
+                  <Button
+                      variant="contained"
+                      color="primary"
+                      className={classes.button}
+                      endIcon={<Save/>}
+                        onClick={onClickTab1}>
+                      Salvar
+                  </Button>
+              </Grid>
 
           </TabPanel>
           {/* INTES */}
           <TabPanel value={value} index={1}>
-            <QuestionItens />
+                <QuestionItens idQuestion={idQuestion} />
 
           </TabPanel>
           {/* CURSO E COMPETÊNCIA*/}
           <TabPanel value={value} index={2}>
-            <QuestionCourse />
+            <QuestionSkill idQuestion={idQuestion}/>
+
           </TabPanel>
 
       </Paper>

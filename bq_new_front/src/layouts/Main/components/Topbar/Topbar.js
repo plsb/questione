@@ -49,14 +49,14 @@ const Topbar = props => {
           />
         </RouterLink>
         <div className={classes.flexGrow} />
-        <Hidden mdDown>
+        {/*} <Hidden mdDown>
             <IconButton
               className={classes.signOutButton}
               color="inherit"
               onClick={handleLogout}>
               <InputIcon />
             </IconButton>
-        </Hidden>
+        </Hidden>*/}
         <Hidden lgUp>
           <IconButton
             color="inherit"

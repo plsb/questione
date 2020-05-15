@@ -189,7 +189,6 @@ const SignUp = props => {
       };
 
       const response = await api.post('register/', data);
-      console.log(response);
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);

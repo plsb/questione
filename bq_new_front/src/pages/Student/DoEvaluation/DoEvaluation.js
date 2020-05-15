@@ -82,7 +82,7 @@ const DoEvaluation = props => {
   async function listApplication() {
     try {
       const response = await api.get('evaluation/get-application/'+codeAplication);
-      console.log(response);
+
       if(response.status == 200){
         if(response.data.status == 0){
           loadAlert('error', 'Avaliação está desabilitada.');
@@ -96,7 +96,7 @@ const DoEvaluation = props => {
         return ;
       }
     } catch (error) {
-      console.log(error);
+
     }
 
   }
@@ -114,7 +114,8 @@ const DoEvaluation = props => {
   async function updateEvaluation(){
     try {
       const response = await api.post('evaluation/start/'+codeAplication);
-      console.log(response);
+
+
       if (response.status === 202) {
         setOpenBackdrop(false);
         if(response.data.message){
@@ -131,7 +132,7 @@ const DoEvaluation = props => {
         setOpenBackdrop(false);
       }
     } catch (error) {
-      console.log(error);
+
       loadAlert('error', 'Erro de conexão.');
     }
     setDialogStart(false);
@@ -140,7 +141,7 @@ const DoEvaluation = props => {
   async function finshEvaluation(){
     try {
       const response = await api.put('evaluation/finish/'+codeAplication);
-      console.log(response);
+
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
@@ -150,7 +151,7 @@ const DoEvaluation = props => {
         history.push('/home');
       }
     } catch (error) {
-      console.log(error);
+
       loadAlert('error', 'Erro de conexão.');
     }
     setDialogFinish(false);
@@ -166,7 +167,7 @@ const DoEvaluation = props => {
   }, []);
 
   async function handleListItemClick (event, answerId, item_question) {
-    console.log('resposta', answerId, item_question);
+
     try {
       const id = answerId;
       const answer =   item_question;
@@ -174,7 +175,7 @@ const DoEvaluation = props => {
         id, answer
       }
       const response = await api.put('evaluation/answer/'+codeAplication, data);
-      console.log(response);
+
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
@@ -184,14 +185,15 @@ const DoEvaluation = props => {
       }
 
     } catch (error) {
-      console.log(error)
+
+
       loadAlert('error', 'Erro de conexão.');
     }
     //console.log('questao', question, item_question);
   };
 
   const handleToggle = (value) => () => {
-    console.log(value)
+
   };
 
   const onClickCloseDialogStart = () => {

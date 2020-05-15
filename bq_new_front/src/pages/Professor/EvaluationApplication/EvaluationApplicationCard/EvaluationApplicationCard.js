@@ -44,7 +44,7 @@ const EvaluationApplicationCard = props => {
   const classes = useStyles();
 
     useEffect(() => {
-        console.log(evaluationApplication);
+
     }, [evaluationApplication]);
 
     useEffect(() => {
@@ -89,11 +89,7 @@ const EvaluationApplicationCard = props => {
                     loadAlert('error', response.data.message);
                 }
             } else {
-                //console.log(evaluationApplication);
-                //console.log(response.data);
                 const new_evaluation = response.data[0];
-                console.log(new_evaluation);
-                console.log(evaluationApplication);
                 setEvaluationApplication(new_evaluation);
 
                 loadAlert('success', 'Modificado o status da aplicação.');

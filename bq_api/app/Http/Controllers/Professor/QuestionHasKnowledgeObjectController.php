@@ -30,6 +30,25 @@ class QuestionHasKnowledgeObjectController extends Controller
 
     ];
 
+    public function index($idQuestion){
+        $question = Question::find($idQuestion);
+
+        if(!$question){
+            return response()->json([
+                'message' => 'Questão não encontrado.'
+            ], 202);
+        }
+        $user = auth('api')->user();
+        if($user->id != $question->fk_user_id){
+            return response()->json([
+                'message' => 'A questão pertence a um outro usuário.'
+            ], 202);
+        }
+
+        $itens = QuestionHasKnowledgeObject::where('fk_question_id', $question->id)->get();
+        return response()->json($itens, 200);
+    }
+
     public function addKnowledgeObject(Request $request){
 
         $validation = Validator::make($request->all(),$this->rules, $this->messages);
@@ -43,52 +62,52 @@ class QuestionHasKnowledgeObjectController extends Controller
         if(!$question){
             return response()->json([
                 'message' => 'Questão não encontrado.'
-            ], 203);
+            ], 202);
         }
 
         $user = auth('api')->user();
         if($user->id != $question->fk_user_id){
             return response()->json([
-                'message' => 'Operação não permitida. A questão pertence a um outro usuário.'
-            ], 203);
+                'message' => 'A questão pertence a um outro usuário.'
+            ], 202);
         } else if($question->validated == 1){
             return response()->json([
-                'message' => 'Operação não permitida. A questão já está validada.'
-            ], 203);
+                'message' => 'A questão já está validada.'
+            ], 202);
         }
 
         $object = KnowledgeObject::find($request->fk_knowledge_object);
         if(!$object){
             return response()->json([
                 'message' => 'Objeto de Conhecimento não encontrado.'
-            ], 203);
+            ], 202);
         }
 
-        $verifyObjectStore = QuestionHasKnowledgeObject::where('fk_question_id', "=", $request->fk_question_id)
-            ->where('fk_knowledge_object', "=", $request->fk_knowledge_object)->get();
-        if(sizeof($verifyObjectStore)>0){
-            return response()->json([
-                'message' => 'O Objeto de Conhecimento já foi cadastrado para esta questão.'
-            ], 203);
-        }
         $course = Course::find($question->fk_course_id);
 
         if($course->id != $object->fk_course_id){
             return response()->json([
-                'message' => 'Operação não permitida. Objeto de Conhecimento não pertence ao curso informado.'
-            ], 203);
+                'message' => 'Objeto de Conhecimento não pertence ao curso informado.'
+            ], 200);
         }
 
-        $object = new QuestionHasKnowledgeObject();
-        $object->fk_question_id = $request->fk_question_id;
-        $object->fk_knowledge_object = $request->fk_knowledge_object;
-        $object->save();
+        $verifyObjectStore = QuestionHasKnowledgeObject::where('fk_question_id', "=", $request->fk_question_id)
+            ->where('fk_knowledge_object', "=", $request->fk_knowledge_object)->get();
+        //verifica se já cadastrou
+        if(sizeof($verifyObjectStore)==0){
+            $object = new QuestionHasKnowledgeObject();
+            $object->fk_question_id = $request->fk_question_id;
+            $object->fk_knowledge_object = $request->fk_knowledge_object;
+            $object->save();
+        } else {
+            $object = $verifyObjectStore[0];
+        }
 
-        return response()->json($object);
+        return response()->json($object, 201);
 
     }
 
-    public function deleteKnowledgeObject(Request $request){
+    public function update(Request $request, $id){
 
         $validation = Validator::make($request->all(),$this->rules, $this->messages);
 
@@ -96,39 +115,68 @@ class QuestionHasKnowledgeObjectController extends Controller
             return $validation->errors()->toJson();
         }
 
-        $question = Question::find($request->fk_question_id);
-        if(!$question){
+        $objectQuestion = QuestionHasKnowledgeObject::where('id', "=", $id)->first();
+
+        if(!$objectQuestion){
             return response()->json([
-                'message' => 'Questão não encontrado.'
-            ], 203);
-        } else if($question->validated == 1){
+                'message' => 'Objeto não encontrado.'
+            ], 202);
+        }
+
+        $question = Question::where('id', $objectQuestion->fk_question_id)->first();
+
+        if($question->validated == 1){
             return response()->json([
-                'message' => 'Operação não permitida. A questão já está validada.'
-            ], 203);
+                'message' => 'A questão já está validada.'
+            ], 202);
         }
 
         $user = auth('api')->user();
         if($user->id != $question->fk_user_id){
             return response()->json([
-                'message' => 'Operação não permitida. A questão pertence a um outro usuário.'
-            ], 203);
+                'message' => 'A questão pertence a um outro usuário.'
+            ], 202);
         }
 
-        $object = KnowledgeObject::find($request->fk_knowledge_object);
-        if(!$object){
-            return response()->json([
-                'message' => 'Objeto de Conhecimento não encontrado.'
-            ], 203);
-        }
-
-        $verifyObjectStore = QuestionHasKnowledgeObject::where('fk_question_id', "=", $request->fk_question_id)
-            ->where('fk_knowledge_object', "=", $request->fk_knowledge_object)->get();
-        foreach ($verifyObjectStore as $value) {
-            $value->delete();
-        }
+        $objectQuestion->fk_question_id = $request->fk_question_id;
+        $objectQuestion->fk_knowledge_object = $request->fk_knowledge_object;
+        $objectQuestion->save();
 
         return response()->json([
-            'message' => 'Objetos excluído!'
-        ], 202);
+            'message' => 'Objeto Questão alterado.',
+            $objectQuestion], 200);
+    }
+
+
+    public function deleteKnowledgeObject(Request $request, $id){
+
+        $objectQuestion = QuestionHasKnowledgeObject::where('id', "=", $id)->first();
+
+        if(!$objectQuestion){
+            return response()->json([
+                'message' => 'Objeto não encontrado.'
+            ], 202);
+        }
+
+        $question = Question::where('id', $objectQuestion->fk_question_id)->first();
+
+        if($question->validated == 1){
+            return response()->json([
+                'message' => 'A questão já está validada.'
+            ], 202);
+        }
+
+        $user = auth('api')->user();
+        if($user->id != $question->fk_user_id){
+            return response()->json([
+                'message' => 'A questão pertence a um outro usuário.'
+            ], 202);
+        }
+
+        $objectQuestion->delete();
+
+        return response()->json([
+            'message' => 'Objeto Questão deletado.',
+            $objectQuestion], 200);
     }
 }

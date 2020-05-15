@@ -69,7 +69,7 @@ const UserRequestCourseDetails = props => {
   async function loadCourses(){
     try {
       const response = await api.get('all/courses');
-      console.log()
+
       setCourses([...courses, ...response.data]);
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
@@ -81,7 +81,7 @@ const UserRequestCourseDetails = props => {
       loadAlert('error', 'Informe o curso.');
       return ;
     }
-    console.log(file)
+
     if(file == null){
       loadAlert('error', 'Selecione o comprovante.');
       return ;
@@ -96,10 +96,9 @@ const UserRequestCourseDetails = props => {
       }
       formData.append('fk_course_id', fk_course_id);
       formData.append('receipt', file);
-      console.log('file ',file);
-      console.log('dados ',formData);
+
       const response = await api.post('course-professor', formData, config);
-      console.log('response ', response);
+
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);

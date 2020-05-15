@@ -107,7 +107,6 @@ const CourseTable = props => {
       const response = await api.get(url);
       setTotal(response.data.total);
       setCourses(response.data.data);
-      console.log(response.data);
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
     }
@@ -164,7 +163,6 @@ const CourseTable = props => {
   }
 
   const onClickEdit = (id) => {
-    console.log(id);
     history.push('/course-details/'+id);
   }
 

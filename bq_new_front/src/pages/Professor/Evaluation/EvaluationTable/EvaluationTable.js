@@ -107,7 +107,7 @@ const EvaluationTable = props => {
       const response = await api.get(url);
       setTotal(response.data.total);
       setEvaluations(response.data.data);
-      console.log(response.data);
+
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
     }

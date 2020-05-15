@@ -94,7 +94,7 @@ const QuestionToolbar = props => {
       setCourses([...courses, ...response.data]);
 
     } catch (error) {
-      console.log(error);
+
     }
   }
 
@@ -105,11 +105,11 @@ const QuestionToolbar = props => {
         fk_course_id
       }
       const response = await api.get('all/objects?fk_course_id='+courseSelect);
-      console.log(response);
+
       setObjects([{'id': '0', 'description': 'Todos os objetos'}, ...response.data]);
 
     } catch (error) {
-      console.log(error);
+
     }
   }
 
@@ -120,11 +120,11 @@ const QuestionToolbar = props => {
         fk_course_id
       }
       const response = await api.get('all/skills?fk_course_id='+courseSelect);
-      console.log(response);
+
       setSkills([{'id': '0', 'description': 'Todas as competências'}, ...response.data]);
 
     } catch (error) {
-      console.log(error);
+
     }
   }
 

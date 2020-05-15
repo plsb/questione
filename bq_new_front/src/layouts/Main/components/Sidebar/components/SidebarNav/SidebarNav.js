@@ -1,9 +1,11 @@
 import React, { forwardRef } from 'react';
-import { NavLink as RouterLink } from 'react-router-dom';
+import {NavLink as RouterLink, useHistory} from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import {List, ListItem, Button, colors} from '@material-ui/core';
+import {logout} from "../../../../../../services/auth";
+import ExitToApp from '@material-ui/icons/ExitToApp';
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -52,6 +54,15 @@ const SidebarNav = props => {
 
   const classes = useStyles();
 
+  const history = useHistory();
+
+  async function handleLogout(event) {
+    event.preventDefault();
+
+    logout();
+    history.push('/');
+  }
+
   return (
     <List
       {...rest}
@@ -71,13 +82,25 @@ const SidebarNav = props => {
           </Button>
         </ListItem>
       ))}
+      <ListItem
+          className={classes.item}
+          disableGutters
+          key="btExit">
+        <Button
+            activeClassName={classes.active}
+            className={classes.button}
+            onClick={handleLogout}>
+          <div className={classes.icon}><ExitToApp /></div>
+          Sair
+        </Button>
+      </ListItem>
     </List>
   );
 };
 
 SidebarNav.propTypes = {
   className: PropTypes.string,
-  pages: PropTypes.array.isRequired
+  pages: PropTypes.array.isRequired,
 };
 
 export default SidebarNav;

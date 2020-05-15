@@ -245,7 +245,6 @@ const EvaluationApplicationResults = props => {
   async function findOverviewQuestions(id){
     try {
       const response = await api.get('/evaluation/applications/result-percentage-question/'+id);
-      console.log(response.data);
       if (response.status === 200) {
         setOverviewQuestions(response.data[0].questions);
         setOverviewQuestionsHead(response.data[0]);

@@ -26,15 +26,12 @@ class QuestionController extends Controller
     private $rules = [
         'base_text' => 'required',
         'stem' => 'required',
-        'fk_course_id' => 'required',
 
     ];
 
     private $messages = [
         'description.required' => 'A DESCRIÇÃO é obrigatória.',
         'stem.required' => 'O ENUNCIADO é obrigatório.',
-
-        'fk_course_id.required' => 'O CURSO é obrigatório.',
 
     ];
 
@@ -134,12 +131,15 @@ class QuestionController extends Controller
             return response($json_str, 202);
         }
 
-        $course = Course::find($request->fk_course_id);
-        if(!$course){
-            return response()->json([
-                'message' => 'Curso não encontrado.'
-            ], 202);
+        if($request->fk_course_id){
+            $course = Course::find($request->fk_course_id);
+            if(!$course){
+                return response()->json([
+                    'message' => 'Curso não encontrado.'
+                ], 202);
+            }
         }
+
         //verifica perfil
         if($request->fk_profile_id){
             $profile = Profile::find($request->fk_profile_id);
@@ -232,12 +232,15 @@ class QuestionController extends Controller
             ], 202);
         }
 
-        $course = Course::find($request->fk_course_id);
-        if(!$course){
-            return response()->json([
-                'message' => 'Curso não encontrado.'
-            ], 202);
+        if($request->fk_course_id){
+            $course = Course::find($request->fk_course_id);
+            if(!$course){
+                return response()->json([
+                    'message' => 'Curso não encontrado.'
+                ], 202);
+            }
         }
+
         //verifica perfil
         if($request->fk_profile_id){
             $profile = Profile::find($request->fk_profile_id);
@@ -273,8 +276,73 @@ class QuestionController extends Controller
         $question->stem = $request->stem;
         $question->reference = $request->reference;
         $question->fk_profile_id = $request->fk_profile_id;
-        $question->fk_skill_id = $request->fk_skill_id;
+        if($request->fk_skill_id) {
+            $question->fk_skill_id = $request->fk_skill_id;
+        }
         $question->fk_user_id = $user->id;
+        if($request->fk_course_id){
+            $question->fk_course_id = $request->fk_course_id;
+        }
+        $question->save();
+
+
+        return response()->json([
+            'message' => 'Questão '.$question->id.' atualizada.',
+            $question
+        ], 200);
+
+    }
+
+    public function updateCourseSkill(Request $request, $id)
+    {
+        $validation = Validator::make($request->all(),$this->rules, $this->messages);
+
+        if(!$request->fk_course_id){
+            return response()->json([
+                'message' => 'Informe o Curso.'
+            ], 202);
+        }
+
+        $user = auth('api')->user();
+        $question = Question::find($id);
+
+        if($question->fk_user_id != $user->id){
+            return response()->json([
+                'message' => 'Acesso não permitido para esta questão.'
+            ], 202);
+        }
+
+        if($question->validated == 1){
+            //falta colocar validacao se a questão já tiver sido aplicada em uma avaliacao
+            return response()->json([
+                'message' => 'A questão não pode ser editada.'
+            ], 202);
+        }
+
+        $course = Course::find($request->fk_course_id);
+        if(!$course){
+            return response()->json([
+                'message' => 'Curso não encontrado.'
+            ], 202);
+        }
+
+        //verifica competência
+        if($request->fk_skill_id){
+            $skill = Skill::find($request->fk_skill_id);
+            if(!$skill){
+                return response()->json([
+                    'message' => 'Competência não encontrada.'
+                ], 202);
+            }
+            if($skill->fk_course_id != $course->id){
+                return response()->json([
+                    'message' => 'Operação não permitida. A Competência não pertence ao curso informado.'
+                ], 202);
+            }
+        }
+
+        $this->verifyRecord($question);
+        $question->fk_skill_id = $request->fk_skill_id;
         $question->fk_course_id = $request->fk_course_id;
         $question->save();
 
@@ -336,6 +404,12 @@ class QuestionController extends Controller
 
         $this->verifyRecord($question);
 
+        if($question->fk_course_id == null){
+            return response()->json([
+                'message' => 'A questão não possui um curso associado.'
+            ], 202);
+        }
+
         $knowledge_objects = QuestionHasKnowledgeObject::where('fk_question_id', '=', $id)->get();
 
         /*if(sizeof($knowledge_objects)==0){
@@ -344,12 +418,21 @@ class QuestionController extends Controller
             ], 202);
         }*/
 
+        $itens = QuestionItem::where('fk_question_id', '=', $question->id)
+            ->get();
+
+        if(sizeof($itens)<2){
+            return response()->json([
+                'message' => 'A questão deve possuir no mínimo duas alternativas.'
+            ], 202);
+        }
+
         $count_items_stored_correct = QuestionItem::where('fk_question_id', '=', $question->id)
                                 ->where('correct_item', '=', '1')->count();
 
         if($count_items_stored_correct != 1){
             return response()->json([
-                'message' => 'Operação não pode ser executada. A questão deve possuir um único item correto.'
+                'message' => 'A questão deve possuir um único item correto.'
             ], 202);
         }
 

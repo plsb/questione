@@ -121,7 +121,6 @@ const QuestionCard = props => {
             const response = await api.get(url);
             setEvaluations(response.data);
         } catch (error) {
-            console.log(error);
             setEvaluations([]);
         }
     }
@@ -143,12 +142,11 @@ const QuestionCard = props => {
             setRank(rank);
 
         } catch (error) {
-            console.log(error);
+
         }
     }
 
     async function modifyRank(rank){
-        console.log('passou rank', rank);
         setRank(rank);
         try {
             const fk_question_id = question.id;
@@ -171,7 +169,6 @@ const QuestionCard = props => {
                 loadAlert('success', 'Classificação cadastrada.');
             }
         } catch (error) {
-            console.log(error);
             setEvaluations([]);
         }
     }
@@ -259,7 +256,6 @@ const QuestionCard = props => {
         try {
             let url = 'question/'+question.id;
 
-            console.log(url);
             const response = await api.delete(url);
             if (response.status === 202) {
                 if(response.data.message){
@@ -282,7 +278,6 @@ const QuestionCard = props => {
             const data = {
                 fk_evaluation_id
             }
-            console.log(url);
             const response = await api.delete(url);
             if (response.status === 202) {
                 if(response.data.message){
@@ -298,8 +293,8 @@ const QuestionCard = props => {
         setOpenDeleteQuestionEvaluation(false);
     }
 
-    const onApplyQuestionInEvaluation = () => {
-
+    const onEditQuestion = (id) => {
+        history.push('/question-details/'+id);
     }
 
     async function handleChangeValidated() {
@@ -380,7 +375,6 @@ const QuestionCard = props => {
 
         setOpenEvalationChoose(false);
 
-        console.log(evaluation);
     }
 
   return (
@@ -400,9 +394,10 @@ const QuestionCard = props => {
                                                 question.id
                         }
                     </Typography>
+                    { question.course  != null ?
                     <Typography variant="button" color="textSecondary" component="h2">
                         {'Área de origem: '+question.course.description}
-                    </Typography>
+                    </Typography> : null }
                     <div>
                         { question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
                             <Chip label="Inserida por você" className={clsx(classes.chipGreen, className)} size="small"/> : null}
@@ -439,7 +434,7 @@ const QuestionCard = props => {
                             <Tooltip title="Editar Questão">
                                 <IconButton className={classes.labelRank}
                                     aria-label="copy"
-                                    onClick={onApplyQuestionInEvaluation}>
+                                    onClick={() => onEditQuestion(question.id)}>
                                     <Edit />
                                 </IconButton>
                             </Tooltip> : null }
@@ -492,7 +487,7 @@ const QuestionCard = props => {
                         <br />
                     </div>
                     : null}
-                { question.skill.length != 0 ?
+                { question.skill  != null ?
                     <div>
                         <Typography variant="button" color="textSecondary" component="p">
                             Competência:
