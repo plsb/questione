@@ -164,7 +164,7 @@ const DoEvaluation = props => {
   }
 
   /*useEffect(() => {
-    console.log('teste '+answers);
+    console. log('teste '+answers);
   }, [enableButtonStart]);*/
 
   useEffect(() => {
