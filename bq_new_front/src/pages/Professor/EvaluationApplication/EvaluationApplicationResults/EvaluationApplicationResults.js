@@ -254,7 +254,7 @@ const EvaluationApplicationResults = props => {
   async function findOverviewQuestions(id){
     try {
       const response = await api.get('/evaluation/applications/result-percentage-question/'+id);
-      console.log('overview', response);
+
       if (response.status === 200) {
         setOverviewQuestions(response.data[0].questions);
         setOverviewQuestionsHead(response.data[0]);
@@ -281,7 +281,6 @@ const EvaluationApplicationResults = props => {
 
   useEffect(() => {
     if(idApplication){
-      console.log('appl', idApplication);
       findResults(idApplication);
       findOverviewQuestions(idApplication);
     }
