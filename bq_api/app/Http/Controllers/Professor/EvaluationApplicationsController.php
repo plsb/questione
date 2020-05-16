@@ -31,7 +31,7 @@ class EvaluationApplicationsController extends Controller
 
     private $rules = [
         'fk_evaluation_id' => 'required',
-        'description' => 'required|max:300|min:4',
+        'description' => 'required|max:300|min:5',
     ];
 
     private $messages = [
@@ -317,7 +317,6 @@ class EvaluationApplicationsController extends Controller
     public function resultPercentageQuestions($idApplication){
         $application = EvaluationApplication::where('id', $idApplication)->first();
 
-
         if(!$application){
             return response()->json([
                 'message' => 'Aplicação não encontrada.'
@@ -331,6 +330,8 @@ class EvaluationApplicationsController extends Controller
                 'message' => 'Avaliação não encontrada.'
             ], 202);
         }
+
+        //verificar de quem é a avaliação
 
         $evaluation_question = EvaluationHasQuestions::where('fk_evaluation_id', $evaluation->id)->get();
 
@@ -347,6 +348,7 @@ class EvaluationApplicationsController extends Controller
             //dd($enaq);
             $arrHead[] = $head->id;
         }
+
 
         $result = array();
         $resultQuestions = array();
@@ -410,7 +412,6 @@ class EvaluationApplicationsController extends Controller
 
                 $resultItens[] = $auxItem;
             }
-            $perfil = Profile::where('id', $question->fk_profile_id)->first();
             $skill = Skill::where('id', $question->fk_skill_id)->first();
             $course = Course::where('id', $question->fk_course_id)->first();
             $objectsHasQuestion = QuestionHasKnowledgeObject::where('fk_question_id', $question->id)->get();
@@ -423,6 +424,10 @@ class EvaluationApplicationsController extends Controller
                 ];
                 $resultObjects[] = $auxObject;
             }
+            $descSkill = null;
+            if($skill){
+                $descSkill = $skill->description;
+            }
 
             $auxQuestion= (object)[
                 'idApplication' => $ev_question->id,
@@ -431,8 +436,7 @@ class EvaluationApplicationsController extends Controller
                 'base_text' => $question->base_text,
                 'stem' => $question->stem,
                 'reference' => $question->reference,
-                'profile' => $perfil->description,
-                'skill' => $skill->description,
+                'skill' => $descSkill,
                 'course' => $course->description,
                 'total_asnwer' => $count_total_answer_question,
                 'percentage_correct' => number_format($percentageCorrectQuestion, 2),
@@ -445,6 +449,7 @@ class EvaluationApplicationsController extends Controller
 
             $resultQuestions[] = $auxQuestion;
         }
+
         //dd($evaluation_question);
         $auxEvaluation= (object)[
             'application' => $application->id,

@@ -156,6 +156,11 @@ const EvaluationCard = props => {
 
     async function saveNewApplication(){
         try {
+            if(descriptionNewApplication.length < 5){
+                setOpenNewApplication(false);
+                loadAlert('error', 'Informe uma descrição com no mínimo 05 caracteres');
+                return ;
+            }
             const fk_evaluation_id = evaluation.id;
             const description = descriptionNewApplication;
             const data = {

@@ -52,18 +52,13 @@ class AllUsers extends Controller
     }
 
     private $rulesUser = [
-        'name' => 'required|max:50|min:8',
-        'password' => 'required|max:10|min:6'
+        'name' => 'required|max:50|min:8'
     ];
 
     private $messagesUser = [
         'name.required' => 'O NOME DO USUÁRIO é obrigatório.',
         'name.max' => 'O máximo de caracteres aceitáveis para o NOME DO USUÁRIO é 50.',
         'name.min' => 'O minímo de caracteres aceitáveis para o NOME DO USUÁRIO é 8.',
-
-        'password.required' => 'O PASSWORD DO USUÁRIO é obrigatório.',
-        'password.max' => 'O máximo de alfanuméricos aceitáveis para o PASSWORD DO USUÁRIO é 10.',
-        'password.min' => 'O minímo de alfanuméricos aceitáveis para o PASSWORD DO USUÁRIO é 6.',
     ];
 
     public function updateProfileUser(Request $request)
@@ -79,8 +74,7 @@ class AllUsers extends Controller
         }
 
         $user = auth('api')->user();
-        $user->name = $request->name;
-        $user->password = $request->password;
+        $user->name = strtoupper($request->name);
         $user->save();
 
         return response()->json([

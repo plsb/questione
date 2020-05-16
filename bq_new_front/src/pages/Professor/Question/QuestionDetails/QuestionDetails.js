@@ -82,6 +82,7 @@ const QuestionDetails = props => {
     const [reference, setReference] = React.useState('');
     //utilizado pra quando for nova questão
     const [idQuestionNew, setIdQuestionNew] = React.useState(0);
+    const timer = React.useRef();
 
     //configuration alert
     const Toast = Swal.mixin({
@@ -156,7 +157,9 @@ const QuestionDetails = props => {
         if(idQuestion){
 
         } else {
-            history.push('/questions')
+            timer.current = setTimeout(() => {
+                history.push('/questions')
+            }, 500);
         }
 
     }

@@ -11,6 +11,7 @@ const browserHistory = createBrowserHistory();
 
 export default class App extends Component {
     render() {
+        document.title = 'Questione - IFCE'
         return (
             <ThemeProvider theme={theme}>
                 <Router history={browserHistory}>

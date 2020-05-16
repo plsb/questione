@@ -173,7 +173,7 @@ const UserRequestCourseDetails = props => {
           </IconButton>
         </div>
         <CardHeader
-          subheader="Selecione abaixo o curso que deseja ter permissão para consturir questões."
+          subheader="Selecione abaixo o curso que deseja ter permissão para construir questões."
           title="Solicitação para curso"/>
         <Divider />
         <CardContent>

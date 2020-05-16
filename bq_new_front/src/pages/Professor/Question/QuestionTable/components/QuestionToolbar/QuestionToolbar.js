@@ -207,7 +207,7 @@ const QuestionToolbar = props => {
                 <TextField
                     id="filled-select-currency"
                     select
-                    label="Selecione o área"
+                    label="Selecione a área"
                     value={courseSelect}
                     onChange={onChangeCourse}
                     helperText="Selecione o área que deseja pesquisar."

@@ -1,20 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/styles';
 import {
   Card,
   CardHeader,
   CardContent,
   Divider, IconButton, Table, TableHead, TableRow,
   TableCell, TableBody, Tab, Paper, Tabs,
-    Box, Typography, AppBar, Collapse
+    Box, Typography, AppBar, Tooltip
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { Done, Close, Block } from "@material-ui/icons";
-import ReactHtmlParser from "react-html-parser";
+import { withStyles, makeStyles } from '@material-ui/core/styles';
 import EvaluationApplicationResultsOverviewQuestion from "./EvaluationApplicationResultsOverViewQuestion";
 
 const useStyles = makeStyles(() => ({
@@ -230,6 +229,16 @@ function LinkTab(props) {
   );
 }
 
+const TooltipCustomized = withStyles((theme) => ({
+  tooltip: {
+    backgroundColor: '#f5f5f9',
+    color: 'rgba(0, 0, 0, 0.87)',
+    maxWidth: 220,
+    fontSize: theme.typography.pxToRem(12),
+    border: '1px solid #dadde9',
+  },
+}))(Tooltip);
+
 const EvaluationApplicationResults = props => {
   const { className, history, ...rest } = props;
   const { idApplication } = props.match.params;
@@ -245,6 +254,7 @@ const EvaluationApplicationResults = props => {
   async function findOverviewQuestions(id){
     try {
       const response = await api.get('/evaluation/applications/result-percentage-question/'+id);
+      console.log('overview', response);
       if (response.status === 200) {
         setOverviewQuestions(response.data[0].questions);
         setOverviewQuestionsHead(response.data[0]);
@@ -271,6 +281,7 @@ const EvaluationApplicationResults = props => {
 
   useEffect(() => {
     if(idApplication){
+      console.log('appl', idApplication);
       findResults(idApplication);
       findOverviewQuestions(idApplication);
     }
@@ -351,13 +362,22 @@ const EvaluationApplicationResults = props => {
                                     hover
                                     key={result.fk_user_id}>
                                   <TableCell className={classes.bodyStudent}>{result.student}</TableCell>
-                                  <TableCell className={classes.bodyPercentage}>
-                                    {result.percentage_correct < 30 ?
-                                        <span className={classes.percentageRed}>{result.percentage_correct+'%'}</span>
-                                        : result.percentage_correct < 70 ?
-                                            <span className={classes.percentageOrange}>{result.percentage_correct+'%'}</span>
-                                            : <span className={classes.percentageGreen}>{result.percentage_correct+'%'}</span> }
-                                  </TableCell>
+                                  <TooltipCustomized
+                                      title={
+                                        <React.Fragment>
+                                          <span className={classes.percentageRed}>{'De 0% a 29% de acerto'}</span>
+                                          <span className={classes.percentageOrange}>{'De 30% a 69% de acerto'}</span>
+                                          <span className={classes.percentageGreen}>{'De 70% a 100% de acerto'}</span>
+                                        </React.Fragment>
+                                      }>
+                                      <TableCell className={classes.bodyPercentage}>
+                                        {result.percentage_correct < 30 ?
+                                            <span className={classes.percentageRed}>{result.percentage_correct+'%'}</span>
+                                            : result.percentage_correct < 70 ?
+                                                <span className={classes.percentageOrange}>{result.percentage_correct+'%'}</span>
+                                                : <span className={classes.percentageGreen}>{result.percentage_correct+'%'}</span> }
+                                      </TableCell>
+                                  </TooltipCustomized>
                                 </TableRow>
                             ))}
                           </TableBody>
@@ -373,14 +393,23 @@ const EvaluationApplicationResults = props => {
                                 <TableHead>
                                   <TableRow>
                                     {overviewQuestions.map((result, i) => (
-                                        <TableCell className={classes.headQuestion}>
-                                          {'Q' + (i+1)}
-                                          {result.percentage_correct_round < 30 ?
-                                              <span className={classes.percentageRed}>{result.percentage_correct_round+'%'}</span>
-                                              : result.percentage_correct_round < 70 ?
-                                                  <span className={classes.percentageOrange}>{result.percentage_correct_round+'%'}</span>
-                                                  : <span className={classes.percentageGreen}>{result.percentage_correct_round+'%'}</span> }
-                                        </TableCell>
+                                        <TooltipCustomized
+                                            title={
+                                              <React.Fragment>
+                                                <span className={classes.percentageRed}>{'De 0% a 29% de acerto'}</span>
+                                                <span className={classes.percentageOrange}>{'De 30% a 69% de acerto'}</span>
+                                                <span className={classes.percentageGreen}>{'De 70% a 100% de acerto'}</span>
+                                              </React.Fragment>
+                                            }>
+                                          <TableCell className={classes.headQuestion}>
+                                            {'Q' + (i+1)}
+                                            {result.percentage_correct_round < 30 ?
+                                                <span className={classes.percentageRed}>{result.percentage_correct_round+'%'}</span>
+                                                : result.percentage_correct_round < 70 ?
+                                                    <span className={classes.percentageOrange}>{result.percentage_correct_round+'%'}</span>
+                                                    : <span className={classes.percentageGreen}>{result.percentage_correct_round+'%'}</span> }
+                                          </TableCell>
+                                        </TooltipCustomized>
                                     ))}
                                   </TableRow>
                                 </TableHead>

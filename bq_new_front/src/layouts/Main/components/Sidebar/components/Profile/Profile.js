@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import {Avatar, Link, Typography} from '@material-ui/core';
+import {Avatar, Grid, Link, Typography} from '@material-ui/core';
 import {getInitials} from "../../../../../../helpers";
 import {Link as RouterLink} from "react-router-dom";
 
@@ -46,11 +46,17 @@ const Profile = props => {
             src={user.avatar}>
             {getInitials(user.name)}
         </Avatar>
-      <Typography
-        className={classes.name}
-        variant="h6">
-        {user.name}
-      </Typography>
+        <Grid
+            container
+            direction="row"
+            justify="center"
+            alignItems="center">
+          <Typography
+            className={classes.name}
+            variant="body2">
+            {user.name}
+          </Typography>
+        </Grid>
       <Typography variant="body2">{user.email}</Typography>
       <Typography variant="body2">{user.level}</Typography>
       <Typography

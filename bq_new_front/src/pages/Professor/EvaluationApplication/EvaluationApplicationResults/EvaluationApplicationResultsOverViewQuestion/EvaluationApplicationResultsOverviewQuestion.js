@@ -6,11 +6,12 @@ import {
   Card,
   CardHeader,
   CardContent, IconButton, Paper,
-  Box, Typography, AppBar, Collapse,
+  Box, Typography, AppBar, Collapse, Tooltip,
 } from '@material-ui/core';
 import { Done, Close, ExpandMoreRounded } from "@material-ui/icons";
 import ReactHtmlParser from "react-html-parser";
 import api from "../../../../../services/api";
+import {withStyles} from "@material-ui/core/styles";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -68,6 +69,16 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const TooltipCustomized = withStyles((theme) => ({
+  tooltip: {
+    backgroundColor: '#f5f5f9',
+    color: 'rgba(0, 0, 0, 0.87)',
+    maxWidth: 220,
+    fontSize: theme.typography.pxToRem(12),
+    border: '1px solid #dadde9',
+  },
+}))(Tooltip);
+
 const EvaluationApplicationResultsOverviewQuestion = props => {
   const { className, history, result, numberQuestion, ...rest } = props;
   const [ answerStudents, setAnswerStudents ] = useState([]);
@@ -100,13 +111,22 @@ const EvaluationApplicationResultsOverviewQuestion = props => {
                         <Typography variant="button" color="body1" component="p">
                           Total de Repostas: {result.total_asnwer}
                         </Typography>
-                        <Typography variant="button" color="body1" component="p">
-                          {result.percentage_correct < 30 ?
-                              <span className={classes.percentageRed}>{'Correto: '+result.percentage_correct+'%'}</span>
-                              : result.percentage_correct < 70 ?
-                                  <span className={classes.percentageOrange}>{'Correto: '+result.percentage_correct+'%'}</span>
-                                  : <span className={classes.percentageGreen}>{'Correto: '+result.percentage_correct+'%'}</span> }
-                        </Typography>
+                        <TooltipCustomized
+                            title={
+                              <React.Fragment>
+                                <span className={classes.percentageRed}>{'De 0% a 29% de acerto'}</span>
+                                <span className={classes.percentageOrange}>{'De 30% a 69% de acerto'}</span>
+                                <span className={classes.percentageGreen}>{'De 70% a 100% de acerto'}</span>
+                              </React.Fragment>
+                            }>
+                            <Typography variant="button" color="body1" component="p">
+                              {result.percentage_correct < 30 ?
+                                  <span className={classes.percentageRed}>{'Correto: '+result.percentage_correct+'%'}</span>
+                                  : result.percentage_correct < 70 ?
+                                      <span className={classes.percentageOrange}>{'Correto: '+result.percentage_correct+'%'}</span>
+                                      : <span className={classes.percentageGreen}>{'Correto: '+result.percentage_correct+'%'}</span> }
+                            </Typography>
+                        </TooltipCustomized>
                         <IconButton
                             className={clsx(classes.expand, {
                               [classes.expandOpen]: expanded,
@@ -131,16 +151,7 @@ const EvaluationApplicationResultsOverviewQuestion = props => {
                             <br />
                           </div>
                           : null}
-                      { result.profile.length != 0 ?
-                          <div>
-                            <Typography variant="button" color="textSecondary" component="p">
-                              Perfil:
-                            </Typography>
-                            <div> { result.profile } </div>
-                            <br />
-                          </div>
-                          : null}
-                      { result.skill != 0 ?
+                      { result.skill != null ?
                           <div>
                             <Typography variant="button" color="textSecondary" component="p">
                               Competência:
@@ -149,7 +160,7 @@ const EvaluationApplicationResultsOverviewQuestion = props => {
                             <br />
                           </div>
                           : null}
-                      { result.objects != 0 ?
+                      { result.objects != null ?
                           <div>
                             <Typography variant="button" color="textSecondary" component="p">
                               Objeto(s) de Conhecimento:

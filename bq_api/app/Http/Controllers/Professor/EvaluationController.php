@@ -220,7 +220,7 @@ class EvaluationController extends Controller
 
 
         $evaluation = new Evaluation();
-        $evaluation->description = $evaluationDuplicate->description;
+        $evaluation->description = $evaluationDuplicate->description . ' (Cópia)';
 
         $evaluation->status = 1; //status 1 é ativa
         $evaluation->fk_user_id = $user->id;

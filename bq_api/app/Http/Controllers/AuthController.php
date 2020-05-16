@@ -57,8 +57,8 @@ class AuthController extends Controller
         }
 
         $user = User::create([
-            'name'    => $request->name,
-            'email'    => $request->email,
+            'name'    => strtoupper($request->name),
+            'email'    => strtolower($request->email),
             'password' => $request->password,
             'cpf' => $request->cpf,
             'acess_level' => 0,

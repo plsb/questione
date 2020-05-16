@@ -11,15 +11,13 @@ import {
   Grid,
   Button,
   TextField,
-  IconButton, Typography
+  IconButton
 } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
 import api from "../../services/api";
 import Swal from "sweetalert2";
 import validate from "validate.js";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import {login, updateNameUser} from "../../services/auth";
-import QuestionAnswer from "@material-ui/icons/QuestionAnswer";
+import {logout, updateNameUser} from "../../services/auth";
 
 const schema = {
   name: {
@@ -37,15 +35,7 @@ const schema = {
       maximum: 64,
       message: 'O e-mail deve conter no máximo 64 caracteres.'
     }
-  },
-  password: {
-    presence: { allowEmpty: false, message: 'A senha é obrigatória.' },
-    length: {
-      minimum: 6,
-      maximum: 10,
-      message: 'A senha deve conter no mínimo 6 e no máximo 10 caracteres.'
-    }
-  },
+  }
 };
 
 const useStyles = makeStyles(() => ({
@@ -87,28 +77,26 @@ const AccountDetails = props => {
   async function saveDetails(){
     try {
       const name = formState.values.name;
-      const password = formState.values.password;
       const data = {
-         name, password
+         name
       }
       const response = await api.put('all/update-profile-user', data);
-
-      if (response.status === 202) {
+      if (response.status === 200) {
+        updateNameUser(response.data[0].name);
+        loadAlert('success', 'Perfil de '+name+' atualizado.');
+        history.push('/home');
+      } else if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
         } else if(response.data.errors[0].name){
           loadAlert('error', response.data.errors[0].name);
-        } if(response.data.errors[0].password){
-          loadAlert('error', response.data.errors[0].password);
         }
-      } else {
-        updateNameUser(response.data[0].name);
-        loadAlert('success', 'Perfil de '+name+' atualizado.');
-        history.push('/home');
       }
 
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+      logout();
+      history.push('/');
+      loadAlert('error', 'Não foi possível executar a operação.');
     }
   }
 
@@ -190,8 +178,6 @@ const AccountDetails = props => {
                 variant="outlined"
               />
             </Grid>
-        </CardContent>
-        <CardContent>
           <Grid
               item
               md={6}
@@ -212,27 +198,6 @@ const AccountDetails = props => {
                   readOnly: true,
                 }}/>
           </Grid>
-        </CardContent>
-        <CardContent>
-            <Grid
-                item
-                md={6}
-                xs={6}>
-              <TextField
-                  fullWidth
-                  error={hasError('password')}
-                  helperText={
-                    hasError('password') ? formState.errors.password[0] : null
-                  }
-                  label="Nova Senha"
-                  margin="dense"
-                  name="password"
-                  onChange={handleChange}
-                  value={formState.values.password || ''}
-                  variant="outlined"
-                  type="password"/>
-            </Grid>
-
         </CardContent>
 
         <Divider />

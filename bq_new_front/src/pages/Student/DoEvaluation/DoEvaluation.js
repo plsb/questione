@@ -85,7 +85,12 @@ const DoEvaluation = props => {
 
       if(response.status == 200){
         if(response.data.status == 0){
-          loadAlert('error', 'Avaliação está desabilitada.');
+          loadAlert('error', 'A avaliação está desabilitada.');
+          history.push('/home');
+          return ;
+        }
+        if(response.data.evaluation.status == 2){
+          loadAlert('error', 'A avaliação está arquivada.');
           history.push('/home');
           return ;
         }
