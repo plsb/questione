@@ -2,10 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
-import {Button, TextField, Typography} from '@material-ui/core';
-import FindInPage from '@material-ui/icons/SearchSharp';
-
-import { SearchInput } from '../../../../../components';
+import {Button, Typography} from '@material-ui/core';
 import {withRouter} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
@@ -41,25 +38,6 @@ const UserRequestCourseToolbar = props => {
 
   const classes = useStyles();
 
-  const onCLickUsers = () => {
-    history.push('/users');
-  }
-
-  const situations = [
-    {
-      value: '0',
-      label: 'Aguardando'
-    },
-    {
-      value: '1',
-      label: 'Aceitos'
-    },
-    {
-      value: '-1',
-      label: 'Recusados'
-    }
-  ];
-
   const onClickNewRequest = () => {
     history.push('/new-request');
   }
@@ -84,9 +62,6 @@ const UserRequestCourseToolbar = props => {
 
 UserRequestCourseToolbar.propTypes = {
   className: PropTypes.string,
-  onChangeSearch: PropTypes.func,
-  onClickSearch: PropTypes.func,
-  searchText: PropTypes.string,
   history: PropTypes.object
 };
 

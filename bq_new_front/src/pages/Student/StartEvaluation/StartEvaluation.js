@@ -5,7 +5,6 @@ import {Grid, IconButton} from '@material-ui/core';
 import { StartEvaluationCard } from '../../../components';
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import PropTypes from "prop-types";
-import CourseDetails from "../../Administrator/Course/CourseDetails";
 
 const useStyles = makeStyles(theme => ({
   root: {

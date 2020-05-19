@@ -13,13 +13,8 @@ import {
 import api from "../../../../services/api";
 import ToolbarEvaluation
   from "./EvaluationResultToolbar/EvaluationResultStudentToolbar";
-import PerfectScrollbar from "react-perfect-scrollbar";
 import moment from "moment";
 import {FormatListBulleted} from "@material-ui/icons";
-import UsersToolbar
-  from "../../../Professor/EvaluationApplication/EvaluationApplicationTable/components/EvaluationApplicationToolbar/EvaluationApplicationToolbar";
-import EvaluationApplicationCard
-  from "../../../Professor/EvaluationApplication/EvaluationApplicationCard/EvaluationApplicationCard";
 
 const useStyles = makeStyles(() => ({
   root: {

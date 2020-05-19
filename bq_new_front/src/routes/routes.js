@@ -34,9 +34,9 @@ import {
     DoEvaluation,
     EvaluationApplicationDetails,
     EvaluationApplicationResults,
-    StartEvaluation, EvaluationsResultStudent, EvaluationsResultStudentDetails
+    StartEvaluation, EvaluationsResultStudent, EvaluationsResultStudentDetails,
+    UserRequestCourseDetails
 } from '../pages';
-import UserRequestCourseDetails from "../pages/UserRequestCourse/UserRequestCourseDetails";
 import QuestionTable from "../pages/Professor/Question/QuestionTable";
 import QuestionDetails from "../pages/Professor/Question/QuestionDetails";
 

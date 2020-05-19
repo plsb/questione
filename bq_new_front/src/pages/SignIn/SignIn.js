@@ -165,19 +165,12 @@ const SignIn = props => {
       const email = formState.values.email;
       const password = formState.values.password;
 
-      const DADOS_CRIPTOGRAFAR = {
-        algoritmo : "aes256",
-        segredo : "chaves"
-      };
-      const crypto = require("crypto");
-      const cipher = crypto.createCipher(DADOS_CRIPTOGRAFAR.algoritmo, DADOS_CRIPTOGRAFAR.segredo);
-
-
       const data = {
         name, cpf, email, password
       };
 
-      const response = await api.post('login/', data);
+      const response = await api.post('login', data);
+      console.log('resposta ', response);
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
@@ -191,6 +184,7 @@ const SignIn = props => {
         history.push('/home');
       }
     } catch (error) {
+      console.log('error ', error);
       loadAlert('error', 'Erro de conexão.');
     }
   }

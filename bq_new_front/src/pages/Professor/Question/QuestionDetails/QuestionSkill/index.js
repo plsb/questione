@@ -276,7 +276,7 @@ const QuestionSkill = props => {
 
     const onClickSkill = () => {
         if(courseSelect == 0){
-            loadAlert('error', 'Informe o curso.');
+            loadAlert('error', 'Informe a área.');
             return ;
         } else {
             saveSkill();

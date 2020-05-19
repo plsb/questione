@@ -465,6 +465,8 @@ class QuestionController extends Controller
         $new_question->fk_skill_id = $question->fk_skill_id;
         $new_question->fk_user_id = $user->id;
         $new_question->fk_course_id = $question->fk_course_id;
+        //pega usuário que criou a questão
+        $new_question->fk_course_id = $question->fk_course_id;
         $new_question->save();
 
         //duplica alternativas da questão

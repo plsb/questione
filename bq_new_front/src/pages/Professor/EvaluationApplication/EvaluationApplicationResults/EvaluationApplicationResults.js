@@ -15,6 +15,8 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import { Done, Close, Block } from "@material-ui/icons";
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import EvaluationApplicationResultsOverviewQuestion from "./EvaluationApplicationResultsOverViewQuestion";
+import EvaluationApplicationResultsSkillObjects from "./EvaluationApplicationResultsSkillObjects";
+import moment from "moment";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -182,6 +184,10 @@ const useStyles = makeStyles(() => ({
     margin: 3,
     padding: 8
   },
+  labelStudent: {
+    display: 'flex',
+    flexDirection: 'column'
+  }
 }));
 
 function TabPanel(props) {
@@ -316,6 +322,9 @@ const EvaluationApplicationResults = props => {
           <Card className={classes.root}>
             <CardContent>
               <Typography variant="h5" color="textSecondary" component="p">
+                {overviewQuestionsHead.idApplication!= null ? 'Código da aplicação: '+overviewQuestionsHead.idApplication : null }
+              </Typography>
+              <Typography variant="h5" color="textSecondary" component="p">
                 {overviewQuestionsHead.description_application!= null ? 'Descrição da aplicação: '+overviewQuestionsHead.description_application : null }
               </Typography>
               <Typography variant="h5" color="textSecondary" component="p">
@@ -336,7 +345,7 @@ const EvaluationApplicationResults = props => {
                       aria-label="nav tabs example">
                     <LinkTab label="Visão Geral" href="/drafts" {...a11yProps(0)} />
                     <LinkTab label="Questões" href="/trash" {...a11yProps(1)} />
-                    {/*<LinkTab label="Gráficos" href="/spam" {...a11yProps(2)} />*/}
+                    <LinkTab label="Outros Dados" href="/spam" {...a11yProps(2)} />
                   </Tabs>
                 </AppBar>
                 <TabPanel value={value} index={0}>
@@ -360,7 +369,32 @@ const EvaluationApplicationResults = props => {
                                     className={classes.tableRow}
                                     hover
                                     key={result.fk_user_id}>
-                                  <TableCell className={classes.bodyStudent}>{result.student}</TableCell>
+                                  <TooltipCustomized
+                                      title={
+                                        <React.Fragment>
+                                          <p>
+                                            <Typography color="textSecondary" variant="overline">
+                                              {'Hora de inicio: '+ moment(result.hr_start).format('h:mm:ss a DD/MM/YYYY')}
+                                            </Typography>
+                                          </p>
+                                          <p>
+                                            <Typography color="textSecondary" variant="overline">
+                                              {result.hr_finished != null ?
+                                                  'Hora de fim: '+ moment(result.hr_finished).format('h:mm:ss a DD/MM/YYYY') :
+                                                  'Avaliação não finalizada.'}
+                                            </Typography>
+                                          </p>
+                                        </React.Fragment>
+                                      }>
+                                      <TableCell className={classes.bodyStudent}>
+                                        <div className={classes.labelStudent}>
+                                          {result.student}
+                                          <Typography color="textSecondary" variant="caption">
+                                            {'Tempo de prova: '+result.total_time}
+                                          </Typography>
+                                        </div>
+                                      </TableCell>
+                                  </TooltipCustomized>
                                   <TooltipCustomized
                                       title={
                                         <React.Fragment>
@@ -450,8 +484,10 @@ const EvaluationApplicationResults = props => {
                                                       result={result} numberQuestion={i}/>
                       ))}
                 </TabPanel>
+                {/* competências e objetos de conhecimento */}
                 <TabPanel value={value} index={2}>
-                  Page Three
+                  <EvaluationApplicationResultsSkillObjects
+                                idApplication={idApplication}/>
                 </TabPanel>
           </CardContent>
               : null }

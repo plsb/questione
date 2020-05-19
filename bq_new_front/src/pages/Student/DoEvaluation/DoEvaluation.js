@@ -55,6 +55,7 @@ const DoEvaluation = props => {
   const [dialogFinish, setDialogFinish] = useState(false);
   const [enableButtonStart, setEnableButtonStart] = useState(true);
   const [openBackdrop, setOpenBackdrop] = React.useState(false);
+  const [refresh, setRefresh] = React.useState(0);
   const timer = React.useRef();
 
   const classes = useStyles();
@@ -132,7 +133,8 @@ const DoEvaluation = props => {
           history.push('/home');
           return ;
         }
-        setAnswers(response.data[0].answer);
+        setAnswers(response.data);
+        setRefresh(refresh+1);
         setEnableButtonStart(false);
         setOpenBackdrop(false);
       }
@@ -163,19 +165,19 @@ const DoEvaluation = props => {
 
   }
 
-  /*useEffect(() => {
-    console. log('teste '+answers);
-  }, [enableButtonStart]);*/
+  useEffect(() => {
+
+  }, [refresh]);
 
   useEffect(() => {
     listApplication();
   }, []);
 
-  async function handleListItemClick (event, answerId, item_question) {
+  async function handleListItemClick (event, answerId, itemQuestionSelected) {
 
     try {
       const id = answerId;
-      const answer =   item_question;
+      const answer =   itemQuestionSelected;
       const data = {
         id, answer
       }
@@ -186,12 +188,17 @@ const DoEvaluation = props => {
           loadAlert('error', response.data.message);
         }
       }  else if(response.status == 200){
-        updateEvaluation();
+        const values = answers;
+        values.forEach(function logArrayElements(element, index, array) {
+          if(element.id == answerId){
+            element.answer = itemQuestionSelected;
+          }
+        });
+        setAnswers(values);
+        setRefresh(refresh+1);
       }
 
     } catch (error) {
-
-
       loadAlert('error', 'Erro de conexão.');
     }
     //console.log('questao', question, item_question);

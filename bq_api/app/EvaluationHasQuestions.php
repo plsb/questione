@@ -14,4 +14,5 @@ class EvaluationHasQuestions extends Model
         return $this->belongsTo(Question::class, 'fk_question_id')
             ->with('questionItems');
     }
+
 }

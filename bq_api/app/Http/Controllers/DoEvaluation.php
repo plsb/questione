@@ -50,7 +50,8 @@ class DoEvaluation extends Controller
             ], 202);
         }
 
-        $questions_evaluations = EvaluationHasQuestions::where('fk_evaluation_id', $application->fk_evaluation_id)->get();
+        $questions_evaluations = EvaluationHasQuestions::where('fk_evaluation_id', $application->fk_evaluation_id)
+            ->get();
 
         if(sizeof($questions_evaluations)==0){
             return response()->json([
@@ -95,12 +96,24 @@ class DoEvaluation extends Controller
 
         }
         //dd($head_answer);
-        $return = AnswersHeadEvaluation::where('fk_user_id', $user->id)
+        $answerHead = AnswersHeadEvaluation::where('fk_user_id', $user->id)
             ->where('fk_application_evaluation_id', $application->id)
-            ->with('answer')
-            ->get();
+            ->first();
 
-        return response()->json($return, 200);
+        //verifica se a aplicação possui opção de questões aleatórias
+        if($application->random_questions == 1) {
+            $answers = AnswersEvaluation::where('fk_answers_head_id', $answerHead->id)
+                ->inRandomOrder()
+                ->with('evaluationQuestion')
+                ->get();
+        } else {
+            $answers = AnswersEvaluation::where('fk_answers_head_id', $answerHead->id)
+                ->with('evaluationQuestion')
+                ->get();
+        }
+
+
+        return response()->json($answers, 200);
     }
 
     public function answer(Request $request, $id_application){

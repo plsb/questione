@@ -195,15 +195,24 @@ const EvaluationApplicationResultsOverviewQuestion = props => {
                                   <Paper className={clsx(classes.paper, classes.paperRight)} elevation={3} variant="outlined">
                                     { ReactHtmlParser (item.description)  }
                                   </Paper>
-                                  <Box display="column">
-                                      <Typography variant="body2" color="textSecondary" component="p">
-                                      { item.total_answer_item > 1 ? item.total_answer_item + ' Respostas.'
-                                          : item.total_answer_item + ' Resposta.'}
-                                    </Typography>
-                                    <Typography variant="body2" color="textSecondary" component="p">
-                                      {item.percentage_answer + '%'}
-                                    </Typography>
-                                  </Box>
+                                  <TooltipCustomized
+                                      title={
+                                        <React.Fragment>
+                                          {'Representa o total e a porcentagem de respostas para a alternativa. O cálculo da porcentagem é ' +
+                                          'baseado no total de respostas de cada questão. A cor verde na alternativa representa o gabarito, ' +
+                                          'a cor vermelha representa um distrator.'}
+                                        </React.Fragment>
+                                      }>
+                                      <Box display="column">
+                                          <Typography variant="body2" color="textSecondary" component="p">
+                                          { item.total_answer_item > 1 ? item.total_answer_item + ' Respostas.'
+                                              : item.total_answer_item + ' Resposta.'}
+                                        </Typography>
+                                        <Typography variant="body2" color="textSecondary" component="p">
+                                          {item.percentage_answer + '%'}
+                                        </Typography>
+                                      </Box>
+                                  </TooltipCustomized>
                                 </Box>
                               </div>
                               :
@@ -212,15 +221,24 @@ const EvaluationApplicationResultsOverviewQuestion = props => {
                                      flexWrap="nowrap">
                                   <Paper className={clsx(classes.paper, classes.paperWrong)} variant="outlined">
                                     { ReactHtmlParser (item.description) } </Paper>
-                                  <Box display="column">
-                                    <Typography variant="body2" color="textSecondary" component="p">
-                                      { item.total_answer_item > 1 ? item.total_answer_item + ' Respostas.'
-                                          : item.total_answer_item + ' Resposta.'}
-                                    </Typography>
-                                    <Typography variant="body2" color="textSecondary" component="p">
-                                      {item.percentage_answer + '%'}
-                                    </Typography>
-                                  </Box>
+                                  <TooltipCustomized
+                                      title={
+                                        <React.Fragment>
+                                          {'Representa o total e a porcentagem de respostas para a alternativa. O cálculo da porcentagem é ' +
+                                          'baseado no total de respostas de cada questão. A cor verde na alternativa representa o gabarito, ' +
+                                          'a cor vermelha representa um distrator.'}
+                                        </React.Fragment>
+                                      }>
+                                      <Box display="column">
+                                        <Typography variant="body2" color="textSecondary" component="p">
+                                          { item.total_answer_item > 1 ? item.total_answer_item + ' Respostas.'
+                                              : item.total_answer_item + ' Resposta.'}
+                                        </Typography>
+                                        <Typography variant="body2" color="textSecondary" component="p">
+                                          {item.percentage_answer + '%'}
+                                        </Typography>
+                                      </Box>
+                                  </TooltipCustomized>
                                 </Box>
                               </div>
                       ))}

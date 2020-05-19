@@ -122,7 +122,6 @@ const QuestionTable = props => {
         url += '&base_text='+base_text;
       }
       const response = await api.get(url);
-      console.log(response, url);
       setTotal(response.data.total);
       setQuestions(response.data.data);
     } catch (error) {

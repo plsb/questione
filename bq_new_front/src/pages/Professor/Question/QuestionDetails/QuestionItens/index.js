@@ -259,7 +259,7 @@ const QuestionItens = props => {
                            plugins: [
                                'textpattern advlist autolink lists link image charmap print',
                                ' preview hr anchor pagebreak code media save',
-                               'table contextmenu FMathEditor charmap'
+                               'table contextmenu charmap'
                            ],
                            toolbar:
                                'insertfile undo redo | fontselect fontsizeselect | bold italic superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview FMathEditor  charmap'

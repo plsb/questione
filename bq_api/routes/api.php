@@ -124,9 +124,11 @@ Route::group(['prefix' => 'evaluation'], function (){
     Route::put('/applications/{idApplication}', 'Professor\EvaluationApplicationsController@update')->name('evaluationApplication.update');
     Route::post('/add-application/', 'Professor\EvaluationApplicationsController@store')->name('evaluationApplication.store');
     Route::put('/change-status-application/{idApplication}', 'Professor\EvaluationApplicationsController@changeStatus')->name('evaluationApplication.changeStatus');
-    //relatórios
+    //relatórios professor
     Route::get('/applications/result-answer-students/{idApplication}', 'Professor\EvaluationApplicationsController@resultAnswerStudents')->name('evaluationApplication.resultAnswerStudents');
     Route::get('/applications/result-percentage-question/{idApplication}', 'Professor\EvaluationApplicationsController@resultPercentageQuestions')->name('evaluationApplication.resultPercentageQuestions');
+    Route::get('/applications/result-percentage-question-by-skill/{idApplication}', 'Professor\EvaluationApplicationsController@resultPercentageQuestionsBySkill')->name('evaluationApplication.resultPercentageQuestionsBySkill');
+    Route::get('/applications/result-percentage-question-by-objects/{idApplication}', 'Professor\EvaluationApplicationsController@resultPercentageQuestionsByObjects')->name('evaluationApplication.resultPercentageQuestionsByObjects');
     //resolução da avaliação pelo student
     Route::get('/get-application/{id_application}', 'DoEvaluation@getApplication')->name('evaluationApplication.getApplication');
     Route::post('/start/{id_application}', 'DoEvaluation@startEvaluation')->name('evaluationApplication.startEvaluation');

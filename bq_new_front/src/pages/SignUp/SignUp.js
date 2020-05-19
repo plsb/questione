@@ -188,7 +188,7 @@ const SignUp = props => {
         name, cpf, email, password
       };
 
-      const response = await api.post('register/', data);
+      const response = await api.post('register', data);
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);

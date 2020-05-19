@@ -9,6 +9,11 @@ use Validator;
 class AuthController extends Controller
 {
 
+    public function __construct()
+    {
+        //$this->middleware(['cors']);
+    }
+
     private $rules = [
         'name' => 'required|max:50|min:8',
         'cpf' => 'required|unique:users',

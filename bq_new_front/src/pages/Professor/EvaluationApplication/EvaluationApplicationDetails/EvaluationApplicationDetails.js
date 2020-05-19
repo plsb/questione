@@ -10,12 +10,14 @@ import {
   Divider,
   Grid,
   Button,
-  TextField, IconButton
+  TextField, IconButton, FormControlLabel, Switch, Tooltip, Typography
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import Swal from "sweetalert2";
 import validate from "validate.js";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import {withStyles} from "@material-ui/core/styles";
+import moment from "moment";
 
 const schema = {
   description: {
@@ -31,6 +33,16 @@ const schema = {
 const useStyles = makeStyles(() => ({
   root: {}
 }));
+
+const TooltipCustomized = withStyles((theme) => ({
+  tooltip: {
+    backgroundColor: '#f5f5f9',
+    color: 'rgba(0, 0, 0, 0.87)',
+    maxWidth: 220,
+    fontSize: theme.typography.pxToRem(12),
+    border: '1px solid #dadde9',
+  },
+}))(Tooltip);
 
 const EvaluationApplicationDetails = props => {
   const { className, history, ...rest } = props;
@@ -68,8 +80,10 @@ const EvaluationApplicationDetails = props => {
   async function saveApplicationDetails(){
     try {
       const description = formState.values.description;
+      const random_questions = formState.values.random_questions;
       const data = {
-        description
+        description,
+        random_questions
       }
       const response = await api.put('evaluation/applications/'+idApplication, data);
       if (response.status === 202) {
@@ -99,6 +113,7 @@ const EvaluationApplicationDetails = props => {
         setFormState(formState => ({
           values: {
             'description': response.data.description,
+            'random_questions': response.data.random_questions,
           },
           touched: {
             ...formState.touched,
@@ -119,20 +134,22 @@ const EvaluationApplicationDetails = props => {
 
   useEffect(() => {
     const errors = validate(formState.values, schema);
+    console.log('formstate', formState);
 
     setFormState(formState => ({
       ...formState,
-      isValid: (errors || formState.values.course==0) ? false : true,
+      isValid: (errors) ? false : true,
       errors: errors || {}
     }));
   }, [formState.values]);
 
   const handleChange = event => {
+    console.log(event);
     setFormState({
       ...formState,
       values: {
         ...formState.values,
-        [event.target.name]: event.target.value
+        [event.target.name]: event.target.checked ? event.target.checked : event.target.value
       },
       touched: {
         ...formState.touched,
@@ -184,6 +201,31 @@ const EvaluationApplicationDetails = props => {
                 value={formState.values.description || ''}
                 variant="outlined"
               />
+              <TooltipCustomized
+                  title={
+                    <React.Fragment>
+                      <p>
+                        <Typography color="textPrimary" variant="body2">
+                          {'Caso esta opção fique ativa, todos os estudantes que forem realizar ' +
+                          ' esta aplicação receberão' +
+                          ' uma avaliação com as mesmas questões, mas cada estudante possuirá uma ' +
+                          ' avaliação com questões em ordem diferente das demais.'}
+                        </Typography>
+                      </p>
+                    </React.Fragment>
+                  }>
+                  <FormControlLabel
+                      control={
+                        <Switch
+                            checked={formState.values.random_questions == 1 ? true : false}
+                            onChange={handleChange}
+                            name="random_questions"
+                            color="primary"
+                        />
+                      }
+                      label="Questões aleatórias?"
+                  />
+              </TooltipCustomized>
             </Grid>
           </Grid>
         </CardContent>

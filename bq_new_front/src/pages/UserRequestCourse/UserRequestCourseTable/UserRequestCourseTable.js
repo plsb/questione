@@ -13,7 +13,7 @@ import {
   TableHead,
   TableRow,
   Typography,
-  TablePagination, Button, Tooltip
+  TablePagination
 } from '@material-ui/core';
 import moment from 'moment';
 import api from '../../../services/api';
@@ -123,15 +123,6 @@ const UserRequestCourseTable = props => {
     loadCourseProfessor(1, searchText);
   }, []);
 
-  const updateSearch = (e) => {
-    setSearchText(e.target.value);
-  }
-
-  const onClickSearch = (e) => {
-    setPage(0);
-    loadCourseProfessor(1, searchText);
-  }
-
   const handlePageChange = (event, page) => {
     loadCourseProfessor(page+1, searchText)
     setPage(page);
@@ -141,16 +132,9 @@ const UserRequestCourseTable = props => {
     setRowsPerPage(event.target.value);
   };
 
-  const onClickEdit = (id) => {
-    history.push('/users/requests/'+id);
-  }
-
   return (
     <div className={classes.root}>
-      <RequestUsersToolbar
-          onChangeSearch={updateSearch.bind(this)}
-          searchText={searchText}
-          onClickSearch={onClickSearch}/>
+      <RequestUsersToolbar />
       <div className={classes.content}>
         <Card
             className={clsx(classes.root, className)}>

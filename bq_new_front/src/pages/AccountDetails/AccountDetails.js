@@ -144,6 +144,10 @@ const AccountDetails = props => {
     history.goBack();
   };
 
+  const onRequest = () => {
+    history.push('/requests');
+  }
+
   return (
     <Card
       {...rest}
@@ -219,7 +223,7 @@ const AccountDetails = props => {
             <Grid
                 className={classes.statsItem}
                 item>
-              <Button color="primary" href="/requests">
+              <Button color="primary" onClick={onRequest}>
                 Solicitar Acesso para cursos
               </Button>
             </Grid>

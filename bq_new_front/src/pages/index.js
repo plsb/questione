@@ -1,6 +1,7 @@
 export { default as PageNotFound } from './PageNotFound';
 export { default as AccountDetails } from './AccountDetails';
 export { default as UserRequestCourseTable } from './UserRequestCourse/UserRequestCourseTable';
+export { default as UserRequestCourseDetails } from './UserRequestCourse/UserRequestCourseDetails';
 export { default as Dashboard } from './Dashboard';
 export { default as SignIn } from './SignIn';
 export { default as SignUp } from './SignUp';

@@ -34,7 +34,7 @@ const Profile = props => {
     email: localStorage.getItem('@Questione-email-user'),
     level: localStorage.getItem('@Questione-acess-level-user')==="1"
         ? "Administrador" : localStorage.getItem('@Questione-acess-level-user')==="2"
-           ? "Professor" : "Usuário"
+           ? "Professor(a)" : "Usuário"
   };
 
   return (

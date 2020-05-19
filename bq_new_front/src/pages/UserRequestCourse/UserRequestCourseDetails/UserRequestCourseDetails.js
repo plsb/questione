@@ -107,7 +107,7 @@ const UserRequestCourseDetails = props => {
         }
       } else {
         loadAlert('success', 'Solicitação cadastrada.');
-        history.push('/requests/');
+        history.push('/requests');
       }
 
     } catch (error) {

@@ -38,7 +38,7 @@ class PasswordResetRequestNotifications extends Notification implements ShouldQu
      */
      public function toMail($notifiable)
      {
-        $url = "http://localhost:3000/reset-password/".$this->token;
+        $url = "https://bancodequestoes.ifce.edu.br/reset-password/".$this->token;
         return (new MailMessage)
             ->subject('[QUESTIONE] Recuperação de senha')
             ->greeting('Olá, '.$this->user->name.'.')
