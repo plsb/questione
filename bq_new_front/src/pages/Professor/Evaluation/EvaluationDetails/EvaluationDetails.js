@@ -47,6 +47,7 @@ const EvaluationDetails = props => {
   const classes = useStyles();
 
   const [questions, setQuestions] = useState([]);
+  const [refresh, setRefresh] = React.useState(0);
 
   const [formState, setFormState] = useState({
     isValid: false,
@@ -138,7 +139,7 @@ const EvaluationDetails = props => {
       findAEvaluation(codigoEvaluation);
     }
 
-  }, []);
+  }, [refresh]);
 
   useEffect(() => {
     const errors = validate(formState.values, schema);
@@ -235,7 +236,9 @@ const EvaluationDetails = props => {
                   {questions.map(question => (
                       <QuestionCard
                           question={question}
-                          id_evaluation={codigoEvaluation}/>
+                          id_evaluation={codigoEvaluation}
+                          setRefresh={setRefresh}
+                          refresh={refresh}/>
                   ))}
                 </TableBody>
               </Table>

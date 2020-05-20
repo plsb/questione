@@ -192,10 +192,7 @@ const EvaluationApplicationResultsSkillObjects = props => {
                       className={classes.head}
                       avatar={
                         <div>
-                          <Typography variant="h4" color="textSecondary" component="h2">
-                            {result.description }
-                          </Typography>
-                          <Typography variant="h6" color="textSecondary" component="h2">
+                          <Typography variant="h5" color="textSecondary" component="h2">
                             {'Curso : '+result.course }
                           </Typography>
                         </div>
@@ -209,7 +206,7 @@ const EvaluationApplicationResultsSkillObjects = props => {
                                   <b>{result.description}</b>{' associada.'}
                                 </React.Fragment>
                               }>
-                            <Typography variant="body2" component="p">
+                            <Typography variant="body1" component="p">
                               {'Total de questões: '+result.total_questions}
                             </Typography>
                           </TooltipCustomized>
@@ -220,7 +217,7 @@ const EvaluationApplicationResultsSkillObjects = props => {
                                   <b>{result.description}</b>{' associada.'}
                                 </React.Fragment>
                               }>
-                            <Typography variant="body2" component="p">
+                            <Typography variant="body1" component="p">
                               {'Total de respostas: '+result.total_answer}
                             </Typography>
                           </TooltipCustomized>
@@ -233,7 +230,7 @@ const EvaluationApplicationResultsSkillObjects = props => {
                                   <span className={classes.percentageGreen}>{'De 70% a 100% de acerto'}</span>
                                 </React.Fragment>
                               }>
-                            <Typography variant="body2" component="p">
+                            <Typography variant="body1" component="p">
                               {result.percentage_correct < 30 ?
                                   <span className={classes.percentageRed}>{'Correto: '+result.percentage_correct+'%'}</span>
                                   : result.percentage_correct < 70 ?
@@ -244,6 +241,11 @@ const EvaluationApplicationResultsSkillObjects = props => {
 
                         </div>
                       }/>
+                      <CardContent>
+                        <Typography variant="h4" color="textPrimary" component="h2">
+                          {result.description }
+                        </Typography>
+                      </CardContent>
                 </Card>
 
             ))}
@@ -258,10 +260,7 @@ const EvaluationApplicationResultsSkillObjects = props => {
                       className={classes.head}
                       avatar={
                         <div>
-                          <Typography variant="h4" color="textSecondary" component="h2">
-                            {result.description }
-                          </Typography>
-                          <Typography variant="h6" color="textSecondary" component="h2">
+                          <Typography variant="h5" color="textSecondary" component="h2">
                             {'Curso : '+result.course }
                           </Typography>
                         </div>
@@ -275,7 +274,7 @@ const EvaluationApplicationResultsSkillObjects = props => {
                                   <b>{result.description}</b>{' associado.'}
                                 </React.Fragment>
                               }>
-                            <Typography variant="body2" component="p">
+                            <Typography variant="body1" component="p">
                               {'Total de questões: '+result.total_questions}
                             </Typography>
                           </TooltipCustomized>
@@ -286,7 +285,7 @@ const EvaluationApplicationResultsSkillObjects = props => {
                                   <b>{result.description}</b>{' associado.'}
                                 </React.Fragment>
                               }>
-                            <Typography variant="body2" component="p">
+                            <Typography variant="body1" component="p">
                               {'Total de respostas: '+result.total_answer}
                             </Typography>
                           </TooltipCustomized>
@@ -299,7 +298,7 @@ const EvaluationApplicationResultsSkillObjects = props => {
                                   <span className={classes.percentageGreen}>{'De 70% a 100% de acerto'}</span>
                                 </React.Fragment>
                               }>
-                            <Typography variant="body2" component="p">
+                            <Typography variant="body1" component="p">
                               {result.percentage_correct < 30 ?
                                   <span className={classes.percentageRed}>{'Correto: '+result.percentage_correct+'%'}</span>
                                   : result.percentage_correct < 70 ?
@@ -310,6 +309,11 @@ const EvaluationApplicationResultsSkillObjects = props => {
 
                         </div>
                       }/>
+                      <CardContent>
+                        <Typography variant="h4" color="textPrimary" component="h2">
+                          {result.description }
+                        </Typography>
+                      </CardContent>
                 </Card>
 
             ))}

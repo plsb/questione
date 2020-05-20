@@ -35,8 +35,13 @@ const useStyles = makeStyles(() => ({
     },
     chipyellow:{
         margin: 3,
-        backgroundColor: '#fff176   ',
+        backgroundColor: '#fff176',
         color: '#212121',
+    },
+    chipblue:{
+        margin: 3,
+        backgroundColor: '#2196f3',
+        color: '#fff',
     },
   spacer: {
     flexGrow: 1
@@ -176,6 +181,11 @@ const EvaluationApplicationCard = props => {
                   }
                   { evaluationApplication.random_questions == 1 ?
                       <Chip label="Questões Aleatórias" className={clsx(classes.chipyellow, className)} size="small"/> :
+                      null
+
+                  }
+                  { evaluationApplication.show_results == 1 ?
+                      <Chip label="Resultados Liberados" className={clsx(classes.chipblue, className)} size="small"/> :
                       null
 
                   }

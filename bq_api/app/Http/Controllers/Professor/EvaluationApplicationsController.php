@@ -169,6 +169,11 @@ class EvaluationApplicationsController extends Controller
         } else {
             $evaluation_application->random_questions = false;
         }
+        if($request->show_results) {
+            $evaluation_application->show_results = $request->show_results;
+        } else {
+            $evaluation_application->show_results = false;
+        }
         $evaluation_application->save();
 
         return response()->json([

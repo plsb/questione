@@ -15,6 +15,7 @@ class ModifyTableEvaluationApplicationAddOptionRandomQuestions extends Migration
     {
         Schema::table('evaluation_application', function (Blueprint $table) {
             $table->boolean('random_questions')->default(false);;
+            $table->boolean('show_results')->default(false);;
         });
     }
 

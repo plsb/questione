@@ -1,10 +1,22 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Redirect, Route} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {isAuthenticated} from "./../../services/auth";
+import validate from "validate.js";
+
+
 
 const RouteWithLayout = props => {
-  const { layout: Layout, component: Component, needToBeLogged, ...rest } = props;
+  const { layout: Layout, component: Component, typeUser, needToBeLogged, ...rest } = props;
+  /* typeUser -1 vai servir para identificar um componente que todos precisam ter acesso.
+    typeUser 1 somente administrador acessa.
+    typeUser 2 somente professor acessa.
+                                 */
+    const typeStorage = localStorage.getItem('@Questione-acess-level-user');
+
+    useEffect(() => {
+
+    }, [typeStorage]);
 
   return (
     <Route
@@ -12,9 +24,13 @@ const RouteWithLayout = props => {
       render={matchProps => (
           needToBeLogged ? (
                isAuthenticated() ? (
-                  <Layout>
-                      <Component {...matchProps} />
-                  </Layout>
+                   typeUser==typeStorage || typeUser==-1 ?
+                       <Layout>
+                           <Component {...matchProps} />
+                       </Layout>
+                       :
+                       <Redirect to={{ pathname: "/Unauthorized", state: { from: props.location } }} />
+
               ) : (
                   <Redirect to={{ pathname: "/sign-in", state: { from: props.location } }} />
               )
@@ -33,7 +49,9 @@ RouteWithLayout.propTypes = {
   component: PropTypes.any.isRequired,
   layout: PropTypes.any.isRequired,
   needToBeLogged: PropTypes.any.isRequired,
-  path: PropTypes.string
+  path: PropTypes.string,
+  typeUser: PropTypes.number,
+
 };
 
 export default RouteWithLayout;

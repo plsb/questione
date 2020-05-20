@@ -8,12 +8,13 @@ import {
   CardContent,
   Divider,
   IconButton,
-  Typography, Box, Table, TableHead, TableRow, TableCell, TableBody
+  Typography, Box, Table, TableHead, TableRow, TableCell, TableBody, Tooltip
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {Close, Done, Block} from "@material-ui/icons";
 import PerfectScrollbar from "react-perfect-scrollbar";
+import {withStyles} from "@material-ui/core/styles";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -21,69 +22,6 @@ const useStyles = makeStyles(() => ({
   },
   content: {
     padding: 0
-  },
-  headStudent: {
-    width: '250px ',
-    height: '90px',
-    backgroundColor: '#FFF',
-    color: '#393A68',
-    paddingLeft: '12px',
-    boxSizing: 'border-box',
-    border: '1px solid #f2f2f2',
-    lineHeight: '40px',
-    fontSize: '14px',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    fontFamily: 'Open Sans, sans-serif, Helvetica, Arial'
-  },
-  headPercentage: {
-    width: '40px',
-    height: '90px',
-    backgroundColor: '#FFF',
-    color: '#393A68',
-    paddingLeft: '12px',
-    boxSizing: 'border-box',
-    border: '1px solid #f2f2f2',
-    lineHeight: '40px',
-    fontSize: '14px',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    fontFamily: 'Open Sans, sans-serif, Helvetica, Arial'
-  },
-  bodyStudent: {
-    width: '250px',
-    height: '60px',
-    backgroundColor: '#FFF',
-    color: '#393A68',
-    paddingLeft: '12px',
-    boxSizing: 'border-box',
-    fontWeight: 'bold',
-    border: '1px solid #f2f2f2',
-    lineHeight: '20px',
-    fontSize: '14px',
-    whiteSpace: 'nowrap',
-    overflow: 'auto',
-    textOverflow: 'ellipsis',
-    fontFamily: 'Open Sans, sans-serif, Helvetica, Arial',
-  },
-  bodyPercentage: {
-    width: '20%',
-    height: '60px',
-    textAlign: 'center',
-    backgroundColor: '#FFF',
-    color: '#393A68',
-    paddingLeft: '12px',
-    boxSizing: 'border-box',
-    fontWeight: 'bold',
-    border: '1px solid #f2f2f2',
-    lineHeight: '20px',
-    fontSize: '14px',
-    whiteSpace: 'nowrap',
-    overflow: 'auto',
-    textOverflow: 'ellipsis',
-    fontFamily: 'Open Sans, sans-serif, Helvetica, Arial'
   },
   headQuestion: {
     width: '90.0px',
@@ -107,15 +45,6 @@ const useStyles = makeStyles(() => ({
     color: '#fff',
     borderRadius: 4
   },
-  percentageOrange: {
-    backgroundColor: '#F5A623',
-    display: 'block',
-    margin: '8px',
-    padding: '0 4px',
-    textAlign: 'center',
-    color: '#fff',
-    borderRadius: 4
-  },
   percentageGreen: {
     backgroundColor: '#5DE2A5',
     display: 'block',
@@ -123,6 +52,15 @@ const useStyles = makeStyles(() => ({
     padding: '0 4px',
     textAlign: 'center',
     color: '#fff',
+    borderRadius: 4
+  },
+  percentageNull: {
+    backgroundColor: '#90a4ae',
+    color: '#fff',
+    display: 'block',
+    margin: '8px',
+    padding: '0 4px',
+    textAlign: 'center',
     borderRadius: 4
   },
   answerCorrect: {
@@ -166,22 +104,18 @@ const useStyles = makeStyles(() => ({
     padding: '12px',
     fontWeight: 'bold',
     fontSize: '14px'
-  },
-  paperWrong: {
-    width: '88%',
-    backgroundColor: '#ef9a9a',
-    color: '#212121',
-    margin: 3,
-    padding: 8
-  },
-  paperRight: {
-    width: '88%',
-    backgroundColor: '#80cbc4',
-    color: '#212121',
-    margin: 3,
-    padding: 8
-  },
+  }
 }));
+
+const TooltipCustomized = withStyles((theme) => ({
+  tooltip: {
+    backgroundColor: '#f5f5f9',
+    color: 'rgba(0, 0, 0, 0.87)',
+    maxWidth: 220,
+    fontSize: theme.typography.pxToRem(12),
+    border: '1px solid #dadde9',
+  },
+}))(Tooltip);
 
 const EvaluationsResultDetails = props => {
   const { className, history, ...rest } = props;
@@ -240,24 +174,33 @@ const EvaluationsResultDetails = props => {
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            <TableRow
-                                className={classes.tableRow}
-                                hover>
-                                {questions.map(result => (
-                                    result.answer == null ?
-                                        <TableCell className={classes.answerNull}>
-                                          <Block />
-                                        </TableCell>
-                                        :
-                                    result.correct == 1 ?
-                                          <TableCell className={classes.answerCorrect}>
-                                            <Done />
-                                          </TableCell> :
-                                          <TableCell className={classes.answerIncorrect}>
-                                            <Close />
-                                          </TableCell>
-                                ))}
-                            </TableRow>
+                            <TooltipCustomized
+                                title={
+                                  <React.Fragment>
+                                    <span className={classes.percentageRed}>{'Errou'}</span>
+                                    <span className={classes.percentageGreen}>{'Acertou'}</span>
+                                    <span className={classes.percentageNull}>{'Não respondeu'}</span>
+                                  </React.Fragment>
+                                }>
+                                <TableRow
+                                    className={classes.tableRow}
+                                    hover>
+                                    {questions.map(result => (
+                                        result.answer == null ?
+                                            <TableCell className={classes.answerNull}>
+                                              <Block />
+                                            </TableCell>
+                                            :
+                                        result.correct == 1 ?
+                                              <TableCell className={classes.answerCorrect}>
+                                                <Done />
+                                              </TableCell> :
+                                              <TableCell className={classes.answerIncorrect}>
+                                                <Close />
+                                              </TableCell>
+                                    ))}
+                                </TableRow>
+                            </TooltipCustomized>
                           </TableBody>
                         </Table>
                       </div>

@@ -100,7 +100,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const QuestionCard = props => {
-  const { className, history, question, id_evaluation, ...rest } = props;
+  const { className, history, question, setRefresh, refresh, id_evaluation, ...rest } = props;
+
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [expanded, setExpanded] = React.useState(false);
     const [openDeleteQuestionEvaluation, setOpenDeleteQuestionEvaluation] = React.useState(false);
@@ -190,6 +191,10 @@ const QuestionCard = props => {
     }, [question, rank]);
 
     useEffect(() => {
+
+    }, [openDeleteQuestionEvaluation]);
+
+    useEffect(() => {
         loadRank();
         loadEvaluations();
 
@@ -253,6 +258,7 @@ const QuestionCard = props => {
     }
 
     async function deleteQuestion(){
+        setOpenDeleteQuestion(false);
         try {
             let url = 'question/'+question.id;
 
@@ -263,15 +269,15 @@ const QuestionCard = props => {
                 }
             } else {
                 loadAlert('success', 'Questão excluída.');
-                window.location.reload();
+                setRefresh(refresh+1);
             }
         } catch (error) {
             loadAlert('error', 'Erro de conexão.');
         }
-        setOpenDeleteQuestionEvaluation(false);
     }
 
     async function deleteQuestionEvaluation() {
+        setOpenDeleteQuestionEvaluation(false);
         try {
             let url = 'evaluation/deletequestion/'+question.id+'+?fk_evaluation_id='+id_evaluation;
             const fk_evaluation_id = id_evaluation;
@@ -285,12 +291,11 @@ const QuestionCard = props => {
                 }
             } else {
                 loadAlert('success', 'Questão excluída da avaliação.');
-                window.location.reload();
+                setRefresh(refresh+1);
             }
         } catch (error) {
             loadAlert('error', 'Erro de conexão.');
         }
-        setOpenDeleteQuestionEvaluation(false);
     }
 
     const onEditQuestion = (id) => {
@@ -311,7 +316,7 @@ const QuestionCard = props => {
                 }
             } else {
                 loadAlert('success', 'Questão habilitada.');
-                window.location.reload();
+                setRefresh(refresh+1);
             }
         } catch (error) {
             loadAlert('error', 'Erro de conexão.');
@@ -329,7 +334,7 @@ const QuestionCard = props => {
                 }
             } else {
                 loadAlert('success', 'Questão duplicada.');
-                window.location.reload();
+                setRefresh(refresh+1);
             }
         } catch (error) {
             loadAlert('error', 'Erro de conexão.');
@@ -607,11 +612,14 @@ const QuestionCard = props => {
 };
 
 QuestionCard.propTypes = {
-  className: PropTypes.string,
-  question: PropTypes.object,
-  id_evaluation: PropTypes.object,
-  evaluations: PropTypes.object,
-    history: PropTypes.object
+    className: PropTypes.string,
+    question: PropTypes.object,
+    id_evaluation: PropTypes.object,
+    evaluations: PropTypes.object,
+    history: PropTypes.object,
+    setRefresh: PropTypes.func,
+    refresh: PropTypes.number
+
 };
 
 export default withRouter(QuestionCard);

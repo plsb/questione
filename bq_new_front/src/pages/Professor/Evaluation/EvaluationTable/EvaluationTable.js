@@ -77,6 +77,8 @@ const EvaluationTable = props => {
   const [total, setTotal] = useState(0);
   const [searchText, setSearchText] = useState('');
   const [open, setOpen] = React.useState(false);
+  const [refresh, setRefresh] = React.useState(0);
+
 
   //configuration alert
   const Toast = Swal.mixin({
@@ -115,7 +117,7 @@ const EvaluationTable = props => {
 
   useEffect(() => {
     loadEvaluations(1);
-  }, []);
+  }, [refresh]);
 
   const updateSearch = (e) => {
     setSearchText(e.target.value);
@@ -173,7 +175,9 @@ const EvaluationTable = props => {
                   <Table>
                     <TableBody>
                     {evaluations.map(evaluation => (
-                        <EvaluationCard evaluation={evaluation}/>
+                        <EvaluationCard evaluation={evaluation}
+                                        setRefresh={setRefresh}
+                                        refresh={refresh}/>
                     ))}
                   </TableBody>
                   </Table>

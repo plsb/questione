@@ -8,7 +8,7 @@ class EvaluationApplication extends Model
 {
     protected $table = 'evaluation_application';
     protected $fillable = ['id', 'id_application', 'description','fk_evaluation_id', 'status',
-        'random_questions'];
+        'random_questions', 'show_results'];
     protected $hidden = [];
 
     public function evaluation(){

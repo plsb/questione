@@ -35,7 +35,8 @@ import {
     EvaluationApplicationDetails,
     EvaluationApplicationResults,
     StartEvaluation, EvaluationsResultStudent, EvaluationsResultStudentDetails,
-    UserRequestCourseDetails
+    UserRequestCourseDetails,
+    Unauthorized
 } from '../pages';
 import QuestionTable from "../pages/Professor/Question/QuestionTable";
 import QuestionDetails from "../pages/Professor/Question/QuestionDetails";
@@ -53,6 +54,7 @@ const Routes = () => (
           component={Dashboard}
           exact
           needToBeLogged={true}
+          typeUser={-1}
           layout={MainLayout}
           path="/home"/>
         <RouteWithLayout
@@ -84,17 +86,20 @@ const Routes = () => (
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={-1}
             path="/account"/>
         <RouteWithLayout
             component={UserRequestCourseTable}
             exact
             needToBeLogged={true}
+            typeUser={-1}
             layout={MainLayout}
             path="/requests"/>
         <RouteWithLayout
             component={UserRequestCourseDetails}
             exact
             needToBeLogged={true}
+            typeUser={-1}
             layout={MainLayout}
             path="/new-request"/>
         <RouteWithLayout
@@ -102,109 +107,132 @@ const Routes = () => (
             exact
             layout={MinimalLayout}
             needToBeLogged={true}
+            typeUser={-1}
             path="/student/start-evaluation"/>
         <RouteWithLayout
             component={EvaluationsResultStudent}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={-1}
             path="/student/result-evaluations"/>
         <RouteWithLayout
             component={EvaluationsResultStudentDetails}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={-1}
             path="/student/result-evaluations/details/:idHead"/>
+        <RouteWithLayout
+            component={DoEvaluation}
+            exact
+            layout={MinimalLayout}
+            needToBeLogged={true}
+            typeUser={-1}
+            path="/code/:codeAplication"/>s
         {/*ROTAS DO ADMINISTRADOR*/}
         <RouteWithLayout
             component={CourseTable}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={1}
             path="/courses"/>
         <RouteWithLayout
             component={CourseDetails}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={1}
             path="/course-details"/>
         <RouteWithLayout
             component={CourseDetails}
             exact
             layout={MainLayout}
+            typeUser={1}
             needToBeLogged={true}
             path="/course-details/:codigoCourse"/>
-        <RouteWithLayout
+        {/*<RouteWithLayout
             component={ProfileTable}
             exact
             layout={MainLayout}
+            typeUser={1}
             needToBeLogged={true}
             path="/profiles"/>
-        {/*<RouteWithLayout
-            component={ProfileDetails}
-            exact
-            layout={MainLayout}
-            needToBeLogged={true}
-            path="/profile-details"/>*/}
         <RouteWithLayout
             component={ProfileDetails}
             exact
             layout={MainLayout}
             needToBeLogged={true}
-            path="/profile-details/:codigoProfile"/>
+            path="/profile-details"/>
+        <RouteWithLayout
+            component={ProfileDetails}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            path="/profile-details/:codigoProfile"/>*/}
         <RouteWithLayout
             component={SkillTable}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={1}
             path="/skills"/>
         <RouteWithLayout
             component={SkillDetails}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={1}
             path="/skill-details"/>
         <RouteWithLayout
             component={SkillDetails}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={1}
             path="/skill-details/:codigoSkill"/>
         <RouteWithLayout
             component={ObjectTable}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={1}
             path="/objects"/>
         <RouteWithLayout
             component={ObjectDetails}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={1}
             path="/object-details"/>
         <RouteWithLayout
             component={ObjectDetails}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={1}
             path="/object-details/:codigoObject"/>
         <RouteWithLayout
             component={UserTable}
             exact
             needToBeLogged={true}
             layout={MainLayout}
+            typeUser={1}
             path="/users"/>
         <RouteWithLayout
             component={RequestUserTable}
             exact
             needToBeLogged={true}
             layout={MainLayout}
+            typeUser={1}
             path="/users/requests"/>
         <RouteWithLayout
             component={RequestUserDetails}
             exact
             needToBeLogged={true}
             layout={MainLayout}
+            typeUser={1}
             path="/users/requests/:codigoCourseProfessor"/>
         {/*ROTAS DO PROFESSOR*/}
         <RouteWithLayout
@@ -212,67 +240,79 @@ const Routes = () => (
             exact
             needToBeLogged={true}
             layout={MainLayout}
+            typeUser={2}
             path="/evaluations"/>
         <RouteWithLayout
             component={EvaluationArchiveTable}
             exact
             needToBeLogged={true}
             layout={MainLayout}
+            typeUser={2}
             path="/evaluations-archive"/>
         <RouteWithLayout
             component={EvaluationDetails}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={2}
             path="/evaluation-details"/>
         <RouteWithLayout
             component={EvaluationDetails}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={2}
             path="/evaluation-details/:codigoEvaluation"/>
         <RouteWithLayout
             component={EvaluationApplicationTable}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={2}
             path="/applications-evaluation"/>
         <RouteWithLayout
             component={EvaluationApplicationDetails}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={2}
             path="/applications-evaluation/details/:idApplication"/>
         <RouteWithLayout
             component={EvaluationApplicationResults}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={2}
             path="/applications-evaluation/results/:idApplication"/>
         <RouteWithLayout
             component={QuestionTable}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={2}
             path="/questions"/>
         <RouteWithLayout
             component={QuestionDetails}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={2}
             path="/question-details"/>
         <RouteWithLayout
             component={QuestionDetails}
             exact
             layout={MainLayout}
             needToBeLogged={true}
+            typeUser={2}
             path="/question-details/:idQuestion"/>
+
         <RouteWithLayout
-            component={DoEvaluation}
+            component={Unauthorized}
             exact
             layout={MinimalLayout}
             needToBeLogged={true}
-            path="/code/:codeAplication"/>
+            typeUser={2}
+            path="/unauthorized"/>
       <RouteWithLayout
           path="*"
           layout={MinimalLayout}

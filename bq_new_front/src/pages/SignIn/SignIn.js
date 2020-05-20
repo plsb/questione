@@ -179,6 +179,7 @@ const SignIn = props => {
         login(response.data.token, response.data[0].name,
                 response.data[0].email, response.data[0].acess_level,
                 response.data[0].id);
+        console.log('storage',localStorage.getItem('@Questione-acess-level-user'));
 
         loadAlert('success', response.data[0].name+', seja bem-vindo!');
         history.push('/home');

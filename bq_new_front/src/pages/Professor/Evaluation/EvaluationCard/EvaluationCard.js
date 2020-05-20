@@ -50,7 +50,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const EvaluationCard = props => {
-  const { className, history, evaluation, ...rest } = props;
+  const { className, history, refresh, setRefresh, evaluation, ...rest } = props;
   const [anchorEl, setAnchorEl] = React.useState(null);
     const [open, setOpen] = React.useState(false);
     const [descriptionNewApplication, setDescriptionNewApplication] = React.useState('');
@@ -94,7 +94,7 @@ const EvaluationCard = props => {
           const response = await api.post('evaluation/duplicate/'+evaluation.id);
           if (response.status === 200) {
               loadAlert('success', 'Avaliação cadastrada(duplicada).');
-              window.location.reload();
+              setRefresh(refresh+1);
           } else {
               loadAlert('error', 'Erro ao mduar o status da avaliação.');
           }
@@ -117,7 +117,7 @@ const EvaluationCard = props => {
               } else {
                   loadAlert('success', 'Avaliação arquivada.');
               }
-              window.location.reload();
+              setRefresh(refresh+1);
           } else {
               loadAlert('error', 'Erro ao mduar o status da avaliação.');
           }
@@ -146,7 +146,7 @@ const EvaluationCard = props => {
                 }
             } else {
                 loadAlert('success', 'Avaliação excluída.');
-                window.location.reload();
+                setRefresh(refresh+1);
             }
         } catch (error) {
             loadAlert('error', 'Erro de conexão.');
@@ -296,9 +296,11 @@ const EvaluationCard = props => {
 };
 
 EvaluationCard.propTypes = {
-  className: PropTypes.string,
-  evaluation: PropTypes.object,
-    history: PropTypes.object
+    className: PropTypes.string,
+    evaluation: PropTypes.object,
+    history: PropTypes.object,
+    setRefresh: PropTypes.func,
+    refresh: PropTypes.number
 };
 
 export default withRouter(EvaluationCard);

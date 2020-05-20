@@ -1,4 +1,5 @@
 export { default as PageNotFound } from './PageNotFound';
+export { default as Unauthorized } from './Unauthorized';
 export { default as AccountDetails } from './AccountDetails';
 export { default as UserRequestCourseTable } from './UserRequestCourse/UserRequestCourseTable';
 export { default as UserRequestCourseDetails } from './UserRequestCourse/UserRequestCourseDetails';

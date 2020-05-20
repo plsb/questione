@@ -136,19 +136,25 @@ const EvaluationsResultStudentTable = props => {
                                     <Typography variant="h5" color="textSecondary" component="h2">
                                       {'Professor(a): '+application.evaluation_application.evaluation.user.name }
                                     </Typography>
-                                    <Typography variant="h6" color="textSecondary" component="h2">
-                                      {'Data da avaliação: '+moment(application.updated_at).format('DD/MM/YYYY') }
-                                    </Typography>
+
                                   </div>
                                 }
                                 action={
-                                  <Tooltip title="Visualizar resultados">
-                                    <IconButton
-                                        aria-label="copy"
-                                        onClick={() => results(application.id)}>
-                                      <FormatListBulleted/>
-                                    </IconButton>
-                                  </Tooltip>
+                                  <div>
+                                    { application.evaluation_application.show_results == 1 ?
+                                    <Tooltip title="Visualizar resultados">
+                                      <IconButton
+                                          aria-label="copy"
+                                          onClick={() => results(application.id)}>
+                                        <FormatListBulleted/>
+                                      </IconButton>
+                                    </Tooltip>
+                                      :
+                                        <Typography variant="h5" color="textSecondary" component="h2">
+                                          {'Resultado não liberado.' }
+                                        </Typography>
+                                    }
+                                  </div>
                                 }/>
                           </Card>
                       ))}

@@ -460,7 +460,7 @@ class QuestionController extends Controller
         $new_question->base_text = $question->base_text;
         $new_question->stem = $question->stem;
         $new_question->validated = 0;
-        $new_question->reference = $question->reference;
+        $new_question->reference = '(Cópia) '.$question->reference;
         $new_question->fk_profile_id = $question->fk_profile_id;
         $new_question->fk_skill_id = $question->fk_skill_id;
         $new_question->fk_user_id = $user->id;

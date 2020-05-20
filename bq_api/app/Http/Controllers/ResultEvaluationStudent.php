@@ -57,6 +57,13 @@ class ResultEvaluationStudent extends Controller
                 'message' => 'Aplicação não pertence ao usuário.',
             ], 202);
         }
+        $application_evaluation = EvaluationApplication::where('id', $head_answer->fk_application_evaluation_id)->first();
+        if($application_evaluation->show_results == 0){
+            return response()->json([
+                'message' => 'Os resultado não foi liberado.',
+            ], 202);
+        }
+
 
         $resultHeadAnswer = array();
 

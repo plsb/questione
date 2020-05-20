@@ -75,6 +75,7 @@ const QuestionTable = props => {
   const [total, setTotal] = useState(0);
   const [searchText, setSearchText] = useState([]);
   const [open, setOpen] = React.useState(false);
+  const [refresh, setRefresh] = React.useState(0);
 
   //configuration alert
   const Toast = Swal.mixin({
@@ -129,10 +130,9 @@ const QuestionTable = props => {
     }
   }
 
-
   useEffect(() => {
     loadQuestions(1);
-  }, []);
+  }, [refresh]);
 
   const updateSearch = (e) => {
     setSearchText(e.target.value);
@@ -220,7 +220,9 @@ const QuestionTable = props => {
                           <TableBody>
                             {questions.map(question => (
                                 <QuestionCard
-                                    question={question}/>
+                                    question={question}
+                                    setRefresh={setRefresh}
+                                    refresh={refresh}/>
                             ))}
                           </TableBody>
                         </Table>

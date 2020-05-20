@@ -82,6 +82,7 @@ const QuestionDetails = props => {
     const [reference, setReference] = React.useState('');
     //utilizado pra quando for nova questão
     const [idQuestionNew, setIdQuestionNew] = React.useState(0);
+
     const timer = React.useRef();
 
     //configuration alert
@@ -105,7 +106,8 @@ const QuestionDetails = props => {
     }
 
   const handleChangeTab = (event, newValue) => {
-    setValue(newValue);
+        saveQuestion();
+        setValue(newValue);
   };
 
     const handleBack = () => {
@@ -162,11 +164,6 @@ const QuestionDetails = props => {
             }, 500);
         }
 
-    }
-
-    const onClickTab2 = () => {
-        setTabSkill(true);
-        setValue(2);
     }
 
     async function findAQuestion(id){
@@ -252,7 +249,7 @@ const QuestionDetails = props => {
               <div style={{padding: "30px"}}>
                   <b className="item1">Texto base</b>
                   <Editor
-                      apiKey="ndvo85oqtt9mclsdb6g3jc5inqot9gxupxd0scnyypzakm18"
+                      apiKey="viwc1vmqpf6f7ozb7m90ayace892e32hsg99bhpo06p6bz3d"
                       init={{
                           height: 200,
                           menubar: false,
@@ -313,7 +310,7 @@ const QuestionDetails = props => {
           </TabPanel>
           {/* INTES */}
           <TabPanel value={value} index={1}>
-                <QuestionItens idQuestion={idQuestion} />
+                <QuestionItens idQuestion={idQuestion}/>
 
           </TabPanel>
           {/* CURSO E COMPETÊNCIA*/}

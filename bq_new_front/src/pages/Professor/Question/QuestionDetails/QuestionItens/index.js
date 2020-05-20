@@ -307,6 +307,7 @@ const QuestionItens = props => {
 QuestionItens.propTypes = {
     className: PropTypes.string,
     idQuestion: PropTypes.number,
+    indexTab: PropTypes.number,
 };
 
 export default withRouter(QuestionItens);

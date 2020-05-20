@@ -47,12 +47,17 @@ const TooltipCustomized = withStyles((theme) => ({
 const EvaluationApplicationDetails = props => {
   const { className, history, ...rest } = props;
   const { idApplication } = props.match.params;
+  const [checkedRandom, setCheckedRandom] = React.useState(false);
+  const [checkedShowResult, setCheckedShowResult] = React.useState(false);
 
   const classes = useStyles();
 
   const [formState, setFormState] = useState({
     isValid: false,
-    values: {},
+    values: {
+      'show_results' : false,
+      'random_questions' : false
+    },
     touched: {},
     errors: {}
   });
@@ -80,10 +85,12 @@ const EvaluationApplicationDetails = props => {
   async function saveApplicationDetails(){
     try {
       const description = formState.values.description;
-      const random_questions = formState.values.random_questions;
+      const random_questions = checkedRandom;
+      const show_results = checkedShowResult;
       const data = {
         description,
-        random_questions
+        random_questions,
+        show_results
       }
       const response = await api.put('evaluation/applications/'+idApplication, data);
       if (response.status === 202) {
@@ -110,15 +117,17 @@ const EvaluationApplicationDetails = props => {
           loadAlert('error', response.data.message);
         }
       } else {
+        setCheckedRandom(response.data.random_questions == 1 ? true : false);
+        setCheckedShowResult(response.data.show_results == 1 ? true : false);
         setFormState(formState => ({
           values: {
             'description': response.data.description,
-            'random_questions': response.data.random_questions,
           },
           touched: {
             ...formState.touched,
           }
         }));
+
       }
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
@@ -134,7 +143,6 @@ const EvaluationApplicationDetails = props => {
 
   useEffect(() => {
     const errors = validate(formState.values, schema);
-    console.log('formstate', formState);
 
     setFormState(formState => ({
       ...formState,
@@ -144,12 +152,11 @@ const EvaluationApplicationDetails = props => {
   }, [formState.values]);
 
   const handleChange = event => {
-    console.log(event);
     setFormState({
       ...formState,
       values: {
         ...formState.values,
-        [event.target.name]: event.target.checked ? event.target.checked : event.target.value
+        [event.target.name]: event.target.value
       },
       touched: {
         ...formState.touched,
@@ -157,6 +164,14 @@ const EvaluationApplicationDetails = props => {
       }
     });
   };
+
+  const handleChangeRandom = event => {
+    setCheckedRandom(event.target.checked);
+  }
+
+  const handleChangeShowResult = event => {
+    setCheckedShowResult(event.target.checked);
+  }
 
   const hasError = field =>
       formState.touched[field] && formState.errors[field] ? true : false;
@@ -217,14 +232,39 @@ const EvaluationApplicationDetails = props => {
                   <FormControlLabel
                       control={
                         <Switch
-                            checked={formState.values.random_questions == 1 ? true : false}
-                            onChange={handleChange}
+                            checked={checkedRandom}
+                            onChange={handleChangeRandom}
                             name="random_questions"
                             color="primary"
                         />
                       }
                       label="Questões aleatórias?"
                   />
+              </TooltipCustomized>
+              <TooltipCustomized
+                  title={
+                    <React.Fragment>
+                      <p>
+                        <Typography color="textPrimary" variant="body2">
+                          {'Caso esta opção fique ativa, todos os estudantes terão acesso' +
+                          ' ao resultado da sua avaliação. No resultado é apenas apresentado' +
+                          ' se o estudante acertou ou errou as questões. A questão completa não' +
+                          ' é apresentada ao estudante.'}
+                        </Typography>
+                      </p>
+                    </React.Fragment>
+                  }>
+                <FormControlLabel
+                    control={
+                      <Switch
+                          checked={checkedShowResult}
+                          onChange={handleChangeShowResult}
+                          name="show_results"
+                          color="primary"
+                      />
+                    }
+                    label="Liberar o resultado?"
+                />
               </TooltipCustomized>
             </Grid>
           </Grid>

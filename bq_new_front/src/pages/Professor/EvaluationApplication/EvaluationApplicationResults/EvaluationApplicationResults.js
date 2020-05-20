@@ -128,6 +128,15 @@ const useStyles = makeStyles(() => ({
     color: '#fff',
     borderRadius: 4
   },
+  percentageNull: {
+    backgroundColor: '#90a4ae',
+    color: '#fff',
+    display: 'block',
+    margin: '8px',
+    padding: '0 4px',
+    textAlign: 'center',
+    borderRadius: 4
+  },
   answerCorrect: {
     width: '90.0px',
     backgroundColor: '#5DE2A5',
@@ -448,26 +457,35 @@ const EvaluationApplicationResults = props => {
                                 </TableHead>
                                 <TableBody>
                                   {answerStudents.map(result => (
-                                      <TableRow
-                                          className={classes.tableRow}
-                                          hover
-                                          key={result.fk_user_id}>
-                                        {result.questions.map(quest => (
-                                            quest.itemSelected == null ?
-                                                <TableCell className={classes.answerNull}>
-                                                  <Block />
-                                                </TableCell>
-                                                :
-                                            quest.correct == 1 ?
-                                                <TableCell className={classes.answerCorrect}>
-                                                  <Done />
-                                                </TableCell> :
-                                                <TableCell className={classes.answerIncorrect}>
-                                                  <Close />
-                                                </TableCell>
-                                        ))}
+                                      <TooltipCustomized
+                                          title={
+                                            <React.Fragment>
+                                              <span className={classes.percentageRed}>{'Errou'}</span>
+                                              <span className={classes.percentageGreen}>{'Acertou'}</span>
+                                              <span className={classes.percentageNull}>{'Não respondeu'}</span>
+                                            </React.Fragment>
+                                          }>
+                                          <TableRow
+                                              className={classes.tableRow}
+                                              hover
+                                              key={result.fk_user_id}>
+                                            {result.questions.map(quest => (
+                                                quest.itemSelected == null ?
+                                                    <TableCell className={classes.answerNull}>
+                                                      <Block />
+                                                    </TableCell>
+                                                    :
+                                                quest.correct == 1 ?
+                                                    <TableCell className={classes.answerCorrect}>
+                                                      <Done />
+                                                    </TableCell> :
+                                                    <TableCell className={classes.answerIncorrect}>
+                                                      <Close />
+                                                    </TableCell>
+                                            ))}
 
-                                      </TableRow>
+                                          </TableRow>
+                                      </TooltipCustomized>
                                   ))}
                                 </TableBody>
                               </Table>
