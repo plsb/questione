@@ -20,6 +20,7 @@ class Evaluation extends Model
             ->with('skill')
             ->with('profile')
             ->with('knowledgeObjects')
+            ->with('keywords')
             ->withTimestamps();
     }
 

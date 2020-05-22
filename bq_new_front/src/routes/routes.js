@@ -316,6 +316,7 @@ const Routes = () => (
       <RouteWithLayout
           path="*"
           layout={MinimalLayout}
+          needToBeLogged={false}
           component={PageNotFound} />
     </Switch>
   </BrowserRouter>

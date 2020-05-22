@@ -208,7 +208,15 @@ const EvaluationDetails = props => {
                 value={formState.values.description || ''}
                 variant="outlined"
               />
+              <Button
+                  color="primary"
+                  variant="outlined"
+                  disabled={!formState.isValid}
+                  onClick={saveEvaluationDetails}>
+                Salvar
+              </Button>
             </Grid>
+            <Divider />
           </Grid>
           { codigoEvaluation ?
           <Grid
@@ -248,15 +256,6 @@ const EvaluationDetails = props => {
           }
         </CardContent>
         <Divider />
-        <CardActions>
-          <Button
-            color="primary"
-            variant="outlined"
-            disabled={!formState.isValid}
-            onClick={saveEvaluationDetails}>
-            Salvar
-          </Button>
-        </CardActions>
       </form>
     </Card>
   );

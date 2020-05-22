@@ -155,7 +155,7 @@ const QuestionCard = props => {
                 fk_question_id,
                 rank
             }
-            let url = '/rank/';
+            let url = '/rank';
 
             const response = await api.post(url, data);
             if (response.status === 202) {
@@ -261,7 +261,7 @@ const QuestionCard = props => {
         setOpenDeleteQuestion(false);
         try {
             let url = 'question/'+question.id;
-
+            console.log(url);
             const response = await api.delete(url);
             if (response.status === 202) {
                 if(response.data.message){
@@ -272,6 +272,7 @@ const QuestionCard = props => {
                 setRefresh(refresh+1);
             }
         } catch (error) {
+            console.log(error);
             loadAlert('error', 'Erro de conexão.');
         }
     }
@@ -501,7 +502,7 @@ const QuestionCard = props => {
                         <br />
                     </div>
                     : null}
-                { question.knowledge_objects.length != 0 ?
+                { question.knowledge_objects[0] ?
                     <div>
                         <Typography variant="button" color="textSecondary" component="p">
                             Objeto(s) de conhecimento:
@@ -513,7 +514,7 @@ const QuestionCard = props => {
                     </div>
                     : null}
 
-                { question.keywords.length != 0 ?
+                { question.keywords[0] ?
                     <div>
                         <Typography variant="button" color="textSecondary" component="p">
                             Palavra(s)-chave:
@@ -597,7 +598,7 @@ const QuestionCard = props => {
                          open={openEnableQuestion}
                          onClickAgree={handleChangeValidated}
                          onClickDisagree={onClickCloseDialogEnableQuestion}
-                         mesage={'Depois de habilitada, a questão não poderá sofrer mudanças no texto base, enunciado e alternativas. Deseja habilitar?'}
+                         mesage={'Depois de habilitada, a questão não poderá ser deletada e não poderá sofrer mudanças no texto base, enunciado e alternativas. Deseja habilitar?'}
                          title={'Habilitar Questão'}/>
         {/* Dialog de escolha da avaliação */}
         <Dialog fullScreen onClose={handleChooseEvaluationExit} aria-labelledby="simple-dialog-title" open={openEvalationChoose}>

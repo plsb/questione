@@ -242,12 +242,10 @@ const QuestionSkill = props => {
                fk_course_id, fk_skill_id
             }
             const response= await api.put('question/update-course-skill/'+idQuestion, data);
-            console.log(response);
             if(response.status === 200){
                 loadAlert('success', 'Questão atualizada.');
             }
         } catch (error) {
-            console.log('error', error);
             loadAlert('error', 'Erro de conexão.')
         }
     }

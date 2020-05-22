@@ -123,11 +123,9 @@ const QuestionTable = props => {
         url += '&keyword='+keyword;
       }
       const response = await api.get(url);
-      console.log(url, response);
       setTotal(response.data.total);
       setQuestions(response.data.data);
     } catch (error) {
-      console.log(error);
       loadAlert('error', 'Erro de conexão.');
     }
   }

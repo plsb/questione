@@ -41,7 +41,7 @@ class AllUsers extends Controller
 
     public function keywords(Request $request)
     {
-        $keywords = DB::select('SELECT DISTINCT(keyword) FROM bancoquestoes.keywords_question
+        $keywords = DB::select('SELECT DISTINCT(keyword) FROM keywords_question
                     order by keyword', []);
 
         return response()->json($keywords, 200);

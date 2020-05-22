@@ -358,7 +358,6 @@ class QuestionController extends Controller
 
     public function destroy($id)
     {
-        //falta colocar para excluir todos os itens se for permitido a exclusao da questao
         $question = Question::find($id);
 
         if($question->validated == 1){
@@ -386,6 +385,12 @@ class QuestionController extends Controller
         $this->verifyRecord($question);
 
         //falta colocar validacao se a questão já tiver sido aplicada em uma avaliacao
+
+        //apaga as palavras-chave
+        $keywords = KeywordQuestion::where('fk_question_id', $question->id)->get();
+        foreach ($keywords as $keyword){
+            $keyword->delete();
+        }
 
         $question->delete();
 
@@ -458,6 +463,8 @@ class QuestionController extends Controller
             $question->id)->get();
 
         $objects = QuestionHasKnowledgeObject::where('fk_question_id', $question->id)->get();
+        $keywords = KeywordQuestion::where('fk_question_id', $question->id)->get();
+
         $new_question = new Question();
         $new_question->base_text = $question->base_text;
         $new_question->stem = $question->stem;
@@ -486,6 +493,14 @@ class QuestionController extends Controller
             $new_object->fk_question_id = $new_question->id;
             $new_object->fk_knowledge_object = $object->fk_knowledge_object;
             $new_object->save();
+        }
+
+        //duplica as palavras-chave
+        foreach($keywords as $keyword){
+            $new_key = new KeywordQuestion();
+            $new_key->keyword = $keyword->keyword;
+            $new_key->fk_question_id = $new_question->id;
+            $new_key->save();
         }
 
         return response()->json([

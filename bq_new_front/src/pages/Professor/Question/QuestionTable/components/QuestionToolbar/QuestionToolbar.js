@@ -126,7 +126,7 @@ const QuestionToolbar = props => {
 
   async function loadKeywordsAll(){
     try {
-      const response = await api.get('all/keywords/');
+      const response = await api.get('all/keywords');
       if(response.status === 200){
         setKeywordsAll(response.data);
       }
@@ -168,6 +168,8 @@ const QuestionToolbar = props => {
   const selectKeyWord = (event, newValue) => {
     if(newValue!=null){
       searchText[4] = {"keyword" : newValue.keyword};
+    } else {
+      searchText[4] = {"keyword" : ''};
     }
   }
 
@@ -267,7 +269,7 @@ const QuestionToolbar = props => {
                   ))}
                 </TextField>
                 <Autocomplete
-                    autoSelect={true}
+                    freeSolo
                     id="keywords"
                     options={keywordsAll}
                     getOptionLabel={(option) => option.keyword}
@@ -290,7 +292,7 @@ QuestionToolbar.propTypes = {
   className: PropTypes.string,
   onChangeSearch: PropTypes.func,
   onClickSearch: PropTypes.func,
-  searchText: PropTypes.object,
+  searchText: PropTypes.array,
   history: PropTypes.object
 };
 

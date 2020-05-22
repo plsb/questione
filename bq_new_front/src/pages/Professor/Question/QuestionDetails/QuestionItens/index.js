@@ -149,7 +149,7 @@ const QuestionItens = props => {
 
             }
         } catch (error) {
-
+            console.log(error);
         }
     }
 
@@ -168,7 +168,7 @@ const QuestionItens = props => {
             const id = element.idItem;
             let acao = "";
             if(id === 0){
-                response = await api.post('questionitem/', data);
+                response = await api.post('questionitem', data);
                 acao = "cadastradas";
             } else {
                 response = await api.put('questionitem/'+id,data);
@@ -181,6 +181,7 @@ const QuestionItens = props => {
                 loadAlert('error', 'Erro ao inserir alternativa.');
             }
         } catch (error) {
+            console.log(error);
             loadAlert('error', 'Erro de conexão.');
         }
     }

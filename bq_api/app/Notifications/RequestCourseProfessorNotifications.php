@@ -42,7 +42,7 @@ class RequestCourseProfessorNotifications extends Notification implements Should
     */
     public function toMail($notifiable)
     {
-        $url = "https://bancodequestoes.ifce.edu.br/";
+        $url = "https://questione.ifce.edu.br/";
 
         return (new MailMessage)
             ->subject('[QUESTIONE] Solicitação de acesso ao curso')

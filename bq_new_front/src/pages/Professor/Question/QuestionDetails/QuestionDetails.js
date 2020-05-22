@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
@@ -17,7 +17,6 @@ import api from "../../../../services/api";
 import Swal from "sweetalert2";
 import QuestionSkill from "./QuestionSkill";
 import QuestionKeywords from "./QuestionKeywords";
-import ReactHtmlParser from 'react-html-parser';
 
 const useStyles = makeStyles({
   root: {
@@ -109,7 +108,10 @@ const QuestionDetails = props => {
     }
 
   const handleChangeTab = (event, newValue) => {
-        setValue(newValue);
+      timer.current = setTimeout(() => {
+          setValue(newValue);
+      }, 400);
+
   };
 
     const handleBack = () => {
@@ -180,7 +182,6 @@ const QuestionDetails = props => {
                 setReference(response.data[0].reference);
                 setBaseText(response.data[0].base_text);
                 setStem(response.data[0].stem);
-                console.log('validada',response.data[0].validated);
             }
         } catch (error) {
             loadAlert('error', 'Erro de conexão.');
@@ -279,10 +280,10 @@ const QuestionDetails = props => {
                               plugins: [
                                   'textpattern advlist autolink lists link image charmap print',
                                   ' preview hr anchor pagebreak code media save',
-                                  'table contextmenu FMathEditor charmap'
+                                  'table contextmenu charmap'
                               ],
                               toolbar:
-                                  'insertfile undo redo | fontselect fontsizeselect | bold italic superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview FMathEditor  charmap'
+                                  'insertfile undo redo | fontselect fontsizeselect | bold italic superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview  charmap'
                           }}
                           value={baseText}
                           onEditorChange={handleChangeBaseText}
@@ -302,10 +303,10 @@ const QuestionDetails = props => {
                           plugins: [
                               'textpattern advlist autolink lists link image charmap print',
                               ' preview hr anchor pagebreak code media save',
-                              'table contextmenu FMathEditor charmap'
+                              'table contextmenu charmap'
                           ],
                           toolbar:
-                              'insertfile undo redo | fontselect fontsizeselect | bold italic superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview FMathEditor  charmap'
+                              'insertfile undo redo | fontselect fontsizeselect | bold italic superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview  charmap'
                       }}
                       value={stem}
                       onEditorChange={handleChangeStem}

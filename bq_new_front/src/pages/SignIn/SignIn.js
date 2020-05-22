@@ -20,7 +20,7 @@ const schema = {
     length: {
       maximum: 64,
       message: 'O e-mail deve conter no máximo 64 caracteres.'
-    }
+    },
   },
   password: {
     presence: { allowEmpty: false, message: 'A senha é obrigatória.'  },

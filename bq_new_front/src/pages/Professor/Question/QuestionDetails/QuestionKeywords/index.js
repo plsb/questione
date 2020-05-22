@@ -62,7 +62,7 @@ const QuestionKeywords = props => {
 
     async function loadKeywordsAll(){
         try {
-            const response = await api.get('all/keywords/');
+            const response = await api.get('all/keywords');
             if(response.status === 200){
                 setKeywordsAll(response.data);
             }
