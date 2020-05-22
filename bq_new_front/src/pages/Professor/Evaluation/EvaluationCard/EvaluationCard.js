@@ -9,7 +9,8 @@ import {
     Typography,
     CardContent,
     MenuItem,
-    Menu, Tooltip, Chip, colors, Dialog, AppBar, Toolbar, List, ListItem, ListItemText, TextField, Button
+    Menu, Tooltip, Chip, colors, Dialog, AppBar, Toolbar,
+    List, ListItem, ListItemText, TextField, Button
 } from '@material-ui/core';
 import { MoreVert, FileCopyOutlined, Edit } from '@material-ui/icons';
 import moment from 'moment';

@@ -17,6 +17,7 @@ import {withRouter} from "react-router-dom";
 import api from "../../../../../../services/api";
 import {SearchInput} from "../../../../../../components";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -54,7 +55,7 @@ const QuestionToolbar = props => {
   const [courseSelect, setCourseSelect] = useState([]);
   const [objectSelect, setObjectSelect] = useState([]);
   const [skillSelect, setSkillSelect] = useState([]);
-  const [textBaseSelect, setTextBaseSelect] = useState('');
+  const [keywordsAll, setKeywordsAll] = useState([]);
   /* S - suas questões
      T - todas as questões
    */
@@ -81,11 +82,6 @@ const QuestionToolbar = props => {
   const onChangeSkill = (e) =>{
     setSkillSelect(e.target.value);
     searchText[3] = {"fk_skill_id" : e.target.value};
-  }
-
-  const onChangeTextBase = (e) =>{
-    setTextBaseSelect(e.target.value);
-    searchText[4] = {"base_text" : e.target.value};
   }
 
   async function loadCourses(){
@@ -128,6 +124,16 @@ const QuestionToolbar = props => {
     }
   }
 
+  async function loadKeywordsAll(){
+    try {
+      const response = await api.get('all/keywords/');
+      if(response.status === 200){
+        setKeywordsAll(response.data);
+      }
+    } catch (error) {
+    }
+  }
+
   const handleChangeSelect = (e) => {
     setValueSelect(e.target.value);
     searchText[0] = {"value" : e.target.value};
@@ -139,10 +145,11 @@ const QuestionToolbar = props => {
     searchText[1] = {"fk_course_id" : 0};
     searchText[2] = {"fk_object_id" : 0};
     searchText[3] = {"fk_skill_id" : 0};
-    searchText[4] = {"base_text" : ''};
+    searchText[4] = {"keyword" : ''};
   }, []);
 
   useEffect(() => {
+    loadKeywordsAll();
     if(courseSelect != 0) {
       loadObjects();
       loadSkills();
@@ -157,6 +164,12 @@ const QuestionToolbar = props => {
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  const selectKeyWord = (event, newValue) => {
+    if(newValue!=null){
+      searchText[4] = {"keyword" : newValue.keyword};
+    }
+  }
 
   return (
       <div
@@ -253,13 +266,16 @@ const QuestionToolbar = props => {
                       </MenuItem>
                   ))}
                 </TextField>
-                <SearchInput
-                    className={classes.textField}
-                    placeholder="Pesquisar no texto base"
-                    onChange={onChangeTextBase}
-                    value={textBaseSelect}
+                <Autocomplete
+                    autoSelect={true}
+                    id="keywords"
+                    options={keywordsAll}
+                    getOptionLabel={(option) => option.keyword}
+                    onChange={(event, newValue) => selectKeyWord(event, newValue)}
+                    style={{ marginLeft: '10px', width: '300px' }}
+                    renderInput={(params) =>
+                        <TextField {...params} label="Palavra-chave" variant="outlined" />}
                 />
-
               </div>
 
             </CardContent>

@@ -57,6 +57,10 @@ class Question extends Model
         return $teste;
     }
 
+    public function keywords(){
+        return $this->hasMany(KeywordQuestion::class, 'fk_question_id');
+    }
+
     /*
     public function professores_valida_questao(){
         return $this->belongsToMany(User::class, 'professor_valida_questao',

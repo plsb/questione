@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import {
     MenuItem,
     TextField,
-    Button, Grid
+    Button, Grid, Tooltip
 } from "@material-ui/core";
 import api from "../../../../../services/api";
 import PropTypes from "prop-types";
@@ -11,6 +11,7 @@ import {withRouter} from "react-router-dom";
 import Swal from "sweetalert2";
 import clsx from "clsx";
 import Save from "@material-ui/icons/Save";
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 const useStyles = makeStyles({
     root: {
@@ -29,6 +30,7 @@ const QuestionSkill = props => {
     const [courses, setCourses] = useState([{'id': '0', 'description': 'Todos as áreas'}]);
     const [objects, setObjects] = useState([]);
     const [skills, setSkills] = useState([]);
+    const [keywords, setKeywords] = useState([]);
     const [courseSelect, setCourseSelect] = useState(0);
     const [objectSelect, setObjectSelect] = useState([]);
     const [skillSelect, setSkillSelect] = useState([]);
@@ -60,6 +62,16 @@ const QuestionSkill = props => {
             icon: icon,
             title: message
         });
+    }
+
+    async function loadKeywords(){
+        try {
+            const response = await api.get('all/keywords/');
+            if(response.status === 200){
+                setKeywords(response.data);
+            }
+        } catch (error) {
+        }
     }
 
     async function loadQuestion(){
@@ -168,6 +180,7 @@ const QuestionSkill = props => {
     useEffect(() => {
         loadSkills();
         loadObjects();
+        loadKeywords();
     }, [courseSelect]);
 
     useEffect(() => {
@@ -229,12 +242,13 @@ const QuestionSkill = props => {
                fk_course_id, fk_skill_id
             }
             const response= await api.put('question/update-course-skill/'+idQuestion, data);
-
+            console.log(response);
             if(response.status === 200){
                 loadAlert('success', 'Questão atualizada.');
             }
         } catch (error) {
-
+            console.log('error', error);
+            loadAlert('error', 'Erro de conexão.')
         }
     }
 
@@ -275,6 +289,7 @@ const QuestionSkill = props => {
     }
 
     const onClickSkill = () => {
+
         if(courseSelect == 0){
             loadAlert('error', 'Informe a área.');
             return ;
@@ -340,10 +355,12 @@ const QuestionSkill = props => {
                    direction="row"
                    justify="center"
                    alignItems="center">
-                   { btAddObject == true ?
-                   <Button color="primary" variant="outlined" onClick={handleAddObjects}>Adicionar Objeto</Button> :
-                       <Button color="primary" variant="outlined" disabled>Adicionar Objeto</Button>
-                   }
+                   <Tooltip title="A questão deverá ter no máximo 03 objetos de conhecimento.">
+                       { btAddObject == true ?
+                       <Button color="primary" variant="outlined" onClick={handleAddObjects}>Adicionar Objeto</Button> :
+                           <Button color="primary" variant="outlined" disabled>Adicionar Objeto</Button>
+                       }
+                   </Tooltip>
                    {btRemoveObject == true ?
                        <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined" onClick={handleRemoveObjects}>Remover Objeto</Button> :
                        <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined" disabled>Remover Objeto</Button>

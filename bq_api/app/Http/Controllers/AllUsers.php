@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Course;
 use App\CourseProfessor;
+use App\KeywordQuestion;
 use App\KnowledgeObject;
 use App\Skill;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Validator;
 
 class AllUsers extends Controller
@@ -35,6 +37,14 @@ class AllUsers extends Controller
             ->get();
 
         return response()->json($skill, 200);
+    }
+
+    public function keywords(Request $request)
+    {
+        $keywords = DB::select('SELECT DISTINCT(keyword) FROM bancoquestoes.keywords_question
+                    order by keyword', []);
+
+        return response()->json($keywords, 200);
     }
 
     public function knowledgeObjects(Request $request)

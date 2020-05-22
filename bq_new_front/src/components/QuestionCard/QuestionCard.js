@@ -435,7 +435,7 @@ const QuestionCard = props => {
                                     inputProps={{ 'aria-label': 'primary checkbox' }}
                                 />
                         </Tooltip> : null }
-                        { question.validated == 0 && question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
+                        { question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
                             <Tooltip title="Editar Questão">
                                 <IconButton className={classes.labelRank}
                                     aria-label="copy"
@@ -504,7 +504,7 @@ const QuestionCard = props => {
                 { question.knowledge_objects.length != 0 ?
                     <div>
                         <Typography variant="button" color="textSecondary" component="p">
-                            Objeto(s) de Conhecimento:
+                            Objeto(s) de conhecimento:
                         </Typography>
                         {question.knowledge_objects.map(item => (
                             <div> { ReactHtmlParser (item.description) } </div>
@@ -512,6 +512,20 @@ const QuestionCard = props => {
                         <br />
                     </div>
                     : null}
+
+                { question.keywords.length != 0 ?
+                    <div>
+                        <Typography variant="button" color="textSecondary" component="p">
+                            Palavra(s)-chave:
+                        </Typography>
+                        {question.keywords.map(item => (
+                              ReactHtmlParser (item.keyword) + '; '
+                        ))}
+                        <br /> <br />
+                    </div>
+                    : null}
+
+
 
                 <Typography variant="button" color="textSecondary" component="p">
                 Texto base:
@@ -583,7 +597,7 @@ const QuestionCard = props => {
                          open={openEnableQuestion}
                          onClickAgree={handleChangeValidated}
                          onClickDisagree={onClickCloseDialogEnableQuestion}
-                         mesage={'Depois de habilitada, a questão não poderá ser excluída nem editada. Deseja habilitar?'}
+                         mesage={'Depois de habilitada, a questão não poderá sofrer mudanças no texto base, enunciado e alternativas. Deseja habilitar?'}
                          title={'Habilitar Questão'}/>
         {/* Dialog de escolha da avaliação */}
         <Dialog fullScreen onClose={handleChooseEvaluationExit} aria-labelledby="simple-dialog-title" open={openEvalationChoose}>

@@ -70,11 +70,12 @@ class QuestionHasKnowledgeObjectController extends Controller
             return response()->json([
                 'message' => 'A questão pertence a um outro usuário.'
             ], 202);
-        } else if($question->validated == 1){
+        }
+        /*if($question->validated == 1){
             return response()->json([
                 'message' => 'A questão já está validada.'
             ], 202);
-        }
+        }*/
 
         $object = KnowledgeObject::find($request->fk_knowledge_object);
         if(!$object){
@@ -125,11 +126,11 @@ class QuestionHasKnowledgeObjectController extends Controller
 
         $question = Question::where('id', $objectQuestion->fk_question_id)->first();
 
-        if($question->validated == 1){
+        /*if($question->validated == 1){
             return response()->json([
                 'message' => 'A questão já está validada.'
             ], 202);
-        }
+        }*/
 
         $user = auth('api')->user();
         if($user->id != $question->fk_user_id){
@@ -160,11 +161,11 @@ class QuestionHasKnowledgeObjectController extends Controller
 
         $question = Question::where('id', $objectQuestion->fk_question_id)->first();
 
-        if($question->validated == 1){
+        /*if($question->validated == 1){
             return response()->json([
                 'message' => 'A questão já está validada.'
             ], 202);
-        }
+        }*/
 
         $user = auth('api')->user();
         if($user->id != $question->fk_user_id){

@@ -24,6 +24,7 @@ Route::group(['prefix' => 'all'], function (){
     Route::get('/skills', 'AllUsers@skills')->name('all.skills');
     Route::put('/update-profile-user', 'AllUsers@updateProfileUser')->name('all.updateProfileUser');
     Route::get('/courses-user', 'AllUsers@coursesUser')->name('all.coursesUser');
+    Route::get('/keywords', 'AllUsers@keywords')->name('all.keywords');
 });
 
 Route::group(['prefix' => 'user'], function (){
@@ -90,6 +91,10 @@ Route::group(['prefix' => 'question'], function (){
     Route::post('/addobject/', 'Professor\QuestionHasKnowledgeObjectController@addKnowledgeObject')->name('question.addKnowledgeObject');
     Route::put('/update-object/{id}', 'Professor\QuestionHasKnowledgeObjectController@update')->name('question.update');
     Route::delete('/deleteobject/{id}', 'Professor\QuestionHasKnowledgeObjectController@deleteKnowledgeObject')->name('question.deleteKnowledgeObject');
+    //keyword
+    Route::get('/keyword/{idQuestion}', 'Professor\KeywordsQuestionController@index')->name('keyword.index');
+    Route::post('/keyword/', 'Professor\KeywordsQuestionController@store')->name('keyword.store');
+    Route::delete('/keyword/{idQuestion}', 'Professor\KeywordsQuestionController@delete')->name('keyword.delete');
 });
 
 Route::group(['prefix' => 'questionitem'], function (){

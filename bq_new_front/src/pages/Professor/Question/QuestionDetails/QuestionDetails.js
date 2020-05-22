@@ -5,7 +5,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {
     Box, Grid, IconButton, TextField, Typography,
-    Button, Icon, MenuItem
+    Button, Tooltip
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import {withRouter} from "react-router-dom";
@@ -16,6 +16,8 @@ import Save from "@material-ui/icons/Save";
 import api from "../../../../services/api";
 import Swal from "sweetalert2";
 import QuestionSkill from "./QuestionSkill";
+import QuestionKeywords from "./QuestionKeywords";
+import ReactHtmlParser from 'react-html-parser';
 
 const useStyles = makeStyles({
   root: {
@@ -80,6 +82,7 @@ const QuestionDetails = props => {
     const [baseText, setBaseText] = React.useState('');
     const [stem, setStem] = React.useState('');
     const [reference, setReference] = React.useState('');
+    const [validated, setValidated] = React.useState(0);
     //utilizado pra quando for nova questão
     const [idQuestionNew, setIdQuestionNew] = React.useState(0);
 
@@ -106,7 +109,6 @@ const QuestionDetails = props => {
     }
 
   const handleChangeTab = (event, newValue) => {
-        saveQuestion();
         setValue(newValue);
   };
 
@@ -174,9 +176,11 @@ const QuestionDetails = props => {
                     loadAlert('error', response.data.message);
                 }
             } else {
+                setValidated(response.data[0].validated)
                 setReference(response.data[0].reference);
                 setBaseText(response.data[0].base_text);
                 setStem(response.data[0].stem);
+                console.log('validada',response.data[0].validated);
             }
         } catch (error) {
             loadAlert('error', 'Erro de conexão.');
@@ -190,6 +194,12 @@ const QuestionDetails = props => {
             setTabSkill(true);
         }
     }, []);
+
+    useEffect(() => {
+        if(validated == 1){
+            setValue(2);
+        }
+    }, [validated]);
 
     useEffect(() => {
 
@@ -219,13 +229,21 @@ const QuestionDetails = props => {
               value={value}
               onChange={handleChangeTab}
               aria-label="nav tabs example">
+              { validated != 1 ?
               <LinkTab label="Texto base & Enunciado" href="/drafts" {...a11yProps(0)} />
-              { tabItens==true ?
-              <LinkTab label="Alternativas" href="#"  {...a11yProps(1)} />
-                   : null  }
+                : <LinkTab label="Texto base & Enunciado" disabled href="/drafts" {...a11yProps(0)} />
+              }
+              { validated == 1 ?
+                  <LinkTab label="Alternativas" disabled href="#"  {...a11yProps(1)} />
+                  : tabItens == true ?
+                      <LinkTab label="Alternativas" href="#"  {...a11yProps(1)} />
+                           : null  }
               { tabSkill==true ?
               <LinkTab label="Área de Conhecimento" href="#" {...a11yProps(2)} />
                     :  null }
+              { tabSkill==true ?
+                  <LinkTab label="Palavras-chave" href="#" {...a11yProps(3)} />
+                  :  null }
           </Tabs>
           {/*texto base e enunciado*/}
           <TabPanel value={value} index={0}>
@@ -234,40 +252,42 @@ const QuestionDetails = props => {
                   direction="row"
                   justify="center"
                   alignItems="center">
-                  <TextField
-                      key="reference"
-                      fullWidth
-                      label="Referência"
-                      margin="dense"
-                      name="reference"
-                      variant="outlined"
-                      value={reference}
-                      onChange={handleChangeReference}
-                      style={{width: '90%', justifyContent: 'center'}}
-                  />
+                  <Tooltip title="Caso a questão tenha sido construída baseada em alguma já aplicada, você pode informar no campo referência. Ex: ENADE 2020, ENEM 2020, etc.">
+                      <TextField
+                          key="reference"
+                          fullWidth
+                          label="Referência"
+                          margin="dense"
+                          name="reference"
+                          variant="outlined"
+                          value={reference}
+                          onChange={handleChangeReference}
+                          style={{width: '90%', justifyContent: 'center'}}
+                      />
+                  </Tooltip>
               </Grid>
               <div style={{padding: "30px"}}>
                   <b className="item1">Texto base</b>
-                  <Editor
-                      apiKey="viwc1vmqpf6f7ozb7m90ayace892e32hsg99bhpo06p6bz3d"
-                      init={{
-                          height: 200,
-                          menubar: false,
-                          file_picker_types: 'image',
-                          images_upload_url: 'postAcceptor.php',
-                          automatic_uploads: false,
-                          plugins: [
-                              'textpattern advlist autolink lists link image charmap print',
-                              ' preview hr anchor pagebreak code media save',
-                              'table contextmenu FMathEditor charmap'
-                          ],
-                          toolbar:
-                              'insertfile undo redo | fontselect fontsizeselect | bold italic superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview FMathEditor  charmap'
-                      }}
-                      value={baseText}
-                      onEditorChange={handleChangeBaseText}
-                      name="base_text"
-                      key="base_text"/>
+                      <Editor
+                          apiKey="viwc1vmqpf6f7ozb7m90ayace892e32hsg99bhpo06p6bz3d"
+                          init={{
+                              height: 200,
+                              menubar: false,
+                              file_picker_types: 'image',
+                              images_upload_url: 'postAcceptor.php',
+                              automatic_uploads: false,
+                              plugins: [
+                                  'textpattern advlist autolink lists link image charmap print',
+                                  ' preview hr anchor pagebreak code media save',
+                                  'table contextmenu FMathEditor charmap'
+                              ],
+                              toolbar:
+                                  'insertfile undo redo | fontselect fontsizeselect | bold italic superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview FMathEditor  charmap'
+                          }}
+                          value={baseText}
+                          onEditorChange={handleChangeBaseText}
+                          name="base_text"
+                          key="base_text"/>
               </div>
               <div style={{padding: "30px"}}>
                   <b className="item1">Enunciado</b>
@@ -297,14 +317,14 @@ const QuestionDetails = props => {
                   direction="row"
                   justify="center"
                   alignItems="center">
-                  <Button
-                      variant="contained"
-                      color="primary"
-                      className={classes.button}
-                      endIcon={<Save/>}
-                        onClick={onClickTab1}>
-                      Salvar
-                  </Button>
+                      <Button
+                          variant="contained"
+                          color="primary"
+                          className={classes.button}
+                          endIcon={<Save/>}
+                            onClick={onClickTab1}>
+                          Salvar
+                      </Button>
               </Grid>
 
           </TabPanel>
@@ -316,6 +336,11 @@ const QuestionDetails = props => {
           {/* CURSO E COMPETÊNCIA*/}
           <TabPanel value={value} index={2}>
             <QuestionSkill idQuestion={idQuestion}/>
+
+          </TabPanel>
+          {/* PALAVRAS-CHAVE*/}
+          <TabPanel value={value} index={3}>
+                <QuestionKeywords idQuestion={idQuestion}/>
 
           </TabPanel>
 

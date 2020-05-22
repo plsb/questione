@@ -234,14 +234,18 @@ const QuestionItens = props => {
                    direction="row"
                    justify="center"
                    alignItems="center">
-                   { btAddItem == true ?
-                       <Button color="primary" variant="outlined"  onClick={handleAddItem}>Adicionar Alternativa</Button> :
-                       <Button color="primary" variant="outlined"  disabled>Adicionar Alternativa</Button>
-                   }
-                   {btRemoveItem == true ?
-                       <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined"  onClick={handleRemoveItem}>Remover Alternativa</Button> :
-                       <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined"  disabled>Remover Alternativa</Button>
-                   }
+                   <Tooltip title="A questão deverá ter no mínimo 02 e no máximo 05 alternativas, sendo apenas UMA correta.">
+                       { btAddItem == true ?
+                           <Button color="primary" variant="outlined"  onClick={handleAddItem}>Adicionar Alternativa</Button> :
+                           <Button color="primary" variant="outlined"  disabled>Adicionar Alternativa</Button>
+                       }
+                   </Tooltip>
+                   <Tooltip title="A questão deverá ter no mínimo 02 e no máximo 05 alternativas, sendo apenas UMA correta.">
+                       {btRemoveItem == true ?
+                           <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined"  onClick={handleRemoveItem}>Remover Alternativa</Button> :
+                           <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined"  disabled>Remover Alternativa</Button>
+                       }
+                   </Tooltip>
                </Grid>
            </div>
            {inputItens.map((inputField, index) => (

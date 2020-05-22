@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Professor;
 use App\Course;
 use App\CourseProfessor;
 use App\EvaluationHasQuestions;
+use App\KeywordQuestion;
 use App\KnowledgeObject;
 use App\Profile;
 use App\Question;
@@ -50,7 +51,7 @@ class QuestionController extends Controller
         $course = $request->fk_course_id;
         $object = $request->fk_object_id;
         $skill = $request->fk_skill_id;
-        $base_text = $request->base_text;
+        $keyword = $request->keyword;
         //dd($course);
         $questions = Question::when($opcao == "S", function ($query, $opcao) {
                 //pega todas as questões do usuário logado
@@ -73,13 +74,19 @@ class QuestionController extends Controller
                 return $query->where('fk_skill_id', '=', $skill);
 
             })
-            ->when($base_text, function ($query) use ($base_text){
+            ->when($keyword, function ($query) use ($keyword){
                 //pega questão de um curso específicp
                 //dd($course);
-                return $query->where('base_text', 'like', '%'.$base_text.'%');
+                $listKeywords = KeywordQuestion::where('keyword', $keyword)->get();
+                $arr = array();
+                foreach ($listKeywords as $key){
+                    //dd($enaq);
+                    $arr[] = $key->fk_question_id;
+                }
+                return $query->whereIn('id', $arr);
 
             })
-            ->when(($opcao == "T") && ($course == 0 || $course == null), function ($query) {
+            ->when(($opcao != "S") && ($course == 0 || $course == null), function ($query) {
                 //pega questões de todos os cursos que o usuário tem permissão
                 $user = auth('api')->user();
                 $courses_user = CourseProfessor::where('fk_user_id', $user->id)
@@ -89,7 +96,8 @@ class QuestionController extends Controller
                     //dd($enaq);
                     $arr[] = $courses_u->fk_course_id;
                 }
-                return $query->whereIn('fk_course_id', $arr);
+                return $query->whereIn('fk_course_id', $arr)
+                        ->where('validated', 1);
             })
             ->when($object > 0, function ($query) use ($object) {
                 //pega questões de todos os cursos
@@ -105,6 +113,7 @@ class QuestionController extends Controller
             })
             ->orderBy('id', 'desc')
             ->withCount('rank')
+            ->with('keywords')
             ->with('rankAvg')
             ->with('rankByUserActive')
             ->with('course')
@@ -309,13 +318,6 @@ class QuestionController extends Controller
         if($question->fk_user_id != $user->id){
             return response()->json([
                 'message' => 'Acesso não permitido para esta questão.'
-            ], 202);
-        }
-
-        if($question->validated == 1){
-            //falta colocar validacao se a questão já tiver sido aplicada em uma avaliacao
-            return response()->json([
-                'message' => 'A questão não pode ser editada.'
             ], 202);
         }
 

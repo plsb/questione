@@ -118,14 +118,16 @@ const QuestionTable = props => {
 
       }
       let data = {};
-      if(searchText[4].base_text != ''){
-        const base_text = searchText[4].base_text.replace(" ", "%20");
-        url += '&base_text='+base_text;
+      if(searchText[4].keyword != ''){
+        const keyword = searchText[4].keyword.split(" ").join("%20");
+        url += '&keyword='+keyword;
       }
       const response = await api.get(url);
+      console.log(url, response);
       setTotal(response.data.total);
       setQuestions(response.data.data);
     } catch (error) {
+      console.log(error);
       loadAlert('error', 'Erro de conexão.');
     }
   }
