@@ -5,26 +5,37 @@ import { makeStyles } from '@material-ui/styles';
 import {Avatar, Grid, Link, Typography} from '@material-ui/core';
 import {getInitials} from "../../../../../../helpers";
 import {Link as RouterLink} from "react-router-dom";
+import Chip from '@material-ui/core/Chip';
+import PlayCircleOutline from '@material-ui/icons/PlayCircleOutline';
 
 const useStyles = makeStyles(theme => ({
-  root: {
+    root: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: 'fit-content'
-  },
-  avatar: {
+    },
+    avatar: {
     width: 60,
     height: 60
-  },
-  name: {
+    },
+    name: {
     marginTop: theme.spacing(1)
-  }
+    },
+    tour: {
+        backgroundColor: '#5DE2A5',
+        display: 'block',
+        margin: '8px',
+        padding: '0 4px',
+        textAlign: 'center',
+        color: '#fff',
+        borderRadius: 4
+    }
 }));
 
 const Profile = props => {
-  const { className, ...rest } = props;
+  const { className, openTour, ...rest } = props;
 
   const classes = useStyles();
 
@@ -65,16 +76,30 @@ const Profile = props => {
         <Link
             component={RouterLink}
             to="/account"
-            variant="body2">
+            variant="body2" className="update-profile">
           clicando aqui.
         </Link>
       </Typography>
+        { localStorage.getItem("@Questione-acess-level-user") != 1 ?
+        <Chip
+            className="tour-questione"
+            size="small"
+            label="Tour Questione"
+            clickable
+            variant="outlined"
+            color="primary"
+            onClick={openTour}
+            onDelete={openTour}
+            deleteIcon={<PlayCircleOutline />}
+            style={{marginTop: '5px'}}
+        /> : null }
     </div>
   );
 };
 
 Profile.propTypes = {
-  className: PropTypes.string
+  className: PropTypes.string,
+    openTour: PropTypes.func,
 };
 
 export default Profile;

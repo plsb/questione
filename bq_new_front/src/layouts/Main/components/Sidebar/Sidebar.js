@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Sidebar = props => {
-  const { open, variant, onClose, history, className, ...rest } = props;
+  const { open, variant, onClose, history, openTour, className, ...rest } = props;
 
   const classes = useStyles();
 
@@ -72,22 +72,26 @@ const Sidebar = props => {
     {
       title: 'Questões',
       href: '/questions',
-      icon: <DashboardIcon />
+      icon: <DashboardIcon />,
+      className: 'question-professor',
     },
     {
       title: 'Avaliações',
       href: '/evaluations',
-      icon: <Ballot />
+      icon: <Ballot />,
+      className: 'evaluation-professor',
     },
     {
       title: 'Aplicações',
       href: '/applications-evaluation',
-      icon: <Assignment />
+      icon: <Assignment />,
+      className: 'applications-professor',
     },
     {
       title: 'Avaliações respondidas',
       href: '/student/result-evaluations',
-      icon: <Assessment />
+      icon: <Assessment />,
+      className: 'result-evaluations',
     }
   ];
 
@@ -98,9 +102,10 @@ const Sidebar = props => {
       icon: <DashboardIcon />
     },
     {
-      title: 'Minhas Avaliações',
+      title: 'Avaliações respondidas',
       href: '/student/result-evaluations',
-      icon: <Assessment />
+      icon: <Assessment />,
+      className: 'result-evaluations',
     }
   ];
 
@@ -124,7 +129,7 @@ const Sidebar = props => {
       <div
         {...rest}
         className={clsx(classes.root, className)}>
-        <Profile />
+        <Profile openTour={openTour}/>
         <Divider className={classes.divider} />
         <SidebarNavAdm
             className={classes.nav}
@@ -138,6 +143,7 @@ const Sidebar = props => {
 Sidebar.propTypes = {
   className: PropTypes.string,
   onClose: PropTypes.func,
+  openTour: PropTypes.func,
   open: PropTypes.bool.isRequired,
   variant: PropTypes.string.isRequired
 };

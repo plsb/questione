@@ -27,7 +27,9 @@
     "react-perfect-scrollbar": "^1.5.3",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
+    "reactour": "^1.17.0",
     "reactstrap": "^8.4.1",
+    "styled-components": "^4.4.1",
     "sweetalert2": "^9.10.12",
     "validate.js": "^0.13.1"
   },

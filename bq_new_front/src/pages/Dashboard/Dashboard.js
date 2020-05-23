@@ -32,7 +32,7 @@ const Dashboard = () => {
         <Grid
             item
             xs={12}>
-          <StartEvaluationCard colorBox="#03a9f4" />
+          <StartEvaluationCard colorBox="#03a9f4" className="start-evaluation-card"/>
         </Grid>
       </Grid>
       <Grid
@@ -44,7 +44,7 @@ const Dashboard = () => {
           sm={6}
           xl={3}
           xs={12}>
-          <TotalQuestion />
+          <TotalQuestion className="total-question"/>
         </Grid>
         <Grid
           item
@@ -52,7 +52,7 @@ const Dashboard = () => {
           sm={6}
           xl={3}
           xs={12}>
-          <TotalStudent />
+          <TotalStudent className="total-student"/>
         </Grid>
         <Grid
           item
@@ -60,7 +60,7 @@ const Dashboard = () => {
           sm={6}
           xl={3}
           xs={12}>
-          <TotalProfessor />
+          <TotalProfessor className="total-professor"/>
         </Grid>
         <Grid
           item
@@ -68,7 +68,7 @@ const Dashboard = () => {
           sm={6}
           xl={3}
           xs={12}>
-          <TotalEvaluation />
+          <TotalEvaluation className="total-evaluation"/>
         </Grid>
         {/*<Grid
           item

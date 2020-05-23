@@ -22,10 +22,10 @@ const Footer = props => {
         <div className={classes.logoImage}>
             <img
                 alt="Logo"
-                src="/images/leds.png"/>
+                src="/images/leds.png" className="leds"/>
             <img
                 alt="Logo"
-                src="/images/gipea.png" style={{marginLeft: '15px'}}/>
+                src="/images/gipea.png" style={{marginLeft: '15px'}} className="gipea"/>
 
             <Link
                 component="a"
