@@ -126,7 +126,7 @@ const QuestionTable = props => {
       setTotal(response.data.total);
       setQuestions(response.data.data);
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+      //loadAlert('error', 'Erro de conexão.');
     }
   }
 

@@ -199,8 +199,7 @@ const SignUp = props => {
         history.push('/sign-in');
       }
     } catch (error) {
-      console.log(error)
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 

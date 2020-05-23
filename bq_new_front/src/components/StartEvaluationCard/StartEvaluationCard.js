@@ -12,10 +12,8 @@ import {
   Box
 } from '@material-ui/core';
 import QuestionAnswer from '@material-ui/icons/QuestionAnswer';
-import CropFree from '@material-ui/icons/CropFree';
 import Swal from "sweetalert2";
 import {withRouter} from "react-router-dom";
-import api from "../../services/api";
 
 const useStyles = makeStyles(theme => ({
   root: {

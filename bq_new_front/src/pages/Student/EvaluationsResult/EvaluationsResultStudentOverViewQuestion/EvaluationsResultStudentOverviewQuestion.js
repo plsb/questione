@@ -6,15 +6,11 @@ import {
   Card,
   CardHeader,
   CardContent,
-  CardActions,
-  Divider,
-  Grid,
-  Button,
-  TextField, IconButton, Table, TableHead, TableRow,
-  TableCell, TableBody, Tab, Paper, Tabs,
-    Box, Typography, AppBar, Collapse
+   IconButton,
+   Paper,
+    Box, Typography, Collapse
 } from '@material-ui/core';
-import { Done, Close, ExpandMoreRounded } from "@material-ui/icons";
+import { ExpandMoreRounded } from "@material-ui/icons";
 import ReactHtmlParser from "react-html-parser";
 
 const useStyles = makeStyles(() => ({

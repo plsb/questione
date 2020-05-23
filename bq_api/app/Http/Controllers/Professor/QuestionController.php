@@ -124,7 +124,6 @@ class QuestionController extends Controller
             ->with('questionItems')
             ->paginate(8);
 
-        //dd($questions);
         return response()->json($questions, 200);
     }
 

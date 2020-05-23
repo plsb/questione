@@ -45,7 +45,7 @@ const Main = props => {
     };
 
     useEffect(() => {
-        console.log(localStorage.getItem("@Questione-acess-level-user"), stepsProfessor);
+
     }, []);
 
     const shouldOpenSidebar = isDesktop ? true : openSidebar;

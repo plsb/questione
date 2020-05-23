@@ -1,17 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import {
   Card,
   CardHeader,
-  CardContent, IconButton, Paper,
-  Box, Typography, AppBar, Collapse, Tooltip, Tab, Tabs, Switch, Chip,
+  CardContent, Paper,
+  Box, Typography, Tooltip, Tab, Tabs,
 } from '@material-ui/core';
 import {withStyles} from "@material-ui/core/styles";
 import api from "../../../../../services/api";
-import {Edit, FormatListBulleted} from "@material-ui/icons";
-import moment from "moment";
 
 const useStyles = makeStyles(() => ({
   root: {

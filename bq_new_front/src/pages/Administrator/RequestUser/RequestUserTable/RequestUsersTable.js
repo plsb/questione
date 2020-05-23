@@ -6,13 +6,11 @@ import {
   Card,
   CardActions,
   CardContent,
-  Avatar,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  Typography,
   TablePagination, Button, Tooltip
 } from '@material-ui/core';
 import api from '../../../../services/api';
@@ -112,10 +110,12 @@ const RequestUsersTable = props => {
     try {
       let url = 'course-professor?page='+page+'&valid='+situation;
       const response = await api.get(url);
-      setTotal(response.data.total);
-      setCourseProfessor(response.data.data);
+      if(response.status == 200) {
+        setTotal(response.data.total);
+        setCourseProfessor(response.data.data);
+      }
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 

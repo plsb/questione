@@ -96,7 +96,7 @@ const AccountDetails = props => {
     } catch (error) {
       logout();
       history.push('/');
-      loadAlert('error', 'Não foi possível executar a operação.');
+
     }
   }
 

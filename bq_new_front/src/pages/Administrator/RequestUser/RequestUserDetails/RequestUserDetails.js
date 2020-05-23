@@ -73,7 +73,7 @@ const RequestUserDetails = props => {
       }
 
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 
@@ -97,7 +97,7 @@ const RequestUserDetails = props => {
           })
           .catch((error) => console.log(error));
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 
@@ -123,7 +123,7 @@ const RequestUserDetails = props => {
         }));
       }
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 

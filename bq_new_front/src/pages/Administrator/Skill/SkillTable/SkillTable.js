@@ -6,7 +6,6 @@ import {
   Card,
   CardActions,
   CardContent,
-  Avatar,
   Table,
   TableBody,
   TableCell,
@@ -105,10 +104,12 @@ const SkillTable = props => {
         url += '&fk_course_id='+searchText;
       }
       const response = await api.get(url);
-      setTotal(response.data.total);
-      setSkills(response.data.data);
+      if(response.status == 200) {
+        setTotal(response.data.total);
+        setSkills(response.data.data);
+      }
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 
@@ -143,7 +144,7 @@ const SkillTable = props => {
         loadSkill(page+1);
       }
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
     setOpen(false);
   }

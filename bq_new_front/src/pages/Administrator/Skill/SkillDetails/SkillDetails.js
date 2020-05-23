@@ -77,9 +77,11 @@ const SkillDetails = props => {
   async function loadCourses(){
     try {
       const response = await api.get('all/courses');
-      setCourses([...courses, ...response.data]);
+      if(response == 200) {
+        setCourses([...courses, ...response.data]);
+      }
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 
@@ -114,7 +116,7 @@ const SkillDetails = props => {
       }
 
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 
@@ -138,7 +140,7 @@ const SkillDetails = props => {
         }));
       }
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 

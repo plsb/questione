@@ -120,7 +120,9 @@ const QuestionCard = props => {
             let url = '/evaluation/choose';
 
             const response = await api.get(url);
-            setEvaluations(response.data);
+            if(response.status == 200) {
+                setEvaluations(response.data);
+            }
         } catch (error) {
             setEvaluations([]);
         }
@@ -131,14 +133,16 @@ const QuestionCard = props => {
             let response = await api.get('/rank/by-user?fk_question_id='+question.id);
             //verifica se usuário já classificou
             let rank = 0;
-            if(response.data.id){
-                rank = response.data.rank;
-                setRankUserQuestion(response.data.rank);
-            }
-            if(rank > 0 || question.fk_user_id == localStorage.getItem("@Questione-id-user")){
-                response = await api.get('/rank/by-question?fk_question_id='+question.id);
-                rank = response.data[0].avg;
-                setQtRank(response.data[0].count);
+            if(response.status == 200) {
+                if (response.data.id) {
+                    rank = response.data.rank;
+                    setRankUserQuestion(response.data.rank);
+                }
+                if (rank > 0 || question.fk_user_id == localStorage.getItem("@Questione-id-user")) {
+                    response = await api.get('/rank/by-question?fk_question_id=' + question.id);
+                    rank = response.data[0].avg;
+                    setQtRank(response.data[0].count);
+                }
             }
             setRank(rank);
 
@@ -272,8 +276,7 @@ const QuestionCard = props => {
                 setRefresh(refresh+1);
             }
         } catch (error) {
-            console.log(error);
-            loadAlert('error', 'Erro de conexão.');
+
         }
     }
 
@@ -295,7 +298,7 @@ const QuestionCard = props => {
                 setRefresh(refresh+1);
             }
         } catch (error) {
-            loadAlert('error', 'Erro de conexão.');
+
         }
     }
 
@@ -320,7 +323,7 @@ const QuestionCard = props => {
                 setRefresh(refresh+1);
             }
         } catch (error) {
-            loadAlert('error', 'Erro de conexão.');
+
         }
         setOpenEnableQuestion(false);
     }
@@ -338,7 +341,7 @@ const QuestionCard = props => {
                 setRefresh(refresh+1);
             }
         } catch (error) {
-            loadAlert('error', 'Erro de conexão.');
+
         }
     }
 
@@ -357,7 +360,6 @@ const QuestionCard = props => {
     }
 
     async function handleListItemClick (evaluation) {
-
         try {
             let url = '/evaluation/addquestion';
             const fk_question_id = question.id;
@@ -376,7 +378,7 @@ const QuestionCard = props => {
                 loadAlert('success', 'Questão adicionada na avaliação.');
             }
         } catch (error) {
-            loadAlert('error', 'Erro de conexão.');
+
         }
 
         setOpenEvalationChoose(false);

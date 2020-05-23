@@ -140,7 +140,6 @@ const DoEvaluation = props => {
       }
     } catch (error) {
 
-      loadAlert('error', 'Erro de conexão.');
     }
     setDialogStart(false);
   }
@@ -159,7 +158,6 @@ const DoEvaluation = props => {
       }
     } catch (error) {
 
-      loadAlert('error', 'Erro de conexão.');
     }
     setDialogFinish(false);
 
@@ -199,9 +197,9 @@ const DoEvaluation = props => {
       }
 
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
-    //console.log('questao', question, item_question);
+
   };
 
   const handleToggle = (value) => () => {

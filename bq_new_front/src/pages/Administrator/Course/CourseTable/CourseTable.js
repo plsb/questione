@@ -108,7 +108,7 @@ const CourseTable = props => {
       setTotal(response.data.total);
       setCourses(response.data.data);
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 
@@ -157,7 +157,7 @@ const CourseTable = props => {
         loadCourses(page+1);
       }
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
     setOpen(false);
   }

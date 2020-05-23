@@ -108,7 +108,7 @@ const EvaluationApplicationCard = props => {
             }
             //window.location.reload();
         } catch (error) {
-            loadAlert('error', 'Erro de conexão.');
+
         }
         setState(state+1);
     }

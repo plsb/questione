@@ -144,10 +144,7 @@ const QuestionDetails = props => {
                     loadAlert('error', response.data.errors[0].description);
                 }
             }
-
-
         } catch (error) {
-            loadAlert('error', 'Erro de conexão.');
         }
     }
 
@@ -184,7 +181,7 @@ const QuestionDetails = props => {
                 setStem(response.data[0].stem);
             }
         } catch (error) {
-            loadAlert('error', 'Erro de conexão.');
+
         }
     }
 

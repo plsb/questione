@@ -6,11 +6,10 @@ import {
   Card,
   CardHeader,
   CardContent, IconButton, Paper,
-  Box, Typography, AppBar, Collapse, Tooltip,
+  Box, Typography, Collapse, Tooltip,
 } from '@material-ui/core';
 import { Done, Close, ExpandMoreRounded } from "@material-ui/icons";
 import ReactHtmlParser from "react-html-parser";
-import api from "../../../../../services/api";
 import {withStyles} from "@material-ui/core/styles";
 
 const useStyles = makeStyles(() => ({

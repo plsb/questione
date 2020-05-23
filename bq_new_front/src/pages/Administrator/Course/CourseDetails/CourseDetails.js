@@ -105,7 +105,7 @@ const CourseDetails = props => {
       }
 
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 
@@ -129,7 +129,7 @@ const CourseDetails = props => {
         }));
       }
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 

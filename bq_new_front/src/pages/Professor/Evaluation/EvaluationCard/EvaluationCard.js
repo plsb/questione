@@ -9,17 +9,16 @@ import {
     Typography,
     CardContent,
     MenuItem,
-    Menu, Tooltip, Chip, colors, Dialog, AppBar, Toolbar,
-    List, ListItem, ListItemText, TextField, Button
+    Menu, Tooltip, Chip, Dialog, AppBar, Toolbar,
+    TextField, Button
 } from '@material-ui/core';
-import { MoreVert, FileCopyOutlined, Edit } from '@material-ui/icons';
+import { MoreVert, Edit } from '@material-ui/icons';
 import moment from 'moment';
 import api from "../../../../services/api";
 import Swal from "sweetalert2";
 import {withRouter} from "react-router-dom";
 import {DialogQuestione} from "../../../../components";
 import CloseIcon from "@material-ui/icons/Close";
-import {fiFI} from "@material-ui/core/locale";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -101,8 +100,7 @@ const EvaluationCard = props => {
           }
 
       } catch (error) {
-          console.log(error);
-          loadAlert('error', 'Erro de conexão.');
+
       }
   }
 
@@ -124,8 +122,7 @@ const EvaluationCard = props => {
           }
 
       } catch (error) {
-          console.log(error);
-          loadAlert('error', 'Erro de conexão.');
+
       }
   }
 
@@ -150,7 +147,7 @@ const EvaluationCard = props => {
                 setRefresh(refresh+1);
             }
         } catch (error) {
-            loadAlert('error', 'Erro de conexão.');
+
         }
         setOpen(false);
     }
@@ -180,7 +177,7 @@ const EvaluationCard = props => {
             }
 
         } catch (error) {
-            loadAlert('error', 'Erro de conexão.');
+
         }
     }
 

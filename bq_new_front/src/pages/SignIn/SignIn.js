@@ -170,7 +170,6 @@ const SignIn = props => {
       };
 
       const response = await api.post('login', data);
-      console.log('resposta ', response);
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
@@ -179,14 +178,12 @@ const SignIn = props => {
         login(response.data.token, response.data[0].name,
                 response.data[0].email, response.data[0].acess_level,
                 response.data[0].id);
-        console.log('storage',localStorage.getItem('@Questione-acess-level-user'));
 
         loadAlert('success', response.data[0].name+', seja bem-vindo!');
         history.push('/home');
       }
     } catch (error) {
-      console.log('error ', error);
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 

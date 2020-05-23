@@ -109,7 +109,7 @@ const ProfileTable = props => {
       setTotal(response.data.total);
       setProfiles(response.data.data);
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 
@@ -144,7 +144,7 @@ const ProfileTable = props => {
         loadProfile(page+1);
       }
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
     setOpen(false);
   }

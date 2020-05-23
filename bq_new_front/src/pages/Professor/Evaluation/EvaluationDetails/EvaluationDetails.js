@@ -6,11 +6,10 @@ import {
   Card,
   CardHeader,
   CardContent,
-  CardActions,
   Divider,
   Grid,
   Button,
-  TextField, IconButton, TableBody, Table, TableCell, TableRow, TableHead, Fab, Tooltip,
+  TextField, IconButton, TableBody, Table, TableCell, TableRow, TableHead,
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import Swal from "sweetalert2";
@@ -105,7 +104,7 @@ const EvaluationDetails = props => {
       }
 
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 
@@ -130,7 +129,7 @@ const EvaluationDetails = props => {
         setQuestions(response.data[0].questions);
       }
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 

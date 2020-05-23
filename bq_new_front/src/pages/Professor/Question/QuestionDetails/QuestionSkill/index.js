@@ -11,7 +11,6 @@ import {withRouter} from "react-router-dom";
 import Swal from "sweetalert2";
 import clsx from "clsx";
 import Save from "@material-ui/icons/Save";
-import Autocomplete from '@material-ui/lab/Autocomplete';
 
 const useStyles = makeStyles({
     root: {
@@ -22,8 +21,6 @@ const useStyles = makeStyles({
         marginRight: 2
     }
 });
-
-
 
 const QuestionSkill = props => {
     const { className, idQuestion, history, ...rest } = props;
@@ -187,10 +184,9 @@ const QuestionSkill = props => {
 
     }, [inputObjects]);
 
-
-    const onChangeObject = (e) =>{
+    /*const onChangeObject = (e) =>{
         setObjectSelect(e.target.value);
-    }
+    }*/
 
     const onChangeSkill = (e) =>{
         setSkillSelect(e.target.value);
@@ -246,7 +242,7 @@ const QuestionSkill = props => {
                 loadAlert('success', 'Questão atualizada.');
             }
         } catch (error) {
-            loadAlert('error', 'Erro de conexão.')
+
         }
     }
 

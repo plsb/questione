@@ -29,8 +29,6 @@ const useStyles = makeStyles({
 
 });
 
-
-
 const QuestionKeywords = props => {
     const { className, idQuestion, history, ...rest } = props;
     const [keywordsAll, setKeywordsAll] = useState([]);
@@ -105,7 +103,7 @@ const QuestionKeywords = props => {
                 loadAlert('success', 'Palavra-chave '+value+', cadastrada.');
             }
         } catch (error) {
-            loadAlert('error', 'Erro de conexão');
+
         }
     }
 
@@ -125,7 +123,7 @@ const QuestionKeywords = props => {
                 loadAlert('success', 'Palavra-chave excluida.');
             }
         } catch (error) {
-            loadAlert('error', 'Erro de conexão');
+
         }
     }
 
@@ -135,9 +133,9 @@ const QuestionKeywords = props => {
         }
     }
 
-    const onClickDeleteKeyword = (id) => {
+    /*const onClickDeleteKeyword = (id) => {
         deleteKeyword(id);
-    }
+    }*/
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -157,7 +155,6 @@ const QuestionKeywords = props => {
     const handleChangeKeyword = (event) => {
         setKeyWordNew(event.target.value);
     };
-
 
     return (
        <div>

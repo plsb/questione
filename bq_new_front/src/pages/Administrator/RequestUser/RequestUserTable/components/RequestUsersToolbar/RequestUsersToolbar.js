@@ -5,7 +5,6 @@ import { makeStyles } from '@material-ui/styles';
 import {Button, TextField, Typography} from '@material-ui/core';
 import FindInPage from '@material-ui/icons/SearchSharp';
 
-import { SearchInput } from '../../../../../../components';
 import {withRouter} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({

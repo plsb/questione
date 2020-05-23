@@ -7,17 +7,10 @@ import {
     CardActions,
     CardContent,
     Table,
-    TableBody,
-    TableCell,
-    TableHead, TablePagination,
-    TableRow,
-    Tooltip
+    TablePagination,
 } from "@material-ui/core";
 import clsx from "clsx";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import Delete from "@material-ui/icons/Delete";
-import Edit from "@material-ui/icons/Edit";
-import {DialogQuestione} from "../index";
 import PropTypes from "prop-types";
 
 const useStyles = makeStyles(theme => ({

@@ -2,10 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
-import {Button, TextField, Typography} from '@material-ui/core';
-import FindInPage from '@material-ui/icons/SearchSharp';
-
-import { SearchInput } from '../../../../../components';
+import {Typography} from '@material-ui/core';
 import {withRouter} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
@@ -37,14 +34,6 @@ const EvaluationResultStudentToolbar = props => {
   const { className, onClickSearch, onChangeSearch, searchText, history, ...rest } = props;
 
   const classes = useStyles();
-
-  const onClickRequestUsers = () => {
-    history.push('/users/requests');
-  }
-
-  const onClickNewCourse = e => {
-    history.push('/course-details');
-  }
 
   return (
     <div

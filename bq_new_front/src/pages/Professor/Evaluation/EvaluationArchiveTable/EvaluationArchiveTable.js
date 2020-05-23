@@ -6,14 +6,9 @@ import {
   Card,
   CardActions,
   CardContent,
-  Avatar,
   Table,
   TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography,
-  TablePagination, Tooltip, Button, CardHeader, Grid
+  TablePagination, CardHeader, Grid
 } from '@material-ui/core';
 import api from '../../../../services/api';
 
@@ -102,10 +97,12 @@ const EvaluationArchiveTable = props => {
         url += '&description='+searchText;
       }
       const response = await api.get(url);
-      setTotal(response.data.total);
-      setEvaluations(response.data.data);
+      if(response.status == 200) {
+        setTotal(response.data.total);
+        setEvaluations(response.data.data);
+      }
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 

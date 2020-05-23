@@ -1,19 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import { makeStyles } from '@material-ui/styles';
 import {
   Card,
   CardActions,
   CardContent,
-  Avatar,
   Table,
   TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography,
-  TablePagination, Tooltip, Button, CardHeader, Grid
+  TablePagination, CardHeader, Grid
 } from '@material-ui/core';
 import api from '../../../../services/api';
 
@@ -21,7 +15,6 @@ import Swal from "sweetalert2";
 import UsersToolbar from "./components/EvaluationApplicationToolbar";
 import PropTypes from "prop-types";
 import EvaluationApplicationCard from "../EvaluationApplicationCard";
-import EvaluationCard from "../../Evaluation/EvaluationCard/EvaluationCard";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -106,7 +99,7 @@ const EvaluationApplicationTable = props => {
       setTotal(response.data.total);
       setEvaluationsApplications(response.data.data);
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 

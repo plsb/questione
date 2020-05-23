@@ -1,30 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import { makeStyles } from '@material-ui/styles';
 import {
   Card,
   CardActions,
   CardContent,
-  Avatar,
   Table,
   TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography,
-  TablePagination, Tooltip, Button, CardHeader, Grid
+  TablePagination, CardHeader, Grid
 } from '@material-ui/core';
 import api from '../../../../services/api';
 
 import Swal from "sweetalert2";
 import UsersToolbar from "./components/EvaluationToolbar";
-import Delete from "@material-ui/icons/Delete";
-import Edit from "@material-ui/icons/Edit";
-import {DialogQuestione} from "../../../../components";
 import PropTypes from "prop-types";
 import EvaluationCard from "../EvaluationCard";
-import QuestionCard from "../../../../components/QuestionCard/QuestionCard";
 const useStyles = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(1),
@@ -111,7 +101,7 @@ const EvaluationTable = props => {
       setEvaluations(response.data.data);
 
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 

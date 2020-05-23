@@ -115,7 +115,7 @@ const ObjectDetails = props => {
       }
 
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 
@@ -140,7 +140,7 @@ const ObjectDetails = props => {
         }));
       }
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 

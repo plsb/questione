@@ -149,7 +149,7 @@ const QuestionItens = props => {
 
             }
         } catch (error) {
-            console.log(error);
+
         }
     }
 
@@ -181,8 +181,7 @@ const QuestionItens = props => {
                 loadAlert('error', 'Erro ao inserir alternativa.');
             }
         } catch (error) {
-            console.log(error);
-            loadAlert('error', 'Erro de conexão.');
+
         }
     }
 

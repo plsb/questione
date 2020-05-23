@@ -101,10 +101,12 @@ const UsersTable = props => {
         url += '&name='+searchText;
       }
       const response = await api.get(url);
-      setTotal(response.data.total);
+      if(response.status == 200) {
+        setTotal(response.data.total);
+      }
       setUsers(response.data.data);
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 

@@ -13,7 +13,6 @@ import {
 import api from "../../../../services/api";
 import ToolbarEvaluation
   from "./EvaluationResultToolbar/EvaluationResultStudentToolbar";
-import moment from "moment";
 import {FormatListBulleted} from "@material-ui/icons";
 
 const useStyles = makeStyles(() => ({

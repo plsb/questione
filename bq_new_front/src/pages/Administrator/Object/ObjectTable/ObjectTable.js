@@ -107,7 +107,7 @@ const ObjectTable = props => {
       setTotal(response.data.total);
       setObjects(response.data.data);
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 
@@ -138,7 +138,7 @@ const ObjectTable = props => {
         loadObject(page+1);
       }
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
     setOpen(false);
   }

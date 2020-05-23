@@ -17,7 +17,6 @@ import Swal from "sweetalert2";
 import validate from "validate.js";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {withStyles} from "@material-ui/core/styles";
-import moment from "moment";
 
 const schema = {
   description: {
@@ -105,7 +104,7 @@ const EvaluationApplicationDetails = props => {
       }
 
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 
@@ -130,7 +129,7 @@ const EvaluationApplicationDetails = props => {
 
       }
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 

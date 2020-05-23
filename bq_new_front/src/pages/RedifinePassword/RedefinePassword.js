@@ -160,7 +160,7 @@ const RedefinePassword = props => {
         history.push('/home');
       }
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+
     }
   }
 
