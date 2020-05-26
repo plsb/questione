@@ -5,7 +5,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class PasswordResetRequestNotifications extends Notification implements ShouldQueue
+class WelcomeNotifications extends Notification implements ShouldQueue
 {
     use Queueable;
     protected $token;
@@ -15,9 +15,8 @@ class PasswordResetRequestNotifications extends Notification implements ShouldQu
     *
     * @return void
     */
-    public function __construct($token, $user)
+    public function __construct($user)
     {
-        $this->token = $token;
         $this->user = $user;
     }
     /**
@@ -38,13 +37,13 @@ class PasswordResetRequestNotifications extends Notification implements ShouldQu
      */
      public function toMail($notifiable)
      {
-        $url_questione = "https://questione.ifce.edu.br/reset-password/".$this->token;
+        $url = "https://questione.ifce.edu.br";
         return (new MailMessage)
-            ->subject('[QUESTIONE] Recuperação de senha')
+            ->subject('Boas-vindas')
             ->greeting('Olá, '.$this->user->name.'.')
-            ->line('Você está recebendo este e-mail porque nós recebemos uma solicitação de recuperação de senha para sua conta.')
-            ->line('Se você não requisitou a redefinição de senha, não é necessário nenhuma ação adicional.')
-            ->action('Recuperar Senha', url($url_questione));
+            ->line('Agradecemos pelo seu cadastro na plataforma Questione.')
+            ->line('Seja bem-vindo(a) e esperamos que tenha uma ótima experiência com o uso da plataforma.')
+            ->action('Questione', url($url));
     }
     /**
     * Get the array representation of the notification.

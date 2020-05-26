@@ -24,18 +24,20 @@ function loadAlert(icon, message) {
 }
 
 const api = axios.create({
+  baseURL: 'https://bancodequestoes.ifce.edu.br/api',
   //baseURL: 'https://200.17.32.102/api',
-  baseURL: 'http://127.0.0.1:8000/api',
-  headers: {
+   //baseURL: 'http://127.0.0.1:8000/api',
+  /*headers: {
     'Content-Type': 'application/json'
-  }
+  }*/
 });
 
-api.interceptors.request.use(async config => {
+api.interceptors.request.use(async config=> {
   const token = getToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
   return config;
 });
 
@@ -56,8 +58,11 @@ api.interceptors.response.use(async response => {
     logout();
     window.location.href = '/sign-in';
     return false;
-  } else {
+  }
+  if(data) {
     loadAlert('error', data.message);
+  } else {
+    loadAlert('error', error);
   }
 
 

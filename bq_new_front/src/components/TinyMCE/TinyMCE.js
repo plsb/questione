@@ -6,7 +6,7 @@ const TinyMCE = props => {
     const { className, history, height, ...rest } = props;
 
     const handleEditorChange = (content, editor) => {
-        console.log('Content was updated:', content);
+
       }
 
     return (

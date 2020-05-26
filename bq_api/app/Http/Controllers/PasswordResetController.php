@@ -135,7 +135,9 @@ class PasswordResetController extends Controller
                 'message' => 'O endereço de EMAIL não pertence a um usuário.'
             ], 202);
         $user->password = $request->password;
-        $user->email_verified_at = date('Y-m-d H:i:s');
+        if($user->email_verified_at == null) {
+            $user->email_verified_at = date('Y-m-d H:i:s');
+        }
         $user->save();
         $passwordReset->delete();
         $user->notify(new PasswordResetSuccessNotifications($user));

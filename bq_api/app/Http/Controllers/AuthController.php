@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\WelcomeNotifications;
 use App\User;
 use Illuminate\Http\Request;
 use Validator;
@@ -68,6 +69,7 @@ class AuthController extends Controller
             'cpf' => $request->cpf,
             'acess_level' => 0,
         ]);
+        $user->notify(new WelcomeNotifications($user));
 
         return response()->json([$user], 200);
     }

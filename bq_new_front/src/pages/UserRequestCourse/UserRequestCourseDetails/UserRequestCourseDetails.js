@@ -174,7 +174,10 @@ const UserRequestCourseDetails = props => {
           </IconButton>
         </div>
         <CardHeader
-          subheader="Selecione abaixo o curso que deseja ter permissão para construir questões."
+          subheader="Selecione abaixo o curso que deseja ter permissão para construir questões. O comprovante
+              deverá está no formato PDF. São exemplos de comprovantes: declaração assinada pela coordenação de curso,
+              portarias (NDE, Colegiado ou outras que comprovem a atuação como professor), diário de classe do sistema acadêmico,
+              ou outro documento que comprove que você é professor do curso solicitado."
           title="Solicitação para curso"/>
         <Divider />
         <CardContent>

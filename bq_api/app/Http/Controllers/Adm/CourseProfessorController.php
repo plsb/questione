@@ -100,6 +100,15 @@ class CourseProfessorController extends Controller
             new RequestCourseProfessorNotifications($user, $description, $situaton)
         );
 
+        //verifica se é o primeiro acesso do usuário como professor
+        $verifyCountCourseProfessor = CourseProfessor::where('fk_user_id', $user->id)
+            ->where('valid', 1)
+            ->get();
+        if(sizeof($verifyCountCourseProfessor)==1){
+            $user->show_tour = true;
+            $user->save();
+        }
+
         return response()->json([
             'message' => 'Estado da solicitação atualizado.',
             $courseProfessor

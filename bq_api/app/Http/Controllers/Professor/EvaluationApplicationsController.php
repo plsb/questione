@@ -60,7 +60,8 @@ class EvaluationApplicationsController extends Controller
         }
         $evaliation_application = EvaluationApplication::whereIn('fk_evaluation_id',$arr)
             ->when($description, function ($query) use ($description) {
-                return $query->where('description', 'like','%'.$description.'%');
+                return $query->where('description', 'like','%'.$description.'%')
+                            ->orWhere('id_application', $description);
             })
             ->where('id_application', '!=', '')
             ->with('evaluation')

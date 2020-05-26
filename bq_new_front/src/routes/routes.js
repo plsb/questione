@@ -310,7 +310,7 @@ const Routes = () => (
             component={Unauthorized}
             exact
             layout={MinimalLayout}
-            needToBeLogged={true}
+            needToBeLogged={false}
             typeUser={2}
             path="/unauthorized"/>
       <RouteWithLayout

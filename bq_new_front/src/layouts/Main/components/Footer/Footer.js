@@ -47,6 +47,24 @@ const Footer = props => {
           </Link>
           . 2020
       </Typography>
+        <Typography variant="body1">
+            Para saber mais informações sobre o Questione
+            {' '}
+            <Link
+                component="a"
+                href="https://docs.google.com/document/d/1TJC9SdqLpPEOb67vN8TKRxgTg33KVC9_L6CoKRYmt4A/edit?usp=sharing"
+                target="_blank">
+                clique aqui
+            </Link>
+            {' '}ou assista as videoaulas {' '}
+            <Link
+                component="a"
+                href="https://www.youtube.com/playlist?list=PL0ZUkjE-wwutUN4Xebv7VSn870Qp82mQQ"
+                target="_blank">
+                clicando aqui
+            </Link>
+            .
+        </Typography>
     </div>
   );
 };

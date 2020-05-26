@@ -272,6 +272,7 @@ const QuestionToolbar = props => {
                     freeSolo
                     id="keywords"
                     options={keywordsAll}
+                    value={searchText[4]}
                     getOptionLabel={(option) => option.keyword}
                     onChange={(event, newValue) => selectKeyWord(event, newValue)}
                     style={{ marginLeft: '10px', width: '300px' }}

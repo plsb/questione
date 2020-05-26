@@ -92,7 +92,7 @@ const QuestionKeywords = props => {
             }
 
             const response = await api.post('question/keyword', data);
-            console.log('response', data, response);
+
             if (response.status === 202) {
                 if(response.data.message){
                     loadAlert('error', response.data.message);
@@ -110,7 +110,6 @@ const QuestionKeywords = props => {
     async function deleteKeyword(value){
         try {
             let url = 'question/keyword/'+value+'?fk_question_id='+idQuestion;
-            console.log(url);
 
             const response = await api.delete(url);
             if (response.status === 202) {

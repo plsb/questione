@@ -45,7 +45,10 @@ class QuestionHasKnowledgeObjectController extends Controller
             ], 202);
         }
 
-        $itens = QuestionHasKnowledgeObject::where('fk_question_id', $question->id)->get();
+        $itens = QuestionHasKnowledgeObject::where('fk_question_id', $question->id)
+            ->with('object')
+            ->get();
+
         return response()->json($itens, 200);
     }
 

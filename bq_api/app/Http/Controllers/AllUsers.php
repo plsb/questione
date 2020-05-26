@@ -7,6 +7,7 @@ use App\CourseProfessor;
 use App\KeywordQuestion;
 use App\KnowledgeObject;
 use App\Skill;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Validator;
@@ -105,5 +106,12 @@ class AllUsers extends Controller
         //dd($courses_user);
         $courses = Course::whereIn('id', $arr)->get();
         return response()->json($courses, 202);
+    }
+
+    public function showTourFalse(){
+        $user = auth('api')->user();
+        $user->show_tour = false;
+        $user->save();
+        return response()->json($user, 200);
     }
 }

@@ -57,7 +57,7 @@ const EvaluationApplicationToolbar = props => {
       <div className={classes.row}>
         <SearchInput
           className={classes.searchInput}
-          placeholder="Pesquisar"
+          placeholder="Pesquisar por descrição ou código"
           onChange={onChangeSearch}
           value={searchText}
         />

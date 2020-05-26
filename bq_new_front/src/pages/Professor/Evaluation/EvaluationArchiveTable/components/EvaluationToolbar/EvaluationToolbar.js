@@ -59,7 +59,7 @@ const EvaluationToolbar = props => {
       <div className={classes.row}>
         <SearchInput
           className={classes.searchInput}
-          placeholder="Pesquisar"
+          placeholder="Pesquisar por descrição"
           onChange={onChangeSearch}
           value={searchText}
         />

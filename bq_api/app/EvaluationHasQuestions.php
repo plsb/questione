@@ -12,7 +12,12 @@ class EvaluationHasQuestions extends Model
 
     public function question(){
         return $this->belongsTo(Question::class, 'fk_question_id')
-            ->with('questionItems');
+            ->with('course')
+            ->with('questionItems')
+            ->with('skill')
+            ->with('profile')
+            ->with('knowledgeObjects')
+            ->with('keywords');
     }
 
 }

@@ -77,7 +77,7 @@ const ObjectDetails = props => {
   async function loadCourses(){
     try {
       const response = await api.get('all/courses');
-      console.log()
+
       setCourses([...courses, ...response.data]);
     } catch (error) {
       loadAlert('error', 'Erro de conexão.');
@@ -122,7 +122,7 @@ const ObjectDetails = props => {
   async function findAObject(id){
     try {
       const response = await api.get('object/show/'+id);
-      console.log(response.data[0]);
+
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);

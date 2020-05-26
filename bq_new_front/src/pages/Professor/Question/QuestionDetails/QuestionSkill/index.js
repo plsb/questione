@@ -27,7 +27,6 @@ const QuestionSkill = props => {
     const [courses, setCourses] = useState([{'id': '0', 'description': 'Todos as áreas'}]);
     const [objects, setObjects] = useState([]);
     const [skills, setSkills] = useState([]);
-    const [keywords, setKeywords] = useState([]);
     const [courseSelect, setCourseSelect] = useState(0);
     const [objectSelect, setObjectSelect] = useState([]);
     const [skillSelect, setSkillSelect] = useState([]);
@@ -61,16 +60,6 @@ const QuestionSkill = props => {
         });
     }
 
-    async function loadKeywords(){
-        try {
-            const response = await api.get('all/keywords/');
-            if(response.status === 200){
-                setKeywords(response.data);
-            }
-        } catch (error) {
-        }
-    }
-
     async function loadQuestion(){
         try {
             const response = await api.get('question/show/'+idQuestion);
@@ -98,17 +87,27 @@ const QuestionSkill = props => {
     async function loadObjectsSelectQuestion(){
         try {
             const response = await api.get('question/object-question/'+idQuestion);
+
             if(response.status === 200){
                 const values = [];
                 if(response.data.length>0) {
                     response.data.forEach(function logArrayElements(element, index, array) {
-                        values.push({
-                            idItem: response.data[index].id,
-                            objectSelected: response.data[index].fk_knowledge_object,
-                        });
+                        if(element.object.fk_course_id == courseSelect) {
+                            values.push({
+                                idItem: response.data[index].id,
+                                objectSelected: response.data[index].fk_knowledge_object,
+                            });
+                        } else {
+                            deleteObject(element.id);
+                        }
 
                     });
-                    setInputObjects(values);
+
+                    if(values[0] ) {
+                        setInputObjects(values);
+                    } else {
+                        setInputObjects([{ idItem:0, objectSelected: 0 }]);
+                    }
                 }
 
             }
@@ -132,10 +131,16 @@ const QuestionSkill = props => {
     async function loadSkills(){
         try {
             const response = await api.get('all/skills?fk_course_id='+courseSelect);
-            setSkills([{'id': '0', 'description': 'Todas as competências'}, ...response.data]);
-            setSkillSelect(0);
-            if(question.fk_skill_id != null){
-                setSkillSelect(question.fk_skill_id);
+            if(response.status == 200) {
+                setSkills([{'id': '0', 'description': 'Todas as competências'}, ...response.data]);
+                setSkillSelect(0);
+                if (question.fk_skill_id != null) {
+                    response.data.forEach(function logArrayElements(element, index, array) {
+                        if(element.id == question.fk_skill_id){
+                            setSkillSelect(question.fk_skill_id);
+                        }
+                    });
+                }
             }
 
 
@@ -177,7 +182,6 @@ const QuestionSkill = props => {
     useEffect(() => {
         loadSkills();
         loadObjects();
-        loadKeywords();
     }, [courseSelect]);
 
     useEffect(() => {
@@ -246,10 +250,9 @@ const QuestionSkill = props => {
         }
     }
 
-    async function deleteObject(element){
+    async function deleteObject(idObject){
         try {
-            const response= await api.delete('question/deleteobject/'+element.idItem);
-
+            const response= await api.delete('question/deleteobject/'+idObject);
             if(response.status === 200 || response.status === 201){
 
             }
@@ -290,19 +293,21 @@ const QuestionSkill = props => {
         } else {
             saveSkill();
             objectsDelete.forEach(function logArrayElements(element, index, array) {
-                deleteObject(element);
+                deleteObject(element.idItem);
             });
-            inputObjects.forEach(function logArrayElements(element, index, array) {
-                if(element.objectSelected != 0){
-                    saveObject(element, index);
-                } else {
-                    deleteObject(element);
-                }
-            });
+            if(inputObjects.length > 0) {
+                inputObjects.forEach(function logArrayElements(element, index, array) {
+                    if (element.objectSelected != 0) {
+                        saveObject(element, index);
+                    } else {
+                        deleteObject(element);
+                    }
+                });
+            }
         }
     }
 
-    const handleChangeCourse = (event) =>{
+    const handleChangeCourse = (event) => {
         setCourseSelect(event.target.value);
     }
 

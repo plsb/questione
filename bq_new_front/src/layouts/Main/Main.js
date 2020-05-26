@@ -6,6 +6,8 @@ import { useMediaQuery } from '@material-ui/core';
 import Tour from 'reactour';
 
 import { Sidebar, Topbar, Footer } from './components';
+import {login, TOKEN_KEY, updateShowTour} from "../../services/auth";
+import api from "../../services/api";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -26,7 +28,8 @@ const useStyles = makeStyles(theme => ({
 const Main = props => {
     const { children } = props;
 
-    const [isTourOpen, setIsTourOpen] = useState(false);
+    const [isTourOpen, setIsTourOpen] =
+                useState(localStorage.getItem('@Questione-acess-show-tour') == 1);
 
     const classes = useStyles();
     const theme = useTheme();
@@ -37,11 +40,11 @@ const Main = props => {
     const [openSidebar, setOpenSidebar] = useState(false);
 
     const handleSidebarOpen = () => {
-    setOpenSidebar(true);
+        setOpenSidebar(true);
     };
 
     const handleSidebarClose = () => {
-    setOpenSidebar(false);
+        setOpenSidebar(false);
     };
 
     useEffect(() => {
@@ -50,8 +53,21 @@ const Main = props => {
 
     const shouldOpenSidebar = isDesktop ? true : openSidebar;
 
+    async function setShowTourFalseAPI() {
+        try {
+            const response = await api.post('all/set-show-tour-false');
+
+        } catch (error) {
+
+        }
+    }
+
     const closeTour = () => {
         setIsTourOpen(false);
+        if(localStorage.getItem('@Questione-acess-show-tour') == 1){
+            setShowTourFalseAPI();
+        }
+        updateShowTour(0);
     }
 
     const openTour = () => {

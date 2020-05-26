@@ -124,7 +124,8 @@ class QuestionItemController extends Controller
         }
         //return response()->json($question_item);
         $question_item->description = $request->description;
-        $question_item->correct_item = $request->correct_item;
+        $request->correct_item ?
+            $question_item->correct_item = $request->correct_item : $question_item->correct_item = 0;
         $question_item->save();
 
 
@@ -135,6 +136,12 @@ class QuestionItemController extends Controller
     public function destroy($id)
     {
         $question_item = QuestionItem::find($id);
+
+        if(!$question_item){
+            return response()->json([
+                'message' => 'A Questão não foi encontrada.'
+            ], 202);
+        }
 
         $question = Question::find($question_item->fk_question_id);
 

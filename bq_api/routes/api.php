@@ -25,6 +25,7 @@ Route::group(['prefix' => 'all'], function (){
     Route::put('/update-profile-user', 'AllUsers@updateProfileUser')->name('all.updateProfileUser');
     Route::get('/courses-user', 'AllUsers@coursesUser')->name('all.coursesUser');
     Route::get('/keywords', 'AllUsers@keywords')->name('all.keywords');
+    Route::post('/set-show-tour-false', 'AllUsers@showTourFalse')->name('all.showTourFalse');
 });
 
 Route::group(['prefix' => 'user'], function (){
@@ -113,6 +114,7 @@ Route::group(['prefix' => 'rank'], function (){
 Route::group(['prefix' => 'evaluation'], function (){
     Route::get('/', 'Professor\EvaluationController@index')->name('evaluation.index');
     Route::get('/show/{evaluation}', 'Professor\EvaluationController@show')->name('evaluation.show');
+    Route::get('/show/questions/{evaluation}', 'Professor\EvaluationController@showQuestions')->name('evaluation.showQuestions');
     Route::get('/choose', 'Professor\EvaluationController@evaluationsToChoose')->name('evaluation.choose');
     Route::post('/', 'Professor\EvaluationController@store')->name('evaluation.store');
     Route::post('/duplicate/{evaluation}', 'Professor\EvaluationController@duplicate')->name('evaluation.duplicate');

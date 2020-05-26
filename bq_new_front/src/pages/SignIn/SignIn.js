@@ -160,13 +160,11 @@ const SignIn = props => {
   async function handleSignIn(event) {
     event.preventDefault();
     try {
-      const name = formState.values.name;
-      const cpf = formState.values.cpf;
       const email = formState.values.email;
       const password = formState.values.password;
 
       const data = {
-        name, cpf, email, password
+        email, password
       };
 
       const response = await api.post('login', data);
@@ -177,11 +175,13 @@ const SignIn = props => {
       } else {
         login(response.data.token, response.data[0].name,
                 response.data[0].email, response.data[0].acess_level,
-                response.data[0].id);
+                response.data[0].id, response.data[0].show_tour);
 
         loadAlert('success', response.data[0].name+', seja bem-vindo!');
         history.push('/home');
       }
+
+      history.push('/home');
     } catch (error) {
 
     }
@@ -234,6 +234,7 @@ const SignIn = props => {
               type="password"
               value={formState.values.password || ''}
               variant="outlined"
+              margin="normal"
             />
             <Button
               className={classes.signInButton}

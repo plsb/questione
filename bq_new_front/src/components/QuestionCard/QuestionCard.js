@@ -15,19 +15,17 @@ import {
     Paper,
     Chip,
     Switch, ListItem, ListItemText,
-    ListItemAvatar,
     List,
-    DialogTitle,
-    Dialog, Avatar, AppBar, Toolbar, Box
+    Dialog, AppBar, Toolbar, Box
 } from '@material-ui/core';
 import Rating from '@material-ui/lab/Rating';
-import {MoreVert, FavoriteRounded, PlaylistAdd, ExpandMoreRounded, Edit} from '@material-ui/icons';
+import {MoreVert, PlaylistAdd, ExpandMoreRounded, Edit} from '@material-ui/icons';
 import Swal from "sweetalert2";
 import {withRouter} from "react-router-dom";
 import ReactHtmlParser from 'react-html-parser';
 import api from "../../services/api";
 import {DialogQuestione} from "../index";
-import AddIcon from '@material-ui/icons/Add';
+import Stars from '@material-ui/icons/StarsRounded';
 import moment from "moment";
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -179,7 +177,7 @@ const QuestionCard = props => {
     }
 
    /* function loadRank(){
-        console.log('passou rank');
+
         if(question.rank_avg.length != 0){
             setRank(question.rank_avg[0].rank_avg);
         }
@@ -265,7 +263,7 @@ const QuestionCard = props => {
         setOpenDeleteQuestion(false);
         try {
             let url = 'question/'+question.id;
-            console.log(url);
+
             const response = await api.delete(url);
             if (response.status === 202) {
                 if(response.data.message){
@@ -407,6 +405,22 @@ const QuestionCard = props => {
                         {'Área de origem: '+question.course.description}
                     </Typography> : null }
                     <div>
+                        { question.skill != null && question.knowledge_objects[0] &&
+                        question.question_items.length >= 2 && question.course  != null
+                        && question.keywords[0]
+                            ?
+                            <Tooltip title="Esta questão é completa. Possui texto-base, enunciado,
+                                    pelo menos duas alternativas,
+                                    um curso associado, uma competência associada, pelo menos um
+                                    objeto de conhecimento associado e pelo menos uma palavra-chave
+                                    associada.">
+                                <Stars
+                                    style={{marginTop: '1px'}}
+                                    color="secondary"/>
+
+                            </Tooltip>
+                            :
+                            null }
                         { question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
                             <Chip label="Inserida por você" className={clsx(classes.chipGreen, className)} size="small"/> : null}
                         { question.validated == 1 ?
@@ -486,6 +500,7 @@ const QuestionCard = props => {
             }/>
         <CardContent>
             <div className={classes.lineQuestion}>
+
                 { question.reference != "" && question.reference != null ?
                     <div>
                         <Typography variant="button" color="textSecondary" component="p">

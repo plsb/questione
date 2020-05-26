@@ -189,10 +189,18 @@ const SignUp = props => {
       };
 
       const response = await api.post('register', data);
-      console.log(response);
+
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
+        } else if(response.data.errors[0].name){
+          loadAlert('error', response.data.errors[0].name);
+        } if(response.data.errors[0].cpf){
+          loadAlert('error', response.data.errors[0].cpf);
+        } else if(response.data.errors[0].email){
+          loadAlert('error', response.data.errors[0].email);
+        } if(response.data.errors[0].password){
+          loadAlert('error', response.data.errors[0].password);
         }
       } else {
         loadAlert('success', response.data[0].name+', cadastrado!');

@@ -102,6 +102,11 @@ class EvaluationController extends Controller
             ->with('user')
             ->with('questions')
             ->get();
+        if(sizeof($evaluation) == 0){
+            return response()->json([
+                'message' => 'Avaliação não encontrada.'
+            ], 202);
+        }
 
         $user = auth('api')->user();
 
@@ -114,6 +119,31 @@ class EvaluationController extends Controller
         $this->verifyRecord($evaluation);
 
         return response()->json($evaluation, 200);
+    }
+
+    public function showQuestions(int $id)
+    {
+        $evaluation = Evaluation::where('id', '=', $id)
+            ->first();
+        if(!$evaluation){
+            return response()->json([
+                'message' => 'Avaliação não encontrada.'
+            ], 202);
+        }
+
+        $user = auth('api')->user();
+
+        if($evaluation->fk_user_id != $user->id){
+            return response()->json([
+                'message' => 'Operação não pode ser realizada. A avaliação pertence a outro usuário.'
+            ], 202);
+        }
+
+        $evaluation_questions = EvaluationHasQuestions::where('fk_evaluation_id', $evaluation->id)
+            ->with('question')
+            ->paginate(5);
+
+        return response()->json($evaluation_questions, 200);
     }
 
     public function update(Request $request, $id)

@@ -9,7 +9,9 @@ import {
   Divider,
   Grid,
   Button,
-  TextField, IconButton, TableBody, Table, TableCell, TableRow, TableHead,
+  TextField, IconButton,
+  TableBody, Table, TableCell,
+  TableRow, TableHead, TablePagination
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import Swal from "sweetalert2";
@@ -47,6 +49,10 @@ const EvaluationDetails = props => {
 
   const [questions, setQuestions] = useState([]);
   const [refresh, setRefresh] = React.useState(0);
+
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0);
+  const [total, setTotal] = useState(0);
 
   const [formState, setFormState] = useState({
     isValid: false,
@@ -108,6 +114,23 @@ const EvaluationDetails = props => {
     }
   }
 
+  async function loadQuestionsEvaluation(id, page){
+    try {
+      const response = await api.get('evaluation/show/questions/'+id+'?page='+page);
+      if (response.status === 202) {
+        if(response.data.message){
+          loadAlert('error', response.data.message);
+        }
+      } else {
+        setQuestions(response.data.data);
+        setTotal(response.data.total);
+        console.log('dados',  response.data);
+      }
+    } catch (error) {
+
+    }
+  }
+
   async function findAEvaluation(id){
     try {
       const response = await api.get('evaluation/show/'+id);
@@ -126,7 +149,7 @@ const EvaluationDetails = props => {
             ...formState.touched,
           }
         }));
-        setQuestions(response.data[0].questions);
+        //setQuestions(response.data[0].questions);
       }
     } catch (error) {
 
@@ -136,6 +159,7 @@ const EvaluationDetails = props => {
   useEffect(() => {
     if(codigoEvaluation){
       findAEvaluation(codigoEvaluation);
+      loadQuestionsEvaluation(codigoEvaluation);
     }
 
   }, [refresh]);
@@ -169,6 +193,17 @@ const EvaluationDetails = props => {
 
   const handleBack = () => {
     history.goBack();
+  };
+
+  const handlePageChange = (event, page) => {
+    if(codigoEvaluation) {
+      loadQuestionsEvaluation(codigoEvaluation, page + 1)
+    }
+    setPage(page);
+  };
+
+  const handleRowsPerPageChange = event => {
+    setRowsPerPage(event.target.value);
   };
 
   return (
@@ -227,27 +262,34 @@ const EvaluationDetails = props => {
                 xs={12}>
               <Table>
                 <TableHead>
-                  <TableRow>
-                    <TableCell className={classes.headTable}>Questões da avaliação</TableCell>
-                    <TableCell>
-                      {/*<Tooltip title="Adicionar Questão">
-                        <Fab className={clsx(classes.fab, className)}
-                             aria-label="add">
-                          <AddIcon />
-                        </Fab>
-                      </Tooltip>*/}
-                    </TableCell>
-                  </TableRow>
+                  <TablePagination
+                      component="div"
+                      count={total}
+                      onChangePage={handlePageChange}
+                      onChangeRowsPerPage={handleRowsPerPageChange}
+                      page={page}
+                      rowsPerPage={rowsPerPage}
+                      rowsPerPageOptions={[5]}
+                  />
                 </TableHead>
                 <TableBody>
                   {questions.map(question => (
                       <QuestionCard
-                          question={question}
+                          question={question.question}
                           id_evaluation={codigoEvaluation}
                           setRefresh={setRefresh}
                           refresh={refresh}/>
                   ))}
                 </TableBody>
+                <TablePagination
+                    component="div"
+                    count={total}
+                    onChangePage={handlePageChange}
+                    onChangeRowsPerPage={handleRowsPerPageChange}
+                    page={page}
+                    rowsPerPage={rowsPerPage}
+                    rowsPerPageOptions={[5]}
+                />
               </Table>
             </Grid>
           </Grid>

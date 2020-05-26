@@ -178,6 +178,7 @@ const QuestionItens = props => {
                 loadAlert('success', 'Alternativas da questão '+acao+'.');
                  inputItens[index].idItem = response.data.id;
             } else {
+
                 loadAlert('error', 'Erro ao inserir alternativa.');
             }
         } catch (error) {
