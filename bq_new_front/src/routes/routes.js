@@ -142,35 +142,9 @@ const Routes = () => (
             component={CourseDetails}
             exact
             layout={MainLayout}
-            needToBeLogged={true}
-            typeUser={1}
-            path="/course-details"/>
-        <RouteWithLayout
-            component={CourseDetails}
-            exact
-            layout={MainLayout}
             typeUser={1}
             needToBeLogged={true}
-            path="/course-details/:codigoCourse"/>
-        {/*<RouteWithLayout
-            component={ProfileTable}
-            exact
-            layout={MainLayout}
-            typeUser={1}
-            needToBeLogged={true}
-            path="/profiles"/>
-        <RouteWithLayout
-            component={ProfileDetails}
-            exact
-            layout={MainLayout}
-            needToBeLogged={true}
-            path="/profile-details"/>
-        <RouteWithLayout
-            component={ProfileDetails}
-            exact
-            layout={MainLayout}
-            needToBeLogged={true}
-            path="/profile-details/:codigoProfile"/>*/}
+            path="/course-details/:codigoCourse?"/>
         <RouteWithLayout
             component={SkillTable}
             exact
@@ -184,14 +158,7 @@ const Routes = () => (
             layout={MainLayout}
             needToBeLogged={true}
             typeUser={1}
-            path="/skill-details"/>
-        <RouteWithLayout
-            component={SkillDetails}
-            exact
-            layout={MainLayout}
-            needToBeLogged={true}
-            typeUser={1}
-            path="/skill-details/:codigoSkill"/>
+            path="/skill-details/:codigoSkill?"/>
         <RouteWithLayout
             component={ObjectTable}
             exact
@@ -205,14 +172,7 @@ const Routes = () => (
             layout={MainLayout}
             needToBeLogged={true}
             typeUser={1}
-            path="/object-details"/>
-        <RouteWithLayout
-            component={ObjectDetails}
-            exact
-            layout={MainLayout}
-            needToBeLogged={true}
-            typeUser={1}
-            path="/object-details/:codigoObject"/>
+            path="/object-details/:codigoObject?"/>
         <RouteWithLayout
             component={UserTable}
             exact
@@ -255,14 +215,7 @@ const Routes = () => (
             layout={MainLayout}
             needToBeLogged={true}
             typeUser={2}
-            path="/evaluation-details"/>
-        <RouteWithLayout
-            component={EvaluationDetails}
-            exact
-            layout={MainLayout}
-            needToBeLogged={true}
-            typeUser={2}
-            path="/evaluation-details/:codigoEvaluation"/>
+            path="/evaluation-details/:codigoEvaluation?"/>
         <RouteWithLayout
             component={EvaluationApplicationTable}
             exact
@@ -297,14 +250,7 @@ const Routes = () => (
             layout={MainLayout}
             needToBeLogged={true}
             typeUser={2}
-            path="/question-details"/>
-        <RouteWithLayout
-            component={QuestionDetails}
-            exact
-            layout={MainLayout}
-            needToBeLogged={true}
-            typeUser={2}
-            path="/question-details/:idQuestion"/>
+            path="/question-details/:idQuestion?"/>
 
         <RouteWithLayout
             component={Unauthorized}

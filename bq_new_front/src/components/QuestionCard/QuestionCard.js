@@ -301,7 +301,7 @@ const QuestionCard = props => {
     }
 
     const onEditQuestion = (id) => {
-        history.push('/question-details/'+id);
+        history.push('/question-details/' + id);
     }
 
     async function handleChangeValidated() {
@@ -407,13 +407,11 @@ const QuestionCard = props => {
                     <div>
                         { question.skill != null && question.knowledge_objects[0] &&
                         question.question_items.length >= 2 && question.course  != null
-                        && question.keywords[0]
                             ?
                             <Tooltip title="Esta questão é completa. Possui texto-base, enunciado,
                                     pelo menos duas alternativas,
-                                    um curso associado, uma competência associada, pelo menos um
-                                    objeto de conhecimento associado e pelo menos uma palavra-chave
-                                    associada.">
+                                    um curso associado, uma competência associada e pelo menos um
+                                    objeto de conhecimento associado.">
                                 <Stars
                                     style={{marginTop: '1px'}}
                                     color="secondary"/>
@@ -650,7 +648,7 @@ QuestionCard.propTypes = {
     evaluations: PropTypes.object,
     history: PropTypes.object,
     setRefresh: PropTypes.func,
-    refresh: PropTypes.number
+    refresh: PropTypes.number,
 
 };
 

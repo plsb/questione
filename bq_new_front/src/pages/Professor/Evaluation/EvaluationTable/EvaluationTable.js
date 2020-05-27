@@ -7,7 +7,7 @@ import {
   CardContent,
   Table,
   TableBody,
-  TablePagination, CardHeader, Grid
+  TablePagination, CardHeader, Grid, LinearProgress
 } from '@material-ui/core';
 import api from '../../../../services/api';
 
@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
 const EvaluationTable = props => {
   const { className, history } = props;
 
-  const [evaluations, setEvaluations] = useState([]);
+  const [evaluations, setEvaluations] = useState(null);
 
   const classes = useStyles();
 
@@ -97,8 +97,12 @@ const EvaluationTable = props => {
         url += '&description='+searchText;
       }
       const response = await api.get(url);
-      setTotal(response.data.total);
-      setEvaluations(response.data.data);
+      if(response.status == 200) {
+        setTotal(response.data.total);
+        setEvaluations(response.data.data);
+      } else {
+        setEvaluations([]);
+      }
 
     } catch (error) {
 
@@ -155,24 +159,27 @@ const EvaluationTable = props => {
 
                 }/>
             <CardContent>
-              <Grid
-                  container
-                  spacing={1}>
-                <Grid
-                    item
-                    md={12}
-                    xs={12}>
-                  <Table>
-                    <TableBody>
-                    {evaluations.map(evaluation => (
-                        <EvaluationCard evaluation={evaluation}
-                                        setRefresh={setRefresh}
-                                        refresh={refresh}/>
-                    ))}
-                  </TableBody>
-                  </Table>
-                </Grid>
-              </Grid>
+              {evaluations == null ?
+                  <LinearProgress color="secondary"    />
+                  :
+                  <Grid
+                      container
+                      spacing={1}>
+                    <Grid
+                        item
+                        md={12}
+                        xs={12}>
+                      <Table>
+                        <TableBody>
+                        {evaluations.map(evaluation => (
+                            <EvaluationCard evaluation={evaluation}
+                                            setRefresh={setRefresh}
+                                            refresh={refresh}/>
+                        ))}
+                      </TableBody>
+                      </Table>
+                    </Grid>
+                  </Grid> }
             </CardContent>
             <CardActions className={classes.actions}>
               <TablePagination

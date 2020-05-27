@@ -8,7 +8,7 @@ import {
   CardContent,
   Divider,
   IconButton,
-  Typography, Table, TableBody, CardActions, TablePagination, Tooltip, Switch, Chip, Grid
+  Typography, Table, TableBody, CardActions, TablePagination, Tooltip, Switch, Chip, Grid, LinearProgress
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import ToolbarEvaluation
@@ -28,7 +28,7 @@ const useStyles = makeStyles(() => ({
 
 const EvaluationsResultStudentTable = props => {
   const { className, history, ...rest } = props;
-  const [ evaluations, setEvaluations ] = useState([]);
+  const [ evaluations, setEvaluations ] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
@@ -42,6 +42,8 @@ const EvaluationsResultStudentTable = props => {
       if (responseHead.status === 200) {
         setEvaluations(responseHead.data.data);
         setTotal(responseHead.data.total);
+      } else {
+        setEvaluations([]);
       }
 
     } catch (error) {
@@ -109,58 +111,61 @@ const EvaluationsResultStudentTable = props => {
 
                 }/>
             <CardContent>
-              <Grid
-                  container
-                  spacing={1}>
-                <Grid
-                    item
-                    md={12}
-                    xs={12}>
-                  <Table>
-                    <TableBody>
-                      {evaluations.map(application => (
-                          <Card
-                              {...rest}
-                              className={classes.root}>
-                            <CardHeader
-                                className={classes.head}
-                                avatar={
-                                  <div>
-                                    <Typography variant="h5" color="textSecondary" component="h2">
-                                      {'Descrição da avaliação: '+application.evaluation_application.evaluation.description }
-                                    </Typography>
-                                    <Typography variant="h5" color="textSecondary" component="h2">
-                                      {'Descrição da aplicação: '+application.evaluation_application.description }
-                                    </Typography>
-                                    <Typography variant="h5" color="textSecondary" component="h2">
-                                      {'Professor(a): '+application.evaluation_application.evaluation.user.name }
-                                    </Typography>
+              {evaluations == null ?
+                  <LinearProgress color="secondary"    />
+                  :
+                    <Grid
+                        container
+                        spacing={1}>
+                      <Grid
+                          item
+                          md={12}
+                          xs={12}>
+                        <Table>
+                          <TableBody>
+                            {evaluations.map(application => (
+                                <Card
+                                    {...rest}
+                                    className={classes.root}>
+                                  <CardHeader
+                                      className={classes.head}
+                                      avatar={
+                                        <div>
+                                          <Typography variant="h5" color="textSecondary" component="h2">
+                                            {'Descrição da avaliação: '+application.evaluation_application.evaluation.description }
+                                          </Typography>
+                                          <Typography variant="h5" color="textSecondary" component="h2">
+                                            {'Descrição da aplicação: '+application.evaluation_application.description }
+                                          </Typography>
+                                          <Typography variant="h5" color="textSecondary" component="h2">
+                                            {'Professor(a): '+application.evaluation_application.evaluation.user.name }
+                                          </Typography>
 
-                                  </div>
-                                }
-                                action={
-                                  <div>
-                                    { application.evaluation_application.show_results == 1 ?
-                                    <Tooltip title="Visualizar resultados">
-                                      <IconButton
-                                          aria-label="copy"
-                                          onClick={() => results(application.id)}>
-                                        <FormatListBulleted/>
-                                      </IconButton>
-                                    </Tooltip>
-                                      :
-                                        <Typography variant="h5" color="textSecondary" component="h2">
-                                          {'Resultado não liberado.' }
-                                        </Typography>
-                                    }
-                                  </div>
-                                }/>
-                          </Card>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </Grid>
-              </Grid>
+                                        </div>
+                                      }
+                                      action={
+                                        <div>
+                                          { application.evaluation_application.show_results == 1 ?
+                                          <Tooltip title="Visualizar resultados">
+                                            <IconButton
+                                                aria-label="copy"
+                                                onClick={() => results(application.id)}>
+                                              <FormatListBulleted/>
+                                            </IconButton>
+                                          </Tooltip>
+                                            :
+                                              <Typography variant="h5" color="textSecondary" component="h2">
+                                                {'Resultado não liberado.' }
+                                              </Typography>
+                                          }
+                                        </div>
+                                      }/>
+                                </Card>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </Grid>
+                    </Grid> }
             </CardContent>
             <CardActions className={classes.actions}>
               <TablePagination

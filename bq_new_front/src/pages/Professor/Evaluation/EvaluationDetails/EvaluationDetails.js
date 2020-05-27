@@ -11,7 +11,7 @@ import {
   Button,
   TextField, IconButton,
   TableBody, Table, TableCell,
-  TableRow, TableHead, TablePagination
+  TableRow, TableHead, TablePagination, LinearProgress
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import Swal from "sweetalert2";
@@ -39,6 +39,15 @@ const useStyles = makeStyles(() => ({
     backgroundColor: '#009688',
     color: '#e0f2f1',
   },
+  labelRed: {
+    backgroundColor: '#EC0B43',
+    display: 'block',
+    margin: '10px',
+    padding: '5px',
+    textAlign: 'center',
+    color: '#fff',
+    borderRadius: 4
+  },
 }));
 
 const EvaluationDetails = props => {
@@ -47,7 +56,7 @@ const EvaluationDetails = props => {
 
   const classes = useStyles();
 
-  const [questions, setQuestions] = useState([]);
+  const [questions, setQuestions] = useState(null);
   const [refresh, setRefresh] = React.useState(0);
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -117,14 +126,11 @@ const EvaluationDetails = props => {
   async function loadQuestionsEvaluation(id, page){
     try {
       const response = await api.get('evaluation/show/questions/'+id+'?page='+page);
-      if (response.status === 202) {
-        if(response.data.message){
-          loadAlert('error', response.data.message);
-        }
-      } else {
+      if (response.status === 200) {
         setQuestions(response.data.data);
         setTotal(response.data.total);
-        console.log('dados',  response.data);
+      } else {
+        setQuestions([]);
       }
     } catch (error) {
 
@@ -160,6 +166,8 @@ const EvaluationDetails = props => {
     if(codigoEvaluation){
       findAEvaluation(codigoEvaluation);
       loadQuestionsEvaluation(codigoEvaluation);
+    } else {
+      setQuestions([]);
     }
 
   }, [refresh]);
@@ -252,7 +260,10 @@ const EvaluationDetails = props => {
             </Grid>
             <Divider />
           </Grid>
-          { codigoEvaluation ?
+          { questions == null ?
+              <LinearProgress color="secondary" />
+              :
+              questions[0] ?
           <Grid
               container
               spacing={1}>
@@ -293,7 +304,10 @@ const EvaluationDetails = props => {
               </Table>
             </Grid>
           </Grid>
-              : null
+              :
+                  codigoEvaluation?
+                       <span className={classes.labelRed}>Esta avaliação não possui questões</span>
+                      : null
           }
         </CardContent>
         <Divider />

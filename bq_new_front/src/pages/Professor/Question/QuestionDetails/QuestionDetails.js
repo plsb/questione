@@ -161,7 +161,7 @@ const QuestionDetails = props => {
 
         } else {
             timer.current = setTimeout(() => {
-                history.push('/questions')
+                history.push('/questions');
             }, 500);
         }
 
@@ -280,7 +280,7 @@ const QuestionDetails = props => {
                                   'table contextmenu charmap'
                               ],
                               toolbar:
-                                  'insertfile undo redo | fontselect fontsizeselect | bold italic superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview  charmap'
+                                  'insertfile undo redo | fontselect fontsizeselect | bold italic underline superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview  charmap'
                           }}
                           value={baseText}
                           onEditorChange={handleChangeBaseText}
@@ -303,7 +303,7 @@ const QuestionDetails = props => {
                               'table contextmenu charmap'
                           ],
                           toolbar:
-                              'insertfile undo redo | fontselect fontsizeselect | bold italic superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview  charmap'
+                              'insertfile undo redo | fontselect fontsizeselect | bold italic underline superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview  charmap'
                       }}
                       value={stem}
                       onEditorChange={handleChangeStem}

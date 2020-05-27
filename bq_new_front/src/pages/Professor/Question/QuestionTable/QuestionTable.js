@@ -6,20 +6,16 @@ import {
   Card,
   CardActions,
   CardContent,
-  Avatar,
+  CircularProgress,
   Table,
   TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography,
-  TablePagination, Grid, IconButton, CardHeader
+  LinearProgress,
+  TablePagination, Grid, CardHeader
 } from '@material-ui/core';
 import api from '../../../../services/api';
 
 import Swal from "sweetalert2";
 import UsersToolbar from "./components/QuestionToolbar";
-import {DialogQuestione, TableQuestione} from "../../../../components";
 import PropTypes from "prop-types";
 import QuestionCard from "../../../../components/QuestionCard/QuestionCard";
 
@@ -66,16 +62,15 @@ const useStyles = makeStyles(theme => ({
 const QuestionTable = props => {
   const { className, history } = props;
 
-  const [questions, setQuestions] = useState([]);
+  const [questions, setQuestions] = useState(null);
 
   const classes = useStyles();
 
   const [rowsPerPage, setRowsPerPage] = useState(8);
-  const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
   const [searchText, setSearchText] = useState([]);
-  const [open, setOpen] = React.useState(false);
   const [refresh, setRefresh] = React.useState(0);
+  const [page, setPage] = useState(0);
 
   //configuration alert
   const Toast = Swal.mixin({
@@ -100,6 +95,7 @@ const QuestionTable = props => {
   async function loadQuestions(page){
     try {
       let url = 'question?page='+page;
+      console.log('url', url);
       if(searchText[0].value == "S"){
         url += '&user=S';
       } else {
@@ -123,15 +119,19 @@ const QuestionTable = props => {
         url += '&keyword='+keyword;
       }
       const response = await api.get(url);
-      setTotal(response.data.total);
-      setQuestions(response.data.data);
+      if(response.status == 200) {
+        setTotal(response.data.total);
+        setQuestions(response.data.data);
+      } else {
+        setQuestions([]);
+      }
     } catch (error) {
       //loadAlert('error', 'Erro de conexão.');
     }
   }
 
   useEffect(() => {
-    loadQuestions(1);
+    loadQuestions(page+1);
   }, [refresh]);
 
   const updateSearch = (e) => {
@@ -151,36 +151,6 @@ const QuestionTable = props => {
   const handleRowsPerPageChange = event => {
     setRowsPerPage(event.target.value);
   };
-
-  const onClickOpenDialog = (id) => {
-    setOpen(true);
-  }
-
-  const onClickCloseDialog = () => {
-    setOpen(false);
-  }
-
-  async function onDeleteQuestion(){
-    /*try {
-      let url = 'course/'+idCourseDelete;
-      const response = await api.delete(url);
-      if (response.status === 202) {
-        if(response.data.message){
-          loadAlert('error', response.data.message);
-        }
-      } else {
-        loadAlert('success', 'Curso excluído.');
-        loadCourses(page+1);
-      }
-    } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
-    }
-    setOpen(false);*/
-  }
-
-  const onClickEdit = (id) => {
-    history.push('/question-details/'+id);
-  }
 
   return (
       <div className={classes.root}>
@@ -209,6 +179,9 @@ const QuestionTable = props => {
 
                 }/>
               <CardContent>
+                {questions == null ?
+                    <LinearProgress color="secondary"    />
+                    :
                     <Grid
                         container
                         spacing={1}>
@@ -227,7 +200,7 @@ const QuestionTable = props => {
                           </TableBody>
                         </Table>
                       </Grid>
-                    </Grid>
+                    </Grid> }
               </CardContent>
             <CardActions className={classes.actions}>
               <TablePagination
@@ -241,12 +214,6 @@ const QuestionTable = props => {
             </CardActions>
           </Card>
         </div>
-        <DialogQuestione handleClose={onClickCloseDialog}
-                         open={open}
-                         onClickAgree={onDeleteQuestion}
-                         onClickDisagree={onClickCloseDialog}
-                         mesage={'Deseja excluir a questão selecionada?'}
-                         title={'Excluir Questão'}/>
       </div>
   );
 };

@@ -7,7 +7,7 @@ import {
   CardContent,
   Divider, IconButton, Table, TableHead, TableRow,
   TableCell, TableBody, Tab, Paper, Tabs,
-    Box, Typography, AppBar, Tooltip
+  Box, Typography, AppBar, Tooltip, LinearProgress
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -258,7 +258,7 @@ const EvaluationApplicationResults = props => {
   const { className, history, ...rest } = props;
   const { idApplication } = props.match.params;
   const [ answerStudents, setAnswerStudents ] = useState([]);
-  const [ overviewQuestions, setOverviewQuestions ] = useState([]);
+  const [ overviewQuestions, setOverviewQuestions ] = useState(null);
   const [ overviewQuestionsHead, setOverviewQuestionsHead ] = useState([]);
   const [ expanded, setExpanded] = React.useState(false);
   const [ value, setValueTab] = React.useState(0);
@@ -273,6 +273,8 @@ const EvaluationApplicationResults = props => {
       if (response.status === 200) {
         setOverviewQuestions(response.data[0].questions);
         setOverviewQuestionsHead(response.data[0]);
+      } else {
+        setOverviewQuestions([]);
       }
     } catch (error) {
 
@@ -344,7 +346,10 @@ const EvaluationApplicationResults = props => {
                  : null }
             </CardContent>
           </Card>
-          { answerStudents[0] ?
+          { overviewQuestions == null ?
+              <LinearProgress color="secondary"    />
+              :
+            answerStudents[0] ?
             <CardContent className={classes.content}>
                 <AppBar position="static">
                   <Tabs
@@ -365,130 +370,128 @@ const EvaluationApplicationResults = props => {
                       m={1}
                       bgcolor="background.paper">
                       <Box p={1}>
-                        <Table>
-                          <TableHead>
-                            <TableRow>
-                              <TableCell  className={classes.headStudent}>Aluno(a)</TableCell>
-                              <TableCell className={classes.headPercentage}>% de Acerto</TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {answerStudents.map(result => (
-                                <TableRow
-                                    className={classes.tableRow}
-                                    hover
-                                    key={result.fk_user_id}>
-                                  <TooltipCustomized
-                                      title={
-                                        <React.Fragment>
-                                          <p>
-                                            <Typography color="textSecondary" variant="overline">
-                                              {'Hora de inicio: '+ moment(result.hr_start).format('h:mm:ss a DD/MM/YYYY')}
+                          <Table>
+                            <TableHead>
+                              <TableRow>
+                                <TableCell  className={classes.headStudent}>Aluno(a)</TableCell>
+                                <TableCell className={classes.headPercentage}>% de Acerto</TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {answerStudents.map(result => (
+                                  <TableRow
+                                      className={classes.tableRow}
+                                      hover
+                                      key={result.fk_user_id}>
+                                    <TooltipCustomized
+                                        title={
+                                          <React.Fragment>
+                                            <p>
+                                              <Typography color="textSecondary" variant="overline">
+                                                {'Hora de inicio: '+ moment(result.hr_start).format('h:mm:ss a DD/MM/YYYY')}
+                                              </Typography>
+                                            </p>
+                                            <p>
+                                              <Typography color="textSecondary" variant="overline">
+                                                {result.hr_finished != null ?
+                                                    'Hora de fim: '+ moment(result.hr_finished).format('h:mm:ss a DD/MM/YYYY') :
+                                                    'Avaliação não finalizada.'}
+                                              </Typography>
+                                            </p>
+                                          </React.Fragment>
+                                        }>
+                                        <TableCell className={classes.bodyStudent}>
+                                          <div className={classes.labelStudent}>
+                                            {result.student}
+                                            <Typography color="textSecondary" variant="caption">
+                                              {'Tempo de prova: '+result.total_time}
                                             </Typography>
-                                          </p>
-                                          <p>
-                                            <Typography color="textSecondary" variant="overline">
-                                              {result.hr_finished != null ?
-                                                  'Hora de fim: '+ moment(result.hr_finished).format('h:mm:ss a DD/MM/YYYY') :
-                                                  'Avaliação não finalizada.'}
-                                            </Typography>
-                                          </p>
-                                        </React.Fragment>
-                                      }>
-                                      <TableCell className={classes.bodyStudent}>
-                                        <div className={classes.labelStudent}>
-                                          {result.student}
-                                          <Typography color="textSecondary" variant="caption">
-                                            {'Tempo de prova: '+result.total_time}
-                                          </Typography>
-                                        </div>
-                                      </TableCell>
-                                  </TooltipCustomized>
-                                  <TooltipCustomized
-                                      title={
-                                        <React.Fragment>
-                                          <span className={classes.percentageRed}>{'De 0% a 29% de acerto'}</span>
-                                          <span className={classes.percentageOrange}>{'De 30% a 69% de acerto'}</span>
-                                          <span className={classes.percentageGreen}>{'De 70% a 100% de acerto'}</span>
-                                        </React.Fragment>
-                                      }>
-                                      <TableCell className={classes.bodyPercentage}>
-                                        {result.percentage_correct < 30 ?
-                                            <span className={classes.percentageRed}>{result.percentage_correct+'%'}</span>
-                                            : result.percentage_correct < 70 ?
-                                                <span className={classes.percentageOrange}>{result.percentage_correct+'%'}</span>
-                                                : <span className={classes.percentageGreen}>{result.percentage_correct+'%'}</span> }
-                                      </TableCell>
-                                  </TooltipCustomized>
-                                </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
+                                          </div>
+                                        </TableCell>
+                                    </TooltipCustomized>
+                                    <TooltipCustomized
+                                        title={
+                                          <React.Fragment>
+                                            <span className={classes.percentageRed}>{'De 0% a 29% de acerto'}</span>
+                                            <span className={classes.percentageOrange}>{'De 30% a 69% de acerto'}</span>
+                                            <span className={classes.percentageGreen}>{'De 70% a 100% de acerto'}</span>
+                                          </React.Fragment>
+                                        }>
+                                        <TableCell className={classes.bodyPercentage}>
+                                          {result.percentage_correct < 30 ?
+                                              <span className={classes.percentageRed}>{result.percentage_correct+'%'}</span>
+                                              : result.percentage_correct < 70 ?
+                                                  <span className={classes.percentageOrange}>{result.percentage_correct+'%'}</span>
+                                                  : <span className={classes.percentageGreen}>{result.percentage_correct+'%'}</span> }
+                                        </TableCell>
+                                    </TooltipCustomized>
+                                  </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
                       </Box>
                     <PerfectScrollbar>
-                      <Box
-                           p={1}
-                           >
+                      <Box p={1}>
 
                             <div className={classes.inner}>
-                              <Table>
-                                <TableHead>
-                                  <TableRow>
-                                    {overviewQuestions.map((result, i) => (
+                                <Table>
+                                  <TableHead>
+                                    <TableRow>
+                                      {overviewQuestions.map((result, i) => (
+                                          <TooltipCustomized
+                                              title={
+                                                <React.Fragment>
+                                                  <span className={classes.percentageRed}>{'De 0% a 29% de acerto'}</span>
+                                                  <span className={classes.percentageOrange}>{'De 30% a 69% de acerto'}</span>
+                                                  <span className={classes.percentageGreen}>{'De 70% a 100% de acerto'}</span>
+                                                </React.Fragment>
+                                              }>
+                                            <TableCell className={classes.headQuestion}>
+                                              {'Q' + (i+1)}
+                                              {result.percentage_correct_round < 30 ?
+                                                  <span className={classes.percentageRed}>{result.percentage_correct_round+'%'}</span>
+                                                  : result.percentage_correct_round < 70 ?
+                                                      <span className={classes.percentageOrange}>{result.percentage_correct_round+'%'}</span>
+                                                      : <span className={classes.percentageGreen}>{result.percentage_correct_round+'%'}</span> }
+                                            </TableCell>
+                                          </TooltipCustomized>
+                                      ))}
+                                    </TableRow>
+                                  </TableHead>
+                                  <TableBody>
+                                    {answerStudents.map(result => (
                                         <TooltipCustomized
                                             title={
                                               <React.Fragment>
-                                                <span className={classes.percentageRed}>{'De 0% a 29% de acerto'}</span>
-                                                <span className={classes.percentageOrange}>{'De 30% a 69% de acerto'}</span>
-                                                <span className={classes.percentageGreen}>{'De 70% a 100% de acerto'}</span>
+                                                <span className={classes.percentageRed}>{'Errou'}</span>
+                                                <span className={classes.percentageGreen}>{'Acertou'}</span>
+                                                <span className={classes.percentageNull}>{'Não respondeu'}</span>
                                               </React.Fragment>
                                             }>
-                                          <TableCell className={classes.headQuestion}>
-                                            {'Q' + (i+1)}
-                                            {result.percentage_correct_round < 30 ?
-                                                <span className={classes.percentageRed}>{result.percentage_correct_round+'%'}</span>
-                                                : result.percentage_correct_round < 70 ?
-                                                    <span className={classes.percentageOrange}>{result.percentage_correct_round+'%'}</span>
-                                                    : <span className={classes.percentageGreen}>{result.percentage_correct_round+'%'}</span> }
-                                          </TableCell>
+                                            <TableRow
+                                                className={classes.tableRow}
+                                                hover
+                                                key={result.fk_user_id}>
+                                              {result.questions.map(quest => (
+                                                  quest.itemSelected == null ?
+                                                      <TableCell className={classes.answerNull}>
+                                                        <Block />
+                                                      </TableCell>
+                                                      :
+                                                  quest.correct == 1 ?
+                                                      <TableCell className={classes.answerCorrect}>
+                                                        <Done />
+                                                      </TableCell> :
+                                                      <TableCell className={classes.answerIncorrect}>
+                                                        <Close />
+                                                      </TableCell>
+                                              ))}
+
+                                            </TableRow>
                                         </TooltipCustomized>
                                     ))}
-                                  </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                  {answerStudents.map(result => (
-                                      <TooltipCustomized
-                                          title={
-                                            <React.Fragment>
-                                              <span className={classes.percentageRed}>{'Errou'}</span>
-                                              <span className={classes.percentageGreen}>{'Acertou'}</span>
-                                              <span className={classes.percentageNull}>{'Não respondeu'}</span>
-                                            </React.Fragment>
-                                          }>
-                                          <TableRow
-                                              className={classes.tableRow}
-                                              hover
-                                              key={result.fk_user_id}>
-                                            {result.questions.map(quest => (
-                                                quest.itemSelected == null ?
-                                                    <TableCell className={classes.answerNull}>
-                                                      <Block />
-                                                    </TableCell>
-                                                    :
-                                                quest.correct == 1 ?
-                                                    <TableCell className={classes.answerCorrect}>
-                                                      <Done />
-                                                    </TableCell> :
-                                                    <TableCell className={classes.answerIncorrect}>
-                                                      <Close />
-                                                    </TableCell>
-                                            ))}
-
-                                          </TableRow>
-                                      </TooltipCustomized>
-                                  ))}
-                                </TableBody>
-                              </Table>
+                                  </TableBody>
+                                </Table>
                             </div>
 
                       </Box>

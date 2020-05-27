@@ -5,7 +5,7 @@ import {
   Card,
   CardHeader,
   CardContent, Paper,
-  Box, Typography, Tooltip, Tab, Tabs,
+  Box, Typography, Tooltip, Tab, Tabs, LinearProgress,
 } from '@material-ui/core';
 import {withStyles} from "@material-ui/core/styles";
 import api from "../../../../../services/api";
@@ -124,7 +124,7 @@ const TooltipCustomized = withStyles((theme) => ({
 
 const EvaluationApplicationResultsSkillObjects = props => {
   const { className, history, result, idApplication, ...rest } = props;
-  const [ skills, setSkills ] = useState([]);
+  const [ skills, setSkills ] = useState(null);
   const [ objects, setObjects ] = useState([]);
   const [expanded, setExpanded] = React.useState(false);
   const [ value, setValue] = React.useState(0);
@@ -144,6 +144,8 @@ const EvaluationApplicationResultsSkillObjects = props => {
       const response = await api.get('/evaluation/applications/result-percentage-question-by-skill/'+idApplication);
       if (response.status === 200) {
         setSkills(response.data);
+      } else {
+        setSkills([]);
       }
     } catch (error) {
 
@@ -181,70 +183,72 @@ const EvaluationApplicationResultsSkillObjects = props => {
 
           </Tabs>
           <TabPanel value={value} index={0}>
-            {skills.map(result => (
-                <Card
-                    {...rest}
-                    className={classes.root}>
-                  <CardHeader
-                      className={classes.head}
-                      avatar={
-                        <div>
-                          <Typography variant="h5" color="textSecondary" component="h2">
-                            {'Curso : '+result.course }
+            { skills == null ?
+                <LinearProgress color="secondary"    />
+                    :
+                skills.map(result => (
+                  <Card
+                      {...rest}
+                      className={classes.root}>
+                    <CardHeader
+                        className={classes.head}
+                        avatar={
+                          <div>
+                            <Typography variant="h5" color="textSecondary" component="h2">
+                              {'Curso : '+result.course }
+                            </Typography>
+                          </div>
+                        }
+                        action={
+                          <div>
+                            <TooltipCustomized
+                                title={
+                                  <React.Fragment>
+                                    {'O Total de questões representa a quantidade de todas as questões que foram aplicadas na avaliação com a competência '}
+                                    <b>{result.description}</b>{' associada.'}
+                                  </React.Fragment>
+                                }>
+                              <Typography variant="body1" component="p">
+                                {'Total de questões: '+result.total_questions}
+                              </Typography>
+                            </TooltipCustomized>
+                            <TooltipCustomized
+                                title={
+                                  <React.Fragment>
+                                    {'O Total de respostas representa a quantidade de todas as respostas cadastradas para todas as questões com a competência '}
+                                    <b>{result.description}</b>{' associada.'}
+                                  </React.Fragment>
+                                }>
+                              <Typography variant="body1" component="p">
+                                {'Total de respostas: '+result.total_answer}
+                              </Typography>
+                            </TooltipCustomized>
+
+                            <TooltipCustomized
+                                title={
+                                  <React.Fragment>
+                                    <span className={classes.percentageRed}>{'De 0% a 29% de acerto'}</span>
+                                    <span className={classes.percentageOrange}>{'De 30% a 69% de acerto'}</span>
+                                    <span className={classes.percentageGreen}>{'De 70% a 100% de acerto'}</span>
+                                  </React.Fragment>
+                                }>
+                              <Typography variant="body1" component="p">
+                                {result.percentage_correct < 30 ?
+                                    <span className={classes.percentageRed}>{'Correto: '+result.percentage_correct+'%'}</span>
+                                    : result.percentage_correct < 70 ?
+                                        <span className={classes.percentageOrange}>{'Correto: '+result.percentage_correct+'%'}</span>
+                                        : <span className={classes.percentageGreen}>{'Correto: '+result.percentage_correct+'%'}</span> }
+                              </Typography>
+                            </TooltipCustomized>
+
+                          </div>
+                        }/>
+                        <CardContent>
+                          <Typography variant="h4" color="textPrimary" component="h2">
+                            {result.description }
                           </Typography>
-                        </div>
-                      }
-                      action={
-                        <div>
-                          <TooltipCustomized
-                              title={
-                                <React.Fragment>
-                                  {'O Total de questões representa a quantidade de todas as questões que foram aplicadas na avaliação com a competência '}
-                                  <b>{result.description}</b>{' associada.'}
-                                </React.Fragment>
-                              }>
-                            <Typography variant="body1" component="p">
-                              {'Total de questões: '+result.total_questions}
-                            </Typography>
-                          </TooltipCustomized>
-                          <TooltipCustomized
-                              title={
-                                <React.Fragment>
-                                  {'O Total de respostas representa a quantidade de todas as respostas cadastradas para todas as questões com a competência '}
-                                  <b>{result.description}</b>{' associada.'}
-                                </React.Fragment>
-                              }>
-                            <Typography variant="body1" component="p">
-                              {'Total de respostas: '+result.total_answer}
-                            </Typography>
-                          </TooltipCustomized>
-
-                          <TooltipCustomized
-                              title={
-                                <React.Fragment>
-                                  <span className={classes.percentageRed}>{'De 0% a 29% de acerto'}</span>
-                                  <span className={classes.percentageOrange}>{'De 30% a 69% de acerto'}</span>
-                                  <span className={classes.percentageGreen}>{'De 70% a 100% de acerto'}</span>
-                                </React.Fragment>
-                              }>
-                            <Typography variant="body1" component="p">
-                              {result.percentage_correct < 30 ?
-                                  <span className={classes.percentageRed}>{'Correto: '+result.percentage_correct+'%'}</span>
-                                  : result.percentage_correct < 70 ?
-                                      <span className={classes.percentageOrange}>{'Correto: '+result.percentage_correct+'%'}</span>
-                                      : <span className={classes.percentageGreen}>{'Correto: '+result.percentage_correct+'%'}</span> }
-                            </Typography>
-                          </TooltipCustomized>
-
-                        </div>
-                      }/>
-                      <CardContent>
-                        <Typography variant="h4" color="textPrimary" component="h2">
-                          {result.description }
-                        </Typography>
-                      </CardContent>
-                </Card>
-
+                        </CardContent>
+                  </Card>
             ))}
 
           </TabPanel>

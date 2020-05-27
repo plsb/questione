@@ -7,7 +7,7 @@ import {
   CardContent,
   Table,
   TableBody,
-  TablePagination, CardHeader, Grid
+  TablePagination, CardHeader, Grid, LinearProgress
 } from '@material-ui/core';
 import api from '../../../../services/api';
 
@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
 const EvaluationApplicationTable = props => {
   const { className, history } = props;
 
-  const [evaluationsApplications, setEvaluationsApplications] = useState([]);
+  const [evaluationsApplications, setEvaluationsApplications] = useState(null);
 
   const classes = useStyles();
 
@@ -96,8 +96,12 @@ const EvaluationApplicationTable = props => {
         url += '&description='+searchText;
       }
       const response = await api.get(url);
-      setTotal(response.data.total);
-      setEvaluationsApplications(response.data.data);
+      if(response.status == 200) {
+        setTotal(response.data.total);
+        setEvaluationsApplications(response.data.data);
+      } else {
+        setEvaluationsApplications([]);
+      }
     } catch (error) {
 
     }
@@ -154,22 +158,25 @@ const EvaluationApplicationTable = props => {
 
                 }/>
             <CardContent>
-              <Grid
-                  container
-                  spacing={1}>
-                <Grid
-                    item
-                    md={12}
-                    xs={12}>
-                  <Table>
-                    <TableBody>
-                      {evaluationsApplications.map(application => (
-                          <EvaluationApplicationCard application={application}/>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </Grid>
-              </Grid>
+              {evaluationsApplications == null ?
+                  <LinearProgress color="secondary"    />
+                  :
+                    <Grid
+                        container
+                        spacing={1}>
+                      <Grid
+                          item
+                          md={12}
+                          xs={12}>
+                        <Table>
+                          <TableBody>
+                            {evaluationsApplications.map(application => (
+                                <EvaluationApplicationCard application={application}/>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </Grid>
+                    </Grid> }
             </CardContent>
             <CardActions className={classes.actions}>
               <TablePagination

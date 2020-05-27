@@ -267,7 +267,7 @@ const QuestionItens = props => {
                                'table contextmenu charmap'
                            ],
                            toolbar:
-                               'insertfile undo redo | fontselect fontsizeselect | bold italic superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview FMathEditor  charmap'
+                               'insertfile undo redo | fontselect fontsizeselect | bold italic underline superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview FMathEditor  charmap'
                        }}
                        name={"item"+index}
                        value={inputItens[index].description}

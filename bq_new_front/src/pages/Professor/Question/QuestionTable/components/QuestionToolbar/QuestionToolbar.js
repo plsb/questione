@@ -26,6 +26,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     marginBottom: theme.spacing(4),
+    marginTop: theme.spacing(1),
+    marginRight: theme.spacing(1),
   },
   spacer: {
     flexGrow: 1
