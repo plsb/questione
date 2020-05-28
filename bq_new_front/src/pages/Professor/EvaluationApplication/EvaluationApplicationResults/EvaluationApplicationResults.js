@@ -257,14 +257,41 @@ const TooltipCustomized = withStyles((theme) => ({
 const EvaluationApplicationResults = props => {
   const { className, history, ...rest } = props;
   const { idApplication } = props.match.params;
-  const [ answerStudents, setAnswerStudents ] = useState([]);
+  const [ answerStudents, setAnswerStudents ] = useState(null);
   const [ overviewQuestions, setOverviewQuestions ] = useState(null);
   const [ overviewQuestionsHead, setOverviewQuestionsHead ] = useState([]);
+  const [ objects, setObjects ] = useState(null);
+  const [ skills, setSkills ] = useState(null);
   const [ expanded, setExpanded] = React.useState(false);
   const [ value, setValueTab] = React.useState(0);
 
   const classes = useStyles();
 
+  async function findResultsSkill(id){
+    try {
+      const response = await api.get('/evaluation/applications/result-percentage-question-by-skill/'+id);
+      if (response.status === 200) {
+        setSkills(response.data);
+      } else {
+        setSkills([]);
+      }
+    } catch (error) {
+
+    }
+  }
+
+  async function findResultsObjects(id){
+    try {
+      const response = await api.get('/evaluation/applications/result-percentage-question-by-objects/'+id);
+      if (response.status === 200) {
+        setObjects(response.data);
+      } else {
+        setObjects([]);
+      }
+    } catch (error) {
+
+    }
+  }
 
   async function findOverviewQuestions(id){
     try {
@@ -286,6 +313,8 @@ const EvaluationApplicationResults = props => {
       const response = await api.get('/evaluation/applications/result-answer-students/'+id);
       if (response.status === 200) {
         setAnswerStudents(response.data);
+      } else {
+        setAnswerStudents([]);
       }
     } catch (error) {
 
@@ -300,6 +329,8 @@ const EvaluationApplicationResults = props => {
     if(idApplication){
       findResults(idApplication);
       findOverviewQuestions(idApplication);
+      findResultsSkill(idApplication);
+      findResultsObjects(idApplication);
     }
 
   }, []);
@@ -341,12 +372,13 @@ const EvaluationApplicationResults = props => {
               <Typography variant="h5" color="textSecondary" component="p">
                 {overviewQuestionsHead.description_evaluation!= null ? 'Descrição da avaliação: '+overviewQuestionsHead.description_evaluation : null }
               </Typography>
-              { overviewQuestionsHead.description_evaluation!=null && !answerStudents[0] ?
+              { answerStudents == null ? null :
+                overviewQuestionsHead.description_evaluation!=null && !answerStudents[0] ?
                   <span className={classes.percentageRed}>SEM RESULTADO</span>
                  : null }
             </CardContent>
           </Card>
-          { overviewQuestions == null ?
+          { answerStudents == null ?
               <LinearProgress color="secondary"    />
               :
             answerStudents[0] ?
@@ -387,14 +419,14 @@ const EvaluationApplicationResults = props => {
                                         title={
                                           <React.Fragment>
                                             <p>
-                                              <Typography color="textSecondary" variant="overline">
-                                                {'Hora de inicio: '+ moment(result.hr_start).format('h:mm:ss a DD/MM/YYYY')}
+                                              <Typography color="textSecondary" variant="caption">
+                                                {'Hora de inicio: '+ moment(result.hr_start).utc().format('MMMM Do YYYY, h:mm:ss a')}
                                               </Typography>
                                             </p>
                                             <p>
-                                              <Typography color="textSecondary" variant="overline">
+                                              <Typography color="textSecondary" variant="caption">
                                                 {result.hr_finished != null ?
-                                                    'Hora de fim: '+ moment(result.hr_finished).format('h:mm:ss a DD/MM/YYYY') :
+                                                    'Hora de fim: '+ moment(result.hr_finished).format('MMMM Do YYYY, h:mm:ss a') :
                                                     'Avaliação não finalizada.'}
                                               </Typography>
                                             </p>
@@ -437,7 +469,8 @@ const EvaluationApplicationResults = props => {
                                 <Table>
                                   <TableHead>
                                     <TableRow>
-                                      {overviewQuestions.map((result, i) => (
+                                      {!overviewQuestions ? null :
+                                          overviewQuestions.map((result, i) => (
                                           <TooltipCustomized
                                               title={
                                                 <React.Fragment>
@@ -459,7 +492,8 @@ const EvaluationApplicationResults = props => {
                                     </TableRow>
                                   </TableHead>
                                   <TableBody>
-                                    {answerStudents.map(result => (
+                                    {!answerStudents ? null :
+                                        answerStudents.map(result => (
                                         <TooltipCustomized
                                             title={
                                               <React.Fragment>
@@ -500,7 +534,8 @@ const EvaluationApplicationResults = props => {
                 </TabPanel>
                {/*visão geral das questões */}
                 <TabPanel value={value} index={1}>
-                  { overviewQuestions.map((result, i) => (
+                  { !overviewQuestions ? null :
+                      overviewQuestions.map((result, i) => (
                     <EvaluationApplicationResultsOverviewQuestion
                                                       result={result} numberQuestion={i}/>
                       ))}
@@ -508,7 +543,8 @@ const EvaluationApplicationResults = props => {
                 {/* competências e objetos de conhecimento */}
                 <TabPanel value={value} index={2}>
                   <EvaluationApplicationResultsSkillObjects
-                                idApplication={idApplication}/>
+                                skills={skills}
+                                objects={objects}/>
                 </TabPanel>
           </CardContent>
               : null }

@@ -8,13 +8,14 @@ import {
   CardContent,
   Divider,
   IconButton,
-  Typography, Box, Table, TableHead, TableRow, TableCell, TableBody, Tooltip
+  Typography, Grid, Tooltip,
+  Paper, LinearProgress
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {Close, Done, Block} from "@material-ui/icons";
-import PerfectScrollbar from "react-perfect-scrollbar";
 import {withStyles} from "@material-ui/core/styles";
+import Swal from "sweetalert2";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -40,7 +41,7 @@ const useStyles = makeStyles(() => ({
     backgroundColor: '#EC0B43',
     display: 'block',
     margin: '8px',
-    padding: '0 4px',
+    padding: '10px',
     textAlign: 'center',
     color: '#fff',
     borderRadius: 4
@@ -49,17 +50,17 @@ const useStyles = makeStyles(() => ({
     backgroundColor: '#5DE2A5',
     display: 'block',
     margin: '8px',
-    padding: '0 4px',
+    padding: '10px',
     textAlign: 'center',
     color: '#fff',
-    borderRadius: 4
+    borderRadius: 4,
   },
   percentageNull: {
     backgroundColor: '#90a4ae',
     color: '#fff',
     display: 'block',
     margin: '8px',
-    padding: '0 4px',
+    padding: '10px',
     textAlign: 'center',
     borderRadius: 4
   },
@@ -120,17 +121,48 @@ const TooltipCustomized = withStyles((theme) => ({
 const EvaluationsResultDetails = props => {
   const { className, history, ...rest } = props;
   const { idHead } = props.match.params;
-  const [ questions, setQuestions ] = useState([]);
+  const [ head, setHead ] = useState([]);
+  const [ questions, setQuestions ] = useState(null);
 
   const classes = useStyles();
+
+  //configuration alert
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'bottom-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    onOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
+
+  function loadAlert(icon, message) {
+    Toast.fire({
+      icon: icon,
+      title: message
+    });
+  }
 
   async function findHead(){
     try {
 
       const response = await api.get('/evaluation/student/result/evaluations-specific/'+idHead);
 
-      if (response.status === 200) {
+      if (response.status == 200) {
         setQuestions(response.data.questions);
+        setHead(response.data);
+      } if (response.status == 202 ){
+        if(response.data.message) {
+          loadAlert('error', response.data.message);
+          setQuestions([]);
+          setHead([]);
+        } else {
+          setQuestions([]);
+          setHead([]);
+        }
       }
     } catch (error) {
 
@@ -161,51 +193,86 @@ const EvaluationsResultDetails = props => {
               title="Avaliação"/>
           <Divider />
             <CardContent>
-                  <PerfectScrollbar>
-                      <div className={classes.inner}>
-                        <Table>
-                          <TableHead>
-                            <TableRow>
-                              {questions.map((result, i) => (
-                                  <TableCell className={classes.headQuestion}>
-                                    {'Questão ' + (i+1)}
-                                  </TableCell>
-                              ))}
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            <TooltipCustomized
-                                title={
-                                  <React.Fragment>
-                                    <span className={classes.percentageRed}>{'Errou'}</span>
-                                    <span className={classes.percentageGreen}>{'Acertou'}</span>
-                                    <span className={classes.percentageNull}>{'Não respondeu'}</span>
-                                  </React.Fragment>
-                                }>
-                                <TableRow
-                                    className={classes.tableRow}
-                                    hover>
-                                    {questions.map(result => (
-                                        result.answer == null ?
-                                            <TableCell className={classes.answerNull}>
-                                              <Block />
-                                            </TableCell>
-                                            :
-                                        result.correct == 1 ?
-                                              <TableCell className={classes.answerCorrect}>
-                                                <Done />
-                                              </TableCell> :
-                                              <TableCell className={classes.answerIncorrect}>
-                                                <Close />
-                                              </TableCell>
-                                    ))}
-                                </TableRow>
-                            </TooltipCustomized>
-                          </TableBody>
-                        </Table>
-                      </div>
+              { questions == null ?
+                  <LinearProgress color="secondary"    />
+                  :
+                  <div>
+                    {head.qtdCorrect != null ?
+                    <Paper variant="outlined" style={{padding: '5px', marginBottom: '15px'}}>
+                      <Typography align="center"
+                                  variant="body2" color="textPrimary"
+                                  style={{fontWeight: 'bold', fontSize: '14px', marginRight: '5px',
+                                    color: '#009688'}} >
+                        {head.qtdCorrect >= 2 ? 'Você acertou '+head.qtdCorrect+ ' questões.'
+                            : 'Você acertou '+head.qtdCorrect+ ' questão.'}
+                      </Typography>
+                      <Typography align="center"
+                                  variant="body2" color="textPrimary"
+                                  style={{fontWeight: 'bold', fontSize: '14px', marginRight: '5px',
+                                    color: '#EC0B43'}} >
+                        {head.qtdIncorrect >= 2 ? 'Você errou '+head.qtdIncorrect+ ' questões.'
+                            : 'Você errou '+head.qtdIncorrect+ ' questão.'}
+                      </Typography>
 
-                  </PerfectScrollbar>
+                    </Paper>
+                    : null}
+
+                    {questions.map((result, i) => (
+                        <div style={{marginBottom: '30px'}}>
+                          <Typography align="center" style={{fontWeight: 'bold'}}
+                                      variant="h5" component="h2">
+                            {'Questão ' + (i+1)}
+                          </Typography>
+                          {result.skill ?
+                              <Grid
+                                  container
+                                  direction="row"
+                                  justify="center"
+                                  alignItems="center">
+                                <Typography align="center"
+                                            variant="body2" color="textPrimary"
+                                            style={{fontWeight: 'bold', marginRight: '5px'}} >
+                                  Competência:
+                                </Typography>
+                                <Typography align="center"
+                                            variant="body2" color="textPrimary" >
+                                  {result.skill.description}
+                                </Typography>
+                              </Grid>
+                              : null }
+                          {result.objects ?
+                              <Grid
+                                  container
+                                  direction="row"
+                                  justify="center"
+                                  alignItems="center">
+                                  <Typography align="center"
+                                              variant="body2" color="textPrimary"
+                                              style={{fontWeight: 'bold', marginRight: '5px'}} >
+                                    Objeto(s) de Conhecimento:
+                                  </Typography>
+                                  <Typography align="center"
+                                              variant="body2" color="textPrimary" >
+                                      {result.objects.map(item => (
+                                            item.object.description + '; '
+                                      ))}
+                                  </Typography>
+                              </Grid>
+                              : null }
+                            {result.answer == null ?
+                                    <span className={classes.percentageNull}><Block /></span>
+                                    :
+                                    result.correct == 1 ?
+                                        <span className={classes.percentageGreen}><Done /></span>
+                                         :
+                                        <span className={classes.percentageRed}><Close /></span>}
+                        </div>
+
+                    ))}
+                  </div>
+
+              }
+
             </CardContent>
        </Card>
       </div>

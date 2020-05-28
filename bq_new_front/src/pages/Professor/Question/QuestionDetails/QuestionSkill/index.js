@@ -151,7 +151,7 @@ const QuestionSkill = props => {
 
     useEffect(() => {
         const length = inputObjects.length;
-        if(length == 1){
+        if(length == 0){
             setBtAddObject(true);
             setBtRemoveObject(false);
         } else if(length == 3){
@@ -211,7 +211,7 @@ const QuestionSkill = props => {
         const values = [...inputObjects];
         const length = inputObjects.length;
         //se só tiver um elemento ele retorna pois não pode excluir
-        if(length==1){
+        if(length==0){
             return ;
         }
         const element = values[length-1];

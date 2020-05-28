@@ -95,7 +95,7 @@ const QuestionTable = props => {
   async function loadQuestions(page){
     try {
       let url = 'question?page='+page;
-      console.log('url', url);
+
       if(searchText[0].value == "S"){
         url += '&user=S';
       } else {

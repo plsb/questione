@@ -13,7 +13,7 @@ import {
 import api from "../../../../services/api";
 import ToolbarEvaluation
   from "./EvaluationResultToolbar/EvaluationResultStudentToolbar";
-import {FormatListBulleted} from "@material-ui/icons";
+import {Close, FormatListBulleted} from "@material-ui/icons";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -21,6 +21,15 @@ const useStyles = makeStyles(() => ({
   },
   content: {
     padding: 0
+  },
+  labelRed: {
+    backgroundColor: '#EC0B43',
+    display: 'block',
+    margin: '2px',
+    padding: '3px',
+    textAlign: 'center',
+    color: '#fff',
+    borderRadius: 4
   },
 
 
@@ -129,7 +138,22 @@ const EvaluationsResultStudentTable = props => {
                                     className={classes.root}>
                                   <CardHeader
                                       className={classes.head}
-                                      avatar={
+                                      action={
+                                        <div>
+                                          { application.evaluation_application.show_results == 1 ?
+                                          <Tooltip title="Visualizar resultados">
+                                            <IconButton
+                                                aria-label="copy"
+                                                onClick={() => results(application.id)}>
+                                              <FormatListBulleted/>
+                                            </IconButton>
+                                          </Tooltip>
+                                            :
+                                              <span className={classes.labelRed}>{'Resultado não liberado.'}</span>
+                                          }
+                                        </div>
+                                      }/>
+                                      <CardContent>
                                         <div>
                                           <Typography variant="h5" color="textSecondary" component="h2">
                                             {'Descrição da avaliação: '+application.evaluation_application.evaluation.description }
@@ -142,24 +166,7 @@ const EvaluationsResultStudentTable = props => {
                                           </Typography>
 
                                         </div>
-                                      }
-                                      action={
-                                        <div>
-                                          { application.evaluation_application.show_results == 1 ?
-                                          <Tooltip title="Visualizar resultados">
-                                            <IconButton
-                                                aria-label="copy"
-                                                onClick={() => results(application.id)}>
-                                              <FormatListBulleted/>
-                                            </IconButton>
-                                          </Tooltip>
-                                            :
-                                              <Typography variant="h5" color="textSecondary" component="h2">
-                                                {'Resultado não liberado.' }
-                                              </Typography>
-                                          }
-                                        </div>
-                                      }/>
+                                      </CardContent>
                                 </Card>
                             ))}
                           </TableBody>

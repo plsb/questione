@@ -415,12 +415,7 @@ class EvaluationApplicationsController extends Controller
         }
 
         $head_question = AnswersHeadEvaluation::where('fk_application_evaluation_id', $application->id)
-            ->get();
-        $arrHead = array();
-        foreach ($head_question as $head){
-            //dd($enaq);
-            $arrHead[] = $head->id;
-        }
+            ->select('id')->get();
 
 
         $result = array();
@@ -434,7 +429,7 @@ class EvaluationApplicationsController extends Controller
                 ->where('correct_item', 1)->first();
             //total de pessoas que responderam a questão
             $count_total_answer_question = AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)
-                ->whereIn('fk_answers_head_id', $arrHead)
+                ->whereIn('fk_answers_head_id', $head_question)
                 ->whereNotNull('answer')
                 ->count();
 
@@ -443,7 +438,7 @@ class EvaluationApplicationsController extends Controller
 
             //quantidade de pessoas que acertaram a questão
             $answer = AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)
-                ->whereIn('fk_answers_head_id', $arrHead)
+                ->whereIn('fk_answers_head_id', $head_question)
                 ->where('answer', $item_correct->id)
                 ->count();
 
@@ -458,7 +453,7 @@ class EvaluationApplicationsController extends Controller
                 //conta quantas pessoas responderam esse item
                 $count_total_answer_item = AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)
                     ->where('answer', $iq->id)
-                    ->whereIn('fk_answers_head_id', $arrHead)
+                    ->whereIn('fk_answers_head_id', $head_question)
                     ->whereNotNull('answer')
                     ->count();
 
@@ -569,12 +564,7 @@ class EvaluationApplicationsController extends Controller
         }
 
         $head_question = AnswersHeadEvaluation::where('fk_application_evaluation_id', $application->id)
-            ->get();
-        $arrHead = array();
-        foreach ($head_question as $head){
-            //dd($enaq);
-            $arrHead[] = $head->id;
-        }
+            ->select('id')->get();
 
         $result = array();
         $resultQuestions = array();
@@ -605,13 +595,13 @@ class EvaluationApplicationsController extends Controller
                             ->where('correct_item', 1)->first();
                         //total de pessoas que responderam a questão
                         $total_answer += AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)
-                            ->whereIn('fk_answers_head_id', $arrHead)
+                            ->whereIn('fk_answers_head_id', $head_question)
                             ->whereNotNull('answer')
                             ->count();
 
                         //quantidade de pessoas que acertaram a questão
                         $total_answer_correct += AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)
-                            ->whereIn('fk_answers_head_id', $arrHead)
+                            ->whereIn('fk_answers_head_id', $head_question)
                             ->where('answer', $item_correct->id)
                             ->count();
 
@@ -675,12 +665,7 @@ class EvaluationApplicationsController extends Controller
         }
 
         $head_question = AnswersHeadEvaluation::where('fk_application_evaluation_id', $application->id)
-            ->get();
-        $arrHead = array();
-        foreach ($head_question as $head){
-            //dd($enaq);
-            $arrHead[] = $head->id;
-        }
+            ->select('id')->get();
 
         $result = array();
         $resultQuestions = array();
@@ -715,13 +700,13 @@ class EvaluationApplicationsController extends Controller
                             ->where('correct_item', 1)->first();
                         //total de pessoas que responderam a questão
                         $total_answer += AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)
-                            ->whereIn('fk_answers_head_id', $arrHead)
+                            ->whereIn('fk_answers_head_id', $head_question)
                             ->whereNotNull('answer')
                             ->count();
 
                         //quantidade de pessoas que acertaram a questão
                         $total_answer_correct += AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)
-                            ->whereIn('fk_answers_head_id', $arrHead)
+                            ->whereIn('fk_answers_head_id', $head_question)
                             ->where('answer', $item_correct->id)
                             ->count();
 

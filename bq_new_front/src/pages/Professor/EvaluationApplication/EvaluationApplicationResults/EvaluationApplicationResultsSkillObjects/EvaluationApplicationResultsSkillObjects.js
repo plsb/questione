@@ -8,7 +8,6 @@ import {
   Box, Typography, Tooltip, Tab, Tabs, LinearProgress,
 } from '@material-ui/core';
 import {withStyles} from "@material-ui/core/styles";
-import api from "../../../../../services/api";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -63,6 +62,15 @@ const useStyles = makeStyles(() => ({
   },
   lineQuestion: {
     marginLeft: 20,
+  },
+  labelRed: {
+    backgroundColor: '#EC0B43',
+    display: 'block',
+    margin: '10px',
+    padding: '5px',
+    textAlign: 'center',
+    color: '#fff',
+    borderRadius: 4
   },
 }));
 
@@ -123,52 +131,18 @@ const TooltipCustomized = withStyles((theme) => ({
 }))(Tooltip);
 
 const EvaluationApplicationResultsSkillObjects = props => {
-  const { className, history, result, idApplication, ...rest } = props;
-  const [ skills, setSkills ] = useState(null);
-  const [ objects, setObjects ] = useState([]);
-  const [expanded, setExpanded] = React.useState(false);
+  const { className, history, result, objects, skills, ...rest } = props;
   const [ value, setValue] = React.useState(0);
 
   const classes = useStyles();
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
 
   const handleChangeTab = (event, newValue) => {
     setValue(newValue);
   };
 
-  async function findResultsSkill(){
-    try {
-      const response = await api.get('/evaluation/applications/result-percentage-question-by-skill/'+idApplication);
-      if (response.status === 200) {
-        setSkills(response.data);
-      } else {
-        setSkills([]);
-      }
-    } catch (error) {
-
-    }
-  }
-
-  async function findResultsObjects(){
-    try {
-      const response = await api.get('/evaluation/applications/result-percentage-question-by-objects/'+idApplication);
-      if (response.status === 200) {
-        setObjects(response.data);
-      }
-    } catch (error) {
-
-    }
-  }
-
   useEffect(() => {
-    findResultsSkill();
-    findResultsObjects();
+
   }, []);
-
-
 
   return (
       <div>
@@ -184,8 +158,11 @@ const EvaluationApplicationResultsSkillObjects = props => {
           </Tabs>
           <TabPanel value={value} index={0}>
             { skills == null ?
-                <LinearProgress color="secondary"    />
-                    :
+                <LinearProgress color="secondary" />
+                :
+                skills.length == 0 ?
+                    <span className={classes.labelRed}>Esta avaliação não possui competências associadas.</span>
+                :
                 skills.map(result => (
                   <Card
                       {...rest}
@@ -253,7 +230,13 @@ const EvaluationApplicationResultsSkillObjects = props => {
 
           </TabPanel>
           <TabPanel value={value} index={1}>
-            {objects.map(result => (
+            {objects == null ?
+                <LinearProgress color="secondary"    />
+                :
+                objects.length == 0 ?
+                <span className={classes.labelRed}>Esta avaliação não possui objetos de conhecimento associados.</span>
+                :
+              objects.map(result => (
                 <Card
                     {...rest}
                     className={classes.root}>
@@ -330,7 +313,8 @@ const EvaluationApplicationResultsSkillObjects = props => {
 
 EvaluationApplicationResultsSkillObjects.propTypes = {
   className: PropTypes.string,
-  idApplication: PropTypes.number,
+  skills: PropTypes.array.isRequired,
+  objects: PropTypes.array.isRequired,
 };
 
 export default EvaluationApplicationResultsSkillObjects;
