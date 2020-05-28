@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 'bold'
   },
   textField: {
-    marginLeft: theme.spacing(3),
+    marginLeft: theme.spacing(1),
   }
 }));
 
@@ -57,6 +57,7 @@ const QuestionToolbar = props => {
   const [courseSelect, setCourseSelect] = useState([]);
   const [objectSelect, setObjectSelect] = useState([]);
   const [skillSelect, setSkillSelect] = useState([]);
+  const [idSelect, setIdSelect] = useState('');
   const [keywordsAll, setKeywordsAll] = useState([]);
   /* S - suas questões
      T - todas as questões
@@ -79,6 +80,11 @@ const QuestionToolbar = props => {
   const onChangeObject = (e) =>{
     setObjectSelect(e.target.value);
     searchText[2] = {"fk_object_id" : e.target.value};
+  }
+
+  const onChangeId = (e) =>{
+    setIdSelect(e.target.value);
+    searchText[5] = {"id" : e.target.value};
   }
 
   const onChangeSkill = (e) =>{
@@ -148,6 +154,7 @@ const QuestionToolbar = props => {
     searchText[2] = {"fk_object_id" : 0};
     searchText[3] = {"fk_skill_id" : 0};
     searchText[4] = {"keyword" : ''};
+    searchText[5] = {"id" : ''};
   }, []);
 
   useEffect(() => {
@@ -222,6 +229,14 @@ const QuestionToolbar = props => {
             <CardContent>
               <div className={classes.row}>
                 <TextField
+                    label="Código da Questão"
+                    helperText="Informe o código"
+                    margin="dense"
+                    onChange={onChangeId}
+                    value={idSelect}
+                    variant="outlined"
+                />
+                <TextField className={classes.textField}
                     id="filled-select-currency"
                     select
                     label="Selecione a área"

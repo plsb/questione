@@ -26,7 +26,7 @@ const useStyles = makeStyles(() => ({
     padding: 0
   },
   headStudent: {
-    width: '250px ',
+    width: '100px ',
     height: '90px',
     backgroundColor: '#FFF',
     color: '#393A68',
@@ -56,7 +56,8 @@ const useStyles = makeStyles(() => ({
     fontFamily: 'Open Sans, sans-serif, Helvetica, Arial'
   },
   bodyStudent: {
-    width: '250px',
+    maxWidth: '230px',
+    width: '100px',
     height: '60px',
     backgroundColor: '#FFF',
     color: '#393A68',
@@ -141,7 +142,7 @@ const useStyles = makeStyles(() => ({
     width: '90.0px',
     backgroundColor: '#5DE2A5',
     //display: 'inline-block',
-    color: '#393A68',
+    color: '#ffffff',
     textAlign: 'center',
     height: '70px',
     boxSizing: 'border-box',
@@ -149,13 +150,13 @@ const useStyles = makeStyles(() => ({
     minWidth: '80px',
     padding: '12px',
     fontWeight: 'bold',
-    fontSize: '14px'
+    fontSize: '25px',
   },
   answerIncorrect: {
     width: '90.0px',
     backgroundColor: '#F14D76',
     //display: 'inline-block',
-    color: '#393A68',
+    color: '#ffffff',
     textAlign: 'center',
     height: '70px',
     boxSizing: 'border-box',
@@ -163,7 +164,7 @@ const useStyles = makeStyles(() => ({
     minWidth: '80px',
     padding: '12px',
     fontWeight: 'bold',
-    fontSize: '14px'
+    fontSize: '25px',
   },
   answerNull: {
     width: '90.0px',
@@ -418,17 +419,26 @@ const EvaluationApplicationResults = props => {
                                     <TooltipCustomized
                                         title={
                                           <React.Fragment>
+                                            <Typography align="center" color="inherit" style={{fontWeight: 'bold'}}>
+                                              {result.student}
+                                              </Typography>
                                             <p>
-                                              <Typography color="textSecondary" variant="caption">
-                                                {'Hora de inicio: '+ moment(result.hr_start).utc().format('MMMM Do YYYY, h:mm:ss a')}
+                                              <Typography color="textPrimary" variant="caption">
+                                                {'O estudante iniciou em '+ moment(result.hr_start).utc().format('MMMM Do YYYY, h:mm:ss a')+'.'}
                                               </Typography>
                                             </p>
                                             <p>
-                                              <Typography color="textSecondary" variant="caption">
+                                              <Typography color="textPrimary" variant="caption">
                                                 {result.hr_finished != null ?
-                                                    'Hora de fim: '+ moment(result.hr_finished).format('MMMM Do YYYY, h:mm:ss a') :
-                                                    'Avaliação não finalizada.'}
+                                                    'O estudante finalizou em '+ moment(result.hr_finished).format('MMMM Do YYYY, h:mm:ss a')+'.' :
+                                                    'A avaliação não foi finalizada pelo estudante.'}
                                               </Typography>
+                                            </p>
+                                            <p>
+                                              {result.hr_finished != null ?
+                                                  <Typography color="textPrimary" variant="caption">
+                                                    {'Tempo de prova: '+result.total_time}
+                                                  </Typography> : null }
                                             </p>
                                           </React.Fragment>
                                         }>
@@ -436,7 +446,7 @@ const EvaluationApplicationResults = props => {
                                           <div className={classes.labelStudent}>
                                             {result.student}
                                             <Typography color="textSecondary" variant="caption">
-                                              {'Tempo de prova: '+result.total_time}
+                                              {result.total_time == 'Avaliação não finalizada.' ? result.total_time : 'Tempo: '+result.total_time}
                                             </Typography>
                                           </div>
                                         </TableCell>
@@ -497,6 +507,8 @@ const EvaluationApplicationResults = props => {
                                         <TooltipCustomized
                                             title={
                                               <React.Fragment>
+                                                <Typography align="center" color="inherit">
+                                                    A letra informa a alternativa que o estudante selecionou.</Typography>
                                                 <span className={classes.percentageRed}>{'Errou'}</span>
                                                 <span className={classes.percentageGreen}>{'Acertou'}</span>
                                                 <span className={classes.percentageNull}>{'Não respondeu'}</span>
@@ -514,9 +526,12 @@ const EvaluationApplicationResults = props => {
                                                       :
                                                   quest.correct == 1 ?
                                                       <TableCell className={classes.answerCorrect}>
+                                                        {quest.ordemQuestion}
                                                         <Done />
+
                                                       </TableCell> :
                                                       <TableCell className={classes.answerIncorrect}>
+                                                        {quest.ordemQuestion}
                                                         <Close />
                                                       </TableCell>
                                               ))}

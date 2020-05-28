@@ -47,6 +47,7 @@ class QuestionController extends Controller
             S - do usuário
             T - de todos os usuários
         */
+        $id = $request->id;
         $opcao = $request->user;
         $course = $request->fk_course_id;
         $object = $request->fk_object_id;
@@ -57,6 +58,10 @@ class QuestionController extends Controller
                 //pega todas as questões do usuário logado
                 $user = auth('api')->user();
                 return $query->where('fk_user_id', '=', $user->id);
+            })
+            ->when($id, function ($query, $id) {
+                //pega questões validadas de todos os usuário
+                return $query->where('id', '=', $id);
             })
             ->when($opcao == "T", function ($query) {
                 //pega questões validadas de todos os usuário

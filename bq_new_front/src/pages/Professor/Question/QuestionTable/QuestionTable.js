@@ -118,6 +118,10 @@ const QuestionTable = props => {
         const keyword = searchText[4].keyword.split(" ").join("%20");
         url += '&keyword='+keyword;
       }
+      if(searchText[5]. id != ""){
+        url += '&id='+searchText[5].id
+      }
+
       const response = await api.get(url);
       if(response.status == 200) {
         setTotal(response.data.total);
@@ -126,6 +130,7 @@ const QuestionTable = props => {
         setQuestions([]);
       }
     } catch (error) {
+      console.log(error);
       //loadAlert('error', 'Erro de conexão.');
     }
   }

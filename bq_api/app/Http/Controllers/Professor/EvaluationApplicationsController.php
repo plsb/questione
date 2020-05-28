@@ -307,6 +307,36 @@ class EvaluationApplicationsController extends Controller
                 $evaluation_question = EvaluationHasQuestions::where('id', $ans->fk_evaluation_question_id)
                     ->first();
 
+                $itensQuestion = QuestionItem::where('fk_question_id', $evaluation_question->fk_question_id)
+                    ->orderBy('id')
+                    ->get();
+                $ordem = 0;
+                if($ans->answer != null) {
+                    foreach ($itensQuestion as $iq) {
+                        $ordem++;
+                        if ($iq->id == $ans->answer) {
+
+                            break;
+                        }
+                    }
+                }
+                switch ($ordem){
+                    case 0:
+                        $ordem = '-'; break;
+                    case 1:
+                        $ordem = 'A'; break;
+                    case 2:
+                        $ordem = 'B'; break;
+                    case 3:
+                        $ordem = 'C'; break;
+                    case 4:
+                        $ordem = 'D'; break;
+                    case 5:
+                        $ordem = 'E'; break;
+
+                }
+
+
                 $question = Question::where('id', $evaluation_question->fk_question_id)->first();
                 $itens_question = QuestionItem::where('fk_question_id', $question->id)
                     ->where('correct_item', 1)->first();
@@ -325,6 +355,7 @@ class EvaluationApplicationsController extends Controller
                     'itemCorrect' => $itens_question->id,
                     'itemSelected' => $ans->answer,
                     'correct' => $correct,
+                    'ordemQuestion' => $ordem,
                 ];
                 $questions[] = $object;
             }
@@ -337,12 +368,14 @@ class EvaluationApplicationsController extends Controller
 
                 $date_time  = new \DateTime($dataAtual);
                 $diff       = $date_time->diff( new \DateTime($dataFuturo));
-
+                //dd($diff);
                 if($diff->y > 0){
-                    $total_time_active = $diff->y . ' ano(s), ' .$diff->m . ' dia(s), ' . $diff->h . ' hora(s) e ' . $diff->i . ' minuto(s)';
+                    $total_time_active = $diff->y . ' ano(s), ' . $diff->m . ' mês(es), ' . $diff->d . ' dia(s), ' . $diff->h . ' hora(s) e ' . $diff->i . ' minuto(s)';
                 } else if($diff->m > 0) {
-                    $total_time_active = $diff->m . ' dia(s), ' . $diff->h . ' hora(s) e ' . $diff->i . ' minuto(s)';
-                } else if($diff->h > 0){
+                    $total_time_active = $diff->m . ' mês(es), ' . $diff->d . ' dia(s), ' . $diff->h . ' hora(s) e ' . $diff->i . ' minuto(s)';
+                } else if($diff->d > 0) {
+                    $total_time_active = $diff->d . ' dia(s), ' . $diff->h . ' hora(s) e ' . $diff->i . ' minuto(s)';
+                }else if($diff->h > 0){
                     $total_time_active = $diff->h . ' hora(s) e ' . $diff->i . ' minuto(s)';
                 } else {
                     $total_time_active = $diff->i . ' minuto(s)';
@@ -449,13 +482,34 @@ class EvaluationApplicationsController extends Controller
             }
 
             $resultItens = array();
+            $ordem = 0;
             foreach($itens_question as $iq){
+                $ordem++;
                 //conta quantas pessoas responderam esse item
                 $count_total_answer_item = AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)
                     ->where('answer', $iq->id)
                     ->whereIn('fk_answers_head_id', $head_question)
                     ->whereNotNull('answer')
                     ->count();
+
+                $ordemDescription = '-';
+                switch ($ordem){
+                    case 0:
+                        $ordemDescription = '-'; break;
+                    case 1:
+                        $ordemDescription = 'a) '; break;
+                    case 2:
+                        $ordemDescription = 'b) '; break;
+                    case 3:
+                        $ordemDescription = 'c) '; break;
+                    case 4:
+                        $ordemDescription = 'd) '; break;
+                    case 5:
+                        $ordemDescription = 'e) '; break;
+
+                }
+
+
 
                 //porcentagem de acerto do item
                 $percentageAnswerItem = 0;
@@ -468,6 +522,7 @@ class EvaluationApplicationsController extends Controller
                         'total_answer_item' => $count_total_answer_item,
                         'percentage_answer' => number_format($percentageAnswerItem, 2),
                         'correct' => 1,
+                        'ordem' => $ordemDescription,
                     ];
                 } else {
                     $auxItem= (object)[
@@ -475,6 +530,7 @@ class EvaluationApplicationsController extends Controller
                         'total_answer_item' => $count_total_answer_item,
                         'percentage_answer' => number_format($percentageAnswerItem, 2),
                         'correct' => 0,
+                        'ordem' => $ordemDescription,
                     ];
                 }
 

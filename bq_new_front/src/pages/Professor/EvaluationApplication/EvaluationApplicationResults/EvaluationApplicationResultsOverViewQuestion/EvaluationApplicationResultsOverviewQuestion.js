@@ -141,6 +141,20 @@ const EvaluationApplicationResultsOverviewQuestion = props => {
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                   <CardContent>
                     <div className={classes.lineQuestion}>
+                      <div>
+                        <Typography variant="button" color="textSecondary" component="p">
+                          {
+                            result.idQuestion < 10 ? 'Questão - 00000' + result.idQuestion :
+                                result.idQuestion < 100 ? 'Questão - 0000' + result.idQuestion :
+                                    result.idQuestion < 1000 ? 'Questão - 000' + result.idQuestion :
+                                        result.idQuestion < 10000 ? 'Questão - 00' + result.idQuestion :
+                                            result.idQuestion < 100000 ? 'Questão - 0' + result.idQuestion :
+                                                result.idQuestion
+                          }
+                        </Typography>
+
+                        <br />
+                      </div>
                       { result.reference != "" && result.reference != null ?
                           <div>
                             <Typography variant="button" color="textSecondary" component="p">
@@ -191,8 +205,9 @@ const EvaluationApplicationResultsOverviewQuestion = props => {
                               <div>
                                 <Box display="flex"
                                      flexWrap="nowrap">
+                                  { item.ordem }
                                   <Paper className={clsx(classes.paper, classes.paperRight)} elevation={3} variant="outlined">
-                                    { ReactHtmlParser (item.description)  }
+                                    { ReactHtmlParser ( item.description)  }
                                   </Paper>
                                   <TooltipCustomized
                                       title={
@@ -218,8 +233,9 @@ const EvaluationApplicationResultsOverviewQuestion = props => {
                               <div>
                                 <Box display="flex"
                                      flexWrap="nowrap">
+                                  {item.ordem}
                                   <Paper className={clsx(classes.paper, classes.paperWrong)} variant="outlined">
-                                    { ReactHtmlParser (item.description) } </Paper>
+                                    { ReactHtmlParser(item.description) } </Paper>
                                   <TooltipCustomized
                                       title={
                                         <React.Fragment>

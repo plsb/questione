@@ -6,6 +6,7 @@ use App\Course;
 use App\CourseProfessor;
 use App\KeywordQuestion;
 use App\KnowledgeObject;
+use App\Question;
 use App\Skill;
 use App\User;
 use Illuminate\Http\Request;
@@ -42,8 +43,21 @@ class AllUsers extends Controller
 
     public function keywords(Request $request)
     {
-        $keywords = DB::select('SELECT DISTINCT(keyword) FROM keywords_question
-                    order by keyword', []);
+        $user = auth('api')->user();
+
+        $courses_professor = CourseProfessor::where('fk_user_id', $user->id)
+            ->where('valid', 1)
+            ->select('fk_course_id')
+            ->get();
+        $questions = Question::whereIn('fk_course_id', $courses_professor)
+            ->select('id')
+            ->get();
+
+        $keywords = KeywordQuestion::whereIn('fk_question_id', $questions)
+            ->select('keyword')
+            ->distinct()
+            ->orderBy('keyword')
+            ->get();
 
         return response()->json($keywords, 200);
     }
