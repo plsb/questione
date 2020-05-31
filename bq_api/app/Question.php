@@ -40,6 +40,10 @@ class Question extends Model
         return $this->hasMany(QuestionItem::class, 'fk_question_id');
     }
 
+    public function questionItemsWithoutCorrect(){
+        return $this->hasMany(QuestionItem::class, 'fk_question_id')->select('id', 'description', 'fk_question_id');
+    }
+
     public function rank(){
        return $this->hasMany(RankQuestion::class, 'fk_question_id');
     }

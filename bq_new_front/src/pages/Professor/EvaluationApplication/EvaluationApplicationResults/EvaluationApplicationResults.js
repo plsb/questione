@@ -27,7 +27,7 @@ const useStyles = makeStyles(() => ({
   },
   headStudent: {
     width: '100px ',
-    height: '90px',
+    height: '115px',
     backgroundColor: '#FFF',
     color: '#393A68',
     paddingLeft: '12px',
@@ -41,7 +41,7 @@ const useStyles = makeStyles(() => ({
     fontFamily: 'Open Sans, sans-serif, Helvetica, Arial'
   },
   headPercentage: {
-    width: '40px',
+    width: '30px',
     height: '90px',
     backgroundColor: '#FFF',
     color: '#393A68',
@@ -56,12 +56,12 @@ const useStyles = makeStyles(() => ({
     fontFamily: 'Open Sans, sans-serif, Helvetica, Arial'
   },
   bodyStudent: {
-    maxWidth: '230px',
+    maxWidth: '170px',
     width: '100px',
-    height: '60px',
+    height: '82px',
     backgroundColor: '#FFF',
     color: '#393A68',
-    paddingLeft: '12px',
+    paddingLeft: '6px',
     boxSizing: 'border-box',
     fontWeight: 'bold',
     border: '1px solid #f2f2f2',
@@ -74,27 +74,26 @@ const useStyles = makeStyles(() => ({
   },
   bodyPercentage: {
     width: '20%',
-    height: '70px',
+    height: '82px',
     textAlign: 'center',
     backgroundColor: '#FFF',
     color: '#393A68',
-    paddingLeft: '12px',
     boxSizing: 'border-box',
     fontWeight: 'bold',
     border: '1px solid #f2f2f2',
-    lineHeight: '20px',
-    fontSize: '14px',
+    lineHeight: '15px',
+    fontSize: '12px',
     whiteSpace: 'nowrap',
     overflow: 'auto',
     textOverflow: 'ellipsis',
     fontFamily: 'Open Sans, sans-serif, Helvetica, Arial'
   },
   headQuestion: {
-    width: '90.0px',
+    width: '90px',
     backgroundColor: '#FFF',
     color: '#393A68',
     textAlign: 'center',
-    height: '80px',
+    height: '115px',
     boxSizing: 'border-box',
     border: '1px solid #F2F2F2',
     minWidth: '80px',
@@ -144,7 +143,7 @@ const useStyles = makeStyles(() => ({
     //display: 'inline-block',
     color: '#ffffff',
     textAlign: 'center',
-    height: '70px',
+    height: '82px',
     boxSizing: 'border-box',
     border: '1px solid #F2F2F2',
     minWidth: '80px',
@@ -158,7 +157,7 @@ const useStyles = makeStyles(() => ({
     //display: 'inline-block',
     color: '#ffffff',
     textAlign: 'center',
-    height: '70px',
+    height: '82px',
     boxSizing: 'border-box',
     border: '1px solid #F2F2F2',
     minWidth: '80px',
@@ -172,7 +171,7 @@ const useStyles = makeStyles(() => ({
     //display: 'inline-block',
     color: '#393A68',
     textAlign: 'center',
-    height: '70px',
+    height: '82px',
     boxSizing: 'border-box',
     border: '1px solid #F2F2F2',
     minWidth: '80px',
@@ -258,6 +257,9 @@ const TooltipCustomized = withStyles((theme) => ({
 const EvaluationApplicationResults = props => {
   const { className, history, ...rest } = props;
   const { idApplication } = props.match.params;
+  const [ avgCorrectQuestions, setAvgCorrectQuestions ] = useState(0);
+  const [ totalVarianceQuestions, setTotalVarianceQuestions ] = useState(0);
+  const [ totalVarianceStudents, setTotalVarianceStudents ] = useState(0);
   const [ answerStudents, setAnswerStudents ] = useState(null);
   const [ overviewQuestions, setOverviewQuestions ] = useState(null);
   const [ overviewQuestionsHead, setOverviewQuestionsHead ] = useState([]);
@@ -301,6 +303,7 @@ const EvaluationApplicationResults = props => {
       if (response.status === 200) {
         setOverviewQuestions(response.data[0].questions);
         setOverviewQuestionsHead(response.data[0]);
+        setTotalVarianceQuestions(response.data[0].variance_total);
       } else {
         setOverviewQuestions([]);
       }
@@ -312,11 +315,15 @@ const EvaluationApplicationResults = props => {
   async function findResults(id){
     try {
       const response = await api.get('/evaluation/applications/result-answer-students/'+id);
+
       if (response.status === 200) {
-        setAnswerStudents(response.data);
+        setAnswerStudents(response.data.students);
+        setTotalVarianceStudents(response.data.variance_total);
+        setAvgCorrectQuestions(response.data.avg_correct_question);
       } else {
         setAnswerStudents([]);
       }
+
     } catch (error) {
 
     }
@@ -363,21 +370,49 @@ const EvaluationApplicationResults = props => {
               title="Resultado da Aplicação"/>
           <Divider />
           <Card className={classes.root}>
-            <CardContent>
-              <Typography variant="h5" color="textSecondary" component="p">
-                {overviewQuestionsHead.idApplication!= null ? 'Código da aplicação: '+overviewQuestionsHead.idApplication : null }
-              </Typography>
-              <Typography variant="h5" color="textSecondary" component="p">
-                {overviewQuestionsHead.description_application!= null ? 'Descrição da aplicação: '+overviewQuestionsHead.description_application : null }
-              </Typography>
-              <Typography variant="h5" color="textSecondary" component="p">
-                {overviewQuestionsHead.description_evaluation!= null ? 'Descrição da avaliação: '+overviewQuestionsHead.description_evaluation : null }
-              </Typography>
-              { answerStudents == null ? null :
-                overviewQuestionsHead.description_evaluation!=null && !answerStudents[0] ?
-                  <span className={classes.percentageRed}>SEM RESULTADO</span>
-                 : null }
-            </CardContent>
+            {overviewQuestionsHead.idApplication!= null ?
+              <CardContent>
+                <Typography variant="h5" color="textPrimary" component="p">
+                  {'Código da aplicação: '+overviewQuestionsHead.idApplication +'.'}
+                </Typography>
+                <Typography variant="h5" color="textPrimary" component="p">
+                  {'Descrição da aplicação: '+overviewQuestionsHead.description_application + '.'}
+                </Typography>
+                <Typography variant="h5" color="textPrimary" component="p">
+                  {overviewQuestionsHead.qtdQuestions > 1 ?
+                      'Esta avaliação possui '+ overviewQuestionsHead.qtdQuestions + ' questões.' :
+                      'Esta avaliação possui '+ overviewQuestionsHead.qtdQuestions + ' questão.'}
+                </Typography>
+                <Typography variant="h5" color="textPrimary" component="p">
+                  {overviewQuestionsHead.qtdStudents > 1 ?
+                      'Esta avaliação foi respondida por '+ overviewQuestionsHead.qtdStudents +' estudantes.' :
+                      'Esta avaliação foi respondida por '+ overviewQuestionsHead.qtdStudents +' estudante.'
+                      }
+                </Typography>
+                <Typography variant="h5" color="textPrimary" component="p">
+                  { avgCorrectQuestions != 0 ?
+                    avgCorrectQuestions > 1 ?
+                      'Esta avaliação possui uma média de acerto igual a '+ avgCorrectQuestions + ' questões por estudante.' :
+                      'Esta avaliação possui uma média de acerto igual a '+ avgCorrectQuestions + ' questão por estudante.' :
+                  null}
+                </Typography>
+                <Typography variant="h5" color="textPrimary" component="p">
+                { overviewQuestionsHead.percentagem_geral_correct_evaluation != 0 ?
+                  'A porcentagem média de questões corretas é: '+ overviewQuestionsHead.percentagem_geral_correct_evaluation+'%.' :
+                  null}
+                </Typography>
+                { overviewQuestionsHead.qtdStudents > 1 && totalVarianceStudents > 0 ?
+                <Typography variant="h5" color="textPrimary" component="p">
+                  {'Alfa de Cronbach: '+
+                  (overviewQuestionsHead.qtdQuestions/(overviewQuestionsHead.qtdQuestions-1) *
+                      (1-(totalVarianceQuestions/totalVarianceStudents))).toFixed(3)
+                      + '.'}
+                </Typography> : null }
+                { answerStudents == null ? null :
+                  !answerStudents[0] ?
+                    <span className={classes.percentageRed}>SEM RESULTADO</span>
+                   : null }
+              </CardContent> : null }
           </Card>
           { answerStudents == null ?
               <LinearProgress color="secondary"    />
@@ -407,7 +442,25 @@ const EvaluationApplicationResults = props => {
                             <TableHead>
                               <TableRow>
                                 <TableCell  className={classes.headStudent}>Aluno(a)</TableCell>
-                                <TableCell className={classes.headPercentage}>% de Acerto</TableCell>
+                                <TooltipCustomized
+                                    title={
+                                      <React.Fragment>
+                                        <Typography color="inherit">
+                                          {'Dado um conjunto de dados, a variância ('}σ<sup>2</sup>{')  é uma medida de dispersão que mostra o quão ' +
+                                        'distante cada valor desse conjunto está do valor central (médio). Quanto menor é a variância, ' +
+                                        'mais próximos os valores estão da média; mas quanto maior ' +
+                                        'ela é, mais os valores estão distantes da média.'}
+                                        </Typography>
+                                        <Typography color="inherit">
+                                          <b>{'Abaixo está o significado das cores para o cabeçalho da questão:'}</b>
+                                        </Typography>
+                                        <span className={classes.percentageRed}>{'De 0% a 29% de acerto'}</span>
+                                        <span className={classes.percentageOrange}>{'De 30% a 69% de acerto'}</span>
+                                        <span className={classes.percentageGreen}>{'De 70% a 100% de acerto'}</span>
+                                      </React.Fragment>
+                                    }>
+                                    <TableCell className={classes.headPercentage}>% de Acerto</TableCell>
+                                </TooltipCustomized>
                               </TableRow>
                             </TableHead>
                             <TableBody>
@@ -451,22 +504,17 @@ const EvaluationApplicationResults = props => {
                                           </div>
                                         </TableCell>
                                     </TooltipCustomized>
-                                    <TooltipCustomized
-                                        title={
-                                          <React.Fragment>
-                                            <span className={classes.percentageRed}>{'De 0% a 29% de acerto'}</span>
-                                            <span className={classes.percentageOrange}>{'De 30% a 69% de acerto'}</span>
-                                            <span className={classes.percentageGreen}>{'De 70% a 100% de acerto'}</span>
-                                          </React.Fragment>
-                                        }>
-                                        <TableCell className={classes.bodyPercentage}>
-                                          {result.percentage_correct < 30 ?
-                                              <span className={classes.percentageRed}>{result.percentage_correct+'%'}</span>
-                                              : result.percentage_correct < 70 ?
-                                                  <span className={classes.percentageOrange}>{result.percentage_correct+'%'}</span>
-                                                  : <span className={classes.percentageGreen}>{result.percentage_correct+'%'}</span> }
-                                        </TableCell>
-                                    </TooltipCustomized>
+                                    <TableCell align="center" style={{margin: '0px'}} className={classes.bodyPercentage}>
+                                      {result.percentage_correct < 30 ?
+                                          <span className={classes.percentageRed}>{result.percentage_correct+'%'}</span>
+                                          : result.percentage_correct < 70 ?
+                                              <span className={classes.percentageOrange}>{result.percentage_correct+'%'}</span>
+                                              : <span className={classes.percentageGreen}>{result.percentage_correct+'%'}</span> }
+                                      <Typography style={{margin: '0px'}} variant="caption" color="textPrimary" display="block" gutterBottom>
+                                        σ<sup>2</sup>{' = '+result.variance}
+                                      </Typography>
+                                    </TableCell>
+
                                   </TableRow>
                               ))}
                             </TableBody>
@@ -484,6 +532,15 @@ const EvaluationApplicationResults = props => {
                                           <TooltipCustomized
                                               title={
                                                 <React.Fragment>
+                                                  <Typography color="inherit">
+                                                    {'Dado um conjunto de dados, a variância ('}σ<sup>2</sup>{')  é uma medida de dispersão que mostra o quão ' +
+                                                                    'distante cada valor desse conjunto está do valor central (médio). Quanto menor é a variância, ' +
+                                                    'mais próximos os valores estão da média; mas quanto maior ' +
+                                                    'ela é, mais os valores estão distantes da média.'}
+                                                  </Typography>
+                                                  <Typography color="inherit">
+                                                    <b>{'Abaixo está o significado das cores para o cabeçalho da questão:'}</b>
+                                                  </Typography>
                                                   <span className={classes.percentageRed}>{'De 0% a 29% de acerto'}</span>
                                                   <span className={classes.percentageOrange}>{'De 30% a 69% de acerto'}</span>
                                                   <span className={classes.percentageGreen}>{'De 70% a 100% de acerto'}</span>
@@ -496,6 +553,9 @@ const EvaluationApplicationResults = props => {
                                                   : result.percentage_correct_round < 70 ?
                                                       <span className={classes.percentageOrange}>{result.percentage_correct_round+'%'}</span>
                                                       : <span className={classes.percentageGreen}>{result.percentage_correct_round+'%'}</span> }
+                                              <Typography variant="caption" color="textPrimary" gutterBottom>
+                                                        σ<sup>2</sup>{'='+result.variance}
+                                              </Typography>
                                             </TableCell>
                                           </TooltipCustomized>
                                       ))}

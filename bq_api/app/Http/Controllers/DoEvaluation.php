@@ -9,6 +9,7 @@ use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
 use App\AnswersHeadEvaluation;
 use App\Question;
+use App\User;
 use Illuminate\Http\Request;
 use Validator;
 use App\Http\Controllers\Controller;
@@ -104,11 +105,11 @@ class DoEvaluation extends Controller
         if($application->random_questions == 1) {
             $answers = AnswersEvaluation::where('fk_answers_head_id', $answerHead->id)
                 ->inRandomOrder()
-                ->with('evaluationQuestion')
+                ->with('evaluationQuestionWithoutCorrect')
                 ->get();
         } else {
             $answers = AnswersEvaluation::where('fk_answers_head_id', $answerHead->id)
-                ->with('evaluationQuestion')
+                ->with('evaluationQuestionWithoutCorrect')
                 ->get();
         }
 

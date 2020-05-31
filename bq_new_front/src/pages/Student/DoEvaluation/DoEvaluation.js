@@ -134,6 +134,7 @@ const DoEvaluation = props => {
           return ;
         }
         setAnswers(response.data);
+
         setRefresh(refresh+1);
         setEnableButtonStart(false);
         setOpenBackdrop(false);
@@ -309,18 +310,18 @@ const DoEvaluation = props => {
                     <Typography variant="button" color="textSecondary" component="p">
                       Texto base:
                     </Typography>
-                    <div> { ReactHtmlParser (data.evaluation_question.question.base_text) } </div>
+                    <div> { ReactHtmlParser (data.evaluation_question_without_correct.question_without_correct.base_text) } </div>
                     <br/>
                     <Typography variant="button" color="textSecondary" component="p">
                       Enunciado:
                     </Typography>
-                    <div> { ReactHtmlParser (data.evaluation_question.question.stem) } </div>
+                    <div> { ReactHtmlParser (data.evaluation_question_without_correct.question_without_correct.stem) } </div>
                     <br />
                     <Typography variant="button" color="textSecondary" component="p">
                       Alternativas:
                     </Typography>
                     <br />
-                    {data.evaluation_question.question.question_items.map(item => (
+                    {data.evaluation_question_without_correct.question_without_correct.question_items_without_correct.map(item => (
                         <List className={classes.lineItemQuestion}
                               key={item.id}
                               onClick={handleToggle(item.id)}

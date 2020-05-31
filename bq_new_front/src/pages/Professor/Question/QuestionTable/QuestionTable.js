@@ -130,7 +130,6 @@ const QuestionTable = props => {
         setQuestions([]);
       }
     } catch (error) {
-      console.log(error);
       //loadAlert('error', 'Erro de conexão.');
     }
   }

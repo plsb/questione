@@ -262,6 +262,7 @@ class EvaluationApplicationsController extends Controller
             ], 202);
         }
 
+
         $evaluation = Evaluation::where('id', $application->fk_evaluation_id)->first();
 
         if(!$evaluation){
@@ -287,8 +288,38 @@ class EvaluationApplicationsController extends Controller
                 'message' => 'Sem dados de aplicação.'
             ], 202);
         }
+
+        $evaluation_question = EvaluationHasQuestions::where('fk_evaluation_id', $evaluation->id)
+            ->orderBy('id')
+            ->get();
+        //seleciona apenas o id do head para pesquisa
+        $head_question_id = AnswersHeadEvaluation::where('fk_application_evaluation_id', $application->id)
+            ->select('id')->get();
+        $qtd_correct_whole_questions = 0;
+        foreach ($evaluation_question as $ev){
+            //verifica qual o item correto
+            $item_correct = QuestionItem::where('fk_question_id', $ev->fk_question_id)
+                ->where('correct_item', 1)->first();
+
+            //quantidade de pessoas que acertaram a questão
+            $answerCorrect = AnswersEvaluation::where('fk_evaluation_question_id', $ev->id)
+                ->whereIn('fk_answers_head_id', $head_question_id)
+                ->where('answer', $item_correct->id)
+                ->count();
+            $qtd_correct_whole_questions += $answerCorrect;
+        }
+        $avg_correct_question = 0;
+
+        $total_students = $head_question_id->count();
+        if($total_students > 0) {
+            $avg_correct_question = $qtd_correct_whole_questions / $total_students;
+        }
+
+
        // return response()->json($answers, 202);
         $result = array();
+        $variance_total = 0;
+        $students = array();
         foreach ($answerHead as $head) {
             $resultStudent = new \ArrayObject();
 
@@ -359,7 +390,10 @@ class EvaluationApplicationsController extends Controller
                 ];
                 $questions[] = $object;
             }
-            $percentage = ($count_corret_student*100)/$total_questions;
+
+            if($total_students >0) {
+                $percentage = ($count_corret_student * 100) / $total_questions;
+            }
 
             $total_time_active = 'Avaliação não finalizada.';
             if($head->finalized_at != null){
@@ -382,6 +416,13 @@ class EvaluationApplicationsController extends Controller
                 }
 
             }
+            $variance = 0;
+            //dd($total_students);
+            if($total_students > 1) {
+                $variance = pow(($count_corret_student - $avg_correct_question), 2) / ($total_students - 1);
+                $variance_total += $variance;
+
+            }
 
 
             $resultStudent = (object)[
@@ -389,16 +430,17 @@ class EvaluationApplicationsController extends Controller
                 'hr_start' => $head->created_at,
                 'hr_finished' => $head->finalized_at,
                 'total_time' => $total_time_active,
+                'variance' => number_format($variance, 3),
                 'questions' => $questions,
                 't_question' => $total_questions,
                 't_correct' => $count_corret_student,
                 'percentage_correct' => number_format($percentage, 2),
             ];
-            $result[] = $resultStudent;
+            $students[] = $resultStudent;
         }
         usort(
 
-            $result,
+            $students,
 
             function( $a, $b ) {
 
@@ -407,6 +449,12 @@ class EvaluationApplicationsController extends Controller
                 return ( ( $a->student < $b->student ) ? -1 : 1 );
             }
         );
+        $result = (object)[
+            'students' => $students,
+            'avg_correct_question' => number_format($avg_correct_question, 2),
+            'variance_total' => number_format($variance_total, 3),
+        ];
+        //$result[] = $resultVariance;
 
         return response()->json($result, 200);
     }
@@ -420,6 +468,7 @@ class EvaluationApplicationsController extends Controller
                 'message' => 'Aplicação não encontrada.'
             ], 202);
         }
+
 
         $evaluation = Evaluation::where('id', $application->fk_evaluation_id)->first();
 
@@ -437,6 +486,7 @@ class EvaluationApplicationsController extends Controller
             ], 202);
         }
 
+
         $evaluation_question = EvaluationHasQuestions::where('fk_evaluation_id', $evaluation->id)
             ->orderBy('id')
             ->get();
@@ -450,12 +500,14 @@ class EvaluationApplicationsController extends Controller
         $head_question = AnswersHeadEvaluation::where('fk_application_evaluation_id', $application->id)
             ->select('id')->get();
 
-
         $result = array();
         $resultQuestions = array();
-
-
+        $percentagemGeralEvaluationCorrect = 0;
+        $qtdQuestions = 0;
+        $variance_total = 0;
         foreach ($evaluation_question as $ev_question){
+            $qtdQuestions++;
+
             $question = Question::where('id', $ev_question->fk_question_id)->first();
             //verifica qual o item correto
             $item_correct = QuestionItem::where('fk_question_id', $question->id)
@@ -475,14 +527,22 @@ class EvaluationApplicationsController extends Controller
                 ->where('answer', $item_correct->id)
                 ->count();
 
+            //média de acertos da questão
+            $avg_question = 0;
+            if($count_total_answer_question > 0 && $answer > 0){
+                $avg_question = $answer / $count_total_answer_question;
+            }
+
             //porcentagem de pessoas que acertam a questão
             $percentageCorrectQuestion = 0;
             if($count_total_answer_question != 0){
                 $percentageCorrectQuestion = ($answer * 100)/$count_total_answer_question;
             }
+            $percentagemGeralEvaluationCorrect += $percentageCorrectQuestion;
 
             $resultItens = array();
             $ordem = 0;
+            $variance_question = 0;
             foreach($itens_question as $iq){
                 $ordem++;
                 //conta quantas pessoas responderam esse item
@@ -509,14 +569,17 @@ class EvaluationApplicationsController extends Controller
 
                 }
 
-
-
                 //porcentagem de acerto do item
                 $percentageAnswerItem = 0;
                 if($count_total_answer_question != 0) {
                     $percentageAnswerItem = ($count_total_answer_item * 100) / $count_total_answer_question;
                 }
                 if($iq->id == $item_correct->id){
+                    //calcula variância baseado na média de acertos da questão
+                    $variance_question += pow((1 - $avg_question), 2)
+                                            *  $count_total_answer_item;
+
+
                     $auxItem= (object)[
                         'description' => $iq->description,
                         'total_answer_item' => $count_total_answer_item,
@@ -525,6 +588,17 @@ class EvaluationApplicationsController extends Controller
                         'ordem' => $ordemDescription,
                     ];
                 } else {
+                    //verifica se algum estudante respondeu o item
+                    $virifyIfSomeStudentAnswer = AnswersEvaluation::where('fk_evaluation_question_id', $ev_question->id)
+                        ->whereIn('fk_answers_head_id', $head_question)
+                        ->where('answer', $iq->id)
+                        ->count();
+                    if($virifyIfSomeStudentAnswer>0) {
+                        //calcula variância baseado na média de acertos da questão
+                        $variance_question += pow((0 - $avg_question), 2) *
+                                                           $virifyIfSomeStudentAnswer;
+                    }
+
                     $auxItem= (object)[
                         'description' => $iq->description,
                         'total_answer_item' => $count_total_answer_item,
@@ -534,8 +608,14 @@ class EvaluationApplicationsController extends Controller
                     ];
                 }
 
+
                 $resultItens[] = $auxItem;
             }
+
+
+
+            //calcula variância dividindo pelo total de respostas
+
             $skill = Skill::where('id', $question->fk_skill_id)->first();
             $course = Course::where('id', $question->fk_course_id)->first();
             $objectsHasQuestion = QuestionHasKnowledgeObject::where('fk_question_id', $question->id)->get();
@@ -548,9 +628,14 @@ class EvaluationApplicationsController extends Controller
                 ];
                 $resultObjects[] = $auxObject;
             }
+
             $descSkill = null;
             if($skill){
                 $descSkill = $skill->description;
+            }
+            if($count_total_answer_question>0) {
+                $variance_question = $variance_question / $count_total_answer_question;
+                $variance_total += $variance_question;
             }
 
             $auxQuestion= (object)[
@@ -561,6 +646,7 @@ class EvaluationApplicationsController extends Controller
                 'reference' => $question->reference,
                 'skill' => $descSkill,
                 'course' => $course->description,
+                'variance' => number_format($variance_question,3),
                 'total_asnwer' => $count_total_answer_question,
                 'percentage_correct' => number_format($percentageCorrectQuestion, 2),
                 'percentage_correct_round' => round($percentageCorrectQuestion),
@@ -569,16 +655,23 @@ class EvaluationApplicationsController extends Controller
 
             ];
 
-
             $resultQuestions[] = $auxQuestion;
+        }
+        //dd($variance_question, $teste);
+        if($qtdQuestions>0) {
+            $percentagemGeralEvaluationCorrect = $percentagemGeralEvaluationCorrect / $qtdQuestions;
         }
 
         //dd($evaluation_question);
         $auxEvaluation= (object)[
             'application' => $application->id,
             'idApplication' => $application->id_application,
+            'variance_total' => number_format($variance_total,3),
             'description_application' => $application->description,
             'description_evaluation' => $evaluation->description,
+            'percentagem_geral_correct_evaluation' => number_format($percentagemGeralEvaluationCorrect, 2),
+            'qtdQuestions' => $qtdQuestions,
+            'qtdStudents' => $head_question->count(),
             'questions' => $resultQuestions
         ];
         $result[] = $auxEvaluation;

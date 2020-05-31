@@ -21,6 +21,11 @@ class AnswersEvaluation extends Model
             ->with('question');
     }
 
+    public function evaluationQuestionWithoutCorrect(){
+        return $this->belongsTo(EvaluationHasQuestions::class, 'fk_evaluation_question_id')
+            ->with('questionWithoutCorrect');
+    }
+
     public function evaluationApplication(){
         return $this->belongsTo(EvaluationApplication::class, 'fk_aplication_evaluation_id');
     }

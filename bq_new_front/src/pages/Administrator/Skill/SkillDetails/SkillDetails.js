@@ -77,7 +77,7 @@ const SkillDetails = props => {
   async function loadCourses(){
     try {
       const response = await api.get('all/courses');
-      if(response == 200) {
+      if(response.status == 200) {
         setCourses([...courses, ...response.data]);
       }
     } catch (error) {
@@ -143,6 +143,7 @@ const SkillDetails = props => {
 
     }
   }
+
 
   useEffect(() => {
     loadCourses();

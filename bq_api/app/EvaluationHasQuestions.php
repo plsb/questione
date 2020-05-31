@@ -20,4 +20,14 @@ class EvaluationHasQuestions extends Model
             ->with('keywords');
     }
 
+    public function questionWithoutCorrect(){
+        return $this->belongsTo(Question::class, 'fk_question_id')
+            ->with('course')
+            ->with('questionItemsWithoutCorrect')
+            ->with('skill')
+            ->with('profile')
+            ->with('knowledgeObjects')
+            ->with('keywords');
+    }
+
 }
