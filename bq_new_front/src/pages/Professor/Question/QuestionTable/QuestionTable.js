@@ -18,6 +18,7 @@ import Swal from "sweetalert2";
 import UsersToolbar from "./components/QuestionToolbar";
 import PropTypes from "prop-types";
 import QuestionCard from "../../../../components/QuestionCard/QuestionCard";
+import {QUESTION_SEARCH_SKILL, searchQuestions, searchQuestionsPage} from "../../../../services/seacrhQuestions";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -96,34 +97,50 @@ const QuestionTable = props => {
     try {
       let url = 'question?page='+page;
 
+      let QUESTION_SEARCH_TYPE = "";
       if(searchText[0].value == "S"){
         url += '&user=S';
+        QUESTION_SEARCH_TYPE = 'S';
       } else {
         url += '&user=T';
+        QUESTION_SEARCH_TYPE = 'T';
       }
+      let QUESTION_SEARCH_COURSE = 0;
+      let QUESTION_SEARCH_SKILL = 0;
+      let QUESTION_SEARCH_OBJECT = 0;
       if(searchText[1].fk_course_id > 0){
         url += '&fk_course_id='+searchText[1].fk_course_id;
+        QUESTION_SEARCH_COURSE = searchText[1].fk_course_id;
 
         if(searchText[2].fk_object_id > 0){
           url += '&fk_object_id='+searchText[2].fk_object_id;
+          QUESTION_SEARCH_OBJECT = searchText[2].fk_object_id;
         }
 
         if(searchText[3].fk_skill_id > 0){
           url += '&fk_skill_id='+searchText[3].fk_skill_id;
+          QUESTION_SEARCH_SKILL = searchText[3].fk_skill_id;
         }
 
       }
       let data = {};
+      let QUESTION_SEARCH_KEYWORD = "";
       if(searchText[4].keyword != ''){
         const keyword = searchText[4].keyword.split(" ").join("%20");
         url += '&keyword='+keyword;
+        QUESTION_SEARCH_KEYWORD = searchText[4].keyword;
       }
-      if(searchText[5]. id != ""){
-        url += '&id='+searchText[5].id
+
+      let QUESTION_SEARCH_ID = "";
+      if(searchText[5].id != ""){
+        url += '&id='+searchText[5].id;
+        QUESTION_SEARCH_ID = searchText[5].id;
       }
 
       const response = await api.get(url);
       if(response.status == 200) {
+        searchQuestions(QUESTION_SEARCH_TYPE, QUESTION_SEARCH_ID, QUESTION_SEARCH_COURSE,
+            QUESTION_SEARCH_SKILL, QUESTION_SEARCH_OBJECT, QUESTION_SEARCH_KEYWORD);
         setTotal(response.data.total);
         setQuestions(response.data.data);
       } else {
@@ -135,6 +152,29 @@ const QuestionTable = props => {
   }
 
   useEffect(() => {
+    if(localStorage.getItem('@Questione-search-type') != null){
+      searchText[0].value = localStorage.getItem('@Questione-search-type');
+    }
+    if(localStorage.getItem('@Questione-search-course') != 0){
+      searchText[1].fk_course_id = localStorage.getItem('@Questione-search-course');
+    }
+    if(localStorage.getItem('@Questione-search-object') != 0){
+      searchText[2].fk_object_id = localStorage.getItem('@Questione-search-object');
+    }
+    if(localStorage.getItem('@Questione-search-skill') != 0){
+      searchText[3].fk_skill_id = localStorage.getItem('@Questione-search-skill');
+    }
+    if(localStorage.getItem('@Questione-search-id') != ''){
+      searchText[5].id = localStorage.getItem('@Questione-search-id');
+    }
+    if(localStorage.getItem('@Questione-search-show-keyword') != ''){
+      searchText[4].keyword = localStorage.getItem('@Questione-search-show-keyword');
+    }
+    if(localStorage.getItem('@Questione-search-page') != 0){
+      handlePageChange(null,  Number(localStorage.getItem('@Questione-search-page')));
+
+    }
+
     loadQuestions(page+1);
   }, [refresh]);
 
@@ -145,11 +185,24 @@ const QuestionTable = props => {
   const onClickSearch = (e) => {
     setPage(0);
     loadQuestions(1);
+    searchQuestionsPage(0);
   }
 
-  const handlePageChange = (event, page) => {
-    loadQuestions(page+1)
-    setPage(page);
+  const onClickCleanSearch = (e) => {
+    console.log('chamou');
+    searchText[0] = {"value" : "S"};
+    searchText[1] = {"fk_course_id" : 0};
+    searchText[2] = {"fk_object_id" : 0};
+    searchText[3] = {"fk_skill_id" : 0};
+    searchText[4] = {"keyword" : ''};
+    searchText[5] = {"id" : ''};
+    onClickSearch();
+  }
+
+  const handlePageChange = (event, newPage) => {
+    loadQuestions(newPage+1);
+    setPage(newPage);
+    searchQuestionsPage(newPage);
   };
 
   const handleRowsPerPageChange = event => {
@@ -161,7 +214,8 @@ const QuestionTable = props => {
           <UsersToolbar
               onChangeSearch={updateSearch.bind(this)}
               searchText={searchText}
-              onClickSearch={onClickSearch}/>
+              onClickSearch={onClickSearch}
+              onClickCleanSearch={onClickCleanSearch}/>
         <div className={classes.content}>
           <Card
               className={clsx(classes.root, className)}>

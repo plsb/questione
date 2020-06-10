@@ -35,6 +35,7 @@ const QuestionItens = props => {
     const [btAddItem, setBtAddItem] = useState(false);
     const [btRemoveItem, setBtRemoveItem] = useState(false);
     const [itemDelete, setItensDelete] = useState([]);
+    const timer = React.useRef();
 
 
     const classes = useStyles();
@@ -153,34 +154,42 @@ const QuestionItens = props => {
         }
     }
 
-    async function saveItem(element, index){
+    async function saveItem(elements){
         try {
-            let response = {};
-            const description = element.description;
-            const fk_question_id = idQuestion;
-            const correct_item = element.correct;
+            //elements.forEach(async function logArrayElements(element, index, array) {
+            for(var i = 0; i < elements.length; i++){
+                let element = elements[i];
+                let response = {};
+                const description = element.description;
+                const fk_question_id = idQuestion;
+                const correct_item = element.correct;
 
-            const data = {
-                description, fk_question_id, correct_item
+                const data = {
+                    description, fk_question_id, correct_item
+                }
+
+                //return ;
+                const id = element.idItem;
+                let acao = "";
+                console.log("item", element);
+
+                if(id === 0){
+                    response = await api.post('questionitem', data);
+                    acao = "cadastradas";
+                } else {
+                    response = await api.put('questionitem/'+id,data);
+                    acao = "atualizadas";
+                }
+
+                if(response.status == 200 || response.status == 201){
+                    loadAlert('success', 'Alternativas da questão '+acao+'.');
+                    inputItens[i].idItem = response.data.id;
+                } else {
+
+                    loadAlert('error', 'Erro ao inserir alternativa.');
+                }
             }
 
-            //return ;
-            const id = element.idItem;
-            let acao = "";
-            if(id === 0){
-                response = await api.post('questionitem', data);
-                acao = "cadastradas";
-            } else {
-                response = await api.put('questionitem/'+id,data);
-                acao = "atualizadas";
-            }
-            if(response.status == 200 || response.status == 201){
-                loadAlert('success', 'Alternativas da questão '+acao+'.');
-                 inputItens[index].idItem = response.data.id;
-            } else {
-
-                loadAlert('error', 'Erro ao inserir alternativa.');
-            }
         } catch (error) {
 
         }
@@ -211,9 +220,7 @@ const QuestionItens = props => {
             deleteItem(element);
         });
 
-        inputItens.forEach(function logArrayElements(element, index, array) {
-            saveItem(element, index);
-        });
+        saveItem(inputItens, 0);
 
     }
 

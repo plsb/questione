@@ -11,13 +11,12 @@ import {Button,
   RadioGroup,
   FormControlLabel,
   Radio, Tooltip, Card, CardActions, CardContent, Collapse,
-  IconButton} from '@material-ui/core';
-import FindInPage from '@material-ui/icons/SearchSharp';
+  IconButton, Hidden} from '@material-ui/core';
 import {withRouter} from "react-router-dom";
 import api from "../../../../../../services/api";
-import {SearchInput} from "../../../../../../components";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import { FcClearFilters, FcSearch } from 'react-icons/fc';
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -50,7 +49,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const QuestionToolbar = props => {
-  const { className, onClickSearch, onChangeSearch, searchText, history, ...rest } = props;
+  const { className, onClickSearch, onChangeSearch, searchText, onClickCleanSearch,
+                        history, ...rest } = props;
   const [courses, setCourses] = useState([{'id': '0', 'description': 'Todos as áreas'}]);
   const [objects, setObjects] = useState([]);
   const [skills, setSkills] = useState([]);
@@ -75,6 +75,7 @@ const QuestionToolbar = props => {
     setCourseSelect(e.target.value);
     searchText[1] = {"fk_course_id" : e.target.value};
     searchText[2] = {"fk_object_id" : 0};
+    searchText[3] = {"fk_skill_id" : 0};
   }
 
   const onChangeObject = (e) =>{
@@ -158,6 +159,12 @@ const QuestionToolbar = props => {
   }, []);
 
   useEffect(() => {
+    if(localStorage.getItem('@Questione-search-course') != null){
+      setCourseSelect(localStorage.getItem('@Questione-search-course'));
+    }
+  }, [courses]);
+
+  useEffect(() => {
     loadKeywordsAll();
     if(courseSelect != 0) {
       loadObjects();
@@ -168,7 +175,7 @@ const QuestionToolbar = props => {
     }
   }, [courseSelect]);
 
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = React.useState(true);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -176,11 +183,14 @@ const QuestionToolbar = props => {
 
   const selectKeyWord = (event, newValue) => {
     if(newValue!=null){
-      searchText[4] = {"keyword" : newValue.keyword};
+      console.log('keyword', newValue);
+      searchText[4].keyword = newValue.keyword;
     } else {
-      searchText[4] = {"keyword" : ''};
+      searchText[4].keyword = '';
     }
   }
+
+  const [value, setValue] = React.useState('');
 
   return (
       <div
@@ -199,17 +209,23 @@ const QuestionToolbar = props => {
         <Card className={classes.root}>
           <CardContent>
               <FormControl component="fieldset">
-                <RadioGroup aria-label="gender" name="gender1" value={valueSelect} onChange={handleChangeSelect}>
+                <RadioGroup aria-label="gender" name="gender1" value={searchText[0] ? searchText[0].value : 'S'} onChange={handleChangeSelect}>
                   <FormControlLabel value="S" control={<Radio />} label="Listar apenas suas questões." />
                   <FormControlLabel value="T" control={<Radio />} label="Listar questões de todos os usuários." />
                 </RadioGroup>
               </FormControl>
-              <Tooltip title="Clique para pesquisar">
+              <Tooltip title="Clique para buscar">
                 <Button
                     onClick={onClickSearch}>
-                  <FindInPage fontSize="large"/>
+                  <FcSearch size="30"/>
                 </Button>
               </Tooltip>
+            <Tooltip title="Clique para limpar o filtro da busca">
+              <Button
+                  onClick={onClickCleanSearch}>
+                <FcClearFilters size="30"/>
+              </Button>
+            </Tooltip>
 
           </CardContent>
           <CardActions disableSpacing>
@@ -229,22 +245,24 @@ const QuestionToolbar = props => {
             <CardContent>
               <div className={classes.row}>
                 <TextField
-                    label="Código da Questão"
-                    helperText="Informe o código"
+                    label="Código"
+                    helperText="Código da Questão"
                     margin="dense"
                     onChange={onChangeId}
-                    value={idSelect}
+                    value={searchText[5] != null  ? searchText[5].id : ""}
+                    style={{width: '140px'}}
                     variant="outlined"
                 />
                 <TextField className={classes.textField}
                     id="filled-select-currency"
                     select
-                    label="Selecione a área"
-                    value={courseSelect}
+                    label="Área"
+                    value={searchText[1] ? searchText[1].fk_course_id : 0}
                     onChange={onChangeCourse}
-                    helperText="Selecione o área que deseja pesquisar."
+                    helperText="Selecione a àrea."
                     variant="outlined"
-                    margin="dense">
+                    margin="dense"
+                   style={{width: '300px'}}>
                   {courses.map((option) => (
                       <MenuItem key={option.id} value={option.id}>
                         {option.description}
@@ -255,12 +273,13 @@ const QuestionToolbar = props => {
                     className={classes.textField}
                     id="filled-select-currency"
                     select
-                    label="Selecione a competência"
-                    value={skillSelect}
+                    label="Competência"
+                    value={searchText[3] ? searchText[3].fk_skill_id : 0}
                     onChange={onChangeSkill}
-                    helperText="Selecione a competência que deseja pesquisar."
+                    helperText="Selecione a competência."
                     variant="outlined"
-                    margin="dense">
+                    margin="dense"
+                    style={{width: '300px'}}>
                   {skills.map((option) => (
                       <MenuItem key={option.id} value={option.id}>
                         {option.description}
@@ -273,12 +292,13 @@ const QuestionToolbar = props => {
                 <TextField
                     id="filled-select-currency"
                     select
-                    label="Selecione o objeto de conhecimento"
-                    value={objectSelect}
+                    label="Objeto de conhecimento"
+                    value={searchText[2] ? searchText[2].fk_object_id : 0}
                     onChange={onChangeObject}
-                    helperText="Selecione o objeto de conhecimento que deseja pesquisar."
+                    helperText="Selecione o objeto de conhecimento."
                     variant="outlined"
-                    margin="dense">
+                    margin="dense"
+                    style={{width: '300px'}}>
                   {objects.map((option) => (
                       <MenuItem key={option.id} value={option.id}>
                         {option.description}
@@ -286,15 +306,22 @@ const QuestionToolbar = props => {
                   ))}
                 </TextField>
                 <Autocomplete
-                    freeSolo
                     id="keywords"
+                    value={value}
+                    onChange={(event, newValue) => {
+                      console.log('value', newValue);
+                      setValue(newValue);
+                    }}
+                    inputValue={searchText[4] ? searchText[4].keyword : ""}
+                    onInputChange={(event, newInputValue) => {
+                      console.log('input', newInputValue);
+                      searchText[4].keyword = newInputValue;
+                    }}
+                    id="controllable-states-demo"
                     options={keywordsAll}
-                    value={searchText[4]}
                     getOptionLabel={(option) => option.keyword}
-                    onChange={(event, newValue) => selectKeyWord(event, newValue)}
-                    style={{ marginLeft: '10px', width: '300px' }}
-                    renderInput={(params) =>
-                        <TextField {...params} label="Palavra-chave" variant="outlined" />}
+                    style={{ marginLeft: '10px', width: '200px' }}
+                    renderInput={(params) => <TextField {...params} label="Palavra-chave" variant="outlined" />}
                 />
               </div>
 
@@ -310,6 +337,7 @@ QuestionToolbar.propTypes = {
   className: PropTypes.string,
   onChangeSearch: PropTypes.func,
   onClickSearch: PropTypes.func,
+  onClickCleanSearch: PropTypes.func,
   searchText: PropTypes.array,
   history: PropTypes.object
 };

@@ -12,6 +12,7 @@ import {
 import api from '../../services/api';
 import Swal from 'sweetalert2';
 import { login } from "../../services/auth";
+import {searchQuestions, searchQuestionsPage} from "../../services/seacrhQuestions";
 
 const schema = {
   email: {
@@ -173,6 +174,10 @@ const SignIn = props => {
           loadAlert('error', response.data.message);
         }
       } else {
+        searchQuestions('S', '', 0,
+            0, 0, '');
+        searchQuestionsPage(0);
+
         login(response.data.token, response.data[0].name,
                 response.data[0].email, response.data[0].acess_level,
                 response.data[0].id, response.data[0].show_tour);

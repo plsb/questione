@@ -8,6 +8,7 @@ use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
 use App\AnswersHeadEvaluation;
+use App\Notifications\StudentFinishEvaluationToProfessorNotification;
 use App\Question;
 use App\User;
 use Illuminate\Http\Request;
@@ -218,6 +219,12 @@ class DoEvaluation extends Controller
         //dd(date('Y-m-d H:i:s'));
         $answer_head->finalized_at = date('Y-m-d H:i:s');
         $answer_head->save();
+
+        $evaluation = Evaluation::where('id', $application->fk_evaluation_id)->first();
+        $userOwner = User::where('id', $evaluation->fk_user_id)->first();
+        $userStudent = User::where('id', $answer_head->fk_user_id)->first();
+        $userOwner->notify(new StudentFinishEvaluationToProfessorNotification($userOwner, $userStudent, $evaluation));
+
         return response()->json([
             'message' => 'Avaliação finalizada.'
         ], 200);
