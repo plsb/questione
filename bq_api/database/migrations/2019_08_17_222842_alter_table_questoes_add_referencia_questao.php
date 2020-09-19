@@ -13,7 +13,7 @@ class AlterTableQuestoesAddReferenciaQuestao extends Migration
      */
     public function up()
     {
-        Schema::table('questoes', function (Blueprint $table) {
+        Schema::table('questions', function (Blueprint $table) {
             $table->text('referencia', 500)->nullable(true);
         });
     }

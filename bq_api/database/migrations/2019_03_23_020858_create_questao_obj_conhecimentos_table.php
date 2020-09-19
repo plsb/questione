@@ -17,8 +17,8 @@ class CreateQuestaoObjConhecimentosTable extends Migration
             $table->increments('id');
             $table->integer('fk_questao_id')->unsigned();
             $table->integer('fk_obj_conhecimento_id')->unsigned();
-            $table->foreign('fk_questao_id')->references('id')->on('questoes')->onDelete('cascade');
-            $table->foreign('fk_obj_conhecimento_id')->references('id')->on('objetos_conhecimento')->onDelete('cascade');
+            $table->foreign('fk_questao_id')->references('id')->on('questions')->onDelete('cascade');
+            $table->foreign('fk_obj_conhecimento_id')->references('id')->on('knowledge_objects')->onDelete('cascade');
             $table->timestamps();
         });
     }

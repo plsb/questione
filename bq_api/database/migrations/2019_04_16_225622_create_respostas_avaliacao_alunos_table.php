@@ -18,11 +18,11 @@ class CreateRespostasAvaliacaoAlunosTable extends Migration
             $table->integer('resposta');
 
             $table->integer('fk_avaliacao_questao_id')->unsigned();
-            $table->foreign('fk_avaliacao_questao_id')->references('id')->on('avaliacao_questao')->onDelete('cascade');
+            $table->foreign('fk_avaliacao_questao_id')->references('id')->on('evaluation_application')->onDelete('cascade');
 
 
             $table->integer('fk_aplicacao_avaliacao_id')->unsigned();
-            $table->foreign('fk_aplicacao_avaliacao_id')->references('id')->on('aplicacao_avaliacao')->onDelete('cascade');
+            $table->foreign('fk_aplicacao_avaliacao_id')->references('id')->on('evaluation_application')->onDelete('cascade');
             $table->timestamps();
         });
     }

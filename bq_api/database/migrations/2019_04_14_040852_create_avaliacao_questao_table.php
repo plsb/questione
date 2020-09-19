@@ -16,9 +16,9 @@ class CreateAvaliacaoQuestaoTable extends Migration
         Schema::create('evaluation_questions', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('fk_avaliacao_id')->unsigned();
-            $table->foreign('fk_avaliacao_id')->references('id')->on('avaliacoes')->onDelete('cascade');
+            $table->foreign('fk_avaliacao_id')->references('id')->on('evaluations')->onDelete('cascade');
             $table->integer('fk_questao_id')->unsigned();
-            $table->foreign('fk_questao_id')->references('id')->on('questoes')->onDelete('cascade');
+            $table->foreign('fk_questao_id')->references('id')->on('questions')->onDelete('cascade');
             $table->timestamps();
         });
     }
