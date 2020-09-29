@@ -17,7 +17,7 @@ class AuthController extends Controller
 
     private $rules = [
         'name' => 'required|max:50|min:8',
-        'cpf' => 'required|unique:users',
+        // 'cpf' => 'required|unique:users',
         'email' => 'required|unique:users',
         'password' => 'required|max:10|min:6'
     ];
@@ -27,8 +27,8 @@ class AuthController extends Controller
         'name.max' => 'O máximo de caracteres aceitáveis para o NOME DO USUÁRIO é 50.',
         'name.min' => 'O minímo de caracteres aceitáveis para o NOME DO USUÁRIO é 8.',
 
-        'cpf.required' => 'O CPF DO USUÁRIO é obrigatório.',
-        'cpf.unique' => 'O CPF DO USUÁRIO já está cadastrado.',
+        // 'cpf.required' => 'O CPF DO USUÁRIO é obrigatório.',
+        // 'cpf.unique' => 'O CPF DO USUÁRIO já está cadastrado.',
 
         'email.required' => 'O E-MAIL DO USUÁRIO é obrigatório.',
         'email.unique' => 'O E-MAIL DO USUÁRIO já está cadastrado.',
@@ -52,10 +52,10 @@ class AuthController extends Controller
             return response($json_str, 202);
         }
 
-        if(!$this->verifyCPFValid($request->cpf))
-        {
-            return response()->json(['message' => 'CPF Inválido!'], 202);
-        }
+        // if(!$this->verifyCPFValid($request->cpf))
+        // {
+        //     return response()->json(['message' => 'CPF Inválido!'], 202);
+        // }
 
         if(!$this->verifyEmailValid($request->email))
         {
@@ -66,7 +66,6 @@ class AuthController extends Controller
             'name'    => strtoupper($request->name),
             'email'    => strtolower($request->email),
             'password' => $request->password,
-            'cpf' => $request->cpf,
             'acess_level' => 0,
         ]);
         $user->notify(new WelcomeNotifications($user));
