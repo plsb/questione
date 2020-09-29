@@ -22,12 +22,6 @@ const schema = {
       message: 'O nome deve conter no mínimo 8 e no máximo 50 caracteres.'
     }
   },
-  cpf: {
-    presence: { allowEmpty: false, message: 'O cpf é obrigatório.' },
-    length: {
-
-    }
-  },
   email: {
     presence: { allowEmpty: false, message: 'O e-mail é obrigatório.' },
     email: true,
