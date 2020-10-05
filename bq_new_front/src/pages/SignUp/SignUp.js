@@ -239,7 +239,7 @@ const SignUp = props => {
               value={formState.values.name || ''}
               variant="outlined"
             />
-            <TextField
+            {/* <TextField
               className={classes.textField}
               error={hasError('cpf')}
               fullWidth
@@ -252,7 +252,7 @@ const SignUp = props => {
               type="text"
               value={formState.values.cpf || ''}
               variant="outlined"
-            />
+            /> */}
             <TextField
               className={classes.textField}
               error={hasError('email')}
