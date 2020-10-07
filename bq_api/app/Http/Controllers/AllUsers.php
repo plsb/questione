@@ -8,6 +8,7 @@ use App\KeywordQuestion;
 use App\KnowledgeObject;
 use App\Question;
 use App\Skill;
+use App\TypeOfEvaluation;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,13 @@ class AllUsers extends Controller
     public function __construct()
     {
         $this->middleware(['jwt.auth']);
+    }
+
+    public function typeOfevaluation()
+    {
+        $typeOfEvaluations = TypeOfEvaluation::orderBy('description')->get();
+
+        return response()->json($typeOfEvaluations, 200);
     }
 
     public function courses()
