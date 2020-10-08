@@ -13,7 +13,7 @@ class CreateClassificacaoQuestoesTable extends Migration
      */
     public function up()
     {
-        Schema::create('rank_questions', function (Blueprint $table) {
+        Schema::create('rank_question', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('classificacao');
             $table->integer('fk_usuario_id')->unsigned();

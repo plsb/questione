@@ -1,11 +1,11 @@
-import React, {useEffect} from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {
     Box, Grid, IconButton, TextField, Typography,
-    Button, Tooltip
+    Button, Tooltip, Select, MenuItem
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import {withRouter} from "react-router-dom";
@@ -17,11 +17,17 @@ import api from "../../../../services/api";
 import Swal from "sweetalert2";
 import QuestionSkill from "./QuestionSkill";
 import QuestionKeywords from "./QuestionKeywords";
+import useTypeOfEvaluations from '../../../../hooks/useTypeOfEvaluations';
 
 const useStyles = makeStyles({
   root: {
     flexGrow: 1,
   },
+  evaluationTypeGroup: {
+    width: '100%',
+    padding: '30px',
+    display: 'flex',
+  }
 });
 
 function TabPanel(props) {
@@ -72,16 +78,27 @@ const QuestionDetails = props => {
     const { className, history, ...rest } = props;
     const { idQuestion } = props.match.params;
 
+    // lista de referencias (tipos de avaliação)
+    const typeOfEvaluationList = useTypeOfEvaluations();
+
     const classes = useStyles();
+
+    console.log("Classes = ", classes);
+
     const [value, setValue] = React.useState(0);
     //visibilidade das abas
     const [tabItens, setTabItens] = React.useState(false);
     const [tabSkill, setTabSkill] = React.useState(false);
+
+    // controlador de abertua do select
+    const [open, setOpen] = React.useState(false);
+
     //campos
     const [baseText, setBaseText] = React.useState('');
     const [stem, setStem] = React.useState('');
-    const [reference, setReference] = React.useState('');
+    const [reference, setReference] = React.useState('select'); // type of evaluation
     const [validated, setValidated] = React.useState(0);
+
     //utilizado pra quando for nova questão
     const [idQuestionNew, setIdQuestionNew] = React.useState(0);
 
@@ -122,8 +139,14 @@ const QuestionDetails = props => {
         try {
             const base_text = baseText;
             const data = {
-                base_text, stem, reference
+                base_text,
+                stem,
             }
+
+            if (reference !== 'select') {
+                data.reference = reference;
+            }
+
             let response = {};
             let acao = "";
             if(!idQuestion){
@@ -167,6 +190,14 @@ const QuestionDetails = props => {
 
     }
 
+    // const loadEvaluationTypes = useCallback(async () => {
+    //     try {
+
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // });
+
     async function findAQuestion(id){
         try {
             const response = await api.get('question/show/'+id);
@@ -203,9 +234,9 @@ const QuestionDetails = props => {
 
     }, [tabItens, value, idQuestionNew]);
 
-    const handleChangeReference = (event) =>{
-        setReference(event.target.value);
-    }
+    // const handleChangeReference = (event) =>{
+    //     setReference(event.target.value);
+    // }
 
     const handleChangeBaseText = (event) => {
         setBaseText(event);
@@ -213,6 +244,18 @@ const QuestionDetails = props => {
 
     const handleChangeStem = (event) => {
         setStem(event);
+    };
+
+    const handleChangeReference = (event) => {
+        setReference(event.target.value);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
     };
 
   return (
@@ -245,24 +288,43 @@ const QuestionDetails = props => {
           </Tabs>
           {/*texto base e enunciado*/}
           <TabPanel value={value} index={0}>
-              <Grid
+                <Grid
                   container
                   direction="row"
                   justify="center"
-                  alignItems="center">
-                  <Tooltip title="Caso a questão tenha sido construída baseada em alguma já aplicada, você pode informar no campo referência. Ex: ENADE 2020, ENEM 2020, etc.">
-                      <TextField
-                          key="reference"
-                          fullWidth
-                          label="Referência"
-                          margin="dense"
-                          name="reference"
-                          variant="outlined"
-                          value={reference}
-                          onChange={handleChangeReference}
-                          style={{width: '90%', justifyContent: 'center'}}
-                      />
-                  </Tooltip>
+                  alignItems="center"
+                >
+                    <div className={classes.evaluationTypeGroup}>
+                        <b className="item1" style={{ marginRight: '32px' }}>Tipo de avaliação</b>
+                        <Tooltip title="Caso a questão tenha sido construída baseada em alguma já aplicada, você pode informar no campo referência. Ex: ENADE 2020, ENEM 2020, etc.">
+                            {/* <TextField
+                                key="reference"
+                                fullWidth
+                                label="Referência"
+                                margin="dense"
+                                name="reference"
+                                variant="outlined"
+                                value={reference}
+                                onChange={handleChangeReference}
+                                style={{width: '90%', justifyContent: 'center'}}
+                            /> */}
+                                <Select
+                                    labelId="demo-controlled-open-select-label"
+                                    id="demo-controlled-open-select"
+                                    open={open}
+                                    onClose={handleClose}
+                                    onOpen={handleOpen}
+                                    value={reference}
+                                    onChange={handleChangeReference}
+                                    className={classes.root}
+                                >
+                                    <MenuItem value="select">Selecione</MenuItem>
+                                    {typeOfEvaluationList.map((type) => (
+                                        <MenuItem value={type.description}>{type.description}</MenuItem>
+                                    ))}
+                                </Select>
+                        </Tooltip>
+                    </div>
               </Grid>
               <div style={{padding: "30px"}}>
                   <b className="item1">Texto base</b>

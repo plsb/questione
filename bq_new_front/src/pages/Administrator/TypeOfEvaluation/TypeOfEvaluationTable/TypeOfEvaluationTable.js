@@ -109,7 +109,6 @@ const TypeOfEvaluationTable = props => {
         url += '&description='+searchText;
       }
       const response = await api.get(url);
-      console.log('Reponse = ', response);
       setTotal(response.data.total);
       setTypeOfEvaluations(response.data.data);
     } catch (error) {

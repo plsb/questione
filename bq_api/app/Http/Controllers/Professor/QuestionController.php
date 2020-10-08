@@ -183,9 +183,11 @@ class QuestionController extends Controller
                 ], 202);
             }
         }
+
         //verifica tipo de avaliação
         if($request->fk_type_of_evaluation_id){
             $typeOfEvaluation = TypeOfEvaluation::find($request->fk_type_of_evaluation_id);
+
             if(!$typeOfEvaluation){
                 return response()->json([
                     'message' => 'Tipo de Avaliação não encontrado.'
