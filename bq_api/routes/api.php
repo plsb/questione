@@ -19,6 +19,7 @@ Route::group(['prefix' => 'public'], function (){
 });
 
 Route::group(['prefix' => 'all'], function (){
+    Route::get('/type-of-evaluations', 'AllUsers@typeOfevaluation')->name('all.typeOfevaluation');
     Route::get('/courses', 'AllUsers@courses')->name('all.courses');
     Route::get('/objects', 'AllUsers@knowledgeObjects')->name('all.knowledgeObjects');
     Route::get('/skills', 'AllUsers@skills')->name('all.skills');
@@ -75,6 +76,14 @@ Route::group(['prefix' => 'object'], function (){
     Route::get('/show/{profile}', 'Adm\KnowledgeObjectsController@show')->name('skill.show');
     Route::put('/{profile}', 'Adm\KnowledgeObjectsController@update')->name('skill.update');
     Route::delete('/{profile}', 'Adm\KnowledgeObjectsController@destroy')->name('skill.destroy');
+});
+
+Route::group(['prefix' => 'type-of-evaluation'], function (){
+    Route::get('/', 'Adm\TypeOfEvaluationController@index')->name('typeOfEvaluation.index');
+    Route::post('/', 'Adm\TypeOfEvaluationController@store')->name('typeOfEvaluation.store');
+    Route::get('/show/{typeEvaluation}', 'Adm\TypeOfEvaluationController@show')->name('typeOfEvaluation.show');
+    Route::put('/{typeEvaluation}', 'Adm\TypeOfEvaluationController@update')->name('typeOfEvaluation.update');
+    Route::delete('/{typeEvaluation}', 'Adm\TypeOfEvaluationController@destroy')->name('typeOfEvaluation.destroy');
 });
 
 //Rotas do usuário professor

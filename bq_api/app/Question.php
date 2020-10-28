@@ -8,9 +8,14 @@ use Illuminate\Support\Facades\DB;
 class Question extends Model
 {
     protected $table = 'questions';
-    protected $fillable = ['id', 'base_text', 'stem', 'validated', 'reference','fk_profile_id',
-                                        'fk_skill_id', 'fk_user_id', 'fk_course_id'];
+    protected $fillable = ['id', 'base_text', 'stem', 'validated', 'reference',
+        'year', 'fk_type_of_evaluation_id', 'fk_profile_id',
+        'fk_skill_id', 'fk_user_id', 'fk_course_id'];
     protected $hidden = [];
+
+    public function typeOfEvaluation(){
+        return $this->belongsTo(TypeOfEvaluation::class, 'fk_type_of_evaluation_id');
+    }
 
     public function profile(){
     	return $this->belongsTo(Profile::class, 'fk_profile_id');

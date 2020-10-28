@@ -8,6 +8,7 @@ use App\KeywordQuestion;
 use App\KnowledgeObject;
 use App\Question;
 use App\Skill;
+use App\TypeOfEvaluation;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -127,5 +128,12 @@ class AllUsers extends Controller
         $user->show_tour = false;
         $user->save();
         return response()->json($user, 200);
+    }
+
+    public function typeOfevaluation()
+    {
+        $typeOfEvaluations = TypeOfEvaluation::orderBy('description')->get();
+
+        return response()->json($typeOfEvaluations, 200);
     }
 }
