@@ -20,8 +20,8 @@ class CreateProfessorvalidaQuestaosTable extends Migration
             $table->boolean('aceita')->nullable();
             $table->boolean('rejeitada')->nullable();
             $table->boolean('modificacao_solicitada')->nullable();
-            $table->foreign('fk_usuario_id')->references('id')->on('usuarios')->onDelete('cascade');
-            $table->foreign('fk_questao_id')->references('id')->on('questoes')->onDelete('cascade');
+            $table->foreign('fk_usuario_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('fk_questao_id')->references('id')->on('questions')->onDelete('cascade');
             $table->timestamps();
         });
     }

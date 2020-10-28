@@ -15,7 +15,9 @@ class ModifyTableEvaluation extends Migration
     {
         Schema::table('evaluations', function (Blueprint $table) {
             $table->renameColumn('descricao', 'description');
+            $table->dropForeign('evaluations_fk_usuario_id_foreign');
             $table->renameColumn('fk_usuario_id', 'fk_user_id');
+            $table->foreign('fk_user_id')->references('id')->on('users');
             $table->dropColumn(['pode_ve_feedback']);
             $table->dropColumn(['pode_ve_comentarios_itens']);
             $table->dropColumn(['codigo_avaliacao']);

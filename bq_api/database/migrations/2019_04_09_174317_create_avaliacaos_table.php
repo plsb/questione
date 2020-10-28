@@ -19,7 +19,7 @@ class CreateAvaliacaosTable extends Migration
             $table->string('codigo_avaliacao', 50);
             $table->boolean('status')->default(0);
             $table->integer('fk_usuario_id')->unsigned();
-            $table->foreign('fk_usuario_id')->references('id')->on('usuarios')->onDelete('cascade');
+            $table->foreign('fk_usuario_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

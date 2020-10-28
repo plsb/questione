@@ -16,7 +16,7 @@ class ModifyTableCourse extends Migration
         Schema::table('courses', function (Blueprint $table) {
             $table->renameColumn('sigla', 'initials');
             $table->renameColumn('nome', 'description');
-            $table->dropColumn(['fk_area_conhecimento_id']);
+            //$table->dropColumn(['fk_area_conhecimento_id']);
         });
     }
 
