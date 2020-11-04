@@ -15,7 +15,9 @@ class ModifyTableKnowledgeObjects extends Migration
     {
         Schema::table('knowledge_objects', function (Blueprint $table) {
             $table->renameColumn('descricao', 'description');
+            $table->dropForeign('knowledge_objects_fk_curso_id_foreign');
             $table->renameColumn('fk_curso_id', 'fk_course_id');
+            $table->foreign('fk_course_id')->references('id')->on('courses');
         });
     }
 

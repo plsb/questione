@@ -16,8 +16,9 @@ class ModifyTableEvaluationApplication extends Migration
         Schema::table('evaluation_application', function (Blueprint $table) {
             $table->string('id_application', 50);
             $table->string('description', 1000);
+            $table->dropForeign('evaluation_application_fk_avaliacao_id_foreign');
             $table->renameColumn('fk_avaliacao_id', 'fk_evaluation_id');
-
+            $table->foreign('fk_evaluation_id')->references('id')->on('evaluations');
         });
     }
 

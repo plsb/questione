@@ -15,7 +15,9 @@ class ModifyTableSkills extends Migration
     {
         Schema::table('skills', function (Blueprint $table) {
             $table->renameColumn('descricao', 'description');
+            $table->dropForeign('skills_fk_curso_id_foreign');
             $table->renameColumn('fk_curso_id', 'fk_course_id');
+            $table->foreign('fk_course_id')->references('id')->on('courses');
         });
     }
 

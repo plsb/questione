@@ -17,7 +17,7 @@ class CreatePerfilsTable extends Migration
             $table->increments('id');
             $table->string('descricao', 1000);
             $table->integer('fk_curso_id')->unsigned();
-            $table->foreign('fk_curso_id')->references('id')->on('cursos')->onDelete('cascade');
+            $table->foreign('fk_curso_id')->references('id')->on('courses')->onDelete('cascade');
             $table->timestamps();
         });
     }

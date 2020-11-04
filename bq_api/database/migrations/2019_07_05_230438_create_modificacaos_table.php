@@ -16,12 +16,12 @@ class CreateModificacaosTable extends Migration
         Schema::create('modificacoes', function (Blueprint $table) {
             $table->increments('id');
             $table->string('descricao_modificacao', 5000);
-            
+
             $table->integer('fk_questao_id')->unsigned();
-            $table->foreign('fk_questao_id')->references('id')->on('questoes')->onDelete('cascade');
+            $table->foreign('fk_questao_id')->references('id')->on('questions')->onDelete('cascade');
 
             $table->integer('fk_usuario_id')->unsigned();
-            $table->foreign('fk_usuario_id')->references('id')->on('usuarios')->onDelete('cascade');
+            $table->foreign('fk_usuario_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->timestamps();
         });

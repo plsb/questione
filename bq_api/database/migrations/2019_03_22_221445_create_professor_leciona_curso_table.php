@@ -21,7 +21,7 @@ class CreateProfessorLecionaCursoTable extends Migration
             $table->boolean('valid');
 
             $table->foreign('fk_user_id')->references('id')->on('users');
-            $table->foreign('fk_course_id')->references('id')->on('cursos');
+            $table->foreign('fk_course_id')->references('id')->on('courses');
             $table->timestamps();
         });
     }

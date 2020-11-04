@@ -16,7 +16,7 @@ class CreateAplicacaoAvaliacaosTable extends Migration
         Schema::create('evaluation_application', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('fk_avaliacao_id')->unsigned();
-            $table->foreign('fk_avaliacao_id')->references('id')->on('avaliacoes')->onDelete('cascade');
+            $table->foreign('fk_avaliacao_id')->references('id')->on('evaluations')->onDelete('cascade');
             $table->timestamps(); //CREATED_AT Irá ser usado como data de criação do dia referente À avaliação
         });
     }
