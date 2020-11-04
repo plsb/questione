@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class ModifyTableCourseProfessor extends Migration
+class ModifyTableQuestionAddYearAndTypeofevaluation extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class ModifyTableCourseProfessor extends Migration
      */
     public function up()
     {
-        Schema::table('course_professor', function (Blueprint $table) {
-            $table->renameColumn('fk_usuario_id', 'fk_user_id');
-            $table->renameColumn('fk_curso_id', 'fk_course_id');
-            $table->renameColumn('comprovante', 'receipt');
-            $table->renameColumn('validado', 'valid');
+        Schema::table('questions', function (Blueprint $table) {
+            $table->integer('year')->nullable();
+
+            $table->integer('fk_type_of_evaluation_id')->unsigned()->nullable();
+            $table->foreign('fk_type_of_evaluation_id')->references('id')->on('type_of_evaluations');
         });
     }
 

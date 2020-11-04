@@ -15,7 +15,9 @@ class ModifyTableProfiles extends Migration
     {
         Schema::table('profiles', function (Blueprint $table) {
             $table->renameColumn('descricao', 'description');
+            $table->dropForeign('profiles_fk_curso_id_foreign');
             $table->renameColumn('fk_curso_id', 'fk_course_id');
+            $table->foreign('fk_course_id')->references('id')->on('courses')->onDelete('cascade');
         });
     }
 

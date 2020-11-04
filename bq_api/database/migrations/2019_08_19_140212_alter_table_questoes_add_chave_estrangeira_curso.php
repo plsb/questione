@@ -13,10 +13,10 @@ class AlterTableQuestoesAddChaveEstrangeiraCurso extends Migration
      */
     public function up()
     {
-        Schema::table('questoes', function ($table) {
+        Schema::table('questions', function ($table) {
             $table->integer('fk_curso_id')->unsigned()->nullable();;
             $table->foreign('fk_curso_id')
-                ->references('id')->on('cursos')->onDelete('no action');
+                ->references('id')->on('courses')->onDelete('no action');
         });
     }
 

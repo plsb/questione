@@ -13,7 +13,7 @@ class AlterAddOpcoesPodevefeedbackAvaliacaoTable extends Migration
      */
     public function up()
     {
-        Schema::table('avaliacoes', function ($table) {
+        Schema::table('evaluations', function ($table) {
             $table->boolean('pode_ve_feedback')->default('0');
             $table->boolean('pode_ve_comentarios_itens')->default('0');
         });

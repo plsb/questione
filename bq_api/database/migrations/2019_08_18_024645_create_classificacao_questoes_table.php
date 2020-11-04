@@ -13,16 +13,16 @@ class CreateClassificacaoQuestoesTable extends Migration
      */
     public function up()
     {
-        Schema::create('classificacao_questoes', function (Blueprint $table) {
+        Schema::create('rank_question', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('classificacao');
             $table->integer('fk_usuario_id')->unsigned();
             $table->integer('fk_questao_id')->unsigned();
 
             $table->foreign('fk_usuario_id')->
-                        references('id')->on('usuarios');
+                        references('id')->on('users');
             $table->foreign('fk_questao_id')->
-                        references('id')->on('questoes');
+                        references('id')->on('questions');
             $table->timestamps();
         });
     }
@@ -34,6 +34,6 @@ class CreateClassificacaoQuestoesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('classificacao_questoes');
+        Schema::dropIfExists('rank_question');
     }
 }

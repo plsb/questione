@@ -127,6 +127,7 @@ class QuestionController extends Controller
             ->with('knowledgeObjects')
             ->with('user')
             ->with('questionItems')
+            ->with('typeOfEvaluation')
             ->paginate(8);
 
         return response()->json($questions, 200);
@@ -182,6 +183,16 @@ class QuestionController extends Controller
             }
         }
 
+        //verifica tipo de avaliação
+        if($request->fk_type_of_evaluation_id){
+            $typeOfEvaluation = TypeOfEvaluation::find($request->fk_type_of_evaluation_id);
+            if(!$typeOfEvaluation){
+                return response()->json([
+                    'message' => 'Tipo de Avaliação não encontrado.'
+                ], 202);
+            }
+        }
+
         $user = auth('api')->user();
 
         $question = new Question();
@@ -193,6 +204,12 @@ class QuestionController extends Controller
         $question->fk_skill_id = $request->fk_skill_id;
         $question->fk_user_id = $user->id;
         $question->fk_course_id = $request->fk_course_id;
+        $question->fk_type_of_evaluation_id = $request->fk_type_of_evaluation_id;
+        if($request->year){
+            $question->year = $request->year;
+        } else {
+            $question->year = date("Y");
+        }
         $question->save();
 
         return response()->json([
@@ -210,6 +227,7 @@ class QuestionController extends Controller
             ->with('knowledgeObjects')
             ->with('user')
             ->with('questionItems')
+            ->with('typeOfEvaluation')
             ->get();
 
         $this->verifyRecord($question);
@@ -283,12 +301,21 @@ class QuestionController extends Controller
             }
         }
 
+        //verifica tipo de avaliação
+        if($request->fk_type_of_evaluation_id){
+            $typeOfEvaluation = TypeOfEvaluation::find($request->fk_type_of_evaluation_id);
+            if(!$typeOfEvaluation){
+                return response()->json([
+                    'message' => 'Tipo de Avaliação não encontrado.'
+                ], 202);
+            }
+        }
+
         $this->verifyRecord($question);
 
         $question->base_text = $request->base_text;
         $question->stem = $request->stem;
         $question->reference = $request->reference;
-        $question->fk_profile_id = $request->fk_profile_id;
         if($request->fk_skill_id) {
             $question->fk_skill_id = $request->fk_skill_id;
         }
@@ -296,6 +323,10 @@ class QuestionController extends Controller
         if($request->fk_course_id){
             $question->fk_course_id = $request->fk_course_id;
         }
+        if($request->fk_type_of_evaluation_id){
+            $question->fk_type_of_evaluation_id = $request->fk_type_of_evaluation_id;
+        }
+        $question->year = $request->year;
         $question->save();
 
 
@@ -478,6 +509,7 @@ class QuestionController extends Controller
         $new_question->fk_skill_id = $question->fk_skill_id;
         $new_question->fk_user_id = $user->id;
         $new_question->fk_course_id = $question->fk_course_id;
+        $new_question->fk_profile_id = $question->fk_profile_id;
         //pega usuário que criou a questão
         $new_question->fk_course_id = $question->fk_course_id;
         $new_question->save();

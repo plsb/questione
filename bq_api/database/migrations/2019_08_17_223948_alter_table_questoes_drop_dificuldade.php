@@ -13,7 +13,7 @@ class AlterTableQuestoesDropDificuldade extends Migration
      */
     public function up()
     {
-        Schema::table('questoes', function (Blueprint $table) {
+        Schema::table('questions', function (Blueprint $table) {
             $table->dropColumn('dificuldade');
         });
     }

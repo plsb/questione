@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class ModifyTableCourse extends Migration
+class CreateTypeOfEvaluationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class ModifyTableCourse extends Migration
      */
     public function up()
     {
-        Schema::table('courses', function (Blueprint $table) {
-            $table->renameColumn('sigla', 'initials');
-            $table->renameColumn('nome', 'description');
-            //$table->dropColumn(['fk_area_conhecimento_id']);
+        Schema::create('type_of_evaluations', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('description', 200);
+            $table->timestamps();
         });
     }
 
@@ -27,6 +27,6 @@ class ModifyTableCourse extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('type_of_evaluations');
     }
 }
