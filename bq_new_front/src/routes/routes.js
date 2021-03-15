@@ -39,6 +39,9 @@ import {
     Unauthorized,
     TypeOfEvaluationTable,
     TypeOfEvaluationDetails,
+    GenerateEvaluationTable,
+    GenerateEvaluationArchiveTable,
+    GenerateEvaluationDetails,
 } from '../pages';
 import QuestionTable from "../pages/Professor/Question/QuestionTable";
 import QuestionDetails from "../pages/Professor/Question/QuestionDetails";
@@ -104,6 +107,28 @@ const Routes = () => (
             typeUser={-1}
             layout={MainLayout}
             path="/new-request"/>
+        {/* ROTAS DO ALUNO */}
+        <RouteWithLayout
+            component={GenerateEvaluationTable}
+            exact
+            needToBeLogged={true}
+            layout={MainLayout}
+            typeUser={-1}
+            path="/student/generate-evaluations"/>
+        <RouteWithLayout
+            component={GenerateEvaluationArchiveTable}
+            exact
+            needToBeLogged={true}
+            layout={MainLayout}
+            typeUser={-1}
+            path="/student/generate-evaluations-archive"/>
+        <RouteWithLayout
+            component={GenerateEvaluationDetails}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            typeUser={-1}
+            path="/student/generate-evaluation-details/:codigoEvaluation?"/>
         <RouteWithLayout
             component={StartEvaluation}
             exact

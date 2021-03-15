@@ -188,7 +188,7 @@ const SignIn = props => {
 
       history.push('/home');
     } catch (error) {
-
+      alert('Erro de autenticação');
     }
   }
 
