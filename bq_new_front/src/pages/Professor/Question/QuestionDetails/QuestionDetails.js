@@ -1,11 +1,11 @@
-import React, {useEffect} from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {
     Box, Grid, IconButton, TextField, Typography,
-    Button, Tooltip
+    Button, Tooltip, Select, MenuItem
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import {withRouter} from "react-router-dom";
@@ -17,11 +17,17 @@ import api from "../../../../services/api";
 import Swal from "sweetalert2";
 import QuestionSkill from "./QuestionSkill";
 import QuestionKeywords from "./QuestionKeywords";
+import useTypeOfEvaluations from '../../../../hooks/useTypeOfEvaluations';
 
 const useStyles = makeStyles({
   root: {
     flexGrow: 1,
   },
+  selectGroup: {
+    width: '100%',
+    padding: '30px',
+    display: 'flex',
+  }
 });
 
 function TabPanel(props) {
@@ -72,16 +78,28 @@ const QuestionDetails = props => {
     const { className, history, ...rest } = props;
     const { idQuestion } = props.match.params;
 
+    // lista de referencias (tipos de avaliação)
+    const typeOfEvaluationList = useTypeOfEvaluations();
+
     const classes = useStyles();
+
     const [value, setValue] = React.useState(0);
     //visibilidade das abas
     const [tabItens, setTabItens] = React.useState(false);
     const [tabSkill, setTabSkill] = React.useState(false);
+
+    // controlador de abertua do select
+    const [openReference, setReferenceOpen] = React.useState(false);
+    const [openYear, setYearOpen] = React.useState(false);
+
     //campos
     const [baseText, setBaseText] = React.useState('');
     const [stem, setStem] = React.useState('');
-    const [reference, setReference] = React.useState('');
+    const [reference, setReference] = React.useState('select'); // type of evaluation
+    const [year, setYear] = React.useState('year');
+    const [yearList, setYearList] = React.useState([]);
     const [validated, setValidated] = React.useState(0);
+
     //utilizado pra quando for nova questão
     const [idQuestionNew, setIdQuestionNew] = React.useState(0);
 
@@ -122,8 +140,15 @@ const QuestionDetails = props => {
         try {
             const base_text = baseText;
             const data = {
-                base_text, stem, reference
+                base_text,
+                stem,
+                year: year === 'year' ? yearList[0] : year,
             }
+
+            if (reference !== 'select') {
+                data.reference = reference;
+            }
+
             let response = {};
             let acao = "";
             if(!idQuestion){
@@ -167,6 +192,14 @@ const QuestionDetails = props => {
 
     }
 
+    // const loadEvaluationTypes = useCallback(async () => {
+    //     try {
+
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // });
+
     async function findAQuestion(id){
         try {
             const response = await api.get('question/show/'+id);
@@ -178,6 +211,7 @@ const QuestionDetails = props => {
                 setValidated(response.data[0].validated)
                 setReference(response.data[0].reference);
                 setBaseText(response.data[0].base_text);
+                setYear(response.data[0].year);
                 setStem(response.data[0].stem);
             }
         } catch (error) {
@@ -185,12 +219,25 @@ const QuestionDetails = props => {
         }
     }
 
+    const getYearList = useCallback(() => {
+        const currentYear = parseInt(new Date().getFullYear());
+        const yearList = [];
+
+        for (let i = currentYear; i > currentYear - 52; i -= 1) {
+            yearList.push(i);
+        }
+
+        setYearList(yearList);
+    });
+
     useEffect(() => {
         if(idQuestion){
             findAQuestion(idQuestion);
             setTabItens(true);
             setTabSkill(true);
         }
+
+        getYearList();
     }, []);
 
     useEffect(() => {
@@ -203,9 +250,9 @@ const QuestionDetails = props => {
 
     }, [tabItens, value, idQuestionNew]);
 
-    const handleChangeReference = (event) =>{
-        setReference(event.target.value);
-    }
+    // const handleChangeReference = (event) =>{
+    //     setReference(event.target.value);
+    // }
 
     const handleChangeBaseText = (event) => {
         setBaseText(event);
@@ -213,6 +260,30 @@ const QuestionDetails = props => {
 
     const handleChangeStem = (event) => {
         setStem(event);
+    };
+
+    const handleChangeReference = (event) => {
+        setReference(event.target.value);
+    };
+
+    const handleReferenceClose = () => {
+        setReferenceOpen(false);
+    };
+
+    const handleReferenceOpen = () => {
+        setReferenceOpen(true);
+    };
+
+    const handleChangeYear = (event) => {
+        setYear(event.target.value);
+    };
+
+    const handleYearClose = () => {
+        setYearOpen(false);
+    };
+
+    const handleYearOpen = () => {
+        setYearOpen(true);
     };
 
   return (
@@ -245,24 +316,53 @@ const QuestionDetails = props => {
           </Tabs>
           {/*texto base e enunciado*/}
           <TabPanel value={value} index={0}>
-              <Grid
+                <Grid
                   container
                   direction="row"
                   justify="center"
-                  alignItems="center">
-                  <Tooltip title="Caso a questão tenha sido construída baseada em alguma já aplicada, você pode informar no campo referência. Ex: ENADE 2020, ENEM 2020, etc.">
-                      <TextField
-                          key="reference"
-                          fullWidth
-                          label="Referência"
-                          margin="dense"
-                          name="reference"
-                          variant="outlined"
-                          value={reference}
-                          onChange={handleChangeReference}
-                          style={{width: '90%', justifyContent: 'center'}}
-                      />
-                  </Tooltip>
+                  alignItems="center"
+                >
+                    <div className={classes.selectGroup}>
+                        <b className="item1" style={{ marginRight: '32px' }}>Tipo de avaliação</b>
+                        <Tooltip title="Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar no campo tipo de avaliação.">
+                                <Select
+                                    labelId="type-of-evaluation-label"
+                                    id="type-of-evaluation"
+                                    open={openReference}
+                                    onClose={handleReferenceClose}
+                                    onOpen={handleReferenceOpen}
+                                    value={reference}
+                                    onChange={handleChangeReference}
+                                    className={classes.root}
+                                >
+                                    <MenuItem value="select">Selecione</MenuItem>
+                                    {typeOfEvaluationList.map((type) => (
+                                        <MenuItem value={type.description}>{type.description}</MenuItem>
+                                    ))}
+                                </Select>
+                        </Tooltip>
+                    </div>
+                    <div className={classes.selectGroup}>
+                        <b className="item1" style={{ marginRight: '120px' }}>Ano</b>
+                        <Tooltip title="Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar o ano de tal questão.">
+                                <Select
+                                    labelId="year-label"
+                                    id="year"
+                                    open={openYear}
+                                    onClose={handleYearClose}
+                                    onOpen={handleYearOpen}
+                                    value={year}
+                                    onChange={handleChangeYear}
+                                    className={classes.root}
+                                >
+                                    <MenuItem value="year">Selecione o ano</MenuItem>
+
+                                    {yearList.map((year) => (
+                                        <MenuItem value={year}>{year}</MenuItem>
+                                    ))}
+                                </Select>
+                        </Tooltip>
+                    </div>
               </Grid>
               <div style={{padding: "30px"}}>
                   <b className="item1">Texto base</b>

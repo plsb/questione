@@ -178,11 +178,11 @@ const QuestionCard = props => {
 
    /* function loadRank(){
 
-        if(question.rank_avg.length != 0){
+        if(question.rank_avg.length !== 0){
             setRank(question.rank_avg[0].rank_avg);
         }
         if(question.rank_by_user_active.length == 0 &&
-            question.fk_user_id != localStorage.getItem("@Questione-id-user")) {
+            question.fk_user_id !== localStorage.getItem("@Questione-id-user")) {
             setRank(0)
         }
         setQtRank(question.rank_count);
@@ -346,7 +346,7 @@ const QuestionCard = props => {
     const [openEvalationChoose, setOpenEvalationChoose] = React.useState(false);
 
     const handleChooseEvaluation = () => {
-        if(question.fk_user_id != localStorage.getItem("@Questione-id-user") && rank == 0){
+        if(question.fk_user_id !== localStorage.getItem("@Questione-id-user") && rank == 0){
             loadAlert('error', 'Antes de aplicar a questão, você deve classificá-la.')
             return;
         }
@@ -400,13 +400,13 @@ const QuestionCard = props => {
                                                 question.id
                         }
                     </Typography>
-                    { question.course  != null ?
+                    { question.course  !== null ?
                     <Typography variant="button" color="textSecondary" component="h2">
                         {'Área de origem: '+question.course.description}
                     </Typography> : null }
                     <div>
-                        { question.skill != null && question.knowledge_objects[0] &&
-                        question.question_items.length >= 2 && question.course  != null
+                        { question.skill !== null && question.knowledge_objects[0] &&
+                        question.question_items.length >= 2 && question.course  !== null
                             ?
                             <Tooltip title="Esta questão é completa. Possui texto-base, enunciado,
                                     pelo menos duas alternativas,
@@ -469,7 +469,7 @@ const QuestionCard = props => {
                     </Box>
                     <Box display="flex" flexDirection="flex-end" p={1} m={1}>
                         <Tooltip title="Avaliação da questão">
-                            {question.fk_user_id != localStorage.getItem("@Questione-id-user") && rank == 0 ?
+                            {question.fk_user_id !== localStorage.getItem("@Questione-id-user") && rank == 0 ?
                                 <div>
                                     <Rating
                                         name={question.id}
@@ -499,7 +499,7 @@ const QuestionCard = props => {
         <CardContent>
             <div className={classes.lineQuestion}>
 
-                { question.reference != "" && question.reference != null ?
+                { question.reference !== "" && question.reference !== null ?
                     <div>
                         <Typography variant="button" color="textSecondary" component="p">
                             Referência:
@@ -508,7 +508,16 @@ const QuestionCard = props => {
                         <br />
                     </div>
                     : null}
-                { question.skill  != null ?
+                { question.year !== '' && question.year !== null ?
+                    <div>
+                        <Typography variant="button" color="textSecondary" component="p">
+                            Ano:
+                        </Typography>
+                        <div> { question.year } </div>
+                        <br />
+                    </div>
+                    : null}
+                { question.skill  !== null ?
                     <div>
                         <Typography variant="button" color="textSecondary" component="p">
                             Competência:

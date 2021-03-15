@@ -13,7 +13,7 @@ class ModifyTableRankQuestion extends Migration
      */
     public function up()
     {
-        Schema::table('rank_questions', function (Blueprint $table) {
+        Schema::table('rank_question', function (Blueprint $table) {
             $table->renameColumn('classificacao', 'rank');
             $table->renameColumn('fk_usuario_id', 'fk_user_id');
             $table->renameColumn('fk_questao_id', 'fk_question_id');

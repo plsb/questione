@@ -36,7 +36,9 @@ import {
     EvaluationApplicationResults,
     StartEvaluation, EvaluationsResultStudent, EvaluationsResultStudentDetails,
     UserRequestCourseDetails,
-    Unauthorized
+    Unauthorized,
+    TypeOfEvaluationTable,
+    TypeOfEvaluationDetails,
 } from '../pages';
 import QuestionTable from "../pages/Professor/Question/QuestionTable";
 import QuestionDetails from "../pages/Professor/Question/QuestionDetails";
@@ -145,6 +147,20 @@ const Routes = () => (
             typeUser={1}
             needToBeLogged={true}
             path="/course-details/:codigoCourse?"/>
+        <RouteWithLayout
+            component={TypeOfEvaluationTable}
+            exact
+            layout={MainLayout}
+            needToBeLogged={true}
+            typeUser={1}
+            path="/type-of-evaluation"/>
+        <RouteWithLayout
+            component={TypeOfEvaluationDetails}
+            exact
+            layout={MainLayout}
+            typeUser={1}
+            needToBeLogged={true}
+            path="/type-of-evaluation-details/:typeOfEvaluationCode?"/>
         <RouteWithLayout
             component={SkillTable}
             exact

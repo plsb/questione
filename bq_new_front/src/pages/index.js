@@ -29,3 +29,5 @@ export { default as DoEvaluation } from './Student/DoEvaluation';
 export { default as StartEvaluation } from './Student/StartEvaluation';
 export { default as EvaluationsResultStudent } from './Student/EvaluationsResult/EvaluationsResultTable/EvaluationsResultStudentTable';
 export { default as EvaluationsResultStudentDetails } from './Student/EvaluationsResult/EvaluationResultDetails/EvaluationsResultDetails';
+export { default as TypeOfEvaluationTable } from './Administrator/TypeOfEvaluation/TypeOfEvaluationTable';
+export { default as TypeOfEvaluationDetails } from './Administrator/TypeOfEvaluation/TypeOfEvaluationDetails';

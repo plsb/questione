@@ -4,11 +4,12 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Divider, Drawer } from '@material-ui/core';
 import DashboardIcon from '@material-ui/icons/Dashboard';
-import PeopleIcon from '@material-ui/icons/People';
+import ClassIcon from '@material-ui/icons/Class';
+// import PeopleIcon from '@material-ui/icons/People';
 import { Note, Ballot, EmojiObjects, AccountBox, Assignment, Assessment } from '@material-ui/icons';
 
 import { Profile, SidebarNavAdm } from './components';
-import {logout} from "../../../../services/auth";
+// import {logout} from "../../../../services/auth";
 import {withRouter} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
@@ -45,6 +46,11 @@ const Sidebar = props => {
       title: 'Cursos',
       href: '/courses',
       icon: <DashboardIcon />
+    },
+    {
+      title: 'Tipos de prova',
+      href: '/type-of-evaluation',
+      icon: <ClassIcon />
     },
     /*{
       title: 'Perfis',
