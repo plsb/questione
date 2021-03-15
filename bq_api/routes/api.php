@@ -111,6 +111,17 @@ Route::group(['prefix' => 'rank'], function (){
     Route::post('/', 'Professor\RankQuestionController@storeUpdate')->name('rank.storeUpdate');
 });
 
+Route::group(['prefix' => 'evaluation/practice'], function (){
+    Route::get('/', 'EvaluationPracticeController@index')->name('evaluation.index');
+    Route::get('/show/{evaluation}', 'EvaluationPracticeController@show')->name('evaluation.practice.show');
+    Route::get('/how-many-questions', 'EvaluationPracticeController@showHowManyQuestions')->name('evaluation.practice.showHowManyQuestions');
+    Route::post('/', 'EvaluationPracticeController@store')->name('evaluation.practice.store');
+    Route::put('/{evaluation}', 'EvaluationPracticeController@update')->name('evaluation.practice.update');
+    Route::put('/generate/{evaluation}', 'EvaluationPracticeController@generateAutomaticEvaluation')->name('evaluation.practice.generateAutomaticEvaluation');
+    Route::delete('/{evaluation}', 'EvaluationPracticeController@destroy')->name('evaluation.practice.destroy');
+    Route::put('/change-status/{evaluation}', 'EvaluationPracticeController@changeStatus')->name('evaluation.practice.changeStatus');
+});
+
 Route::group(['prefix' => 'evaluation'], function (){
     Route::get('/', 'Professor\EvaluationController@index')->name('evaluation.index');
     Route::get('/show/{evaluation}', 'Professor\EvaluationController@show')->name('evaluation.show');
