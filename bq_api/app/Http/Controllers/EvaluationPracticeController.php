@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Course;
 use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
+use App\Question;
+use App\TypeOfEvaluation;
 use Illuminate\Http\Request;
 use Validator;
 use DB;
@@ -205,6 +208,102 @@ class EvaluationPracticeController extends Controller
             $evaluation
         ], 200);
 
+    }
+
+    public function generateAutomaticEvaluation(Request $request, $id){
+        $user = auth('api')->user();
+        $evaluation = Evaluation::find($id);
+
+        if($evaluation->fk_user_id != $user->id){
+            return response()->json([
+                'message' => 'Operação não pode ser realizada. A avaliação pertence a outro usuário.'
+            ], 202);
+        }
+
+        if(!$request->fk_type_evaluation_id){
+            return response()->json([
+                'message' => 'Informe o tipo da avaliação.'
+            ], 202);
+        }
+        $typeEvaluation = TypeOfEvaluation::find($request->fk_type_evaluation_id);
+        if(!$typeEvaluation){
+            return response()->json([
+                'message' => 'Tipo de avaliação não encontrado.'
+            ], 202);
+        }
+
+        if(!$request->fk_course_id){
+            return response()->json([
+                'message' => 'Informe a área.'
+            ], 202);
+        }
+        $course = Course::find($request->fk_course_id);
+        if(!$course){
+            return response()->json([
+                'message' => 'Área não encontrada.'
+            ], 202);
+        }
+
+        if(!$request->qtQuestions){
+            return response()->json([
+                'message' => 'Informe a quantidade de questões.'
+            ], 202);
+        }
+        if(!is_int($request->qtQuestions)){
+            return response()->json([
+                'message' => 'A quantidade informada deve ser um número inteiro.'
+            ], 202);
+        }
+        if($request->year_start && $request->year_end ){
+            if($request->year_end < $request->year_start){
+                return response()->json([
+                    'message' => 'Ano final deve ser maior que o ano inicial.'
+                ], 202);
+            }
+        }
+
+        //aqui ocorrerá a geração de prova automática
+    }
+
+    public function showHowManyQuestions(Request $request){
+
+        if(!$request->fk_type_evaluation_id){
+            return response()->json([
+                'message' => 'Informe o tipo da avaliação.'
+            ], 202);
+        }
+        $typeEvaluation = TypeOfEvaluation::find($request->fk_type_evaluation_id);
+        if(!$typeEvaluation){
+            return response()->json([
+                'message' => 'Tipo de avaliação não encontrado.'
+            ], 202);
+        }
+
+        if(!$request->fk_course_id){
+            return response()->json([
+                'message' => 'Informe a área.'
+            ], 202);
+        }
+        $course = Course::find($request->fk_course_id);
+        if(!$course){
+            return response()->json([
+                'message' => 'Área não encontrada.'
+            ], 202);
+        }
+
+        $year_start =  $request->year_start;
+        $year_end =  $request->year_end;
+        $questions = Question::where('fk_type_of_evaluation_id', '=', $typeEvaluation->id)
+            ->where('fk_course_id', $course->id)
+            ->when($year_start, function ($query, $year_start) {
+                //pega questões validadas de todos os usuário
+                return $query->where('year', '>=', $year_start);
+            })
+            ->when($year_end, function ($query, $year_end) {
+                //pega questões validadas de todos os usuário
+                return $query->where('year', '<=', $year_end);
+            })->count();
+        return response()->json($questions, 200);
     }
 
     public function verifyRecord($record){
