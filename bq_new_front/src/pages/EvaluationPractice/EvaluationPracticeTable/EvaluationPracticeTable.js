@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import { makeStyles } from '@material-ui/styles';
 import {
   Card,
@@ -15,15 +14,15 @@ import api from '../../../services/api';
 import Swal from "sweetalert2";
 import UsersToolbar from "./components/EvaluationToolbar";
 import PropTypes from "prop-types";
-import EvaluationCard from "../EvaluationCard";
+import EvaluationPracticeCard from "../EvaluationPracticeCard";
 const useStyles = makeStyles(theme => ({
   root: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1)
   },
   content: {
     padding: 0,
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(1)
   },
   inner: {
     minWidth: 1050
@@ -56,7 +55,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const EvaluationArchiveTable = props => {
+const EvaluationPracticeTable = props => {
   const { className, history } = props;
 
   const [evaluations, setEvaluations] = useState(null);
@@ -69,6 +68,7 @@ const EvaluationArchiveTable = props => {
   const [searchText, setSearchText] = useState('');
   const [open, setOpen] = React.useState(false);
   const [refresh, setRefresh] = React.useState(0);
+
 
   //configuration alert
   const Toast = Swal.mixin({
@@ -92,7 +92,7 @@ const EvaluationArchiveTable = props => {
 
   async function loadEvaluations(page){
     try {
-      let url = 'evaluation?status=2&page='+page;
+      let url = 'evaluation/practice?status=1&page='+page;
       if(searchText != ''){
         url += '&description='+searchText;
       }
@@ -103,6 +103,7 @@ const EvaluationArchiveTable = props => {
       } else {
         setEvaluations([]);
       }
+
     } catch (error) {
 
     }
@@ -110,6 +111,7 @@ const EvaluationArchiveTable = props => {
 
   useEffect(() => {
     loadEvaluations(1);
+    // setEvaluations(() => null); // temp
   }, [refresh]);
 
   const updateSearch = (e) => {
@@ -143,7 +145,6 @@ const EvaluationArchiveTable = props => {
                 avatar={
                   <div>
 
-
                   </div>
                 }
                 action={
@@ -171,12 +172,12 @@ const EvaluationArchiveTable = props => {
                         xs={12}>
                       <Table>
                         <TableBody>
-                          {evaluations.map(evaluation => (
-                              <EvaluationCard evaluation={evaluation}
-                                              setRefresh={setRefresh}
-                                              refresh={refresh}/>
-                          ))}
-                        </TableBody>
+                        {evaluations.map(evaluation => (
+                            <EvaluationPracticeCard evaluation={evaluation}
+                                            setRefresh={setRefresh}
+                                            refresh={refresh}/>
+                        ))}
+                      </TableBody>
                       </Table>
                     </Grid>
                   </Grid> }
@@ -198,8 +199,8 @@ const EvaluationArchiveTable = props => {
   );
 };
 
-EvaluationArchiveTable.propTypes = {
+EvaluationPracticeTable.propTypes = {
   history: PropTypes.object
 };
 
-export default EvaluationArchiveTable;
+export default EvaluationPracticeTable;

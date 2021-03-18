@@ -39,11 +39,11 @@ const EvaluationToolbar = props => {
   const classes = useStyles();
 
   const onClickRequestUsers = () => {
-    history.push('/evaluations-archive');
+    history.push('/student/evaluation-practice-archive');
   }
 
-  const onClickNewCourse = e => {
-    history.push('/evaluation-details');
+  const onClickNewPractice = e => {
+    history.push('/student/evaluation-practice-details');
   }
 
   return (
@@ -51,14 +51,14 @@ const EvaluationToolbar = props => {
       {...rest}
       className={clsx(classes.root, className)}>
       <div className={classes.row}>
-        <Typography variant="h3" className={classes.title}>{'Avaliações'}</Typography>
+        <Typography variant="h3" className={classes.title}>{'Avaliações Práticas'}</Typography>
         <span className={classes.spacer} />
         <Button className={classes.exportButton}
                 onClick={onClickRequestUsers}>Avaliações arquivadas</Button>
         <Button
             color="primary"
             variant="contained"
-            onClick={onClickNewCourse}>
+            onClick={onClickNewPractice}>
           Nova Avaliação
         </Button>
       </div>

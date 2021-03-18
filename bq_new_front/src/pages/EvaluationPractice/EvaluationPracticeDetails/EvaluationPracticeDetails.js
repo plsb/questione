@@ -60,7 +60,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const GenerateEvaluationDetails = props => {
+const EvaluationPracticeDetails = props => {
   const { className, history, ...rest } = props;
   const { codigoEvaluation } = props.match.params;
 
@@ -111,7 +111,7 @@ const GenerateEvaluationDetails = props => {
     });
   }
 
-  async function saveGenerateEvaluationDetails() {
+  async function saveEvaluationPracticeDetails() {
     try {
       const description = formState.values.description;
 
@@ -122,10 +122,10 @@ const GenerateEvaluationDetails = props => {
       let response = {};
       let acao = "";
       if (!id) {
-        response = await api.post('evaluation', data);
+        response = await api.post('evaluation/practice', data);
         acao = "cadastrada";
       } else {
-        response = await api.put('evaluation/' + id, data);
+        response = await api.put('evaluation/practice/' + id, data);
         acao = "atualizada";
       }
       if (response.status === 202) {
@@ -135,8 +135,8 @@ const GenerateEvaluationDetails = props => {
           loadAlert('error', response.data.errors[0].description);
         }
       } else {
-        loadAlert('success', 'Avaluação ' + acao + '.');
-        history.push('/evaluations');
+        loadAlert('success', 'Avaliação ' + acao + '.');
+        history.push('/student/evaluation-practice');
       }
 
     } catch (error) {
@@ -146,7 +146,7 @@ const GenerateEvaluationDetails = props => {
 
   async function loadQuestionsEvaluation(id, page) {
     try {
-      const response = await api.get('evaluation/show/questions/' + id + '?page=' + page);
+      const response = await api.get('evaluation/practice/show/questions/' + id + '?page=' + page);
       if (response.status === 200) {
         setQuestions(response.data.data);
         setTotal(response.data.total);
@@ -160,7 +160,7 @@ const GenerateEvaluationDetails = props => {
 
   async function findAEvaluation(id) {
     try {
-      const response = await api.get('evaluation/show/' + id);
+      const response = await api.get('evaluation/practice/show/' + id);
       if (response.status === 202) {
         if (response.data.message) {
           loadAlert('error', response.data.message);
@@ -186,7 +186,7 @@ const GenerateEvaluationDetails = props => {
   useEffect(() => {
     if (codigoEvaluation) {
       findAEvaluation(codigoEvaluation);
-      loadQuestionsEvaluation(codigoEvaluation);
+      // loadQuestionsEvaluation(codigoEvaluation);
     } else {
       setQuestions([]);
     }
@@ -273,7 +273,7 @@ const GenerateEvaluationDetails = props => {
         </div>
         <CardHeader
           subheader=""
-          title="Gerar Avaliação" />
+          title="Criar Avaliação Prática" />
         <Divider />
         <CardContent>
           <Grid
@@ -281,6 +281,26 @@ const GenerateEvaluationDetails = props => {
             spacing={1}
           >
             <Grid
+              item
+              md={12}
+              xs={12}
+            >
+              <TextField
+                fullWidth
+                error={hasError('description')}
+                helperText={
+                  hasError('description') ? formState.errors.description[0] : null
+                }
+                label="Descrição"
+                margin="dense"
+                name="description"
+                onChange={handleChange}
+                value={formState.values.description || ''}
+                variant="outlined"
+              />
+            </Grid>
+            
+            {/* <Grid
               item
               md={3}
               xs={12}
@@ -395,7 +415,7 @@ const GenerateEvaluationDetails = props => {
                 variant="outlined"
                 type="number"
               />
-            </Grid>
+            </Grid> */}
 
             <Grid
               item
@@ -406,62 +426,16 @@ const GenerateEvaluationDetails = props => {
                 color="primary"
                 variant="outlined"
                 disabled={!formState.isValid}
-                onClick={saveGenerateEvaluationDetails}>
-                Gerar avaliação
+                onClick={saveEvaluationPracticeDetails}>
+                  {codigoEvaluation ? 'Salvar' : 'Criar avaliação prática'}
               </Button>
             </Grid>
 
             <Divider />
           </Grid>
-          {questions == null ?
+          {formState.values.length === 0 && (
             <LinearProgress color="secondary" />
-            :
-            questions[0] ?
-              <Grid
-                container
-                spacing={1}>
-                <Grid
-                  item
-                  md={12}
-                  xs={12}>
-                  <Table>
-                    <TableHead>
-                      <TablePagination
-                        component="div"
-                        count={total}
-                        onChangePage={handlePageChange}
-                        onChangeRowsPerPage={handleRowsPerPageChange}
-                        page={page}
-                        rowsPerPage={rowsPerPage}
-                        rowsPerPageOptions={[5]}
-                      />
-                    </TableHead>
-                    <TableBody>
-                      {questions.map(question => (
-                        <QuestionCard
-                          question={question.question}
-                          id_evaluation={codigoEvaluation}
-                          setRefresh={setRefresh}
-                          refresh={refresh} />
-                      ))}
-                    </TableBody>
-                    <TablePagination
-                      component="div"
-                      count={total}
-                      onChangePage={handlePageChange}
-                      onChangeRowsPerPage={handleRowsPerPageChange}
-                      page={page}
-                      rowsPerPage={rowsPerPage}
-                      rowsPerPageOptions={[5]}
-                    />
-                  </Table>
-                </Grid>
-              </Grid>
-              :
-              codigoEvaluation ?
-                <span className={classes.labelRed}>Esta avaliação não possui questões</span>
-                : null
-          }
+          )}
         </CardContent>
         <Divider />
       </form>
@@ -469,8 +443,8 @@ const GenerateEvaluationDetails = props => {
   );
 };
 
-GenerateEvaluationDetails.propTypes = {
+EvaluationPracticeDetails.propTypes = {
   className: PropTypes.string,
 };
 
-export default GenerateEvaluationDetails;
+export default EvaluationPracticeDetails;

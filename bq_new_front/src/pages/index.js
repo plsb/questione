@@ -20,9 +20,9 @@ export { default as CourseDetails } from './Administrator/Course/CourseDetails';
 export { default as ProfileTable } from './Administrator/Profile/ProfileTable';
 export { default as ProfileDetails } from './Administrator/Profile/ProfileDetails';
 
-export { default as EvaluationTable } from './Evaluation/EvaluationTable';
-export { default as EvaluationArchiveTable } from './Evaluation/EvaluationArchiveTable';
-export { default as EvaluationDetails } from './Evaluation/EvaluationDetails';
+export { default as EvaluationTable } from './Professor/Evaluation/EvaluationTable';
+export { default as EvaluationArchiveTable } from './Professor/Evaluation/EvaluationArchiveTable';
+export { default as EvaluationDetails } from './Professor/Evaluation/EvaluationDetails';
 
 export { default as EvaluationApplicationTable } from './Professor/EvaluationApplication/EvaluationApplicationTable';
 export { default as EvaluationApplicationDetails } from './Professor/EvaluationApplication/EvaluationApplicationDetails';
@@ -34,6 +34,7 @@ export { default as EvaluationsResultStudentDetails } from './Student/Evaluation
 export { default as TypeOfEvaluationTable } from './Administrator/TypeOfEvaluation/TypeOfEvaluationTable';
 export { default as TypeOfEvaluationDetails } from './Administrator/TypeOfEvaluation/TypeOfEvaluationDetails';
 
-export { default as GenerateEvaluationTable } from './GenerateEvaluation/GenerateEvaluationTable';
-export { default as GenerateEvaluationArchiveTable } from './GenerateEvaluation/GenerateEvaluationArchiveTable';
-export { default as GenerateEvaluationDetails } from './GenerateEvaluation/GenerateEvaluationDetails';
+export { default as EvaluationPracticeTable } from './EvaluationPractice/EvaluationPracticeTable';
+export { default as EvaluationPracticeArchiveTable } from './EvaluationPractice/EvaluationPracticeArchiveTable';
+export { default as EvaluationPracticeDetails } from './EvaluationPractice/EvaluationPracticeDetails';
+export { default as GenerateEvaluation } from './EvaluationPractice/GenerateEvaluation';

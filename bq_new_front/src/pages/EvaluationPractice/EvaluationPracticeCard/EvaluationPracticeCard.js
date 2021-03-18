@@ -49,7 +49,7 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-const GenerateEvaluationCard = props => {
+const EvaluationPracticeCard = props => {
   const { className, history, refresh, setRefresh, evaluation, ...rest } = props;
   const [anchorEl, setAnchorEl] = React.useState(null);
     const [open, setOpen] = React.useState(false);
@@ -86,7 +86,7 @@ const GenerateEvaluationCard = props => {
   };
 
   const onEdit = () => {
-      history.push('/evaluation-details/'+evaluation.id);
+      history.push('/student/evaluation-practice-details/'+evaluation.id);
   }
 
   async function duplicate(){
@@ -96,7 +96,7 @@ const GenerateEvaluationCard = props => {
               loadAlert('success', 'Avaliação cadastrada(duplicada).');
               setRefresh(refresh+1);
           } else {
-              loadAlert('error', 'Erro ao mduar o status da avaliação.');
+              loadAlert('error', 'Erro ao mudar o status da avaliação.');
           }
 
       } catch (error) {
@@ -184,6 +184,10 @@ const GenerateEvaluationCard = props => {
     //dialog de nova aplicação
     const [openNewApplication, setOpenNewApplication] = React.useState(false);
 
+    const handleGenerateEvaluation = () => {
+        history.push('/student/generate-evaluation/'+evaluation.id);
+    }
+
     const handleNewApplication = () => {
         setOpenNewApplication(true);
     };
@@ -246,7 +250,7 @@ const GenerateEvaluationCard = props => {
             keepMounted
             open={Boolean(anchorEl)}
             onClose={handleClose}>
-            { evaluation.status == 1 ? <MenuItem onClick={handleNewApplication}>Nova Aplicação</MenuItem> : null}
+            { evaluation.status == 1 ? <MenuItem onClick={handleGenerateEvaluation}>Gerar Avaliação</MenuItem> : null}
             <MenuItem onClick={duplicate}>Duplicar</MenuItem>
             { evaluation.status == 1 ? <MenuItem onClick={() => changeStatus(2) }>Arquivar</MenuItem> : null}
             { evaluation.status == 2 ? <MenuItem onClick={() => changeStatus(1) }>Ativar</MenuItem> : null}
@@ -293,7 +297,7 @@ const GenerateEvaluationCard = props => {
   );
 };
 
-GenerateEvaluationCard.propTypes = {
+EvaluationPracticeCard.propTypes = {
     className: PropTypes.string,
     evaluation: PropTypes.object,
     history: PropTypes.object,
@@ -301,4 +305,4 @@ GenerateEvaluationCard.propTypes = {
     refresh: PropTypes.number
 };
 
-export default withRouter(GenerateEvaluationCard);
+export default withRouter(EvaluationPracticeCard);

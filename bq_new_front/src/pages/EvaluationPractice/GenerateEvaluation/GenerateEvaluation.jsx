@@ -69,8 +69,6 @@ const GenerateEvaluation = props => {
   const typeOfEvaluationList = useTypeOfEvaluations();
   const areaList = useCourses();
 
-  console.log(amountQuestions);
-
   const classes = useStyles();
 
   const [refresh, setRefresh] = React.useState(0);
