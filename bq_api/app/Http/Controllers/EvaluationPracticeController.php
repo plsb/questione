@@ -262,7 +262,16 @@ class EvaluationPracticeController extends Controller
             }
         }
 
+        //colocar validação de quantidade de questões se tem ou não
+
         //aqui ocorrerá a geração de prova automática
+    }
+
+    public function hasQuestionsinEvaluation(Request $request, $id){
+
+        $evaluationQuestions = EvaluationHasQuestions::where('fk_evaluation_id', $id)->get();
+
+        return $evaluationQuestions;
     }
 
     public function showHowManyQuestions(Request $request){

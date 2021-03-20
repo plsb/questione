@@ -120,6 +120,7 @@ Route::group(['prefix' => 'evaluation/practice'], function (){
     Route::put('/generate/{evaluation}', 'EvaluationPracticeController@generateAutomaticEvaluation')->name('evaluation.practice.generateAutomaticEvaluation');
     Route::delete('/{evaluation}', 'EvaluationPracticeController@destroy')->name('evaluation.practice.destroy');
     Route::put('/change-status/{evaluation}', 'EvaluationPracticeController@changeStatus')->name('evaluation.practice.changeStatus');
+    Route::get('/has-questions/{evaluation}', 'EvaluationPracticeController@hasQuestionsinEvaluation')->name('evaluation.practice.hasQuestionsinEvaluation');
 });
 
 Route::group(['prefix' => 'evaluation'], function (){
