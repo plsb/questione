@@ -92,7 +92,7 @@ const EvaluationPracticeArchiveTable = props => {
 
   async function loadEvaluations(page){
     try {
-      let url = 'evaluation?status=2&page='+page;
+      let url = 'evaluation/practice?status=2&page='+page;
       if(searchText != ''){
         url += '&description='+searchText;
       }

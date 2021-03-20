@@ -99,6 +99,7 @@ const EvaluationPracticeTable = props => {
       const response = await api.get(url);
       if(response.status == 200) {
         setTotal(response.data.total);
+
         setEvaluations(response.data.data);
       } else {
         setEvaluations([]);
@@ -111,7 +112,6 @@ const EvaluationPracticeTable = props => {
 
   useEffect(() => {
     loadEvaluations(1);
-    // setEvaluations(() => null); // temp
   }, [refresh]);
 
   const updateSearch = (e) => {
