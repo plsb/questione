@@ -9,19 +9,15 @@ import {
   Divider,
   Grid,
   Button,
-  TextField, IconButton,
-  TableBody, Table, TableCell,
-  TableRow, TableHead, TablePagination, LinearProgress,
-  Tooltip, Select, MenuItem
+  TextField, IconButton, LinearProgress,
+  Tooltip, Select, MenuItem, Typography
 } from '@material-ui/core';
 import api from "../../../services/api";
 import Swal from "sweetalert2";
 import validate from "validate.js";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import QuestionCard from "../../../components/QuestionCard";
 import useTypeOfEvaluations from '../../../hooks/useTypeOfEvaluations';
 import useCourses from '../../../hooks/useCourses';
-import useAmountQuestions from '../../../hooks/useAmountQuestions';
 
 const schema = {
   description: {
@@ -31,7 +27,13 @@ const schema = {
       maximum: 300,
       message: 'A descrição deve conter no mínimo 4 e no máximo 300 caracteres.'
     }
-  }
+  },
+  typeOfEvaluation: {
+    presence: { allowEmpty: false, message: 'O tipo de avaliação é obrigatório' },
+  },
+  area: {
+    presence: { allowEmpty: false, message: 'A área é obrigatória' },
+  },
 };
 
 const useStyles = makeStyles(() => ({
@@ -71,15 +73,17 @@ const GenerateEvaluation = props => {
 
   const classes = useStyles();
 
-  const [refresh, setRefresh] = React.useState(0);
+  const [refresh] = React.useState(0);
 
   // Refence select states
   const [openReference, setReferenceOpen] = React.useState(false);
-  const [reference, setReference] = React.useState('select'); // type of evaluation
 
   // Area select states
   const [areaIsOpen, setAreaIsOpen] = React.useState(false);
-  const [area, setArea] = React.useState('select');
+
+  const [amountQuestions, setAmountQuestions] = React.useState(null);
+
+  const [renderConfigQuestions, setRenderConfigQuestions] = React.useState(false);
 
   const [formState, setFormState] = useState({
     isValid: false,
@@ -110,21 +114,19 @@ const GenerateEvaluation = props => {
 
   async function saveGenerateEvaluation() {
     try {
-      const description = formState.values.description;
+      const referenceId = typeOfEvaluationList.filter((item) => item.description === formState.values.typeOfEvaluation)[0].id;
+      const areaId = areaList.filter((item) => item.description === formState.values.area)[0].id;
 
-      const id = formState.values.id;
-      const data = {
-        description
-      }
-      let response = {};
-      let acao = "";
-      if (!id) {
-        response = await api.post('evaluation/practice', data);
-        acao = "cadastrada";
-      } else {
-        response = await api.put('evaluation/practice/' + id, data);
-        acao = "atualizada";
-      }
+      const { amount_questions, initial_period, final_period } = formState.values;
+
+      const response = await api.put(`evaluation/practice/generate/${codigoEvaluation}`, {
+        fk_type_evaluation_id: referenceId,
+        fk_course_id: areaId,
+        qtQuestions: parseInt(amount_questions, 10),
+        year_start: initial_period,
+        year_end: final_period,
+      });
+
       if (response.status === 202) {
         if (response.data.message) {
           loadAlert('error', response.data.message);
@@ -132,10 +134,9 @@ const GenerateEvaluation = props => {
           loadAlert('error', response.data.errors[0].description);
         }
       } else {
-        loadAlert('success', 'Avaliação ' + acao + '.');
+        loadAlert('success', 'Avaliação gerada com sucesso!');
         history.push('/student/evaluation-practice');
       }
-
     } catch (error) {
 
     }
@@ -159,10 +160,30 @@ const GenerateEvaluation = props => {
             ...formState.touched,
           }
         }));
-        //setQuestions(response.data[0].questions);
       }
     } catch (error) {
 
+    }
+  }
+
+  async function handleHowManyQuestions() {
+    try {
+      const referenceId = typeOfEvaluationList.filter((item) => item.description === formState.values.typeOfEvaluation)[0].id;
+      const areaId = areaList.filter((item) => item.description === formState.values.area)[0].id;
+
+      const response = await api.get(`/evaluation/practice/how-many-questions`, {
+        params: {
+          fk_type_evaluation_id: referenceId,
+          fk_course_id: areaId,
+        }
+      });
+
+			if (response) {
+				setAmountQuestions(response.data);
+        setRenderConfigQuestions(true);
+			}
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -183,6 +204,8 @@ const GenerateEvaluation = props => {
   }, [formState.values]);
 
   const handleChange = event => {
+    event.target.value = event.target.value === 'select' ? null : event.target.value;
+
     setFormState({
       ...formState,
       values: {
@@ -203,22 +226,12 @@ const GenerateEvaluation = props => {
     history.goBack();
   };
 
-  // Reference select methods
-  const handleChangeReference = (event) => {
-    setReference(event.target.value);
-  };
-
   const handleReferenceClose = () => {
     setReferenceOpen(false);
   };
 
   const handleReferenceOpen = () => {
     setReferenceOpen(true);
-  };
-
-  // Area select methods
-  const handleChangeArea = (event) => {
-    setArea(event.target.value);
   };
 
   const handleAreaClose = () => {
@@ -258,14 +271,20 @@ const GenerateEvaluation = props => {
                 <b className="item1" style={{ marginRight: '32px' }}>Tipo de avaliação</b>
                 <Tooltip title="Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar no campo tipo de avaliação.">
                   <Select
-                    labelId="type-of-evaluation-label"
-                    id="type-of-evaluation"
+                    labelId="typeOfEvaluation-label"
+                    id="typeOfEvaluation"
+                    name="typeOfEvaluation"
                     open={openReference}
                     onClose={handleReferenceClose}
                     onOpen={handleReferenceOpen}
-                    value={reference}
-                    onChange={handleChangeReference}
+                    value={formState.values.typeOfEvaluation || 'select'}
+                    onChange={handleChange}
                     className={classes.root}
+                    error={hasError('typeOfEvaluation')}
+                    helperText={
+                      hasError('typeOfEvaluation') ? formState.errors.typeOfEvaluation[0] : null
+                    }
+                    disabled={renderConfigQuestions}
                   >
                     <MenuItem value="select">Selecione</MenuItem>
                     {typeOfEvaluationList.map((type) => (
@@ -287,12 +306,18 @@ const GenerateEvaluation = props => {
                   <Select
                     labelId="area-label"
                     id="area"
+                    name="area"
                     open={areaIsOpen}
                     onClose={handleAreaClose}
                     onOpen={handleAreaOpen}
-                    value={area}
-                    onChange={handleChangeArea}
+                    value={formState.values.area || 'select'}
+                    onChange={handleChange}
                     className={classes.root}
+                    error={hasError('area')}
+                    helperText={
+                      hasError('area') ? formState.errors.area[0] : null
+                    }
+                    disabled={renderConfigQuestions}
                   >
                     <MenuItem value="select">Selecione</MenuItem>
                     {areaList.map((item) => (
@@ -303,82 +328,21 @@ const GenerateEvaluation = props => {
               </div>
             </Grid>
 
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                error={hasError('amount_questions')}
-                helperText={
-                  hasError('amount_questions') ? formState.errors.amount_questions[0] : null
-                }
-                label="Quantidade de questões"
-                margin="dense"
-                name="amount_questions"
-                onChange={handleChange}
-                value={formState.values.amount_questions || ''}
-                variant="outlined"
-                type="number"
-              />
-            </Grid>
-
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                error={hasError('initial_period')}
-                helperText={
-                  hasError('initial_period') ? formState.errors.initial_period[0] : null
-                }
-                label="Período (Ano inicial)"
-                margin="dense"
-                name="initial_period"
-                onChange={handleChange}
-                value={formState.values.initial_period || ''}
-                variant="outlined"
-                type="number"
-              />
-            </Grid>
-
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                error={hasError('final_period')}
-                helperText={
-                  hasError('final_period') ? formState.errors.final_period[0] : null
-                }
-                label="Período (Ano final)"
-                margin="dense"
-                name="final_period"
-                onChange={handleChange}
-                value={formState.values.final_period || ''}
-                variant="outlined"
-                type="number"
-              />
-            </Grid>
-
-            <Grid
-              item
-              md={12}
-              xs={12}
-            >
-              <Button
-                color="primary"
-                variant="outlined"
-                disabled={!formState.isValid}
-                onClick={saveGenerateEvaluation}>
-                  Gerar
-              </Button>
-            </Grid>
+            {!renderConfigQuestions && (
+              <Grid
+                item
+                md={12}
+                xs={12}
+              >
+                <Button
+                  color="primary"
+                  variant="outlined"
+                  disabled={!formState.isValid || renderConfigQuestions}
+                  onClick={handleHowManyQuestions}>
+                    Configurar questões
+                </Button>
+              </Grid>
+            )}
 
             <Divider />
           </Grid>
@@ -387,121 +351,116 @@ const GenerateEvaluation = props => {
           )}
         </CardContent>
 
-        <CardContent>
-          <Grid
-            container
-            spacing={1}
-          > 
+        {renderConfigQuestions && (
+          <CardContent>
             <Grid
-              item
-              md={3}
-              xs={12}
-            >
-              <div className={classes.selectGroup}>
-                <b className="item1" style={{ marginRight: '32px' }}>Área</b>
-                <Tooltip title="Área">
-                  <Select
-                    labelId="area-label"
-                    id="area"
-                    open={areaIsOpen}
-                    onClose={handleAreaClose}
-                    onOpen={handleAreaOpen}
-                    value={area}
-                    onChange={handleChangeArea}
-                    className={classes.root}
+              container
+              spacing={1}
+            > 
+              <Grid
+                item
+                md={12}
+                xs={12}
+              >
+                <Typography variant="h4" color="textPrimary" component="h4">
+                  {'Total de questões disponíveis: '+amountQuestions}
+                </Typography>
+              </Grid>
+
+              <Grid
+                item
+                md={4}
+                xs={12}
+              >
+                <TextField
+                  fullWidth
+                  error={hasError('amount_questions')}
+                  helperText={
+                    hasError('amount_questions') ? formState.errors.amount_questions[0] : null
+                  }
+                  label="Quantidade de questões"
+                  margin="dense"
+                  name="amount_questions"
+                  onChange={handleChange}
+                  value={formState.values.amount_questions || ''}
+                  variant="outlined"
+                  type="number"
+                  disabled={amountQuestions === 0}
+                />
+              </Grid>
+
+              <Grid
+                item
+                md={4}
+                xs={12}
+              >
+                <TextField
+                  fullWidth
+                  error={hasError('initial_period')}
+                  helperText={
+                    hasError('initial_period') ? formState.errors.initial_period[0] : null
+                  }
+                  label="Período (Ano inicial)"
+                  margin="dense"
+                  name="initial_period"
+                  onChange={handleChange}
+                  value={formState.values.initial_period || ''}
+                  variant="outlined"
+                  type="number"
+                />
+              </Grid>
+
+              <Grid
+                item
+                md={4}
+                xs={12}
+              >
+                <TextField
+                  fullWidth
+                  error={hasError('final_period')}
+                  helperText={
+                    hasError('final_period') ? formState.errors.final_period[0] : null
+                  }
+                  label="Período (Ano final)"
+                  margin="dense"
+                  name="final_period"
+                  onChange={handleChange}
+                  value={formState.values.final_period || ''}
+                  variant="outlined"
+                  type="number"
+                />
+              </Grid>
+
+              <Grid
+                item
+                md={12}
+                xs={12}
+              >
+                <Button
+                  color="primary"
+                  variant="outlined"
+                  disabled={!formState.isValid || !formState.values.amount_questions}
+                  onClick={saveGenerateEvaluation}>
+                    Gerar
+                </Button>
+
+                <Button
+                  color="secondary"
+                  variant="outlined"
+                  onClick={() => setRenderConfigQuestions(false)}
+                  style={{ marginLeft: '16px' }}
                   >
-                    <MenuItem value="select">Selecione</MenuItem>
-                    {areaList.map((item) => (
-                      <MenuItem value={item.description}>{item.description}</MenuItem>
-                    ))}
-                  </Select>
-                </Tooltip>
-              </div>
-            </Grid>
+                    Editar
+                </Button>
+              </Grid>
 
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                error={hasError('amount_questions')}
-                helperText={
-                  hasError('amount_questions') ? formState.errors.amount_questions[0] : null
-                }
-                label="Quantidade de questões"
-                margin="dense"
-                name="amount_questions"
-                onChange={handleChange}
-                value={formState.values.amount_questions || ''}
-                variant="outlined"
-                type="number"
-              />
+              <Divider />
             </Grid>
-
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                error={hasError('initial_period')}
-                helperText={
-                  hasError('initial_period') ? formState.errors.initial_period[0] : null
-                }
-                label="Período (Ano inicial)"
-                margin="dense"
-                name="initial_period"
-                onChange={handleChange}
-                value={formState.values.initial_period || ''}
-                variant="outlined"
-                type="number"
-              />
-            </Grid>
-
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                error={hasError('final_period')}
-                helperText={
-                  hasError('final_period') ? formState.errors.final_period[0] : null
-                }
-                label="Período (Ano final)"
-                margin="dense"
-                name="final_period"
-                onChange={handleChange}
-                value={formState.values.final_period || ''}
-                variant="outlined"
-                type="number"
-              />
-            </Grid>
-
-            <Grid
-              item
-              md={12}
-              xs={12}
-            >
-              <Button
-                color="primary"
-                variant="outlined"
-                disabled={!formState.isValid}
-                onClick={saveGenerateEvaluation}>
-                  Gerar
-              </Button>
-            </Grid>
-
-            <Divider />
-          </Grid>
-          {formState.values.length === 0 && (
-            <LinearProgress color="secondary" />
-          )}
-        </CardContent>
+            {formState.values.length === 0 && (
+              <LinearProgress color="secondary" />
+            )}
+          </CardContent>
+        )}
         <Divider />
       </form>
     </Card>

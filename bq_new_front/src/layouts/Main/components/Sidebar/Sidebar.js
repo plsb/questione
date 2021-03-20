@@ -115,7 +115,7 @@ const Sidebar = props => {
     },
     {
       title: 'Pratique',
-      href: '/student/generate-evaluations',
+      href: '/student/evaluation-practice',
       icon: <DashboardIcon />
     },
   ];
