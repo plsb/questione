@@ -113,15 +113,15 @@ Route::group(['prefix' => 'rank'], function (){
 });
 
 Route::group(['prefix' => 'evaluation/practice'], function (){
-    Route::get('/', 'EvaluationPracticeController@index')->name('evaluation.index');
-    Route::get('/show/{evaluation}', 'EvaluationPracticeController@show')->name('evaluation.practice.show');
-    Route::get('/how-many-questions', 'EvaluationPracticeController@showHowManyQuestions')->name('evaluation.practice.showHowManyQuestions');
-    Route::post('/', 'EvaluationPracticeController@store')->name('evaluation.practice.store');
-    Route::put('/{evaluation}', 'EvaluationPracticeController@update')->name('evaluation.practice.update');
-    Route::put('/generate/{evaluation}', 'EvaluationPracticeController@generateAutomaticEvaluation')->name('evaluation.practice.generateAutomaticEvaluation');
-    Route::delete('/{evaluation}', 'EvaluationPracticeController@destroy')->name('evaluation.practice.destroy');
-    Route::put('/change-status/{evaluation}', 'EvaluationPracticeController@changeStatus')->name('evaluation.practice.changeStatus');
-    Route::get('/has-questions/{evaluation}', 'EvaluationPracticeController@hasQuestionsinEvaluation')->name('evaluation.practice.hasQuestionsinEvaluation');
+    Route::get('/', 'Practice\EvaluationPracticeController@index')->name('evaluation.index');
+    Route::get('/show/{evaluation}', 'Practice\EvaluationPracticeController@show')->name('evaluation.practice.show');
+    Route::get('/how-many-questions', 'Practice\EvaluationPracticeController@showHowManyQuestions')->name('evaluation.practice.showHowManyQuestions');
+    Route::post('/', 'Practice\EvaluationPracticeController@store')->name('evaluation.practice.store');
+    Route::put('/{evaluation}', 'Practice\EvaluationPracticeController@update')->name('evaluation.practice.update');
+    Route::put('/generate/{evaluation}', 'Practice\EvaluationHasQuestionsPracticeController@generateAutomaticQuestionsOfEvaluation')->name('evaluation.practice.generateAutomaticQuestionsOfEvaluation');
+    Route::delete('/{evaluation}', 'Practice\EvaluationPracticeController@destroy')->name('evaluation.practice.destroy');
+    Route::put('/change-status/{evaluation}', 'Practice\EvaluationPracticeController@changeStatus')->name('evaluation.practice.changeStatus');
+    Route::get('/has-questions/{evaluation}', 'Practice\EvaluationPracticeController@hasQuestionsinEvaluation')->name('evaluation.practice.hasQuestionsinEvaluation');
 });
 
 Route::group(['prefix' => 'evaluation'], function (){
