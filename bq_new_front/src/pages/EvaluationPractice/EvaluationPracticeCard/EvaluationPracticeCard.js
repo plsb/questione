@@ -55,6 +55,8 @@ const EvaluationPracticeCard = props => {
     const [open, setOpen] = React.useState(false);
     const [descriptionNewApplication, setDescriptionNewApplication] = React.useState('');
 
+    const [hasQuestions, setHasQuestions] = React.useState(false);
+
     const classes = useStyles();
 
     //configuration alert
@@ -108,17 +110,16 @@ const EvaluationPracticeCard = props => {
         try {
             const data = {
                 status,
-                description: evaluation.description,
             }
-            const response = await api.put('evaluation/practice/' + evaluation.id, data);
+            const response = await api.put('evaluation/practice/change-status/' + evaluation.id, data);
             if (response.status === 200) {
                 if (status == 1) {
                     loadAlert('success', 'Avaliação ativa.');
                 } else {
                     loadAlert('success', 'Avaliação arquivada.');
                 }
-                // setRefresh(refresh + 1);
-                document.location.reload();
+                setRefresh(refresh + 1);
+                // document.location.reload();
             } else {
                 loadAlert('error', 'Erro ao mduar o status da avaliação.');
             }
@@ -164,9 +165,9 @@ const EvaluationPracticeCard = props => {
             const fk_evaluation_id = evaluation.id;
             const description = descriptionNewApplication;
             const data = {
-                description, fk_evaluation_id
+                description,
             }
-            const response = await api.post('evaluation/add-application', data);
+            const response = await api.post(`evaluation/practice/add-application/${fk_evaluation_id}`, data);
             if (response.status === 202) {
                 if (response.data.message) {
                     loadAlert('error', response.data.message);
@@ -175,7 +176,7 @@ const EvaluationPracticeCard = props => {
             } else {
                 loadAlert('success', 'Nova aplicação cadastrada.');
                 setDescriptionNewApplication('');
-                history.push('/applications-evaluation');
+                history.push('/student/evaluation-practice/applications-evaluation');
             }
 
         } catch (error) {
@@ -201,6 +202,29 @@ const EvaluationPracticeCard = props => {
     const handleChangeDescriptionNewApplication = (e) => {
         setDescriptionNewApplication(e.target.value);
     }
+
+    async function checkHasQuestion() {
+        const { evaluation: { id } } = props;
+
+        try {
+            const response = await api.get(`/evaluation/practice/has-questions/${id}`);
+            if (response.status === 202) {
+                if (response.data.message) {
+                    loadAlert('error', response.data.message);
+                }
+            } else {
+                if (response.data.length !== 0) {
+                    setHasQuestions(true);
+                }
+            }
+        } catch (e) {
+
+        }
+    }
+
+    useEffect(() => {
+        checkHasQuestion();
+    }, []);
 
     return (
         <Card
@@ -252,8 +276,9 @@ const EvaluationPracticeCard = props => {
                 keepMounted
                 open={Boolean(anchorEl)}
                 onClose={handleClose}>
-                <MenuItem onClick={() => {}}>Praticar</MenuItem>
-                {evaluation.status == 1 ? <MenuItem onClick={handleGenerateEvaluation}>Gerar Avaliação</MenuItem> : null}
+                {evaluation.status == 1 && hasQuestions ? <MenuItem onClick={() => handleNewApplication()}>Nova aplicação</MenuItem> : null}
+                {evaluation.status == 1 && hasQuestions ? <MenuItem onClick={() => history.push(`/student/generate-evaluation/${props.evaluation.id}/questions`)}>Ver questões</MenuItem> : null}
+                {evaluation.status == 1 && !hasQuestions ? <MenuItem onClick={handleGenerateEvaluation}>Gerar Avaliação</MenuItem> : null}
                 {/* <MenuItem onClick={duplicate}>Duplicar</MenuItem> */}
                 {evaluation.status == 1 ? <MenuItem onClick={() => changeStatus(2)}>Arquivar</MenuItem> : null}
                 {evaluation.status == 2 ? <MenuItem onClick={() => changeStatus(1)}>Ativar</MenuItem> : null}
@@ -265,6 +290,9 @@ const EvaluationPracticeCard = props => {
                 onClickDisagree={onClickCloseDialog}
                 mesage={'Deseja excluir a avaliação selecionada?'}
                 title={'Excluir Avaliação'} />
+
+            {console.log('=======> ', openNewApplication)}
+
             {/* Dialog de cadastro de aplicação */}
             <Dialog fullScreen onClose={handleNewApplicationExit} aria-labelledby="simple-dialog-title" open={openNewApplication}>
                 <AppBar className={classes.appBar}>
@@ -274,7 +302,7 @@ const EvaluationPracticeCard = props => {
                         </IconButton>
                         <Typography variant="h5" className={classes.title}>
                             Informe a descrição para a aplicação
-                    </Typography>
+                        </Typography>
                     </Toolbar>
                 </AppBar>
                 <TextField
@@ -293,7 +321,7 @@ const EvaluationPracticeCard = props => {
                     className={classes.fieldsDialog}
                     onClick={saveNewApplication}>
                     Salvar
-            </Button>
+                </Button>
 
             </Dialog>
         </Card>

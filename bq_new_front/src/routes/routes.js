@@ -42,7 +42,11 @@ import {
     EvaluationPracticeTable,
     EvaluationPracticeArchiveTable,
     EvaluationPracticeDetails,
+    GenerateEvaluationQuestions,
     GenerateEvaluation,
+    EvaluationPracticeApplicationTable,
+    EvaluationPracticeApplicationDetails,
+    EvaluationPracticeApplicationResults,
 } from '../pages';
 import QuestionTable from "../pages/Professor/Question/QuestionTable";
 import QuestionDetails from "../pages/Professor/Question/QuestionDetails";
@@ -137,6 +141,36 @@ const Routes = () => (
                 needToBeLogged={true}
                 typeUser={-1}
                 path="/student/generate-evaluation/:codigoEvaluation?" />
+            <RouteWithLayout
+                component={GenerateEvaluationQuestions}
+                exact
+                layout={MainLayout}
+                needToBeLogged={true}
+                typeUser={-1}
+                path="/student/generate-evaluation/:codigoEvaluation/questions" />
+            
+            <RouteWithLayout
+                component={EvaluationPracticeApplicationTable}
+                exact
+                layout={MainLayout}
+                needToBeLogged={true}
+                typeUser={-1}
+                path="/student/evaluation-practice/applications-evaluation" />
+            <RouteWithLayout
+                component={EvaluationPracticeApplicationDetails}
+                exact
+                layout={MainLayout}
+                needToBeLogged={true}
+                typeUser={-1}
+                path="/student/evaluation-practice/applications-evaluation/details/:idApplication" />
+            <RouteWithLayout
+                component={EvaluationPracticeApplicationResults}
+                exact
+                layout={MainLayout}
+                needToBeLogged={true}
+                typeUser={-1}
+                path="/student/evaluation-practice/applications-evaluation/results/:idApplication" />
+
             <RouteWithLayout
                 component={StartEvaluation}
                 exact

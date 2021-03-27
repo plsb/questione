@@ -18,6 +18,7 @@ import validate from "validate.js";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import useTypeOfEvaluations from '../../../hooks/useTypeOfEvaluations';
 import useCourses from '../../../hooks/useCourses';
+import useCoursesWithQuestions from '../../../hooks/useCoursesWithQuestions';
 
 const schema = {
   description: {
@@ -69,7 +70,7 @@ const GenerateEvaluation = props => {
   const { codigoEvaluation } = props.match.params;
 
   const typeOfEvaluationList = useTypeOfEvaluations();
-  const areaList = useCourses();
+  // const areaList = useCoursesWithQuestions();
 
   const classes = useStyles();
 
@@ -80,9 +81,11 @@ const GenerateEvaluation = props => {
 
   // Area select states
   const [areaIsOpen, setAreaIsOpen] = React.useState(false);
+  const [areaList, setAreaList] = React.useState([]);
 
   const [amountQuestions, setAmountQuestions] = React.useState(null);
 
+  const [renderConfigArea, setRenderConfigArea] = React.useState(false);
   const [renderConfigQuestions, setRenderConfigQuestions] = React.useState(false);
 
   const [formState, setFormState] = useState({
@@ -135,7 +138,8 @@ const GenerateEvaluation = props => {
         }
       } else {
         loadAlert('success', 'Avaliação gerada com sucesso!');
-        history.push('/student/evaluation-practice');
+        loadQuestions();
+        // history.push('/student/evaluation-practice');
       }
     } catch (error) {
 
@@ -166,22 +170,74 @@ const GenerateEvaluation = props => {
     }
   }
 
+  async function getAreas() {
+    const referenceId = typeOfEvaluationList.filter((item) => item.description === formState.values.typeOfEvaluation)[0].id;
+
+    try {
+      const response = await api.get(`/all/courses-with-questions-practice/${referenceId}`);
+
+      if (response) {
+        setAreaList(response.data);
+        setRenderConfigArea(true);
+      }
+    } catch (error) {
+      setAreaList([]);
+    }
+  }
+
+  async function handleHowManyQuestions2() {
+    try {
+      const referenceId = typeOfEvaluationList.filter((item) => item.description === formState.values.typeOfEvaluation)[0].id;
+      const areaId = areaList.filter((item) => item.description === formState.values.area)[0].id;
+
+      const response = await api.get(`/evaluation/practice/has-questions/${codigoEvaluation}`);
+
+      if (response) {
+        console.log('==> ', response);
+        // setAmountQuestions(response.data);
+        // setRenderConfigQuestions(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async function handleHowManyQuestions() {
     try {
       const referenceId = typeOfEvaluationList.filter((item) => item.description === formState.values.typeOfEvaluation)[0].id;
       const areaId = areaList.filter((item) => item.description === formState.values.area)[0].id;
+      const { initial_period, final_period } = formState.values;
 
       const response = await api.get(`/evaluation/practice/how-many-questions`, {
         params: {
           fk_type_evaluation_id: referenceId,
           fk_course_id: areaId,
+          year_start: initial_period,
+          year_end: final_period,
         }
       });
 
-			if (response) {
-				setAmountQuestions(response.data);
+      if (response) {
+        setAmountQuestions(response.data);
         setRenderConfigQuestions(true);
-			}
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function loadQuestions() {
+    try {
+      const referenceId = typeOfEvaluationList.filter((item) => item.description === formState.values.typeOfEvaluation)[0].id;
+      const areaId = areaList.filter((item) => item.description === formState.values.area)[0].id;
+
+      const response = await api.get(`/evaluation/practice/has-questions/${codigoEvaluation}`);
+
+      if (response) {
+        console.log('Questões = ', response.data);
+        // setAmountQuestions(response.data);
+        // setRenderConfigQuestions(true);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -261,10 +317,10 @@ const GenerateEvaluation = props => {
           <Grid
             container
             spacing={1}
-          > 
+          >
             <Grid
               item
-              md={3}
+              md={12}
               xs={12}
             >
               <div className={classes.selectGroup}>
@@ -295,40 +351,103 @@ const GenerateEvaluation = props => {
               </div>
             </Grid>
 
-            <Grid
-              item
-              md={3}
-              xs={12}
-            >
-              <div className={classes.selectGroup}>
-                <b className="item1" style={{ marginRight: '32px' }}>Área</b>
-                <Tooltip title="Área">
-                  <Select
-                    labelId="area-label"
-                    id="area"
-                    name="area"
-                    open={areaIsOpen}
-                    onClose={handleAreaClose}
-                    onOpen={handleAreaOpen}
-                    value={formState.values.area || 'select'}
-                    onChange={handleChange}
-                    className={classes.root}
-                    error={hasError('area')}
-                    helperText={
-                      hasError('area') ? formState.errors.area[0] : null
-                    }
-                    disabled={renderConfigQuestions}
-                  >
-                    <MenuItem value="select">Selecione</MenuItem>
-                    {areaList.map((item) => (
-                      <MenuItem value={item.description}>{item.description}</MenuItem>
-                    ))}
-                  </Select>
-                </Tooltip>
-              </div>
-            </Grid>
+            {!renderConfigArea && (
+              <Grid
+                item
+                md={12}
+                xs={12}
+              >
+                {console.log(formState.values)}
+                <Button
+                  color="primary"
+                  variant="outlined"
+                  disabled={!formState.values.typeOfEvaluation && formState.values.typeOfEvaluation !== 'select'}
+                  onClick={getAreas}>
+                  Avançar
+                </Button>
+              </Grid>
+            )}
 
-            {!renderConfigQuestions && (
+            {renderConfigArea && (
+              <>
+                <Grid
+                  item
+                  md={12}
+                  xs={12}
+                >
+                  <div className={classes.selectGroup}>
+                    <b className="item1" style={{ marginRight: '32px' }}>Área</b>
+                    <Tooltip title="Área">
+                      <Select
+                        labelId="area-label"
+                        id="area"
+                        name="area"
+                        open={areaIsOpen}
+                        onClose={handleAreaClose}
+                        onOpen={handleAreaOpen}
+                        value={formState.values.area || 'select'}
+                        onChange={handleChange}
+                        className={classes.root}
+                        error={hasError('area')}
+                        helperText={
+                          hasError('area') ? formState.errors.area[0] : null
+                        }
+                        disabled={renderConfigQuestions}
+                      >
+                        <MenuItem value="select">Selecione</MenuItem>
+                        {areaList.map((item) => (
+                          <MenuItem value={item.description}>{item.description}</MenuItem>
+                        ))}
+                      </Select>
+                    </Tooltip>
+                  </div>
+                </Grid>
+
+                <Grid
+                  item
+                  md={4}
+                  xs={12}
+                >
+                  <TextField
+                    fullWidth
+                    error={hasError('initial_period')}
+                    helperText={
+                      hasError('initial_period') ? formState.errors.initial_period[0] : null
+                    }
+                    label="Período (Ano inicial)"
+                    margin="dense"
+                    name="initial_period"
+                    onChange={handleChange}
+                    value={formState.values.initial_period || ''}
+                    variant="outlined"
+                    type="number"
+                  />
+                </Grid>
+
+                <Grid
+                  item
+                  md={4}
+                  xs={12}
+                >
+                  <TextField
+                    fullWidth
+                    error={hasError('final_period')}
+                    helperText={
+                      hasError('final_period') ? formState.errors.final_period[0] : null
+                    }
+                    label="Período (Ano final)"
+                    margin="dense"
+                    name="final_period"
+                    onChange={handleChange}
+                    value={formState.values.final_period || ''}
+                    variant="outlined"
+                    type="number"
+                  />
+                </Grid>
+              </>
+            )}
+
+            {!renderConfigQuestions && renderConfigArea && (
               <Grid
                 item
                 md={12}
@@ -337,9 +456,9 @@ const GenerateEvaluation = props => {
                 <Button
                   color="primary"
                   variant="outlined"
-                  disabled={!formState.isValid || renderConfigQuestions}
+                  disabled={!formState.isValid}
                   onClick={handleHowManyQuestions}>
-                    Configurar questões
+                  Configurar questões
                 </Button>
               </Grid>
             )}
@@ -356,80 +475,38 @@ const GenerateEvaluation = props => {
             <Grid
               container
               spacing={1}
-            > 
+            >
               <Grid
                 item
                 md={12}
                 xs={12}
               >
                 <Typography variant="h4" color="textPrimary" component="h4">
-                  {'Total de questões disponíveis: '+amountQuestions}
+                  {'Total de questões disponíveis: ' + amountQuestions}
                 </Typography>
               </Grid>
 
               <Grid
-                item
-                md={4}
-                xs={12}
-              >
-                <TextField
-                  fullWidth
-                  error={hasError('amount_questions')}
-                  helperText={
-                    hasError('amount_questions') ? formState.errors.amount_questions[0] : null
-                  }
-                  label="Quantidade de questões"
-                  margin="dense"
-                  name="amount_questions"
-                  onChange={handleChange}
-                  value={formState.values.amount_questions || ''}
-                  variant="outlined"
-                  type="number"
-                  disabled={amountQuestions === 0}
-                />
-              </Grid>
-
-              <Grid
-                item
-                md={4}
-                xs={12}
-              >
-                <TextField
-                  fullWidth
-                  error={hasError('initial_period')}
-                  helperText={
-                    hasError('initial_period') ? formState.errors.initial_period[0] : null
-                  }
-                  label="Período (Ano inicial)"
-                  margin="dense"
-                  name="initial_period"
-                  onChange={handleChange}
-                  value={formState.values.initial_period || ''}
-                  variant="outlined"
-                  type="number"
-                />
-              </Grid>
-
-              <Grid
-                item
-                md={4}
-                xs={12}
-              >
-                <TextField
-                  fullWidth
-                  error={hasError('final_period')}
-                  helperText={
-                    hasError('final_period') ? formState.errors.final_period[0] : null
-                  }
-                  label="Período (Ano final)"
-                  margin="dense"
-                  name="final_period"
-                  onChange={handleChange}
-                  value={formState.values.final_period || ''}
-                  variant="outlined"
-                  type="number"
-                />
-              </Grid>
+                  item
+                  md={4}
+                  xs={12}
+                >
+                  <TextField
+                    fullWidth
+                    error={hasError('amount_questions')}
+                    helperText={
+                      hasError('amount_questions') ? formState.errors.amount_questions[0] : null
+                    }
+                    label="Quantidade de questões"
+                    margin="dense"
+                    name="amount_questions"
+                    onChange={handleChange}
+                    value={formState.values.amount_questions || ''}
+                    variant="outlined"
+                    type="number"
+                    disabled={amountQuestions === 0}
+                  />
+                </Grid>
 
               <Grid
                 item
@@ -441,7 +518,7 @@ const GenerateEvaluation = props => {
                   variant="outlined"
                   disabled={!formState.isValid || !formState.values.amount_questions}
                   onClick={saveGenerateEvaluation}>
-                    Gerar
+                  Gerar
                 </Button>
 
                 <Button
@@ -449,9 +526,27 @@ const GenerateEvaluation = props => {
                   variant="outlined"
                   onClick={() => setRenderConfigQuestions(false)}
                   style={{ marginLeft: '16px' }}
-                  >
-                    Editar
+                >
+                  Editar
                 </Button>
+              </Grid>
+
+              <Divider />
+
+              <Grid
+                item
+                md={12}
+                xs={12}
+              >
+                <h1>Questões</h1>
+
+                {/* {questions.map(question => (
+                  <QuestionCard
+                    question={question}
+                    setRefresh={setRefresh}
+                    refresh={refresh}/>
+                ))} */}
+
               </Grid>
 
               <Divider />

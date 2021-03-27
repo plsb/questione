@@ -38,3 +38,7 @@ export { default as EvaluationPracticeTable } from './EvaluationPractice/Evaluat
 export { default as EvaluationPracticeArchiveTable } from './EvaluationPractice/EvaluationPracticeArchiveTable';
 export { default as EvaluationPracticeDetails } from './EvaluationPractice/EvaluationPracticeDetails';
 export { default as GenerateEvaluation } from './EvaluationPractice/GenerateEvaluation';
+export { default as GenerateEvaluationQuestions } from './EvaluationPractice/EvaluationPracticeQuestions';
+export { default as EvaluationPracticeApplicationTable } from './EvaluationPractice/EvaluationPracticeApplication/EvaluationApplicationTable';
+export { default as EvaluationPracticeApplicationDetails } from './EvaluationPractice/EvaluationPracticeApplication/EvaluationApplicationDetails';
+export { default as EvaluationPracticeApplicationResults } from './EvaluationPractice/EvaluationPracticeApplication/EvaluationApplicationResults';
