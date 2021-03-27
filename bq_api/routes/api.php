@@ -21,6 +21,7 @@ Route::group(['prefix' => 'public'], function (){
 Route::group(['prefix' => 'all'], function (){
     Route::get('/type-of-evaluations', 'AllUsers@typeOfevaluation')->name('all.typeOfevaluation');
     Route::get('/courses', 'AllUsers@courses')->name('all.courses');
+    Route::get('/courses-with-questions-practice/{id}', 'AllUsers@coursesWithQuestionsByTypoOfEvaluation')->name('all.courses');
     Route::get('/objects', 'AllUsers@knowledgeObjects')->name('all.knowledgeObjects');
     Route::get('/skills', 'AllUsers@skills')->name('all.skills');
     Route::put('/update-profile-user', 'AllUsers@updateProfileUser')->name('all.updateProfileUser');
@@ -112,14 +113,15 @@ Route::group(['prefix' => 'rank'], function (){
 });
 
 Route::group(['prefix' => 'evaluation/practice'], function (){
-    Route::get('/', 'EvaluationPracticeController@index')->name('evaluation.index');
-    Route::get('/show/{evaluation}', 'EvaluationPracticeController@show')->name('evaluation.practice.show');
-    Route::get('/how-many-questions', 'EvaluationPracticeController@showHowManyQuestions')->name('evaluation.practice.showHowManyQuestions');
-    Route::post('/', 'EvaluationPracticeController@store')->name('evaluation.practice.store');
-    Route::put('/{evaluation}', 'EvaluationPracticeController@update')->name('evaluation.practice.update');
-    Route::put('/generate/{evaluation}', 'EvaluationPracticeController@generateAutomaticEvaluation')->name('evaluation.practice.generateAutomaticEvaluation');
-    Route::delete('/{evaluation}', 'EvaluationPracticeController@destroy')->name('evaluation.practice.destroy');
-    Route::put('/change-status/{evaluation}', 'EvaluationPracticeController@changeStatus')->name('evaluation.practice.changeStatus');
+    Route::get('/', 'Practice\EvaluationPracticeController@index')->name('evaluation.index');
+    Route::get('/show/{evaluation}', 'Practice\EvaluationPracticeController@show')->name('evaluation.practice.show');
+    Route::get('/how-many-questions', 'Practice\EvaluationPracticeController@showHowManyQuestions')->name('evaluation.practice.showHowManyQuestions');
+    Route::post('/', 'Practice\EvaluationPracticeController@store')->name('evaluation.practice.store');
+    Route::put('/{evaluation}', 'Practice\EvaluationPracticeController@update')->name('evaluation.practice.update');
+    Route::put('/generate/{evaluation}', 'Practice\EvaluationHasQuestionsPracticeController@generateAutomaticQuestionsOfEvaluation')->name('evaluation.practice.generateAutomaticQuestionsOfEvaluation');
+    Route::delete('/{evaluation}', 'Practice\EvaluationPracticeController@destroy')->name('evaluation.practice.destroy');
+    Route::put('/change-status/{evaluation}', 'Practice\EvaluationPracticeController@changeStatus')->name('evaluation.practice.changeStatus');
+    Route::get('/has-questions/{evaluation}', 'Practice\EvaluationPracticeController@hasQuestionsinEvaluation')->name('evaluation.practice.hasQuestionsinEvaluation');
 });
 
 Route::group(['prefix' => 'evaluation'], function (){

@@ -35,6 +35,26 @@ class AllUsers extends Controller
         return response()->json($courses, 200);
     }
 
+    public function coursesWithQuestionsByTypoOfEvaluation($id_type_of_evaluation)
+    {
+        if(!$id_type_of_evaluation){
+            return response()->json([
+                'message' => 'Informe o tipo de avaliação.'
+            ], 202);
+        }
+
+        $arr_id_courses = [];
+        $questions = Question::where('fk_type_of_evaluation_id', $id_type_of_evaluation)
+            ->groupBy('fk_course_id')
+            ->get('fk_course_id');
+        foreach ($questions as $q){
+            $arr_id_courses[] = $q->fk_course_id;
+        }
+        $courses = Course::whereIn('id', $arr_id_courses)->orderBy('description')->get();
+
+        return response()->json($courses, 200);
+    }
+
     public function skills(Request $request)
     {
         if(!$request->fk_course_id){

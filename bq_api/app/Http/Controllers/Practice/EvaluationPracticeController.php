@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Practice;
 
 use App\Course;
 use App\Evaluation;
@@ -9,6 +9,7 @@ use App\EvaluationHasQuestions;
 use App\Question;
 use App\TypeOfEvaluation;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Validator;
 use DB;
 
@@ -210,59 +211,11 @@ class EvaluationPracticeController extends Controller
 
     }
 
-    public function generateAutomaticEvaluation(Request $request, $id){
-        $user = auth('api')->user();
-        $evaluation = Evaluation::find($id);
+    public function hasQuestionsinEvaluation(Request $request, $id){
 
-        if($evaluation->fk_user_id != $user->id){
-            return response()->json([
-                'message' => 'Operação não pode ser realizada. A avaliação pertence a outro usuário.'
-            ], 202);
-        }
+        $evaluationQuestions = EvaluationHasQuestions::where('fk_evaluation_id', $id)->get();
 
-        if(!$request->fk_type_evaluation_id){
-            return response()->json([
-                'message' => 'Informe o tipo da avaliação.'
-            ], 202);
-        }
-        $typeEvaluation = TypeOfEvaluation::find($request->fk_type_evaluation_id);
-        if(!$typeEvaluation){
-            return response()->json([
-                'message' => 'Tipo de avaliação não encontrado.'
-            ], 202);
-        }
-
-        if(!$request->fk_course_id){
-            return response()->json([
-                'message' => 'Informe a área.'
-            ], 202);
-        }
-        $course = Course::find($request->fk_course_id);
-        if(!$course){
-            return response()->json([
-                'message' => 'Área não encontrada.'
-            ], 202);
-        }
-
-        if(!$request->qtQuestions){
-            return response()->json([
-                'message' => 'Informe a quantidade de questões.'
-            ], 202);
-        }
-        if(!is_int($request->qtQuestions)){
-            return response()->json([
-                'message' => 'A quantidade informada deve ser um número inteiro.'
-            ], 202);
-        }
-        if($request->year_start && $request->year_end ){
-            if($request->year_end < $request->year_start){
-                return response()->json([
-                    'message' => 'Ano final deve ser maior que o ano inicial.'
-                ], 202);
-            }
-        }
-
-        //aqui ocorrerá a geração de prova automática
+        return $evaluationQuestions;
     }
 
     public function showHowManyQuestions(Request $request){
