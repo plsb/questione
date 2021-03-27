@@ -30,4 +30,11 @@ class EvaluationHasQuestions extends Model
             ->with('keywords');
     }
 
+    public function questionWithSkillAndObjects(){
+        return $this->belongsTo(Question::class, 'fk_question_id')
+            ->with('course')
+            ->with('skill')
+            ->with('knowledgeObjects');
+    }
+
 }
