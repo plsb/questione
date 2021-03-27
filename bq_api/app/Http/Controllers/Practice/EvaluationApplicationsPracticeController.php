@@ -31,6 +31,34 @@ class EvaluationApplicationsPracticeController extends Controller
 
     ];
 
+    public function index(Request $request)
+    {
+        $user = auth('api')->user();
+
+        $evaluations = Evaluation::where('fk_user_id', '=', $user->id)
+            ->where('practice', 1)
+            ->get();
+
+        $description = $request->description;
+
+        $arr = array();
+        foreach ($evaluations as $ev){
+            //dd($enaq);
+            $arr[] = $ev->id;
+        }
+        $evaliation_application = EvaluationApplication::whereIn('fk_evaluation_id',$arr)
+            ->when($description, function ($query) use ($description) {
+                return $query->where('description', 'like','%'.$description.'%')
+                    ->orWhere('id_application', $description);
+            })
+            ->where('id_application', '!=', '')
+            ->with('evaluation')
+            ->orderBy('id', 'DESC')
+            ->paginate(10);
+
+        return response()->json($evaliation_application, 200);
+    }
+
     public function store(Request $request, $id){
 
         $validation = Validator::make($request->all(),$this->rules, $this->messages);
