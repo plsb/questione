@@ -213,7 +213,9 @@ class EvaluationPracticeController extends Controller
 
     public function hasQuestionsinEvaluation(Request $request, $id){
 
-        $evaluationQuestions = EvaluationHasQuestions::where('fk_evaluation_id', $id)->get();
+        $evaluationQuestions = EvaluationHasQuestions::where('fk_evaluation_id', $id)
+            ->with('questionWithSkillAndObjects')
+            ->get();
 
         return $evaluationQuestions;
     }
