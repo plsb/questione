@@ -108,8 +108,14 @@ class EvaluationHasQuestionsPracticeController extends Controller
         }
 
         //pega de forma aleatória. Futuramente deverá ser adicionado aprendizagem de máquina
-        $arr_questions = $questions->toArray();
-        $output_rand = array_rand($arr_questions, $qtdQuestions);
+        $arr_questions = $questions->toArray(); // retorna todas as questões elegíveis
+        //pega a quantidade de questões informadas pelo usuário
+        if($qtdQuestions <= 1){
+            $output_rand[0] = array_rand($arr_questions, $qtdQuestions);
+        } else {
+            $output_rand = array_rand($arr_questions, $qtdQuestions);
+        }
+        //dd($output_rand, $qtdQuestions);
         foreach($output_rand as $o){
             $evaluation_question = new EvaluationHasQuestions();
             $evaluation_question->fk_question_id = $arr_questions[$o];
