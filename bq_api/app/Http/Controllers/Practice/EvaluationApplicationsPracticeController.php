@@ -216,6 +216,7 @@ class EvaluationApplicationsPracticeController extends Controller
 
         $answer_head = AnswersHeadEvaluation::where('fk_application_evaluation_id', $application->id)
             ->first();
+        //return response()->json($answer_head, 200);
 
         $status = 1; // NÃO INICIADA
 

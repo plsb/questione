@@ -28,6 +28,15 @@ class DoEvaluation extends Controller
         $evaluation_application = EvaluationApplication::where('id_application', $id)
             ->with('evaluation')
             ->first();
+        if($evaluation_application->evaluation->practice == 1){
+            $user = auth('api')->user();
+
+            if($user->id != $evaluation_application->evaluation->user->id){
+                return response()->json([
+                    'message' => 'O código pertence a uma avaliação prática de outro usuário.'
+                ], 202);
+            }
+        }
         if($evaluation_application){
             return response()->json($evaluation_application, 200);
         } else {
