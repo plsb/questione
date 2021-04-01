@@ -155,14 +155,14 @@ const Routes = () => (
                 layout={MainLayout}
                 needToBeLogged={true}
                 typeUser={-1}
-                path="/student/evaluation-practice/applications-evaluation" />
+                path="/student/evaluation-practice/applications-evaluation/:idApplication" />
             <RouteWithLayout
                 component={EvaluationPracticeApplicationDetails}
                 exact
                 layout={MainLayout}
                 needToBeLogged={true}
                 typeUser={-1}
-                path="/student/evaluation-practice/applications-evaluation/details/:idApplication" />
+                path="/student/evaluation-practice/:codigoEvaluation/applications-evaluation/details/:idApplication" />
             <RouteWithLayout
                 component={EvaluationPracticeApplicationResults}
                 exact

@@ -256,9 +256,11 @@ const DoEvaluation = props => {
                     <Typography variant="button" color="textSecondary" component="p">
                       {'Código da aplicação: '+application.id_application}
                     </Typography>
-                    <Typography variant="button" color="textSecondary" component="p">
-                      {'Professor(a): '+application.evaluation.user.name}
-                    </Typography>
+                    {application && application.evaluation.practice !== 1 && (
+                      <Typography variant="button" color="textSecondary" component="p">
+                        {'Professor(a): '+application.evaluation.user.name}
+                      </Typography>
+                    )}
                   </div>
                 }
             />

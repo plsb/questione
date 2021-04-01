@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
@@ -9,8 +9,7 @@ import {
     Typography,
     CardContent,
     MenuItem,
-    Menu, Tooltip, Chip, Dialog, AppBar, Toolbar,
-    TextField, Button
+    Menu, Tooltip, Chip,
 } from '@material-ui/core';
 import { MoreVert, Edit } from '@material-ui/icons';
 import moment from 'moment';
@@ -18,7 +17,7 @@ import api from "../../../services/api";
 import Swal from "sweetalert2";
 import { withRouter } from "react-router-dom";
 import { DialogQuestione } from "../../../components";
-import CloseIcon from "@material-ui/icons/Close";
+// import CloseIcon from "@material-ui/icons/Close";
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -53,7 +52,7 @@ const EvaluationPracticeCard = props => {
     const { className, history, refresh, setRefresh, evaluation, ...rest } = props;
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [open, setOpen] = React.useState(false);
-    const [descriptionNewApplication, setDescriptionNewApplication] = React.useState('');
+    // const [descriptionNewApplication, setDescriptionNewApplication] = React.useState('');
 
     const [hasQuestions, setHasQuestions] = React.useState(false);
 
@@ -155,53 +154,53 @@ const EvaluationPracticeCard = props => {
         setOpen(false);
     }
 
-    async function saveNewApplication() {
-        try {
-            if (descriptionNewApplication.length < 5) {
-                setOpenNewApplication(false);
-                loadAlert('error', 'Informe uma descrição com no mínimo 05 caracteres');
-                return;
-            }
-            const fk_evaluation_id = evaluation.id;
-            const description = descriptionNewApplication;
-            const data = {
-                description,
-            }
-            const response = await api.post(`evaluation/practice/add-application/${fk_evaluation_id}`, data);
-            if (response.status === 202) {
-                if (response.data.message) {
-                    loadAlert('error', response.data.message);
-                }
-                setOpenNewApplication(false);
-            } else {
-                loadAlert('success', 'Nova aplicação cadastrada.');
-                setDescriptionNewApplication('');
-                history.push('/student/evaluation-practice/applications-evaluation');
-            }
+    // async function saveNewApplication() {
+    //     try {
+    //         if (descriptionNewApplication.length < 5) {
+    //             setOpenNewApplication(false);
+    //             loadAlert('error', 'Informe uma descrição com no mínimo 05 caracteres');
+    //             return;
+    //         }
+    //         const fk_evaluation_id = evaluation.id;
+    //         const description = descriptionNewApplication;
+    //         const data = {
+    //             description,
+    //         }
+    //         const response = await api.post(`evaluation/practice/add-application/${fk_evaluation_id}`, data);
+    //         if (response.status === 202) {
+    //             if (response.data.message) {
+    //                 loadAlert('error', response.data.message);
+    //             }
+    //             setOpenNewApplication(false);
+    //         } else {
+    //             loadAlert('success', 'Nova aplicação cadastrada.');
+    //             setDescriptionNewApplication('');
+    //             history.push('/student/evaluation-practice/applications-evaluation');
+    //         }
 
-        } catch (error) {
+    //     } catch (error) {
 
-        }
-    }
+    //     }
+    // }
 
-    //dialog de nova aplicação
-    const [openNewApplication, setOpenNewApplication] = React.useState(false);
+    // //dialog de nova aplicação
+    // const [openNewApplication, setOpenNewApplication] = React.useState(false);
 
     const handleGenerateEvaluation = () => {
         history.push('/student/generate-evaluation/' + evaluation.id);
     }
 
-    const handleNewApplication = () => {
-        setOpenNewApplication(true);
-    };
+    // const handleNewApplication = () => {
+    //     setOpenNewApplication(true);
+    // };
 
-    const handleNewApplicationExit = () => {
-        setOpenNewApplication(false);
-    }
+    // const handleNewApplicationExit = () => {
+    //     setOpenNewApplication(false);
+    // }
 
-    const handleChangeDescriptionNewApplication = (e) => {
-        setDescriptionNewApplication(e.target.value);
-    }
+    // const handleChangeDescriptionNewApplication = (e) => {
+    //     setDescriptionNewApplication(e.target.value);
+    // }
 
     async function checkHasQuestion() {
         const { evaluation: { id } } = props;
@@ -276,7 +275,7 @@ const EvaluationPracticeCard = props => {
                 keepMounted
                 open={Boolean(anchorEl)}
                 onClose={handleClose}>
-                {evaluation.status == 1 && hasQuestions ? <MenuItem onClick={() => handleNewApplication()}>Nova aplicação</MenuItem> : null}
+                {evaluation.status == 1 && hasQuestions ? <MenuItem onClick={() => history.push(`/student/evaluation-practice/applications-evaluation/${props.evaluation.id}`)}>Ver aplicações</MenuItem> : null}
                 {evaluation.status == 1 && hasQuestions ? <MenuItem onClick={() => history.push(`/student/generate-evaluation/${props.evaluation.id}/questions`)}>Ver questões</MenuItem> : null}
                 {evaluation.status == 1 && !hasQuestions ? <MenuItem onClick={handleGenerateEvaluation}>Gerar Avaliação</MenuItem> : null}
                 {/* <MenuItem onClick={duplicate}>Duplicar</MenuItem> */}
@@ -291,10 +290,8 @@ const EvaluationPracticeCard = props => {
                 mesage={'Deseja excluir a avaliação selecionada?'}
                 title={'Excluir Avaliação'} />
 
-            {console.log('=======> ', openNewApplication)}
-
             {/* Dialog de cadastro de aplicação */}
-            <Dialog fullScreen onClose={handleNewApplicationExit} aria-labelledby="simple-dialog-title" open={openNewApplication}>
+            {/* <Dialog fullScreen onClose={handleNewApplicationExit} aria-labelledby="simple-dialog-title" open={openNewApplication}>
                 <AppBar className={classes.appBar}>
                     <Toolbar>
                         <IconButton edge="start" color="inherit" onClick={handleNewApplicationExit} aria-label="close">
@@ -323,7 +320,7 @@ const EvaluationPracticeCard = props => {
                     Salvar
                 </Button>
 
-            </Dialog>
+            </Dialog> */}
         </Card>
     );
 };

@@ -45,7 +45,7 @@ const TooltipCustomized = withStyles((theme) => ({
 
 const EvaluationApplicationDetails = props => {
   const { className, history, ...rest } = props;
-  const { idApplication } = props.match.params;
+  const { idApplication, codigoEvaluation } = props.match.params;
   const [checkedRandom, setCheckedRandom] = React.useState(false);
   const [checkedShowResult, setCheckedShowResult] = React.useState(false);
 
@@ -91,7 +91,7 @@ const EvaluationApplicationDetails = props => {
         random_questions,
         show_results
       }
-      const response = await api.put('evaluation/applications/'+idApplication, data);
+      const response = await api.put('evaluation/practice/applications/'+idApplication, data);
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
@@ -100,7 +100,7 @@ const EvaluationApplicationDetails = props => {
         }
       } else {
         loadAlert('success', 'Aplicação atualizada.');
-        history.push('/applications-evaluation');
+        history.push(`/student/evaluation-practice/applications-evaluation/${codigoEvaluation}`);
       }
 
     } catch (error) {
@@ -110,7 +110,7 @@ const EvaluationApplicationDetails = props => {
 
   async function findAApplication(id){
     try {
-      const response = await api.get('/evaluation/applications/show/'+id);
+      const response = await api.get('evaluation/practice/applications/show/'+id);
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
@@ -215,7 +215,7 @@ const EvaluationApplicationDetails = props => {
                 value={formState.values.description || ''}
                 variant="outlined"
               />
-              <TooltipCustomized
+              {/* <TooltipCustomized
                   title={
                     <React.Fragment>
                       <p>
@@ -239,8 +239,8 @@ const EvaluationApplicationDetails = props => {
                       }
                       label="Questões aleatórias?"
                   />
-              </TooltipCustomized>
-              <TooltipCustomized
+              </TooltipCustomized> */}
+              {/* <TooltipCustomized
                   title={
                     <React.Fragment>
                       <p>
@@ -264,7 +264,7 @@ const EvaluationApplicationDetails = props => {
                     }
                     label="Liberar o resultado?"
                 />
-              </TooltipCustomized>
+              </TooltipCustomized> */}
             </Grid>
           </Grid>
         </CardContent>

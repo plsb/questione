@@ -3,13 +3,21 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import {
   Card,
+  Dialog,
+  AppBar,
+  Toolbar,
   CardActions,
   CardContent,
+  IconButton,
+  Typography,
   Table,
+  Button,
+  TextField,
   TableBody,
   TablePagination, CardHeader, Grid, LinearProgress
 } from '@material-ui/core';
 import api from '../../../../services/api';
+import CloseIcon from "@material-ui/icons/Close";
 
 import Swal from "sweetalert2";
 import UsersToolbar from "./components/EvaluationApplicationToolbar";
@@ -53,11 +61,26 @@ const useStyles = makeStyles(theme => ({
   },
   searchInput: {
     marginRight: theme.spacing(1)
+  },
+  appBar: {
+    position: 'relative',
+  },
+  title: {
+      marginLeft: 2,
+      flex: 1,
+      fontWeight: 'bold',
+      color: '#ffffff'
+  },
+  fieldsDialog: {
+    marginTop: 20
   }
 }));
 
 const EvaluationApplicationTable = props => {
   const { className, history } = props;
+  const { idApplication } = props.match.params;
+
+  console.log('-====> ', props.match.params);
 
   const [evaluationsApplications, setEvaluationsApplications] = useState(null);
 
@@ -68,6 +91,7 @@ const EvaluationApplicationTable = props => {
   const [total, setTotal] = useState(0);
   const [searchText, setSearchText] = useState('');
   const [open, setOpen] = React.useState(false);
+  const [descriptionNewApplication, setDescriptionNewApplication] = React.useState('');
 
   //configuration alert
   const Toast = Swal.mixin({
@@ -91,19 +115,21 @@ const EvaluationApplicationTable = props => {
 
   async function loadEvaluationsApplications(page){
     try {
-      let url = 'evaluation/practice/list-applications?page='+page;
+      let url = `evaluation/practice/list-applications/${idApplication}?page=+${page}`;
       if(searchText != ''){
         url += '&description='+searchText;
       }
       const response = await api.get(url);
       if(response.status == 200) {
         setTotal(response.data.total);
+        console.log(response.data.data);
         setEvaluationsApplications(response.data.data);
       } else {
+        console.log('teste');
         setEvaluationsApplications([]);
       }
     } catch (error) {
-
+      console.log(error);
     }
   }
 
@@ -129,12 +155,62 @@ const EvaluationApplicationTable = props => {
     setRowsPerPage(event.target.value);
   };
 
+  async function saveNewApplication() {
+      try {
+          if (descriptionNewApplication.length < 5) {
+              setOpenNewApplication(false);
+              loadAlert('error', 'Informe uma descrição com no mínimo 05 caracteres');
+              return;
+          }
+          const fk_evaluation_id = idApplication;
+          const description = descriptionNewApplication;
+          const data = {
+              description,
+          }
+          const response = await api.post(`evaluation/practice/add-application/${fk_evaluation_id}`, data);
+          if (response.status === 202) {
+              if (response.data.message) {
+                  loadAlert('error', response.data.message);
+              }
+              setOpenNewApplication(false);
+          } else {
+              loadAlert('success', 'Nova aplicação cadastrada.');
+              setDescriptionNewApplication('');
+              setOpenNewApplication(false);
+              window.location.reload();
+          }
+
+      } catch (error) {
+
+      }
+  }
+
+  //dialog de nova aplicação
+  const [openNewApplication, setOpenNewApplication] = React.useState(false);
+
+  const handleNewApplicationExit = () => {
+    setOpenNewApplication(false);
+}
+
+  const handleNewApplication = () => {
+    setOpenNewApplication(true);
+  };
+
+  const handleChangeDescriptionNewApplication = (e) => {
+    setDescriptionNewApplication(e.target.value);
+  }
+
   return (
       <div className={classes.root}>
         <UsersToolbar
             onChangeSearch={updateSearch.bind(this)}
             searchText={searchText}
             onClickSearch={onClickSearch}/>
+
+        <Button onClick={() => handleNewApplication()} color="primary">
+            Nova aplicação
+        </Button>
+
         <div className={classes.content}>
           <Card
               className={clsx(classes.root, className)}>
@@ -171,7 +247,7 @@ const EvaluationApplicationTable = props => {
                         <Table>
                           <TableBody>
                             {evaluationsApplications.map(application => (
-                                <EvaluationApplicationCard application={application}/>
+                                <EvaluationApplicationCard application={application} idApplication={idApplication} />
                             ))}
                           </TableBody>
                         </Table>
@@ -189,6 +265,37 @@ const EvaluationApplicationTable = props => {
                   rowsPerPageOptions={[10]}
               />
             </CardActions>
+
+            {/* Dialog de cadastro de aplicação */}
+            <Dialog fullScreen onClose={handleNewApplicationExit} aria-labelledby="simple-dialog-title" open={openNewApplication}>
+                <AppBar className={classes.appBar}>
+                    <Toolbar>
+                        <IconButton edge="start" color="inherit" onClick={handleNewApplicationExit} aria-label="close">
+                            <CloseIcon />
+                        </IconButton>
+                        <Typography variant="h5" className={classes.title}>
+                            Informe a descrição para a aplicação
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+                <TextField
+                    fullWidth
+                    label="Descrição"
+                    margin="dense"
+                    name="description"
+                    variant="outlined"
+                    onChange={handleChangeDescriptionNewApplication}
+                    value={descriptionNewApplication}
+                    className={classes.fieldsDialog}
+                />
+                <Button
+                    color="primary"
+                    variant="outlined"
+                    className={classes.fieldsDialog}
+                    onClick={saveNewApplication}>
+                    Salvar
+                </Button>
+            </Dialog>
           </Card>
         </div>
       </div>
