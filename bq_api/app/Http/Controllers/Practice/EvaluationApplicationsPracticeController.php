@@ -118,4 +118,73 @@ class EvaluationApplicationsPracticeController extends Controller
 
     }
 
+    public function update(Request $request, $id){
+
+        $validation = Validator::make($request->all(),$this->rules, $this->messages);
+
+        if(!$request->description) {
+            return response()->json([
+                'message' => 'Informe a descrição.'
+            ], 200);
+        }
+
+        $evaluation_application = EvaluationApplication::find($id);
+
+        if(!$evaluation_application){
+            return response()->json([
+                'message' => 'A aplicação da avaliação não foi encontrada.'
+            ], 202);
+        }
+
+        $evaluation = Evaluation::where('id', $evaluation_application->fk_evaluation_id)->first();
+        //dd($evaluation_application);
+        $user = auth('api')->user();
+        if($user->id != $evaluation->fk_user_id){
+            return response()->json([
+                'message' => 'A avaliação pertence a um outro usuário.'
+            ], 202);
+        }
+
+        if($evaluation->status == 2){
+            $evaluation_application->status = 0;
+            $evaluation_application->save();
+            return response()->json([
+                'message' => 'A avaliação está arquivada.'
+            ], 202);
+        }
+
+        $evaluation_application->description = $request->description;
+        $evaluation_application->save();
+
+        return response()->json([
+            'message' => 'Aplicação da avaliação atualizada.',
+            $evaluation_application
+        ], 200);
+
+    }
+
+    public function show(int $id)
+    {
+        $application = EvaluationApplication::where('id', '=', $id)
+            ->first();
+
+        if(!$application){
+            return response()->json([
+                'message' => 'Aplicação não encontrada.'
+            ], 202);
+        }
+
+        $evaluation = Evaluation::where('id', $application->fk_evaluation_id)->first();
+
+        $user = auth('api')->user();
+
+        if($evaluation->fk_user_id != $user->id){
+            return response()->json([
+                'message' => 'A avaliação pertence a outro usuário.'
+            ], 202);
+        }
+
+        return response()->json($application, 200);
+    }
+
 }

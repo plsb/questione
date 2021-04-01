@@ -126,6 +126,8 @@ Route::group(['prefix' => 'evaluation/practice'], function (){
     //EvaluationApplicationsPracticeController
     Route::post('/add-application/{evaluation}', 'Practice\EvaluationApplicationsPracticeController@store')->name('evaluationApplication.practice.store');
     Route::get('/list-applications/{evaluation}', 'Practice\EvaluationApplicationsPracticeController@index')->name('evaluationApplication.practice.index');
+    Route::get('/applications/show/{idApplication}', 'Practice\EvaluationApplicationsPracticeController@show')->name('evaluationApplication.pratice.show');
+    Route::put('/applications/{idApplication}', 'Practice\EvaluationApplicationsPracticeController@update')->name('evaluationApplication.pratice.update');
 });
 
 Route::group(['prefix' => 'evaluation'], function (){
