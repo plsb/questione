@@ -49,6 +49,7 @@ class EvaluationApplicationsController extends Controller
         $user = auth('api')->user();
 
         $evaluations = Evaluation::where('fk_user_id', '=', $user->id)
+            ->where('practice', 0)
             ->get();
 
         $description = $request->description;

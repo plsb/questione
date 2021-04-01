@@ -31,12 +31,13 @@ class EvaluationApplicationsPracticeController extends Controller
 
     ];
 
-    public function index(Request $request)
+    public function index(Request $request, $id)
     {
         $user = auth('api')->user();
 
         $evaluations = Evaluation::where('fk_user_id', '=', $user->id)
             ->where('practice', 1)
+            ->where('id', $id)
             ->get();
 
         $description = $request->description;
