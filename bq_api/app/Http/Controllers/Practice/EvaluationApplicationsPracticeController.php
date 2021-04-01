@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Practice;
 
+use App\AnswersHeadEvaluation;
 use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
@@ -185,6 +186,47 @@ class EvaluationApplicationsPracticeController extends Controller
         }
 
         return response()->json($application, 200);
+    }
+
+    public function statusApplication(int $id){
+        /*
+         * STATUS
+         * 1- NÃO INICIADA
+         * 2- INICIADA
+         * 3- FINALIZADA
+         */
+        $application = EvaluationApplication::where('id', '=', $id)
+            ->first();
+
+        if(!$application){
+            return response()->json([
+                'message' => 'Aplicação não encontrada.'
+            ], 202);
+        }
+
+        $evaluation = Evaluation::where('id', $application->fk_evaluation_id)->first();
+
+        $user = auth('api')->user();
+
+        if($evaluation->fk_user_id != $user->id){
+            return response()->json([
+                'message' => 'A avaliação pertence a outro usuário.'
+            ], 202);
+        }
+
+        $answer_head = AnswersHeadEvaluation::where('fk_application_evaluation_id', $application->id)
+            ->first();
+
+        $status = 1; // NÃO INICIADA
+
+        if($answer_head){
+            $status = 2; // INICIADA
+            if($answer_head->finalized_at){
+                $status = 3; // FINALIZADA
+            }
+        }
+
+        return response()->json($status, 200);
     }
 
 }
