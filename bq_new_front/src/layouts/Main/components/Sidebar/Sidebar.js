@@ -112,7 +112,12 @@ const Sidebar = props => {
       href: '/student/result-evaluations',
       icon: <Assessment />,
       className: 'result-evaluations',
-    }
+    },
+    {
+      title: 'Pratique',
+      href: '/student/evaluation-practice',
+      icon: <DashboardIcon />
+    },
   ];
 
   function handlePage(event) {

@@ -19,9 +19,11 @@ export { default as CourseTable } from './Administrator/Course/CourseTable';
 export { default as CourseDetails } from './Administrator/Course/CourseDetails';
 export { default as ProfileTable } from './Administrator/Profile/ProfileTable';
 export { default as ProfileDetails } from './Administrator/Profile/ProfileDetails';
+
 export { default as EvaluationTable } from './Professor/Evaluation/EvaluationTable';
 export { default as EvaluationArchiveTable } from './Professor/Evaluation/EvaluationArchiveTable';
 export { default as EvaluationDetails } from './Professor/Evaluation/EvaluationDetails';
+
 export { default as EvaluationApplicationTable } from './Professor/EvaluationApplication/EvaluationApplicationTable';
 export { default as EvaluationApplicationDetails } from './Professor/EvaluationApplication/EvaluationApplicationDetails';
 export { default as EvaluationApplicationResults } from './Professor/EvaluationApplication/EvaluationApplicationResults';
@@ -31,3 +33,12 @@ export { default as EvaluationsResultStudent } from './Student/EvaluationsResult
 export { default as EvaluationsResultStudentDetails } from './Student/EvaluationsResult/EvaluationResultDetails/EvaluationsResultDetails';
 export { default as TypeOfEvaluationTable } from './Administrator/TypeOfEvaluation/TypeOfEvaluationTable';
 export { default as TypeOfEvaluationDetails } from './Administrator/TypeOfEvaluation/TypeOfEvaluationDetails';
+
+export { default as EvaluationPracticeTable } from './EvaluationPractice/EvaluationPracticeTable';
+export { default as EvaluationPracticeArchiveTable } from './EvaluationPractice/EvaluationPracticeArchiveTable';
+export { default as EvaluationPracticeDetails } from './EvaluationPractice/EvaluationPracticeDetails';
+export { default as GenerateEvaluation } from './EvaluationPractice/GenerateEvaluation';
+export { default as GenerateEvaluationQuestions } from './EvaluationPractice/EvaluationPracticeQuestions';
+export { default as EvaluationPracticeApplicationTable } from './EvaluationPractice/EvaluationPracticeApplication/EvaluationApplicationTable';
+export { default as EvaluationPracticeApplicationDetails } from './EvaluationPractice/EvaluationPracticeApplication/EvaluationApplicationDetails';
+export { default as EvaluationPracticeApplicationResults } from './EvaluationPractice/EvaluationPracticeApplication/EvaluationApplicationResults';
