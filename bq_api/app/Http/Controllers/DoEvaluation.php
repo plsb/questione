@@ -37,6 +37,16 @@ class DoEvaluation extends Controller
                 ], 202);
             }
         }
+        //procura o cabeçalho da avaliação para saber se o aluno já iniciou a aavaliação
+        $head_answer = AnswersHeadEvaluation::where('fk_user_id', $user->id)
+            ->where('fk_application_evaluation_id', $evaluation_application->id)->first();
+
+        //student_started 0 - Não inicou e 1 - inicou
+        $evaluation_application->student_started = 0;
+        if($head_answer){
+            $evaluation_application->student_started = 1;
+        }
+
         if($evaluation_application){
             return response()->json($evaluation_application, 200);
         } else {
