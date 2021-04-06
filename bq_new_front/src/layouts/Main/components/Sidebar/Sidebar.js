@@ -98,7 +98,12 @@ const Sidebar = props => {
       href: '/student/result-evaluations',
       icon: <Assessment />,
       className: 'result-evaluations',
-    }
+    },
+    {
+      title: 'Pratique',
+      href: '/evaluation-practice',
+      icon: <DashboardIcon />,
+    },
   ];
 
   const pagesUser = [
@@ -115,7 +120,7 @@ const Sidebar = props => {
     },
     {
       title: 'Pratique',
-      href: '/student/evaluation-practice',
+      href: '/evaluation-practice',
       icon: <DashboardIcon />
     },
   ];

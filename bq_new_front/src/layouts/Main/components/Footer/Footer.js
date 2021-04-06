@@ -35,6 +35,15 @@ const Footer = props => {
                     alt="Logo"
                     src="/images/ifce.png" style={{marginLeft: '15px'}}/>
             </Link>
+
+            <Link
+                component="a"
+                href="https://www.great.ufc.br/"
+                target="_blank">
+                <img
+                    alt="Logo"
+                    src="/images/great.png" style={{marginLeft: '15px', maxHeight: '35px' }}/>
+            </Link>
         </div>
       <Typography variant="body1">
         Desenvolvido com recursos do Instituto Federal de Educação, Ciência e Tecnologia do Ceará.

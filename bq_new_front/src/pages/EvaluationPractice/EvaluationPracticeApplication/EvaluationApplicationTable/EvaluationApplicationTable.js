@@ -188,13 +188,13 @@ const EvaluationApplicationTable = props => {
   //dialog de nova aplicação
   const [openNewApplication, setOpenNewApplication] = React.useState(false);
 
-  const handleNewApplicationExit = () => {
-    setOpenNewApplication(false);
-}
-
   const handleNewApplication = () => {
     setOpenNewApplication(true);
   };
+
+  const handleNewApplicationExit = () => {
+    setOpenNewApplication(false);
+  }
 
   const handleChangeDescriptionNewApplication = (e) => {
     setDescriptionNewApplication(e.target.value);
@@ -203,13 +203,12 @@ const EvaluationApplicationTable = props => {
   return (
       <div className={classes.root}>
         <UsersToolbar
-            onChangeSearch={updateSearch.bind(this)}
-            searchText={searchText}
-            onClickSearch={onClickSearch}/>
-
-        <Button onClick={() => handleNewApplication()} color="primary">
-            Nova aplicação
-        </Button>
+          onChangeSearch={updateSearch.bind(this)}
+          searchText={searchText}
+          onClickSearch={onClickSearch}
+          onClickHandleNewApplication={handleNewApplication}
+        />
+            
 
         <div className={classes.content}>
           <Card

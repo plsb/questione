@@ -136,7 +136,7 @@ const EvaluationPracticeDetails = props => {
         }
       } else {
         loadAlert('success', 'Avaliação ' + acao + '.');
-        history.push('/student/evaluation-practice');
+        history.push('/evaluation-practice');
       }
 
     } catch (error) {

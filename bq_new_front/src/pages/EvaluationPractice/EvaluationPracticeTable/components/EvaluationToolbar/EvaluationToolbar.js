@@ -39,11 +39,11 @@ const EvaluationToolbar = props => {
   const classes = useStyles();
 
   const onClickRequestUsers = () => {
-    history.push('/student/evaluation-practice-archive');
+    history.push('/evaluation-practice-archive');
   }
 
   const onClickNewPractice = e => {
-    history.push('/student/evaluation-practice-details');
+    history.push('/evaluation-practice-details');
   }
 
   return (

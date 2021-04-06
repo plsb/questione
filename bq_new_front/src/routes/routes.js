@@ -119,35 +119,35 @@ const Routes = () => (
                 needToBeLogged={true}
                 layout={MainLayout}
                 typeUser={-1}
-                path="/student/evaluation-practice" />
+                path="/evaluation-practice" />
             <RouteWithLayout
                 component={EvaluationPracticeArchiveTable}
                 exact
                 needToBeLogged={true}
                 layout={MainLayout}
                 typeUser={-1}
-                path="/student/evaluation-practice-archive" />
+                path="/evaluation-practice-archive" />
             <RouteWithLayout
                 component={EvaluationPracticeDetails}
                 exact
                 layout={MainLayout}
                 needToBeLogged={true}
                 typeUser={-1}
-                path="/student/evaluation-practice-details/:codigoEvaluation?" />
+                path="/evaluation-practice-details/:codigoEvaluation?" />
             <RouteWithLayout
                 component={GenerateEvaluation}
                 exact
                 layout={MainLayout}
                 needToBeLogged={true}
                 typeUser={-1}
-                path="/student/generate-evaluation/:codigoEvaluation?" />
+                path="/generate-evaluation/:codigoEvaluation?" />
             <RouteWithLayout
                 component={GenerateEvaluationQuestions}
                 exact
                 layout={MainLayout}
                 needToBeLogged={true}
                 typeUser={-1}
-                path="/student/generate-evaluation/:codigoEvaluation/questions" />
+                path="/generate-evaluation/:codigoEvaluation/questions" />
             
             <RouteWithLayout
                 component={EvaluationPracticeApplicationTable}
@@ -155,21 +155,21 @@ const Routes = () => (
                 layout={MainLayout}
                 needToBeLogged={true}
                 typeUser={-1}
-                path="/student/evaluation-practice/applications-evaluation/:idApplication" />
+                path="/evaluation-practice/applications-evaluation/:idApplication" />
             <RouteWithLayout
                 component={EvaluationPracticeApplicationDetails}
                 exact
                 layout={MainLayout}
                 needToBeLogged={true}
                 typeUser={-1}
-                path="/student/evaluation-practice/:codigoEvaluation/applications-evaluation/details/:idApplication" />
+                path="/evaluation-practice/:codigoEvaluation/applications-evaluation/details/:idApplication" />
             <RouteWithLayout
                 component={EvaluationPracticeApplicationResults}
                 exact
                 layout={MainLayout}
                 needToBeLogged={true}
                 typeUser={-1}
-                path="/student/evaluation-practice/applications-evaluation/results/:idApplication" />
+                path="/evaluation-practice/applications-evaluation/results/:idApplication" />
 
             <RouteWithLayout
                 component={StartEvaluation}

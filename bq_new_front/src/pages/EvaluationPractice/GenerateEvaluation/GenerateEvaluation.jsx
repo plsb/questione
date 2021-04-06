@@ -79,13 +79,18 @@ const GenerateEvaluation = props => {
   // Refence select states
   const [openReference, setReferenceOpen] = React.useState(false);
 
+  // Refence select states
+  const [openSkills, setSkillsOpen] = React.useState(false);
+
   // Area select states
   const [areaIsOpen, setAreaIsOpen] = React.useState(false);
   const [areaList, setAreaList] = React.useState([]);
+  const [skillList, setSkillList] = React.useState([]);
 
   const [amountQuestions, setAmountQuestions] = React.useState(null);
 
   const [renderConfigArea, setRenderConfigArea] = React.useState(false);
+  const [renderConfigSkills, setRenderConfigSkills] = React.useState(false);
   const [renderConfigQuestions, setRenderConfigQuestions] = React.useState(false);
 
   const [formState, setFormState] = useState({
@@ -119,6 +124,7 @@ const GenerateEvaluation = props => {
     try {
       const referenceId = typeOfEvaluationList.filter((item) => item.description === formState.values.typeOfEvaluation)[0].id;
       const areaId = areaList.filter((item) => item.description === formState.values.area)[0].id;
+      const skillId = skillList.filter((item) => item.description === formState.values.skills)[0].id;
 
       const { amount_questions, initial_period, final_period } = formState.values;
 
@@ -128,6 +134,7 @@ const GenerateEvaluation = props => {
         qtQuestions: parseInt(amount_questions, 10),
         year_start: initial_period,
         year_end: final_period,
+        fk_skill_id: skillId,
       });
 
       if (response.status === 202) {
@@ -139,7 +146,7 @@ const GenerateEvaluation = props => {
       } else {
         loadAlert('success', 'Avaliação gerada com sucesso!');
         loadQuestions();
-        // history.push('/student/evaluation-practice');
+        history.push('/evaluation-practice');
       }
     } catch (error) {
 
@@ -185,6 +192,21 @@ const GenerateEvaluation = props => {
     }
   }
 
+  async function getSkills() {
+    const areaId = areaList.filter((item) => item.description === formState.values.area)[0].id;
+
+    try {
+      const response = await api.get(`/all/skills-with-questions-practice?fk_course_id=${areaId}`);
+
+      if (response) {
+        setSkillList(response.data);
+        setRenderConfigSkills(true);
+      }
+    } catch (error) {
+      setSkillList([]);
+    }
+  }
+
   async function handleHowManyQuestions2() {
     try {
       const referenceId = typeOfEvaluationList.filter((item) => item.description === formState.values.typeOfEvaluation)[0].id;
@@ -206,6 +228,7 @@ const GenerateEvaluation = props => {
     try {
       const referenceId = typeOfEvaluationList.filter((item) => item.description === formState.values.typeOfEvaluation)[0].id;
       const areaId = areaList.filter((item) => item.description === formState.values.area)[0].id;
+      const skillId = skillList.filter((item) => item.description === formState.values.skills)[0].id;
       const { initial_period, final_period } = formState.values;
 
       const response = await api.get(`/evaluation/practice/how-many-questions`, {
@@ -214,6 +237,7 @@ const GenerateEvaluation = props => {
           fk_course_id: areaId,
           year_start: initial_period,
           year_end: final_period,
+          fk_skill_id: skillId,
         }
       });
 
@@ -402,6 +426,60 @@ const GenerateEvaluation = props => {
                     </Tooltip>
                   </div>
                 </Grid>
+              </>
+            )}
+
+            {!renderConfigSkills && renderConfigArea && (
+              <Grid
+                item
+                md={12}
+                xs={12}
+              >
+                {console.log(formState.values)}
+                <Button
+                  color="primary"
+                  variant="outlined"
+                  disabled={!formState.values.area && formState.values.skills !== 'select'}
+                  onClick={() => getSkills()}>
+                  Avançar
+                </Button>
+              </Grid>
+            )}
+
+            {renderConfigSkills && (
+              <>
+                <Grid
+                  item
+                  md={12}
+                  xs={12}
+                >
+                  <div className={classes.selectGroup}>
+                    <b className="item1" style={{ marginRight: '32px' }}>Competências</b>
+                    <Tooltip title="">
+                      <Select
+                        labelId="skills-label"
+                        id="skills"
+                        name="skills"
+                        open={openSkills}
+                        onClose={() => setSkillsOpen(false)}
+                        onOpen={() => setSkillsOpen(true)}
+                        value={formState.values.skills || 'select'}
+                        onChange={handleChange}
+                        className={classes.root}
+                        error={hasError('skills')}
+                        helperText={
+                          hasError('skills') ? formState.errors.skills[0] : null
+                        }
+                        disabled={renderConfigQuestions}
+                      >
+                        <MenuItem value="select">Selecione</MenuItem>
+                        {skillList.map((type) => (
+                          <MenuItem value={type.description}>{type.description}</MenuItem>
+                        ))}
+                      </Select>
+                    </Tooltip>
+                  </div>
+                </Grid>
 
                 <Grid
                   item
@@ -447,7 +525,7 @@ const GenerateEvaluation = props => {
               </>
             )}
 
-            {!renderConfigQuestions && renderConfigArea && (
+            {!renderConfigQuestions && !!renderConfigSkills && renderConfigArea && (
               <Grid
                 item
                 md={12}
@@ -529,24 +607,6 @@ const GenerateEvaluation = props => {
                 >
                   Editar
                 </Button>
-              </Grid>
-
-              <Divider />
-
-              <Grid
-                item
-                md={12}
-                xs={12}
-              >
-                <h1>Questões</h1>
-
-                {/* {questions.map(question => (
-                  <QuestionCard
-                    question={question}
-                    setRefresh={setRefresh}
-                    refresh={refresh}/>
-                ))} */}
-
               </Grid>
 
               <Divider />

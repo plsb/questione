@@ -96,6 +96,7 @@ const DoEvaluation = props => {
           return ;
         }
         setApplication(response.data);
+        console.log(response.data);
       } else {
         loadAlert('error', 'Ocorreu um erro ao buscar a avaliação.');
         history.push('/home');
@@ -134,6 +135,8 @@ const DoEvaluation = props => {
           return ;
         }
         setAnswers(response.data);
+
+        console.log(response.data);
 
         setRefresh(refresh+1);
         setEnableButtonStart(false);
@@ -265,25 +268,26 @@ const DoEvaluation = props => {
                 }
             />
             <CardActions disableSpacing>
-              <div >
-                {enableButtonStart ?
-                <Button className={classes.buttons} variant="contained" color="primary"
-                    onClick={onClickOpenDialogStart}>
-                  Iniciar
-                </Button> :
-                <Button className={classes.buttons} variant="contained" color="primary"
-                        disabled>
-                  Iniciar
-                </Button> }
-                {enableButtonStart ?
-                <Button className={clsx(classes.chipRed, className)} variant="contained" color="#e57373"
-                        disabled>
+              <div>
+                <Button
+                  className={classes.buttons}
+                  variant="contained"
+                  color="primary"
+                  onClick={onClickOpenDialogStart}
+                  disabled={!enableButtonStart}
+                >
+                  {application && application.student_started === 1 ? 'Continuar' : 'Iniciar' }
+                </Button>
+
+                <Button
+                  className={clsx(classes.chipRed, className)}
+                  variant="contained"
+                  color="#e57373"
+                  onClick={onClickOpenDialogFinsh}
+                  disabled={enableButtonStart}
+                >
                   Finalizar
-                </Button> :
-                <Button className={clsx(classes.chipRed, className)} variant="contained" color="#e57373"
-                    onClick={onClickOpenDialogFinsh}>
-                  Finalizar
-                </Button>}
+                </Button>
               </div>
 
             </CardActions>

@@ -15,7 +15,7 @@ import moment from 'moment';
 import Swal from "sweetalert2";
 import { withRouter } from "react-router-dom";
 import api from "../../../../services/api";
-import { Edit, FormatListBulleted, MoreVert } from "@material-ui/icons";
+import { Edit, FormatListBulleted, MoreVert, PlayArrow } from "@material-ui/icons";
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -98,11 +98,11 @@ const EvaluationApplicationCard = props => {
     }
 
     const onEdit = (id) => {
-        history.push(`/student/evaluation-practice/${idApplication}/applications-evaluation/details/${id}`);
+        history.push(`/evaluation-practice/${idApplication}/applications-evaluation/details/${id}`);
     }
 
     const results = (id) => {
-        history.push('/student/evaluation-practice/applications-evaluation/details/' + id);
+        history.push('/evaluation-practice/applications-evaluation/details/' + id);
     }
 
     // async function onClickOpenDialogEnableApplication() {
@@ -192,8 +192,8 @@ const EvaluationApplicationCard = props => {
                                         <Tooltip title="Opções da Avaliação">
                                             <IconButton
                                                 aria-label="settings"
-                                                onClick={handleClick}>
-                                                <MoreVert />
+                                                onClick={() => history.push(`/code/${application.id_application}`)}>
+                                                <PlayArrow />
                                             </IconButton>
                                         </Tooltip>
                                     )}
@@ -245,20 +245,6 @@ const EvaluationApplicationCard = props => {
 
 
                     </CardContent>
-                    <Menu
-                        id="simple-menu"
-                        anchorEl={anchorEl}
-                        keepMounted
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}>
-                        {/* {evaluation.status == 1 && hasQuestions ? <MenuItem onClick={() => history.push(`/student/evaluation-practice/applications-evaluation/${props.evaluation.id}`)}>Ver aplicações</MenuItem> : null}
-                        {evaluation.status == 1 && hasQuestions ? <MenuItem onClick={() => history.push(`/student/generate-evaluation/${props.evaluation.id}/questions`)}>Ver questões</MenuItem> : null}
-                        {evaluation.status == 1 && !hasQuestions ? <MenuItem onClick={handleGenerateEvaluation}>Gerar Avaliação</MenuItem> : null}
-                        {evaluation.status == 1 ? <MenuItem onClick={() => changeStatus(2)}>Arquivar</MenuItem> : null}
-                        {evaluation.status == 2 ? <MenuItem onClick={() => changeStatus(1)}>Ativar</MenuItem> : null}
-                        {evaluation.status == 2 ? <MenuItem onClick={onClickOpenDialog}>Deletar</MenuItem> : null} */}
-                        <MenuItem onClick={() => history.push(`/code/${application.id_application}`)}>Iniciar avaliação</MenuItem>
-                    </Menu>
                 </Card>
                 : null}
 

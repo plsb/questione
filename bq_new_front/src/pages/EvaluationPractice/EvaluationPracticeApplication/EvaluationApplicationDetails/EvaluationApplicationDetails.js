@@ -100,7 +100,7 @@ const EvaluationApplicationDetails = props => {
         }
       } else {
         loadAlert('success', 'Aplicação atualizada.');
-        history.push(`/student/evaluation-practice/applications-evaluation/${codigoEvaluation}`);
+        history.push(`/evaluation-practice/applications-evaluation/${codigoEvaluation}`);
       }
 
     } catch (error) {

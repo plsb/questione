@@ -30,11 +30,17 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     fontWeight: 'bold'
+  },
+  actions: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   }
 }));
 
 const EvaluationApplicationToolbar = props => {
-  const { className, onClickSearch, onChangeSearch, searchText, history, ...rest } = props;
+  const { className, onClickSearch, onChangeSearch, searchText, history, onClickHandleNewApplication, ...rest } = props;
 
   const classes = useStyles();
 
@@ -65,6 +71,11 @@ const EvaluationApplicationToolbar = props => {
             onClick={onClickSearch}>
           <FindInPage fontSize="large"/>
         </Button>
+        <div className={classes.actions}>
+          <Button onClick={() => onClickHandleNewApplication()} color="primary" variant="contained">
+            Nova aplicação
+          </Button>
+        </div>
       </div>
     </div>
   );

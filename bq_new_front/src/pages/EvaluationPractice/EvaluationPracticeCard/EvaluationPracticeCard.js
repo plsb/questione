@@ -87,7 +87,7 @@ const EvaluationPracticeCard = props => {
     };
 
     const onEdit = () => {
-        history.push('/student/evaluation-practice-details/' + evaluation.id);
+        history.push('/evaluation-practice-details/' + evaluation.id);
     }
 
     async function duplicate() {
@@ -175,7 +175,7 @@ const EvaluationPracticeCard = props => {
     //         } else {
     //             loadAlert('success', 'Nova aplicação cadastrada.');
     //             setDescriptionNewApplication('');
-    //             history.push('/student/evaluation-practice/applications-evaluation');
+    //             history.push('/evaluation-practice/applications-evaluation');
     //         }
 
     //     } catch (error) {
@@ -187,7 +187,7 @@ const EvaluationPracticeCard = props => {
     // const [openNewApplication, setOpenNewApplication] = React.useState(false);
 
     const handleGenerateEvaluation = () => {
-        history.push('/student/generate-evaluation/' + evaluation.id);
+        history.push('/generate-evaluation/' + evaluation.id);
     }
 
     // const handleNewApplication = () => {
@@ -275,8 +275,8 @@ const EvaluationPracticeCard = props => {
                 keepMounted
                 open={Boolean(anchorEl)}
                 onClose={handleClose}>
-                {evaluation.status == 1 && hasQuestions ? <MenuItem onClick={() => history.push(`/student/evaluation-practice/applications-evaluation/${props.evaluation.id}`)}>Ver aplicações</MenuItem> : null}
-                {evaluation.status == 1 && hasQuestions ? <MenuItem onClick={() => history.push(`/student/generate-evaluation/${props.evaluation.id}/questions`)}>Ver questões</MenuItem> : null}
+                {evaluation.status == 1 && hasQuestions ? <MenuItem onClick={() => history.push(`/evaluation-practice/applications-evaluation/${props.evaluation.id}`)}>Ver aplicações</MenuItem> : null}
+                {evaluation.status == 1 && hasQuestions ? <MenuItem onClick={() => history.push(`/generate-evaluation/${props.evaluation.id}/questions`)}>Ver questões</MenuItem> : null}
                 {evaluation.status == 1 && !hasQuestions ? <MenuItem onClick={handleGenerateEvaluation}>Gerar Avaliação</MenuItem> : null}
                 {/* <MenuItem onClick={duplicate}>Duplicar</MenuItem> */}
                 {evaluation.status == 1 ? <MenuItem onClick={() => changeStatus(2)}>Arquivar</MenuItem> : null}
