@@ -84,8 +84,13 @@ class EvaluationHasQuestionsPracticeController extends Controller
         $year_start = $request->year_start;
         $year_end = $request->year_end;
         $qtdQuestions = $request->qtQuestions;
+        $fk_skill_id = $request->fk_skill_id;
         $questions = Question::where('fk_type_of_evaluation_id', '=', $typeEvaluation->id)
             ->where('fk_course_id', $course->id)
+            ->when($fk_skill_id, function ($query, $fk_skill_id) {
+                //pega questões validadas de todos os usuário
+                return $query->where('fk_skill_id', '=', $fk_skill_id);
+            })
             ->when($year_start, function ($query, $year_start) {
                 //pega questões validadas de todos os usuário
                 return $query->where('year', '>=', $year_start);
