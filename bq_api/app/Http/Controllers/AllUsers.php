@@ -55,6 +55,27 @@ class AllUsers extends Controller
         return response()->json($courses, 200);
     }
 
+    public function skillsWithQuestionsByTypoOfEvaluation(Request $request)
+    {
+        if(!$request->fk_course_id){
+            return response()->json([
+                'message' => 'Informe o curso.'
+            ], 202);
+        }
+
+        $arr_id_skills = [];
+        $questions = Question::whereNotNull('fk_type_of_evaluation_id')
+            ->where('fk_course_id', '=', $request->fk_course_id)
+            ->groupBy('fk_skill_id')
+            ->get('fk_skill_id');
+        foreach ($questions as $q){
+            $arr_id_skills[] = $q->fk_skill_id;
+        }
+        $skills = Skill::whereIn('id', $arr_id_skills)->orderBy('description')->get();
+
+        return response()->json($skills, 200);
+    }
+
     public function skills(Request $request)
     {
         if(!$request->fk_course_id){

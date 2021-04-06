@@ -21,9 +21,10 @@ Route::group(['prefix' => 'public'], function (){
 Route::group(['prefix' => 'all'], function (){
     Route::get('/type-of-evaluations', 'AllUsers@typeOfevaluation')->name('all.typeOfevaluation');
     Route::get('/courses', 'AllUsers@courses')->name('all.courses');
-    Route::get('/courses-with-questions-practice/{id}', 'AllUsers@coursesWithQuestionsByTypoOfEvaluation')->name('all.courses');
+    Route::get('/courses-with-questions-practice/{id}', 'AllUsers@coursesWithQuestionsByTypoOfEvaluation')->name('all.courses.practice');
     Route::get('/objects', 'AllUsers@knowledgeObjects')->name('all.knowledgeObjects');
     Route::get('/skills', 'AllUsers@skills')->name('all.skills');
+    Route::get('/skills-with-questions-practice', 'AllUsers@skillsWithQuestionsByTypoOfEvaluation')->name('all.skills.practice');
     Route::put('/update-profile-user', 'AllUsers@updateProfileUser')->name('all.updateProfileUser');
     Route::get('/courses-user', 'AllUsers@coursesUser')->name('all.coursesUser');
     Route::get('/keywords', 'AllUsers@keywords')->name('all.keywords');
