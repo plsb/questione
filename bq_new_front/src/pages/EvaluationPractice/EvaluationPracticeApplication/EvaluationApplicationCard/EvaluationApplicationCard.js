@@ -189,7 +189,7 @@ const EvaluationApplicationCard = props => {
                                     </Tooltip> : null}
 
                                     {status !== 3 && (
-                                        <Tooltip title="Opções da Avaliação">
+                                        <Tooltip title="Realizar avaliação">
                                             <IconButton
                                                 aria-label="settings"
                                                 onClick={() => history.push(`/code/${application.id_application}`)}>

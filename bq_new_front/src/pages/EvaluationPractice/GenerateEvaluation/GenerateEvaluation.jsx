@@ -350,7 +350,7 @@ const GenerateEvaluation = props => {
             >
               <div className={classes.selectGroup}>
                 <b className="item1" style={{ marginRight: '32px' }}>Tipo de avaliação</b>
-                <Tooltip title="Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar no campo tipo de avaliação.">
+                <Tooltip title="Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar no campo tipo de avaliação." placement="right">
                   <Select
                     labelId="typeOfEvaluation-label"
                     id="typeOfEvaluation"
@@ -402,7 +402,7 @@ const GenerateEvaluation = props => {
                 >
                   <div className={classes.selectGroup}>
                     <b className="item1" style={{ marginRight: '32px' }}>Área</b>
-                    <Tooltip title="Área">
+                    <Tooltip title="Área" placement="right">
                       <Select
                         labelId="area-label"
                         id="area"
@@ -456,7 +456,7 @@ const GenerateEvaluation = props => {
                 >
                   <div className={classes.selectGroup}>
                     <b className="item1" style={{ marginRight: '32px' }}>Competência</b>
-                    <Tooltip title="">
+                    <Tooltip title="" placement="right">
                       <Select
                         labelId="skills-label"
                         id="skills"
