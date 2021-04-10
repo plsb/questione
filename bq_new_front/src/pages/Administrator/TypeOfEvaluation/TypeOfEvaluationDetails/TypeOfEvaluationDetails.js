@@ -88,7 +88,7 @@ const CourseDetails = props => {
           loadAlert('error', response.data.errors[0].description);
         }
       } else {
-        loadAlert('success', `Tipo de prova ${acao}.`);
+        loadAlert('success', `Tipo de avaliação ${acao}.`);
         history.push('/type-of-evaluation');
       }
 
@@ -171,7 +171,7 @@ const CourseDetails = props => {
           </div>
           <CardHeader
               subheader=""
-              title="Tipo de Prova"/>
+              title="Tipo de Avaliação"/>
           <Divider />
           <CardContent>
             <Grid
@@ -217,7 +217,7 @@ const CourseDetails = props => {
           </CardContent>
           <Divider />
           <CardActions>
-            <Tooltip title="Clique aqui para solicitar acesso para tipos de provas" aria-label="add">
+            <Tooltip title="Clique aqui para solicitar acesso para tipos de avaliação" aria-label="add">
               <Button
                   color="primary"
                   variant="outlined"

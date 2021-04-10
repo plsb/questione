@@ -157,7 +157,7 @@ const TypeOfEvaluationTable = props => {
           loadAlert('error', response.data.message);
         }
       } else {
-        loadAlert('success', 'Tipo de prova excluído.');
+        loadAlert('success', 'Tipo de avaliação excluído.');
         loadTypeOfEvaluations(page+1);
       }
     } catch (error) {
@@ -236,8 +236,8 @@ const TypeOfEvaluationTable = props => {
                        open={open}
                        onClickAgree={onDeleteObject}
                        onClickDisagree={onClickCloseDialog}
-                       mesage={'Deseja excluir o tipo de prova selecionado?'}
-                       title={'Excluir tipo de prova'}/>
+                       mesage={'Deseja excluir o tipo de avaliação selecionado?'}
+                       title={'Excluir tipo de avaliação'}/>
       </div>
 
     </div>

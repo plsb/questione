@@ -228,7 +228,8 @@ const GenerateEvaluation = props => {
     try {
       const referenceId = typeOfEvaluationList.filter((item) => item.description === formState.values.typeOfEvaluation)[0].id;
       const areaId = areaList.filter((item) => item.description === formState.values.area)[0].id;
-      const skillId = skillList.filter((item) => item.description === formState.values.skills)[0].id;
+      const skill = skillList.filter((item) => item.description === formState.values.skills)[0];
+
       const { initial_period, final_period } = formState.values;
 
       const response = await api.get(`/evaluation/practice/how-many-questions`, {
@@ -237,7 +238,7 @@ const GenerateEvaluation = props => {
           fk_course_id: areaId,
           year_start: initial_period,
           year_end: final_period,
-          fk_skill_id: skillId,
+          fk_skill_id: skill ? skill.id : null,
         }
       });
 
@@ -454,7 +455,7 @@ const GenerateEvaluation = props => {
                   xs={12}
                 >
                   <div className={classes.selectGroup}>
-                    <b className="item1" style={{ marginRight: '32px' }}>Competências</b>
+                    <b className="item1" style={{ marginRight: '32px' }}>Competência</b>
                     <Tooltip title="">
                       <Select
                         labelId="skills-label"
@@ -472,7 +473,7 @@ const GenerateEvaluation = props => {
                         }
                         disabled={renderConfigQuestions}
                       >
-                        <MenuItem value="select">Selecione</MenuItem>
+                        <MenuItem value="select">Selecione (Opcional)</MenuItem>
                         {skillList.map((type) => (
                           <MenuItem value={type.description}>{type.description}</MenuItem>
                         ))}
@@ -492,13 +493,14 @@ const GenerateEvaluation = props => {
                     helperText={
                       hasError('initial_period') ? formState.errors.initial_period[0] : null
                     }
-                    label="Período (Ano inicial)"
+                    label="Período (Ano inicial) - Opcional"
                     margin="dense"
                     name="initial_period"
                     onChange={handleChange}
                     value={formState.values.initial_period || ''}
                     variant="outlined"
                     type="number"
+                    disabled={renderConfigQuestions}
                   />
                 </Grid>
 
@@ -513,13 +515,14 @@ const GenerateEvaluation = props => {
                     helperText={
                       hasError('final_period') ? formState.errors.final_period[0] : null
                     }
-                    label="Período (Ano final)"
+                    label="Período (Ano final) - Opcional"
                     margin="dense"
                     name="final_period"
                     onChange={handleChange}
                     value={formState.values.final_period || ''}
                     variant="outlined"
                     type="number"
+                    disabled={renderConfigQuestions}
                   />
                 </Grid>
               </>

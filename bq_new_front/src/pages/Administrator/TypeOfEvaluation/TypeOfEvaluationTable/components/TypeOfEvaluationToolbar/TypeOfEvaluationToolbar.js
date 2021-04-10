@@ -51,7 +51,7 @@ const TypeOfEvaluationToolbar = props => {
       {...rest}
       className={clsx(classes.root, className)}>
       <div className={classes.row}>
-        <Typography variant="h3" className={classes.title}>{'Tipos de Prova'}</Typography>
+        <Typography variant="h3" className={classes.title}>{'Tipos de Avaliação'}</Typography>
         <span className={classes.spacer} />
         <Button
             color="primary"
