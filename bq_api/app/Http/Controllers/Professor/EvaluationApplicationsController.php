@@ -120,6 +120,9 @@ class EvaluationApplicationsController extends Controller
         $evaluation_application->id_application = $id_evaluation;
         $evaluation_application->description = $request->description;
         $evaluation_application->fk_evaluation_id = $request->fk_evaluation_id;
+        $evaluation_application->date_start = $request->date_start;
+        $evaluation_application->time_start = $request->time_start;
+        $evaluation_application->time_to_finalize = $request->time_to_finalize;
         $evaluation_application->status = 0;
         $evaluation_application->save();
 
@@ -176,6 +179,9 @@ class EvaluationApplicationsController extends Controller
         } else {
             $evaluation_application->show_results = false;
         }
+        $evaluation_application->date_start = $request->date_start;
+        $evaluation_application->time_start = $request->time_start;
+        $evaluation_application->time_to_finalize = $request->time_to_finalize;
         $evaluation_application->save();
 
         return response()->json([
