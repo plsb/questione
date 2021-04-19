@@ -5,6 +5,8 @@ import { makeStyles } from '@material-ui/styles';
 import { Divider, Drawer } from '@material-ui/core';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ClassIcon from '@material-ui/icons/Class';
+import ExtensionIcon from '@material-ui/icons/Extension';
+import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 // import PeopleIcon from '@material-ui/icons/People';
 import { Note, Ballot, EmojiObjects, AccountBox, Assignment, Assessment } from '@material-ui/icons';
 
@@ -48,7 +50,7 @@ const Sidebar = props => {
       icon: <DashboardIcon />
     },
     {
-      title: 'Tipos de prova',
+      title: 'Tipos de avaliação',
       href: '/type-of-evaluation',
       icon: <ClassIcon />
     },
@@ -78,7 +80,7 @@ const Sidebar = props => {
     {
       title: 'Questões',
       href: '/questions',
-      icon: <DashboardIcon />,
+      icon: <QuestionAnswerIcon />,
       className: 'question-professor',
     },
     {
@@ -94,34 +96,34 @@ const Sidebar = props => {
       className: 'applications-professor',
     },
     {
+      title: 'Pratique',
+      href: '/evaluation-practice',
+      icon: <ExtensionIcon />,
+    },
+    {
       title: 'Avaliações respondidas',
       href: '/student/result-evaluations',
       icon: <Assessment />,
       className: 'result-evaluations',
-    },
-    {
-      title: 'Pratique',
-      href: '/evaluation-practice',
-      icon: <DashboardIcon />,
     },
   ];
 
   const pagesUser = [
+    // {
+    //   title: 'Realizar Avaliação',
+    //   href: '/student/start-evaluation',
+    //   icon: <DashboardIcon />
+    // },
     {
-      title: 'Realizar Avaliação',
-      href: '/student/start-evaluation',
-      icon: <DashboardIcon />
+      title: 'Pratique',
+      href: '/evaluation-practice',
+      icon: <ExtensionIcon />
     },
     {
       title: 'Avaliações respondidas',
       href: '/student/result-evaluations',
       icon: <Assessment />,
       className: 'result-evaluations',
-    },
-    {
-      title: 'Pratique',
-      href: '/evaluation-practice',
-      icon: <DashboardIcon />
     },
   ];
 

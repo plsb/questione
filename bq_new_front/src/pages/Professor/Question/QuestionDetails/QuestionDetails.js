@@ -17,7 +17,7 @@ import api from "../../../../services/api";
 import Swal from "sweetalert2";
 import QuestionSkill from "./QuestionSkill";
 import QuestionKeywords from "./QuestionKeywords";
-import useTypeOfEvaluations from '../../../../hooks/useTypeOfEvaluations';
+// import useTypeOfEvaluations from '../../../../hooks/useTypeOfEvaluations';
 
 const useStyles = makeStyles({
   root: {
@@ -79,7 +79,7 @@ const QuestionDetails = props => {
     const { idQuestion } = props.match.params;
 
     // lista de referencias (tipos de avaliação)
-    const typeOfEvaluationList = useTypeOfEvaluations();
+    // const typeOfEvaluationList = useTypeOfEvaluations();
 
     const classes = useStyles();
 
@@ -89,7 +89,7 @@ const QuestionDetails = props => {
     const [tabSkill, setTabSkill] = React.useState(false);
 
     // controlador de abertua do select
-    const [openReference, setReferenceOpen] = React.useState(false);
+    // const [openReference, setReferenceOpen] = React.useState(false);
     const [openYear, setYearOpen] = React.useState(false);
 
     //campos
@@ -262,17 +262,17 @@ const QuestionDetails = props => {
         setStem(event);
     };
 
-    const handleChangeReference = (event) => {
-        setReference(event.target.value);
-    };
+    // const handleChangeReference = (event) => {
+    //     setReference(event.target.value);
+    // };
 
-    const handleReferenceClose = () => {
-        setReferenceOpen(false);
-    };
+    // const handleReferenceClose = () => {
+    //     setReferenceOpen(false);
+    // };
 
-    const handleReferenceOpen = () => {
-        setReferenceOpen(true);
-    };
+    // const handleReferenceOpen = () => {
+    //     setReferenceOpen(true);
+    // };
 
     const handleChangeYear = (event) => {
         setYear(event.target.value);
@@ -322,7 +322,7 @@ const QuestionDetails = props => {
                   justify="center"
                   alignItems="center"
                 >
-                    <div className={classes.selectGroup}>
+                    {/* <div className={classes.selectGroup}>
                         <b className="item1" style={{ marginRight: '32px' }}>Tipo de avaliação</b>
                         <Tooltip title="Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar no campo tipo de avaliação.">
                                 <Select
@@ -341,7 +341,7 @@ const QuestionDetails = props => {
                                     ))}
                                 </Select>
                         </Tooltip>
-                    </div>
+                    </div> */}
                     <div className={classes.selectGroup}>
                         <b className="item1" style={{ marginRight: '120px' }}>Ano</b>
                         <Tooltip title="Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar o ano de tal questão.">

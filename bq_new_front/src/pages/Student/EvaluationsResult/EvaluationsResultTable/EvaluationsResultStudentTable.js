@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import moment from 'moment';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
@@ -31,8 +32,12 @@ const useStyles = makeStyles(() => ({
     color: '#fff',
     borderRadius: 4
   },
-
-
+  chipblue: {
+    margin: 3,
+    marginTop: '16px',
+    backgroundColor: '#2196f3',
+    color: '#fff',
+  },
 }));
 
 const EvaluationsResultStudentTable = props => {
@@ -165,6 +170,15 @@ const EvaluationsResultStudentTable = props => {
                                             {'Professor(a): '+application.evaluation_application.evaluation.user.name }
                                           </Typography>
 
+                                          {application.finalized_at && (
+                                            <Typography variant="h5" color="textSecondary" component="h2">
+                                              {'Data de realização: '+moment(application.finalized_at).format('DD/MM/YYYY hh:mm') }
+                                            </Typography>
+                                          )}
+
+                                          {application.evaluation_application.evaluation.practice === 1 && (
+                                            <Chip label="Pratique" className={clsx(classes.chipblue, className)} size="small"/>
+                                          )}
                                         </div>
                                       </CardContent>
                                 </Card>
