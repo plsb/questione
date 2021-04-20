@@ -107,7 +107,6 @@ class EvaluationApplicationsController extends Controller
                 'message' => 'A avaliação não tem questões.'
             ], 202);
         }
-        //dd($evaluation_question);
 
         do{
             //ano 		Horas/minutos/segundos e id PRofessor
@@ -265,7 +264,7 @@ class EvaluationApplicationsController extends Controller
 
         if(!$application){
             return response()->json([
-                'message' => 'Aplicação não encontrada.'
+                'message' => 'A Aplicação não foi encontrada.'
             ], 202);
         }
 
@@ -274,7 +273,7 @@ class EvaluationApplicationsController extends Controller
 
         if(!$evaluation){
             return response()->json([
-                'message' => 'Avaliação não encontrada.'
+                'message' => 'A Avaliação não foi encontrada.'
             ], 202);
         }
 
@@ -286,13 +285,40 @@ class EvaluationApplicationsController extends Controller
             ], 202);
         }
 
+        //finaliza as avaliações de forma automática caso tenha passado o tempo para respondê-la
+        //verifica se a avaliação tem tempo pré-determinado para terminar e finaliza automaticamente
+        if($application->time_to_finalize){
+            //pega o time e divide em horas, minutos e segundos
+            $horas = substr($application->time_to_finalize, 0, 2);
+            $minutos = substr($application->time_to_finalize, 3, 2);
+            $segundos = substr($application->time_to_finalize, 6, 2);
+            //pesquisa os cabeçalhos quee não possuem hora de finalização
+            $answerHeadNotEnded = AnswersHeadEvaluation::where('fk_application_evaluation_id', '=', $idApplication)
+                ->whereNull('finalized_at')
+                ->orderBy('id')
+                ->get();
+            //percorre todas as avaliações que não possuem data de finalização
+            foreach($answerHeadNotEnded as $ans_while){
+                //pega o horário que a avaliação foi criada e acrescenta a ela o tempo para finalizar definido pelo professor
+                $timeStudentShouldFinishedEvaluation = $ans_while->created_at;
+                $timeStudentShouldFinishedEvaluation->add(new \DateInterval('PT'.$horas.'H'.$minutos.'M'.$segundos.'S'));
+                $dateNow = new \DateTime(date('Y-m-d H:i'));
+                if($timeStudentShouldFinishedEvaluation < $dateNow){
+
+                    $ans_while->finalized_at = date('Y-m-d H:i:s');
+                    $ans_while->finished_automatically = 1;
+                    $ans_while->save();
+                }
+            }
+        }
+
         $answerHead = AnswersHeadEvaluation::where('fk_application_evaluation_id', '=', $idApplication)
             ->orderBy('id')
             ->get();
 
         if(sizeof($answerHead)==0){
             return response()->json([
-                'message' => 'Sem dados de aplicação.'
+                'message' => 'Não há respostas para a aplicação.'
             ], 202);
         }
 
@@ -436,6 +462,7 @@ class EvaluationApplicationsController extends Controller
                 'student' => $student->name,
                 'hr_start' => $head->created_at,
                 'hr_finished' => $head->finalized_at,
+                'finished_automatically' => $head->finished_automatically,
                 'total_time' => $total_time_active,
                 'variance' => number_format($variance, 3),
                 'questions' => $questions,

@@ -28,8 +28,8 @@ class DoEvaluation extends Controller
         $evaluation_application = EvaluationApplication::where('id_application', $id)
             ->with('evaluation')
             ->first();
+        $user = auth('api')->user();
         if($evaluation_application->evaluation->practice == 1){
-            $user = auth('api')->user();
 
             if($user->id != $evaluation_application->evaluation->user->id){
                 return response()->json([
@@ -61,16 +61,27 @@ class DoEvaluation extends Controller
 
         if(!$application){
             return response()->json([
-                'message' => 'Aplicação não encontrada.'
+                'message' => 'A aplicação não foi encontrada.'
             ], 202);
         }
 
         if($application->status==0){
             return response()->json([
-                'message' => 'Aplicação está desabilitada.'
+                'message' => 'A aplicação está desabilitada.'
             ], 202);
         }
 
+        if($application->evaluation->practice == 1){
+            $user = auth('api')->user();
+
+            if($user->id != $application->evaluation->user->id){
+                return response()->json([
+                    'message' => 'O código pertence a uma avaliação prática de outro usuário.'
+                ], 202);
+            }
+        }
+
+        //verifica se o professor pre detemrinou uma data e horário específico para iniciar a avaliação
         if($application->date_start){
             //pega a data atual
             $dateNow = date('Y-m-d');
@@ -88,7 +99,7 @@ class DoEvaluation extends Controller
                     //aumenta 20 minutos para especificar o tempo final pata iniciar limite
                     $timeFinisedEvaluationStarted->add(new \DateInterval('PT20M'));
 
-                    //horário que oestudante deve iniciar a avaliação
+                    //horário que o estudante deve iniciar a avaliação
                     $timeStudentShouldStarted = new \DateTime($application->time_start);
                     $timeStudentShouldFinished = new \DateTime($application->time_start);
                     $timeStudentShouldStarted->sub(new \DateInterval('PT20M'));
@@ -97,13 +108,13 @@ class DoEvaluation extends Controller
                     if(!($timeInserted >= $timeStartedEvaluationStarted && $timeInserted <= $timeFinisedEvaluationStarted)){
                         return response()->json([
                             'message' => 'A avaliação não pode ser iniciada. '.
-                            'O estudante deveria ter iniciado entre '.$timeStudentShouldStarted->format('H:i').
-                                ' e '. $timeStudentShouldFinished->format('H:i')
+                            'O estudante deveria ter iniciado entre o horário '.$timeStudentShouldStarted->format('H:i').
+                                ' e '. $timeStudentShouldFinished->format('H:i').' do dia '
+                                .$timeStudentShouldFinished->format('d/m/Y')
                         ], 202);
                     }
                 }
             }
-
 
         }
 
@@ -212,7 +223,7 @@ class DoEvaluation extends Controller
 
         if($answer_head->finalized_at != null){
             return response()->json([
-                'message' => 'A avaliação já foi encerrada pelo usuário.'
+                'message' => 'A avaliação está com a situação: FINALIZADA.'
             ], 202);
         }
 
@@ -222,6 +233,31 @@ class DoEvaluation extends Controller
             return response()->json([
                 'message' => 'A aplicação está desativada.'
             ], 202);
+        }
+
+        //verifica se a avaliação tem tempo pré-determinado para terminar e finaliza automaticamente
+        if($application_evaluation->time_to_finalize){
+            //pega o time e divide em horas, minutos e segundos
+            $horas = substr($application_evaluation->time_to_finalize, 0, 2);
+            $minutos = substr($application_evaluation->time_to_finalize, 3, 2);
+            $segundos = substr($application_evaluation->time_to_finalize, 6, 2);
+
+            //pega o horário que a avaliação foi criada e acrescenta a ela o tempo para finalizar definido pelo professor
+            $timeStudentShouldFinishedEvaluation = $answer_head->created_at;
+            $timeStudentShouldFinishedEvaluation->add(new \DateInterval('PT'.$horas.'H'.$minutos.'M'.$segundos.'S'));
+            $dateNow = new \DateTime(date('Y-m-d H:i'));
+            if($timeStudentShouldFinishedEvaluation < $dateNow){
+
+                $answer_head->finalized_at = date('Y-m-d H:i:s');
+                $answer_head->finished_automatically = 1;
+                $answer_head->save();
+
+                //aqui deve finalizar a avaliação automaticamente
+
+                return response()->json([
+                    'message' => 'O horário atual não é permitido para realizar a avaliação. A sua avaliação foi encerrada automaticamente.'
+                ], 202);
+            }
         }
 
         $answer->answer = $request->answer;
@@ -237,13 +273,13 @@ class DoEvaluation extends Controller
 
         if(!$application){
             return response()->json([
-                'message' => 'Aplicação não encontrada.'
+                'message' => 'A Aplicação não foi encontrada.'
             ], 202);
         }
 
         if($application->status==0){
             return response()->json([
-                'message' => 'Aplicação está desabilitada.'
+                'message' => 'A Aplicação está desabilitada.'
             ], 202);
         }
 
@@ -252,13 +288,13 @@ class DoEvaluation extends Controller
             ->first();
         if(!$answer_head){
             return response()->json([
-                'message' => 'Cabeçalho da avaliação não encontrado.'
+                'message' => 'O Cabeçalho da avaliação não foi encontrado.'
             ], 202);
         }
 
         if($answer_head->finalized_at != null){
             return response()->json([
-                'message' => 'Avaliação já foi finalizada pelo usuário.'
+                'message' => 'A avaliação está com a situação: FINALIZADA.'
             ], 202);
         }
 
@@ -268,7 +304,7 @@ class DoEvaluation extends Controller
             ->get();
         if(sizeof($answer)>0){
             return response()->json([
-                'message' => 'Responda todas as questões.'
+                'message' => 'Para finalizar a avaliação, responda todas as questões.'
             ], 202);
         }
         //dd(date('Y-m-d H:i:s'));
