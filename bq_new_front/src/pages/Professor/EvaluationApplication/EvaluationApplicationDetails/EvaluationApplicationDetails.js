@@ -30,7 +30,14 @@ const schema = {
 };
 
 const useStyles = makeStyles(() => ({
-  root: {}
+  root: {},
+  inputInline: {
+    margin: '0 8px',
+    minWidth: '180px',
+  },
+  row: {
+    margin: '16px 0px',
+  }
 }));
 
 const TooltipCustomized = withStyles((theme) => ({
@@ -45,9 +52,12 @@ const TooltipCustomized = withStyles((theme) => ({
 
 const EvaluationApplicationDetails = props => {
   const { className, history, ...rest } = props;
+
   const { idApplication } = props.match.params;
   const [checkedRandom, setCheckedRandom] = React.useState(false);
   const [checkedShowResult, setCheckedShowResult] = React.useState(false);
+  const [checkedDefineDateAndHour, setCheckedDefineDateAndHour] = React.useState(false);
+  const [checkedDefineDuration, setCheckedDefineDuration] = React.useState(false);
 
   const classes = useStyles();
 
@@ -83,13 +93,17 @@ const EvaluationApplicationDetails = props => {
 
   async function saveApplicationDetails(){
     try {
-      const description = formState.values.description;
+      const { description, date, hour, duration } = formState.values;
+
       const random_questions = checkedRandom;
       const show_results = checkedShowResult;
       const data = {
         description,
         random_questions,
-        show_results
+        show_results,
+        date_start: date !== '' ? date : null,
+        time_start: hour !== '' ? hour : null,
+        time_to_finalize: duration !== '' ? duration : null,
       }
       const response = await api.put('evaluation/applications/'+idApplication, data);
       if (response.status === 202) {
@@ -118,9 +132,19 @@ const EvaluationApplicationDetails = props => {
       } else {
         setCheckedRandom(response.data.random_questions == 1 ? true : false);
         setCheckedShowResult(response.data.show_results == 1 ? true : false);
+        if (response.data.date_start) {
+          setCheckedDefineDateAndHour(true);
+        }
+        if (response.data.time_to_finalize) {
+          setCheckedDefineDuration(true);
+        }
+
         setFormState(formState => ({
           values: {
             'description': response.data.description,
+            'date': response.data.date_start,
+            'hour': response.data.time_start,
+            'duration': response.data.time_to_finalize,
           },
           touched: {
             ...formState.touched,
@@ -170,6 +194,33 @@ const EvaluationApplicationDetails = props => {
 
   const handleChangeShowResult = event => {
     setCheckedShowResult(event.target.checked);
+  }
+
+  const handleChangeDefineDateAndHour = event => {
+    if (!event.target.checked) {
+      setFormState({
+        ...formState,
+        values: {
+          ...formState.values,
+          date: '',
+          hour: '',
+        },
+      })
+    }
+    setCheckedDefineDateAndHour(event.target.checked);
+  }
+
+  const handleChangeDefineDuration = event => {
+    if (!event.target.checked) {
+      setFormState({
+        ...formState,
+        values: {
+          ...formState.values,
+          duration: '',
+        },
+      })
+    }
+    setCheckedDefineDuration(event.target.checked);
   }
 
   const hasError = field =>
@@ -266,6 +317,102 @@ const EvaluationApplicationDetails = props => {
                 />
               </TooltipCustomized>
             </Grid>
+          </Grid>
+          <Grid
+            item
+            md={6}
+            xs={12}
+            className={classes.row}
+          >
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={checkedDefineDateAndHour}
+                  onChange={handleChangeDefineDateAndHour}
+                  name="define_date_and_hour"
+                  color="primary"
+                />
+              }
+              label="Definir data e hora inicial?"
+            />
+
+            {checkedDefineDateAndHour && (
+              <>
+                <TextField
+                  // error={hasError('description')}
+                  // helperText={
+                  //   hasError('description') ? formState.errors.description[0] : null
+                  // }
+                  type="date"
+                  label="Data da avaliação"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  margin="dense"
+                  name="date"
+                  onChange={handleChange}
+                  value={formState.values.date || ''}
+                  variant="outlined"
+                  className={classes.inputInline}
+                />
+
+                <TextField
+                  // error={hasError('description')}
+                  // helperText={
+                  //   hasError('description') ? formState.errors.description[0] : null
+                  // }
+                  type="time"
+                  label="Hora de início"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  margin="dense"
+                  name="hour"
+                  onChange={handleChange}
+                  value={formState.values.hour || ''}
+                  variant="outlined"
+                  className={classes.inputInline}
+                />
+              </>
+            )}
+          </Grid>
+          <Grid
+            item
+            md={6}
+            xs={12}
+            className={classes.row}
+          >
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={checkedDefineDuration}
+                  onChange={handleChangeDefineDuration}
+                  name="define_duration"
+                  color="primary"
+                />
+              }
+              label="Definir duração?"
+            />
+
+            {checkedDefineDuration && (
+              <TextField
+                // error={hasError('description')}
+                // helperText={
+                //   hasError('description') ? formState.errors.description[0] : null
+                // }
+                type="time"
+                label="Duração da prova em horas"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                margin="dense"
+                name="duration"
+                onChange={handleChange}
+                value={formState.values.duration || ''}
+                variant="outlined"
+                className={classes.inputInline}
+              />
+            )}
           </Grid>
         </CardContent>
         <Divider />
