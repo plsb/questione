@@ -46,7 +46,8 @@ class DoEvaluation extends Controller
         if($head_answer){
             $evaluation_application->student_started = 1;
         }
-
+        //atributo dt_created informará a data e horário corretos (sem diferença de 3 horas)
+        $evaluation_application->dt_created = new \DateTime($evaluation_application->created_at);
         if($evaluation_application){
             return response()->json($evaluation_application, 200);
         } else {
