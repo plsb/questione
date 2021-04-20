@@ -22,6 +22,7 @@ import ReactHtmlParser from "react-html-parser";
 import clsx from "clsx";
 import Swal from "sweetalert2";
 import {DialogQuestione} from "../../../components";
+import Timer from "../../../components/Timer"; 
 
 const useStyles = makeStyles({
   root: {
@@ -72,6 +73,14 @@ const DoEvaluation = props => {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
+
+  function getExpiryTimestamp(timestampTime) {
+    const time = new Date();
+
+    time.setSeconds(time.getSeconds() + Math.floor(timestampTime / 1000));
+
+    return time;
+  }
 
   function loadAlert(icon, message) {
     Toast.fire({
@@ -135,8 +144,6 @@ const DoEvaluation = props => {
           return ;
         }
         setAnswers(response.data);
-
-        console.log(response.data);
 
         setRefresh(refresh+1);
         setEnableButtonStart(false);
@@ -264,9 +271,24 @@ const DoEvaluation = props => {
                         {'Professor(a): '+application.evaluation.user.name}
                       </Typography>
                     )}
+                    {!enableButtonStart && (
+                      <Typography variant="button" color="textSecondary" component="p">
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          Tempo restante:
+                          <Timer 
+                            expiryTimestamp={
+                              getExpiryTimestamp(
+                                ((new Date('2021-04-19 22:00')).getTime() - (new Date(application.created_at)).getTime())
+                              )
+                            }
+                          />
+                        </div>
+                      </Typography>
+                    )}
                   </div>
                 }
             />
+
             <CardActions disableSpacing>
               <div>
                 <Button
