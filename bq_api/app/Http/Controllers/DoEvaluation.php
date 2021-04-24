@@ -57,7 +57,7 @@ class DoEvaluation extends Controller
         $timeStudentShouldFinishedEvaluation = $head_answer->created_at;
         $timeStudentShouldFinishedEvaluation->add(new \DateInterval('PT'.$horas.'H'.$minutos.'M'.$segundos.'S'));
 
-        $evaluation_application->time_to_finalized = $timeStudentShouldFinishedEvaluation;
+        $evaluation_application->time_to_finalized = new \DateTime($timeStudentShouldFinishedEvaluation);
         if($evaluation_application){
             return response()->json($evaluation_application, 200);
         } else {
