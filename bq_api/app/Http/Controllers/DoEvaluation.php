@@ -64,11 +64,12 @@ class DoEvaluation extends Controller
             $timeStudentShouldFinishedEvaluation->add(new \DateInterval('PT'.$horas.'H'.$minutos.'M'.$segundos.'S'));
 
             $evaluation_application->time_to_finalized = new \DateTime($timeStudentShouldFinishedEvaluation);
-            if($evaluation_application){
-                return response()->json($evaluation_application, 200);
-            } else {
-                return response()->json($evaluation_application, 202);
-            }
+        }
+
+        if($evaluation_application){
+            return response()->json($evaluation_application, 200);
+        } else {
+            return response()->json($evaluation_application, 202);
         }
     }
 
