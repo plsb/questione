@@ -215,7 +215,6 @@ const GenerateEvaluation = props => {
       const response = await api.get(`/evaluation/practice/has-questions/${codigoEvaluation}`);
 
       if (response) {
-        console.log('==> ', response);
         // setAmountQuestions(response.data);
         // setRenderConfigQuestions(true);
       }
@@ -259,7 +258,6 @@ const GenerateEvaluation = props => {
       const response = await api.get(`/evaluation/practice/has-questions/${codigoEvaluation}`);
 
       if (response) {
-        console.log('Questões = ', response.data);
         // setAmountQuestions(response.data);
         // setRenderConfigQuestions(true);
       }
@@ -382,7 +380,6 @@ const GenerateEvaluation = props => {
                 md={12}
                 xs={12}
               >
-                {console.log(formState.values)}
                 <Button
                   color="primary"
                   variant="outlined"
@@ -436,7 +433,6 @@ const GenerateEvaluation = props => {
                 md={12}
                 xs={12}
               >
-                {console.log(formState.values)}
                 <Button
                   color="primary"
                   variant="outlined"

@@ -171,7 +171,6 @@ const QuestionItens = props => {
                 //return ;
                 const id = element.idItem;
                 let acao = "";
-                console.log("item", element);
 
                 if(id === 0){
                     response = await api.post('questionitem', data);

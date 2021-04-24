@@ -52,6 +52,7 @@ const DoEvaluation = props => {
   const { codeAplication } = props.match.params;
   const [application, setApplication] = useState([]);
   const [answers, setAnswers] = useState([]);
+  const [dateTimeToFinalized, setDateTimeToFinalized] = useState(null);
   const [dialogStart, setDialogStart] = useState(false);
   const [dialogFinish, setDialogFinish] = useState(false);
   const [enableButtonStart, setEnableButtonStart] = useState(true);
@@ -105,7 +106,10 @@ const DoEvaluation = props => {
           return ;
         }
         setApplication(response.data);
-        console.log(response.data);
+      } else if (response.status == 202) {
+        loadAlert('error', response.data.message);
+        history.push('/home');
+        return ;
       } else {
         loadAlert('error', 'Ocorreu um erro ao buscar a avaliação.');
         history.push('/home');
@@ -136,6 +140,9 @@ const DoEvaluation = props => {
         setOpenBackdrop(false);
         if(response.data.message){
           loadAlert('error', response.data.message);
+          if (response.data.closed) {
+            history.push('/home');
+          }
         }
       } else if(response.status == 200){
         if(response.data.status == 0){
@@ -143,7 +150,8 @@ const DoEvaluation = props => {
           history.push('/home');
           return ;
         }
-        setAnswers(response.data);
+        setAnswers(response.data[0]);
+        setDateTimeToFinalized(response.data.date_time_to_finalized);
 
         setRefresh(refresh+1);
         setEnableButtonStart(false);
@@ -271,14 +279,14 @@ const DoEvaluation = props => {
                         {'Professor(a): '+application.evaluation.user.name}
                       </Typography>
                     )}
-                    {!enableButtonStart && (
+                    {!enableButtonStart && dateTimeToFinalized && (
                       <Typography variant="button" color="textSecondary" component="p">
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                           Tempo restante:
                           <Timer 
                             expiryTimestamp={
                               getExpiryTimestamp(
-                                ((new Date('2021-04-19 22:00')).getTime() - (new Date(application.created_at)).getTime())
+                                ((new Date(dateTimeToFinalized.date)).getTime() - (new Date()).getTime())
                               )
                             }
                           />

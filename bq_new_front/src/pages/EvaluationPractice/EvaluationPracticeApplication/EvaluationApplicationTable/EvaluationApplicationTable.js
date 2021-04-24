@@ -80,8 +80,6 @@ const EvaluationApplicationTable = props => {
   const { className, history } = props;
   const { idApplication } = props.match.params;
 
-  console.log('-====> ', props.match.params);
-
   const [evaluationsApplications, setEvaluationsApplications] = useState(null);
 
   const classes = useStyles();
@@ -122,10 +120,8 @@ const EvaluationApplicationTable = props => {
       const response = await api.get(url);
       if(response.status == 200) {
         setTotal(response.data.total);
-        console.log(response.data.data);
         setEvaluationsApplications(response.data.data);
       } else {
-        console.log('teste');
         setEvaluationsApplications([]);
       }
     } catch (error) {

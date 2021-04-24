@@ -87,8 +87,6 @@ const useStyles = makeStyles(theme => ({
 function QuestionItem({ question, index }) {
     const classes = useStyles();
 
-    console.log(question)
-
     return (
         <Card>
             <CardContent className={classes.lineQuestion}>

@@ -189,7 +189,6 @@ const QuestionTable = props => {
   }
 
   const onClickCleanSearch = (e) => {
-    console.log('chamou');
     searchText[0] = {"value" : "S"};
     searchText[1] = {"fk_course_id" : 0};
     searchText[2] = {"fk_object_id" : 0};

@@ -101,7 +101,6 @@ const EvaluationPracticeQuestions = props => {
       let url = `/evaluation/practice/has-questions/${codigoEvaluation}`;
       const response = await api.get(url);
       if(response.status == 200) {
-        console.log('=====> ', response);
         setQuestions(response.data);
       } else {
         setQuestions([]);
