@@ -43,7 +43,7 @@ class DoEvaluation extends Controller
 
         //student_started 0 - Não inicou e 1 - inicou
         $evaluation_application->student_started = 0;
-        if($head_answer){
+        if($head_answer && !$head_answer->finalized_at){
             $evaluation_application->student_started = 1;
         }
         //atributo dt_created informará a data e horário corretos (sem diferença de 3 horas)
