@@ -225,10 +225,11 @@ class DoEvaluation extends Controller
         $timeStudentShouldFinishedEvaluation = $head_answer->created_at;
         $timeStudentShouldFinishedEvaluation->add(new \DateInterval('PT'.$horas.'H'.$minutos.'M'.$segundos.'S'));
 
-        $answers->date_time_to_finalized = new \DateTime($timeStudentShouldFinishedEvaluation);
-
-
-        return response()->json($answers, 200);
+        //$answers->date_time_to_finalized = new \DateTime($timeStudentShouldFinishedEvaluation);
+        
+        return response()->json([
+            "date_time_to_finalized" => new \DateTime($timeStudentShouldFinishedEvaluation)
+            , $answers], 200);
     }
 
     public function answer(Request $request, $id_application){
