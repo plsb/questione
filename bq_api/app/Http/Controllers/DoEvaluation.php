@@ -45,29 +45,30 @@ class DoEvaluation extends Controller
         $evaluation_application->student_started = 0;
         if($head_answer){
             $evaluation_application->student_started = 1;
+
             if($head_answer->finalized_at){
                 return response()->json([
                     'message' => 'A avaliação já foi respondida pelo usuário.'
                 ], 202);
             }
-        }
 
-        //atributo dt_created informará a data e horário corretos (sem diferença de 3 horas)
-        //$evaluation_application->dt_created = new \DateTime($evaluation_application->created_at);
-        //pega o time e divide em horas, minutos e segundos
-        $horas = substr($evaluation_application->time_to_finalize, 0, 2);
-        $minutos = substr($evaluation_application->time_to_finalize, 3, 2);
-        $segundos = substr($evaluation_application->time_to_finalize, 6, 2);
+            //atributo dt_created informará a data e horário corretos (sem diferença de 3 horas)
+            //$evaluation_application->dt_created = new \DateTime($evaluation_application->created_at);
+            //pega o time e divide em horas, minutos e segundos
+            $horas = substr($evaluation_application->time_to_finalize, 0, 2);
+            $minutos = substr($evaluation_application->time_to_finalize, 3, 2);
+            $segundos = substr($evaluation_application->time_to_finalize, 6, 2);
 
-        //pega o horário que a avaliação foi criada e acrescenta a ela o tempo para finalizar definido pelo professor
-        $timeStudentShouldFinishedEvaluation = $head_answer->created_at;
-        $timeStudentShouldFinishedEvaluation->add(new \DateInterval('PT'.$horas.'H'.$minutos.'M'.$segundos.'S'));
+            //pega o horário que a avaliação foi criada e acrescenta a ela o tempo para finalizar definido pelo professor
+            $timeStudentShouldFinishedEvaluation = $head_answer->created_at;
+            $timeStudentShouldFinishedEvaluation->add(new \DateInterval('PT'.$horas.'H'.$minutos.'M'.$segundos.'S'));
 
-        $evaluation_application->time_to_finalized = new \DateTime($timeStudentShouldFinishedEvaluation);
-        if($evaluation_application){
-            return response()->json($evaluation_application, 200);
-        } else {
-            return response()->json($evaluation_application, 202);
+            $evaluation_application->time_to_finalized = new \DateTime($timeStudentShouldFinishedEvaluation);
+            if($evaluation_application){
+                return response()->json($evaluation_application, 200);
+            } else {
+                return response()->json($evaluation_application, 202);
+            }
         }
     }
 
