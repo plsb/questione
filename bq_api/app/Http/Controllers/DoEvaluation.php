@@ -92,43 +92,6 @@ class DoEvaluation extends Controller
             }
         }
 
-        //verifica se o professor pre detemrinou uma data e horário específico para iniciar a avaliação
-        if($application->date_start){
-            //pega a data atual
-            $dateNow = date('Y-m-d');
-            //verifica se a data atual é igual a data de iniciar a avaliação
-            if($application->date_start == $dateNow){
-                //verifica se tem hora inicial
-                if($application->time_start){
-                    //pega hora atual
-                    $timeStartedEvaluationStarted = new \DateTime(date('H:i'));
-                    $timeFinisedEvaluationStarted = new \DateTime(date('H:i'));
-                    //pega hora que foi inserida pelo professor para iniciar a avaliação
-                    $timeInserted = new \DateTime($application->time_start);
-                    //diminui 20 minutos para especificar o tempo inicial para iniciar limite
-                    $timeStartedEvaluationStarted->sub(new \DateInterval('PT20M'));
-                    //aumenta 20 minutos para especificar o tempo final pata iniciar limite
-                    $timeFinisedEvaluationStarted->add(new \DateInterval('PT20M'));
-
-                    //horário que o estudante deve iniciar a avaliação
-                    $timeStudentShouldStarted = new \DateTime($application->time_start);
-                    $timeStudentShouldFinished = new \DateTime($application->time_start);
-                    $timeStudentShouldStarted->sub(new \DateInterval('PT20M'));
-                    $timeStudentShouldFinished->add(new \DateInterval('PT20M'));
-
-                    if(!($timeInserted >= $timeStartedEvaluationStarted && $timeInserted <= $timeFinisedEvaluationStarted)){
-                        return response()->json([
-                            'message' => 'A avaliação não pode ser iniciada. '.
-                            'O estudante deveria ter iniciado entre o horário '.$timeStudentShouldStarted->format('H:i').
-                                ' e '. $timeStudentShouldFinished->format('H:i').' do dia '
-                                .$timeStudentShouldFinished->format('d/m/Y')
-                        ], 202);
-                    }
-                }
-            }
-
-        }
-
         $questions_evaluations = EvaluationHasQuestions::where('fk_evaluation_id', $application->fk_evaluation_id)
             ->get();
 
@@ -150,6 +113,44 @@ class DoEvaluation extends Controller
                 ], 202);
             }
         } else {
+            //verifica se o professor pre detemrinou uma data e horário específico para iniciar a avaliação
+            if($application->date_start){
+                //pega a data atual
+                $dateNow = date('Y-m-d');
+                //verifica se a data atual é igual a data de iniciar a avaliação
+                if($application->date_start == $dateNow){
+                    //verifica se tem hora inicial
+                    if($application->time_start){
+                        //pega hora atual
+                        $timeStartedEvaluationStarted = new \DateTime(date('H:i'));
+                        $timeFinisedEvaluationStarted = new \DateTime(date('H:i'));
+                        //pega hora que foi inserida pelo professor para iniciar a avaliação
+                        $timeInserted = new \DateTime($application->time_start);
+                        //diminui 20 minutos para especificar o tempo inicial para iniciar limite
+                        $timeStartedEvaluationStarted->sub(new \DateInterval('PT20M'));
+                        //aumenta 20 minutos para especificar o tempo final pata iniciar limite
+                        $timeFinisedEvaluationStarted->add(new \DateInterval('PT20M'));
+
+                        //horário que o estudante deve iniciar a avaliação
+                        $timeStudentShouldStarted = new \DateTime($application->time_start);
+                        $timeStudentShouldFinished = new \DateTime($application->time_start);
+                        $timeStudentShouldStarted->sub(new \DateInterval('PT20M'));
+                        $timeStudentShouldFinished->add(new \DateInterval('PT20M'));
+
+                        if(!($timeInserted >= $timeStartedEvaluationStarted && $timeInserted <= $timeFinisedEvaluationStarted)){
+                            return response()->json([
+                                'message' => 'A avaliação não pode ser iniciada. '.
+                                    'O estudante deveria ter iniciado entre o horário '.$timeStudentShouldStarted->format('H:i').
+                                    ' e '. $timeStudentShouldFinished->format('H:i').' do dia '
+                                    .$timeStudentShouldFinished->format('d/m/Y')
+                            ], 202);
+                        }
+                    }
+                }
+
+            }
+
+
             //senão tem avaliação, então cria nova
             $head_answer = new AnswersHeadEvaluation();
             $head_answer->fk_application_evaluation_id = $application->id;
