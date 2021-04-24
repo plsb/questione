@@ -112,6 +112,32 @@ class DoEvaluation extends Controller
                     'message' => 'Avaliação já foi respondida pelo usuário.'
                 ], 202);
             }
+
+            //verifica se a avaliação tem tempo pré-determinado para terminar e finaliza automaticamente
+            if($application->time_to_finalize){
+                //pega o time e divide em horas, minutos e segundos
+                $horas = substr($application->time_to_finalize, 0, 2);
+                $minutos = substr($application->time_to_finalize, 3, 2);
+                $segundos = substr($application->time_to_finalize, 6, 2);
+
+                //pega o horário que a avaliação foi criada e acrescenta a ela o tempo para finalizar definido pelo professor
+                $timeStudentShouldFinishedEvaluation = $head_answer->created_at;
+                $timeStudentShouldFinishedEvaluation->add(new \DateInterval('PT'.$horas.'H'.$minutos.'M'.$segundos.'S'));
+                $dateNow = new \DateTime(date('Y-m-d H:i'));
+                if($timeStudentShouldFinishedEvaluation < $dateNow){
+
+                    $head_answer->finalized_at = date('Y-m-d H:i:s');
+                    $head_answer->finished_automatically = 1;
+                    $head_answer->save();
+
+                    //aqui deve finalizar a avaliação automaticamente
+
+                    return response()->json([
+                        'closed' => '1',
+                        'message' => 'O horário atual não é permitido para realizar a avaliação. A sua avaliação foi encerrada automaticamente.'
+                    ], 202);
+                }
+            }
         } else {
             //verifica se o professor pre detemrinou uma data e horário específico para iniciar a avaliação
             if($application->date_start){
@@ -267,6 +293,7 @@ class DoEvaluation extends Controller
                 //aqui deve finalizar a avaliação automaticamente
 
                 return response()->json([
+                    'closed' => '1',
                     'message' => 'O horário atual não é permitido para realizar a avaliação. A sua avaliação foi encerrada automaticamente.'
                 ], 202);
             }

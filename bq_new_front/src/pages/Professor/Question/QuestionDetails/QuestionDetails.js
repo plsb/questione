@@ -320,8 +320,7 @@ const QuestionDetails = props => {
                   container
                   direction="row"
                   justify="center"
-                  alignItems="center"
-                >
+                  alignItems="center">
                     {/* <div className={classes.selectGroup}>
                         <b className="item1" style={{ marginRight: '32px' }}>Tipo de avaliação</b>
                         <Tooltip title="Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar no campo tipo de avaliação.">
