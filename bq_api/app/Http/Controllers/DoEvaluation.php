@@ -45,12 +45,13 @@ class DoEvaluation extends Controller
         $evaluation_application->student_started = 0;
         if($head_answer){
             $evaluation_application->student_started = 1;
+            if($head_answer->finalized_at){
+                return response()->json([
+                    'message' => 'A avaliação já foi respondida pelo usuário.'
+                ], 202);
+            }
         }
-        if($head_answer->finalized_at){
-            return response()->json([
-                'message' => 'A avaliação já foi respondida pelo usuário.'
-            ], 202);
-        }
+
         //atributo dt_created informará a data e horário corretos (sem diferença de 3 horas)
         //$evaluation_application->dt_created = new \DateTime($evaluation_application->created_at);
         //pega o time e divide em horas, minutos e segundos
