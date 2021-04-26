@@ -324,7 +324,7 @@ class DoEvaluation extends Controller
         return response()->json($answer, 200);
     }
 
-    public function finishEvaluation($idApplication){
+    public function finishEvaluation(Request $request, $idApplication){
         $user = auth('api')->user();
 
         $application = EvaluationApplication::where('id_application', $idApplication)->first();
@@ -367,6 +367,9 @@ class DoEvaluation extends Controller
         }
         //dd(date('Y-m-d H:i:s'));
         $answer_head->finalized_at = date('Y-m-d H:i:s');
+        if($request->finished_automatically){
+            $answer_head->finished_automatically = 1;
+        }
         $answer_head->save();
 
         $evaluation = Evaluation::where('id', $application->fk_evaluation_id)->first();
