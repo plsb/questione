@@ -11,6 +11,7 @@ use App\AnswersHeadEvaluation;
 use App\Notifications\StudentFinishEvaluationToProfessorNotification;
 use App\Question;
 use App\User;
+use Cassandra\Date;
 use Illuminate\Http\Request;
 use Validator;
 use App\Http\Controllers\Controller;
@@ -233,9 +234,11 @@ class DoEvaluation extends Controller
             $date_time_to_finalized = new \DateTime($timeStudentShouldFinishedEvaluation);
         }
 
+        $date_server =  new \DateTime();
         return response()->json([
-            "date_time_to_finalized" => $date_time_to_finalized
-            , $answers], 200);
+           "date_server" => $date_server,
+            "date_time_to_finalized" => $date_time_to_finalized,
+            $answers], 200);
     }
 
     public function answer(Request $request, $id_application){
