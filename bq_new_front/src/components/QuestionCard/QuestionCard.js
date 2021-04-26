@@ -346,7 +346,7 @@ const QuestionCard = props => {
     const [openEvalationChoose, setOpenEvalationChoose] = React.useState(false);
 
     const handleChooseEvaluation = () => {
-        if(question.fk_user_id !== localStorage.getItem("@Questione-id-user") && rank == 0){
+        if(question.fk_user_id !== parseInt(localStorage.getItem("@Questione-id-user")) && rank == 0){
             loadAlert('error', 'Antes de aplicar a questão, você deve classificá-la.')
             return;
         }
@@ -508,7 +508,7 @@ const QuestionCard = props => {
                         <br />
                     </div>
                     : null}
-                { question.year !== '' && question.year !== null ?
+                 { question.year !== '' && question.year !== null ?
                     <div>
                         <Typography variant="button" color="textSecondary" component="p">
                             Ano:

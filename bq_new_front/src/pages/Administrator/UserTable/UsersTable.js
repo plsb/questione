@@ -170,7 +170,8 @@ const UsersTable = props => {
                           </TableCell>
                           <TableCell>{user.email}</TableCell>
                           <TableCell>
-                            {user.acess_level === 1 ? "Administrador" :
+                            {user.acess_level === 0 ? "Aluno" :
+                              user.acess_level === 1 ? "Administrador" :
                                 user.acess_level === 2 ? "Professor" : ""}
                           </TableCell>
                         </TableRow>

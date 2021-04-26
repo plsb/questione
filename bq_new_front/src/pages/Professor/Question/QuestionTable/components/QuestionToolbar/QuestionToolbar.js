@@ -308,12 +308,12 @@ const QuestionToolbar = props => {
                     id="keywords"
                     value={value}
                     onChange={(event, newValue) => {
-                      // console.log('value', newValue);
+
                       setValue(newValue);
                     }}
                     inputValue={searchText[4] ? searchText[4].keyword : ""}
                     onInputChange={(event, newInputValue) => {
-                      // console.log('input', newInputValue);
+
                       searchText[4].keyword = newInputValue;
                     }}
                     id="controllable-states-demo"

@@ -196,7 +196,7 @@ const QuestionDetails = props => {
     //     try {
 
     //     } catch (error) {
-    //         console.log(error);
+
     //     }
     // });
 
@@ -341,8 +341,8 @@ const QuestionDetails = props => {
                                 </Select>
                         </Tooltip>
                     </div> */}
-                    <div className={classes.selectGroup}>
-                        <b className="item1" style={{ marginRight: '120px' }}>Ano</b>
+                    {/*<div className={classes.selectGroup}>
+                        {<b className="item1" style={{ marginRight: '120px' }}>Ano</b>
                         <Tooltip title="Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar o ano de tal questão.">
                                 <Select
                                     labelId="year-label"
@@ -361,7 +361,7 @@ const QuestionDetails = props => {
                                     ))}
                                 </Select>
                         </Tooltip>
-                    </div>
+                    </div>*/}
               </Grid>
               <div style={{padding: "30px"}}>
                   <b className="item1">Texto base</b>

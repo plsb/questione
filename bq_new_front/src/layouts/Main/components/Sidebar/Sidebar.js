@@ -54,11 +54,6 @@ const Sidebar = props => {
       href: '/type-of-evaluation',
       icon: <ClassIcon />
     },
-    /*{
-      title: 'Perfis',
-      href: '/profiles',
-      icon: <PeopleIcon />
-    },*/
     {
       title: 'Competências',
       href: '/skills',
@@ -99,6 +94,7 @@ const Sidebar = props => {
       title: 'Pratique',
       href: '/evaluation-practice',
       icon: <ExtensionIcon />,
+      className: 'practice',
     },
     {
       title: 'Avaliações respondidas',
@@ -109,15 +105,11 @@ const Sidebar = props => {
   ];
 
   const pagesUser = [
-    // {
-    //   title: 'Realizar Avaliação',
-    //   href: '/student/start-evaluation',
-    //   icon: <DashboardIcon />
-    // },
     {
       title: 'Pratique',
       href: '/evaluation-practice',
-      icon: <ExtensionIcon />
+      icon: <ExtensionIcon />,
+      className: 'practice',
     },
     {
       title: 'Avaliações respondidas',

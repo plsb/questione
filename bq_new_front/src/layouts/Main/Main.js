@@ -103,6 +103,10 @@ const Main = props => {
 
 const stepsGeneral = [
     {
+        selector: '.practice',
+        content: 'O módulo Pratique permite que o usuário gere avaliações por área e competência para testar seus conhecimentos.',
+    },
+    {
         selector: '.start-evaluation-card',
         content: 'Para responder uma avaliação é necessário que você informe o código da aplicação neste card fornecido por um professor.' +
             ' Uma aplicação só poderá ser respondida se ela estiver ativa e não estiver arquivada.',
@@ -139,8 +143,8 @@ const stepsGeneral = [
     },
     {
         selector: '.update-profile',
-        content: 'Ao clicar em atualização de perfil, você poderá alterar seu nome e caso seja professor do Instituto Federal de Educação, Ciência' +
-            ' e Tecnologia do Ceará, poderá solicitar acesso ao banco de questões de um ou mais cursos. Para solicitar acesso aos cursos, basta enviar um comprovante' +
+        content: 'Ao clicar em atualização de perfil, você poderá alterar seu nome e caso seja professor de qualquer Institução ' +
+            ' de ensino, poderá solicitar acesso ao banco de questões de um ou mais cursos. Para solicitar acesso aos cursos, basta enviar um comprovante' +
             ' que comprove que você é professor de um determinado curso.',
     },
     {
@@ -161,8 +165,7 @@ const stepsProfessor = [
             ' Você também poderá buscar suas questões ou questões de outros usuários já validadas. A busca pode ser' +
             ' realizada por curso, competência, objetos de conhecimento ou palavra-chave. É através desta opção que você poderá' +
             ' escolher quais questões irão compor determinada avaliação. Você só poderá aplicar em uma avaliação, questões que já foram validadas. Depois ' +
-            ' de validar uma questão, o sistema não irá mais permitir que você edite o texto-base, enunciado e alternativas. Caso você selecione' +
-            ' uma questão inserida por outro usuário para compor uma avaliação, será necessário que classifique a questão antes da aplicação.',
+            ' de validar uma questão, o sistema não irá mais permitir que você edite o texto-base, enunciado e alternativas.',
     },
     {
         selector: '.evaluation-professor',
@@ -174,8 +177,10 @@ const stepsProfessor = [
     {
         selector: '.applications-professor',
         content: 'Na opção Aplicações, você poderá editar e ativar aplicações de uma avaliação. Uma aplicação só poderá ser respondida pelos' +
-            ' estudantes caso esteja Ativa. Você também poderá escolher opções para sua aplicação, como: prova randômica e se permite' +
-            ' mostrar o gabarito para os estudantes. Aqui também é possível visualizar os resultados da aplicação por aluno, por questão,' +
+            ' estudantes caso esteja Ativa. Você também poderá escolher opções para sua aplicação, como: se as questões da prova serão distribuída de forma' +
+            ' randômica; se permite mostrar o gabarito para os estudantes após a finalização; configurar uma data e hora para iniciar a avaliação; ' +
+            'e configurar a quantidade de horas de duração da avaliação.' +
+            ' Aqui também é possível visualizar os resultados da aplicação por aluno, por questão,' +
             ' por competência e objeto de conhecimento.',
     },
     {

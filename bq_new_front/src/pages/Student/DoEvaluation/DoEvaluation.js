@@ -22,7 +22,7 @@ import ReactHtmlParser from "react-html-parser";
 import clsx from "clsx";
 import Swal from "sweetalert2";
 import {DialogQuestione} from "../../../components";
-import Timer from "../../../components/Timer"; 
+import Timer from "../../../components/Timer";
 
 const useStyles = makeStyles({
   root: {
@@ -134,7 +134,6 @@ const DoEvaluation = props => {
   async function updateEvaluation(){
     try {
       const response = await api.post('evaluation/start/'+codeAplication);
-
 
       if (response.status === 202) {
         setOpenBackdrop(false);
@@ -283,10 +282,10 @@ const DoEvaluation = props => {
                       <Typography variant="button" color="textSecondary" component="p">
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                           Tempo restante:
-                          <Timer 
+                          <Timer
                             expiryTimestamp={
                               getExpiryTimestamp(
-                                ((new Date(dateTimeToFinalized.date)).getTime() - (new Date()).getTime())
+                                ((new Date(dateTimeToFinalized.date.replace(' ', 'T'))).getTime() - (new Date()).getTime())
                               )
                             }
                           />

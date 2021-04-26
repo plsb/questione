@@ -109,31 +109,32 @@ class DoEvaluation extends Controller
                 ], 202);
             }
 
-            //verifica se a avaliação tem tempo pré-determinado para terminar e finaliza automaticamente
-            if($application->time_to_finalize){
-                //pega o time e divide em horas, minutos e segundos
-                $horas = substr($application->time_to_finalize, 0, 2);
-                $minutos = substr($application->time_to_finalize, 3, 2);
-                $segundos = substr($application->time_to_finalize, 6, 2);
+           if($application->time_to_finalize) {
+               //pega o time e divide em horas, minutos e segundos
+               $horas = substr($application->time_to_finalize, 0, 2);
+               $minutos = substr($application->time_to_finalize, 3, 2);
+               $segundos = substr($application->time_to_finalize, 6, 2);
 
-                //pega o horário que a avaliação foi criada e acrescenta a ela o tempo para finalizar definido pelo professor
-                $timeStudentShouldFinishedEvaluation = $head_answer->created_at;
-                $timeStudentShouldFinishedEvaluation->add(new \DateInterval('PT'.$horas.'H'.$minutos.'M'.$segundos.'S'));
-                $dateNow = new \DateTime(date('Y-m-d H:i'));
-                if($timeStudentShouldFinishedEvaluation < $dateNow){
+               //pega o horário que a avaliação foi criada e acrescenta a ela o tempo para finalizar definido pelo professor
+               $timeStudentShouldFinishedEvaluation = $head_answer->created_at;
+               $timeStudentShouldFinishedEvaluation->add(new \DateInterval('PT' . $horas . 'H' . $minutos . 'M' . $segundos . 'S'));
+               $dateNow = new \DateTime(date('Y-m-d H:i'));
 
-                    $head_answer->finalized_at = date('Y-m-d H:i:s');
-                    $head_answer->finished_automatically = 1;
-                    $head_answer->save();
+               if ($timeStudentShouldFinishedEvaluation < $dateNow) {
 
-                    //aqui deve finalizar a avaliação automaticamente
+                   $head_answer->finalized_at = date('Y-m-d H:i:s');
+                   $head_answer->finished_automatically = 1;
+                   $head_answer->save();
 
-                    return response()->json([
-                        'closed' => '1',
-                        'message' => 'O horário atual não é permitido para realizar a avaliação. A sua avaliação foi encerrada automaticamente.'
-                    ], 202);
-                }
-            }
+                   //aqui deve finalizar a avaliação automaticamente
+
+                   return response()->json([
+                       'closed' => '1',
+                       'message' => 'O horário atual não é permitido para realizar a avaliação. A sua avaliação foi encerrada automaticamente.'
+                   ], 202);
+               }
+           }
+
         } else {
             //verifica se o professor pre detemrinou uma data e horário específico para iniciar a avaliação
             if($application->date_start){
@@ -172,7 +173,6 @@ class DoEvaluation extends Controller
 
             }
 
-
             //senão tem avaliação, então cria nova
             $head_answer = new AnswersHeadEvaluation();
             $head_answer->fk_application_evaluation_id = $application->id;
@@ -197,6 +197,7 @@ class DoEvaluation extends Controller
             $answer->save();
 
         }
+
         //dd($head_answer);
         $answerHead = AnswersHeadEvaluation::where('fk_user_id', $user->id)
             ->where('fk_application_evaluation_id', $application->id)
@@ -214,21 +215,26 @@ class DoEvaluation extends Controller
                 ->get();
         }
 
-        //atributo dt_created informará a data e horário corretos (sem diferença de 3 horas)
-        //$evaluation_application->dt_created = new \DateTime($evaluation_application->created_at);
-        //pega o time e divide em horas, minutos e segundos
-        $horas = substr($application->time_to_finalize, 0, 2);
-        $minutos = substr($application->time_to_finalize, 3, 2);
-        $segundos = substr($application->time_to_finalize, 6, 2);
+        $date_time_to_finalized = null;
+        if($application->time_to_finalize){
+            //atributo dt_created informará a data e horário corretos (sem diferença de 3 horas)
+            //$evaluation_application->dt_created = new \DateTime($evaluation_application->created_at);
+            //pega o time e divide em horas, minutos e segundos
+            $horas = substr($application->time_to_finalize, 0, 2);
+            $minutos = substr($application->time_to_finalize, 3, 2);
+            $segundos = substr($application->time_to_finalize, 6, 2);
 
-        //pega o horário que a avaliação foi criada e acrescenta a ela o tempo para finalizar definido pelo professor
-        $timeStudentShouldFinishedEvaluation = $head_answer->created_at;
-        $timeStudentShouldFinishedEvaluation->add(new \DateInterval('PT'.$horas.'H'.$minutos.'M'.$segundos.'S'));
+            //pega o horário que a avaliação foi criada e acrescenta a ela o tempo para finalizar definido pelo professor
+            $timeStudentShouldFinishedEvaluation = $head_answer->created_at;
 
-        //$answers->date_time_to_finalized = new \DateTime($timeStudentShouldFinishedEvaluation);
-        
+            $timeStudentShouldFinishedEvaluation->add(new \DateInterval('PT'.$horas.'H'.$minutos.'M'.$segundos.'S'));
+
+            //$answers->date_time_to_finalized = new \DateTime($timeStudentShouldFinishedEvaluation);
+            $date_time_to_finalized = new \DateTime($timeStudentShouldFinishedEvaluation);
+        }
+
         return response()->json([
-            "date_time_to_finalized" => new \DateTime($timeStudentShouldFinishedEvaluation)
+            "date_time_to_finalized" => $date_time_to_finalized
             , $answers], 200);
     }
 
