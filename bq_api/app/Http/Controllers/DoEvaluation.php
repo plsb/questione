@@ -360,6 +360,11 @@ class DoEvaluation extends Controller
         $answer = AnswersEvaluation::where('fk_answers_head_id', $answer_head->id)
             ->where('answer', null)
             ->get();
+
+        //verifica se já deu o tempo final da aplicação e finaliza automaticamente
+        if($request->finished_automatically){
+            $answer_head->finished_automatically = 1;
+        } else
         if(sizeof($answer)>0){
             return response()->json([
                 'message' => 'Para finalizar a avaliação, responda todas as questões.'
@@ -367,9 +372,7 @@ class DoEvaluation extends Controller
         }
         //dd(date('Y-m-d H:i:s'));
         $answer_head->finalized_at = date('Y-m-d H:i:s');
-        if($request->finished_automatically){
-            $answer_head->finished_automatically = 1;
-        }
+
         $answer_head->save();
 
         $evaluation = Evaluation::where('id', $application->fk_evaluation_id)->first();
