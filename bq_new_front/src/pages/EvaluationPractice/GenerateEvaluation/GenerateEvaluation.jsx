@@ -121,10 +121,16 @@ const GenerateEvaluation = props => {
   }
 
   async function saveGenerateEvaluation() {
+    
     try {
       const referenceId = typeOfEvaluationList.filter((item) => item.description === formState.values.typeOfEvaluation)[0].id;
       const areaId = areaList.filter((item) => item.description === formState.values.area)[0].id;
-      const skillId = skillList.filter((item) => item.description === formState.values.skills)[0].id;
+      const skills = skillList.filter((item) => item.description === formState.values.skills);
+
+      let skillId = null;
+      if (skills.lenght > 0) {
+        skillId = skills[0].id;
+      }
 
       const { amount_questions, initial_period, final_period } = formState.values;
 
@@ -149,7 +155,7 @@ const GenerateEvaluation = props => {
         history.push('/evaluation-practice');
       }
     } catch (error) {
-
+      // console.log(error);
     }
   }
 

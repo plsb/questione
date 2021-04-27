@@ -14,7 +14,7 @@ import {
 import api from "../../../../services/api";
 import ToolbarEvaluation
   from "./EvaluationResultToolbar/EvaluationResultStudentToolbar";
-import {Close, FormatListBulleted} from "@material-ui/icons";
+import {Close, FormatListBulleted, PlayArrow} from "@material-ui/icons";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -24,7 +24,7 @@ const useStyles = makeStyles(() => ({
     padding: 0
   },
   labelRed: {
-    backgroundColor: '#EC0B43',
+    backgroundColor: '#daa520',
     display: 'block',
     margin: '2px',
     padding: '3px',
@@ -38,6 +38,21 @@ const useStyles = makeStyles(() => ({
     backgroundColor: '#2196f3',
     color: '#fff',
   },
+  chipred: {
+    margin: 3,
+    marginTop: '16px',
+    backgroundColor: '#d2691e',
+    color: '#fff',
+  },
+  chipgreen: {
+    margin: 3,
+    marginTop: '16px',
+    backgroundColor: '#6b8e23',
+    color: '#fff',
+  },
+  dFlex: {
+    display: 'flex',
+  }
 }));
 
 const EvaluationsResultStudentTable = props => {
@@ -144,8 +159,8 @@ const EvaluationsResultStudentTable = props => {
                                   <CardHeader
                                       className={classes.head}
                                       action={
-                                        <div>
-                                          { application.evaluation_application.show_results == 1 ?
+                                        <div className={classes.dFlex}>
+                                          { application.evaluation_application.show_results == 1 && application.finalized_at ?
                                           <Tooltip title="Visualizar resultados">
                                             <IconButton
                                                 aria-label="copy"
@@ -154,8 +169,18 @@ const EvaluationsResultStudentTable = props => {
                                             </IconButton>
                                           </Tooltip>
                                             :
-                                              <span className={classes.labelRed}>{'Resultado não liberado.'}</span>
+                                              application.evaluation_application.show_results == 0 && application.finalized_at && <span className={classes.labelRed}>{'Resultado não liberado.'}</span>
                                           }
+
+                                          {!application.finalized_at && application.finished_automatically === 0 && (
+                                              <Tooltip title="Realizar avaliação">
+                                                  <IconButton
+                                                      aria-label="settings"
+                                                      onClick={() => history.push(`/code/${application.evaluation_application.id_application}`)}>
+                                                      <PlayArrow />
+                                                  </IconButton>
+                                              </Tooltip>
+                                          )}
                                         </div>
                                       }/>
                                       <CardContent>
@@ -166,9 +191,11 @@ const EvaluationsResultStudentTable = props => {
                                           <Typography variant="h5" color="textSecondary" component="h2">
                                             {'Descrição da aplicação: '+application.evaluation_application.description }
                                           </Typography>
-                                          <Typography variant="h5" color="textSecondary" component="h2">
-                                            {'Professor(a): '+application.evaluation_application.evaluation.user.name }
-                                          </Typography>
+                                          {application.evaluation_application.evaluation.practice !== 1 && (
+                                            <Typography variant="h5" color="textSecondary" component="h2">
+                                              {'Professor(a): '+application.evaluation_application.evaluation.user.name }
+                                            </Typography>
+                                          )}
 
                                           {application.finalized_at && (
                                             <Typography variant="h5" color="textSecondary" component="h2">
@@ -178,6 +205,18 @@ const EvaluationsResultStudentTable = props => {
 
                                           {application.evaluation_application.evaluation.practice === 1 && (
                                             <Chip label="Pratique" className={clsx(classes.chipblue, className)} size="small"/>
+                                          )}
+
+                                          {application.finalized_at && application.finished_automatically === 0 && (
+                                            <Chip label="Finalizada" className={clsx(classes.chipred, className)} size="small"/>
+                                          )}
+
+                                          {application.finalized_at && application.finished_automatically === 1 && (
+                                            <Chip label="Finalizada automaticamente" className={clsx(classes.chipred, className)} size="small"/>
+                                          )}
+
+                                          {!application.finalized_at && application.finished_automatically === 0 && (
+                                            <Chip label="Iniciada" className={clsx(classes.chipgreen, className)} size="small"/>
                                           )}
                                         </div>
                                       </CardContent>

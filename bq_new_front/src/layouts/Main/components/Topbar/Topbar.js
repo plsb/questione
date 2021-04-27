@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -12,7 +12,7 @@ import { useHistory } from "react-router-dom";
 const useStyles = makeStyles(theme => ({
   root: {
     boxShadow: 'none',
-    backgroundColor: '#3a7cf7',
+    // backgroundColor: window.location.pathname.replace('/', '') === 'evaluation-practice' ? '#00e676' : '#3a7cf7',
   },
   flexGrow: {
     flexGrow: 1
@@ -24,6 +24,16 @@ const useStyles = makeStyles(theme => ({
 
 const Topbar = props => {
   const history = useHistory();
+
+  const [background, setBackground] = useState('#3a7cf7');
+
+  useEffect(() => {
+    if (window.location.pathname.indexOf('/evaluation-practice') !== -1) {
+      setBackground('#4615b2');
+    } else {
+      setBackground('#3a7cf7');
+    }
+  }, [window.location.pathname]);
 
   const { className, onSidebarOpen, ...rest } = props;
 
@@ -40,6 +50,7 @@ const Topbar = props => {
     <AppBar
       {...rest}
       className={clsx(classes.root, className)}
+      style={{ background }}
     >
       <Toolbar>
         <RouterLink to="/">

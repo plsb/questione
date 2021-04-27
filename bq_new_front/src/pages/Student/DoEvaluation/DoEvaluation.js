@@ -24,6 +24,12 @@ import Swal from "sweetalert2";
 import {DialogQuestione} from "../../../components";
 import Timer from "../../../components/Timer";
 
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogActions from "@material-ui/core/DialogActions";
+import Dialog from "@material-ui/core/Dialog";
+
 const useStyles = makeStyles({
   root: {
     width: '100%',
@@ -53,11 +59,16 @@ const DoEvaluation = props => {
   const [application, setApplication] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [dateTimeToFinalized, setDateTimeToFinalized] = useState(null);
+  const [dateServer, setDateServer] = useState(new Date());
   const [dialogStart, setDialogStart] = useState(false);
   const [dialogFinish, setDialogFinish] = useState(false);
   const [enableButtonStart, setEnableButtonStart] = useState(true);
   const [openBackdrop, setOpenBackdrop] = React.useState(false);
   const [refresh, setRefresh] = React.useState(0);
+  const [showTimeDialog, setShowTimeDialog] = useState({
+    show: false,
+    message: '',
+  });
   const timer = React.useRef();
 
   const classes = useStyles();
@@ -76,6 +87,9 @@ const DoEvaluation = props => {
   });
 
   function getExpiryTimestamp(timestampTime) {
+    // const { date } = dateServer;
+    // const time = new Date(date.replace(' ', 'T'));
+
     const time = new Date();
 
     time.setSeconds(time.getSeconds() + Math.floor(timestampTime / 1000));
@@ -151,6 +165,7 @@ const DoEvaluation = props => {
         }
         setAnswers(response.data[0]);
         setDateTimeToFinalized(response.data.date_time_to_finalized);
+        setDateServer(response.data.date_time_to_finalized);
 
         setRefresh(refresh+1);
         setEnableButtonStart(false);
@@ -160,6 +175,26 @@ const DoEvaluation = props => {
 
     }
     setDialogStart(false);
+  }
+
+  async function autoFinishEvaluation() {
+    try {
+      const response = await api.put('evaluation/finish/'+codeAplication, {
+        finished_automatically: 1,
+      });
+
+      if (response.status === 202) {
+        if(response.data.message){
+          loadAlert('error', response.data.message);
+        }
+      } else if(response.status == 200){
+        loadAlert('error', 'Tempo para responder a avaliação esgotado!');
+        history.push('/student/result-evaluations');
+      }
+    } catch (error) {
+
+    }
+    setDialogFinish(false);
   }
 
   async function finshEvaluation(){
@@ -172,7 +207,7 @@ const DoEvaluation = props => {
         }
       } else if(response.status == 200){
         loadAlert('success', 'Avaliação respondida com sucesso!');
-        history.push('/home');
+        history.push('/student/result-evaluations');
       }
     } catch (error) {
 
@@ -288,6 +323,8 @@ const DoEvaluation = props => {
                                 ((new Date(dateTimeToFinalized.date.replace(' ', 'T'))).getTime() - (new Date()).getTime())
                               )
                             }
+                            onExpire={autoFinishEvaluation}
+                            setShowTimeDialog={() => {}}
                           />
                         </div>
                       </Typography>
@@ -380,14 +417,32 @@ const DoEvaluation = props => {
                          open={dialogStart}
                          onClickAgree={startEvaluation}
                          onClickDisagree={onClickCloseDialogStart}
-                         mesage={'Deseja iniciar a avaliação?'}
-                         title={'Iniciar Avaliação'}/>
+                         mesage={`${application && application.student_started === 1 ? 'Deseja continuar a avaliação?' : 'Deseja iniciar a avaliação?'}`}
+                         title={'Responder Avaliação'}/>
         <DialogQuestione handleClose={onClickCloseDialogFinish}
                          open={dialogFinish}
                          onClickAgree={finshEvaluation}
                          onClickDisagree={onClickCloseDialogFinish}
                          mesage={'Deseja finalizar a avaliação?'}
                          title={'Finalizar Avaliação'}/>
+
+        {/* <Dialog
+              open={showTimeDialog.show}
+              onClose={() => setShowTimeDialog({ ...showTimeDialog, show: false })}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description">
+              <DialogTitle id="alert-dialog-title">Tempo de prova</DialogTitle>
+              <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    {showTimeDialog.message}
+                  </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                  <Button onClick={() => setShowTimeDialog({ ...showTimeDialog, show: false })} color="primary">
+                      Ok
+                  </Button>
+              </DialogActions>
+          </Dialog> */}
       </div>
   );
 };
