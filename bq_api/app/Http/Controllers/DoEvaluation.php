@@ -329,6 +329,7 @@ class DoEvaluation extends Controller
 
         $application = EvaluationApplication::where('id_application', $idApplication)->first();
 
+
         if(!$application){
             return response()->json([
                 'message' => 'A Aplicação não foi encontrada.'
@@ -340,6 +341,8 @@ class DoEvaluation extends Controller
                 'message' => 'A Aplicação está desabilitada.'
             ], 202);
         }
+
+        $evaluation = Evaluation::where('id', $application->fk_evaluation_id)->first();
 
         $answer_head = AnswersHeadEvaluation::where('fk_user_id', $user->id)
             ->where('fk_application_evaluation_id', $application->id)
@@ -378,7 +381,9 @@ class DoEvaluation extends Controller
         $evaluation = Evaluation::where('id', $application->fk_evaluation_id)->first();
         $userOwner = User::where('id', $evaluation->fk_user_id)->first();
         $userStudent = User::where('id', $answer_head->fk_user_id)->first();
-        $userOwner->notify(new StudentFinishEvaluationToProfessorNotification($userOwner, $userStudent, $evaluation));
+        if($evaluation->practice == 0) { //só envia o e-mail caso a avaliação não for prática
+            $userOwner->notify(new StudentFinishEvaluationToProfessorNotification($userOwner, $userStudent, $evaluation));
+        }
 
         return response()->json([
             'message' => 'Avaliação finalizada.'

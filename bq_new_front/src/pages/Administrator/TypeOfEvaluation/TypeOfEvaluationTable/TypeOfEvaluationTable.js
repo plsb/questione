@@ -104,11 +104,13 @@ const TypeOfEvaluationTable = props => {
 
   async function loadTypeOfEvaluations(page){
     try {
-      let url = '/type-of-evaluation/?page='+page;
+      let url = '/type-of-evaluation?page='+page;
+
       if(searchText != ''){
         url += '&description='+searchText;
       }
       const response = await api.get(url);
+
       setTotal(response.data.total);
       setTypeOfEvaluations(response.data.data);
     } catch (error) {
@@ -152,6 +154,7 @@ const TypeOfEvaluationTable = props => {
     try {
       let url = '/type-of-evaluation/'+idTypeOfEvaluationDelete;
       const response = await api.delete(url);
+
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);

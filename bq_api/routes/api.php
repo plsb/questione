@@ -64,11 +64,11 @@ Route::group(['prefix' => 'skill'], function (){
 });
 
 Route::group(['prefix' => 'object'], function (){
-    Route::get('/', 'Adm\KnowledgeObjectsController@index')->name('skill.index');
-    Route::post('/', 'Adm\KnowledgeObjectsController@store')->name('skill.store');
-    Route::get('/show/{profile}', 'Adm\KnowledgeObjectsController@show')->name('skill.show');
-    Route::put('/{profile}', 'Adm\KnowledgeObjectsController@update')->name('skill.update');
-    Route::delete('/{profile}', 'Adm\KnowledgeObjectsController@destroy')->name('skill.destroy');
+    Route::get('/', 'Adm\KnowledgeObjectsController@index')->name('object.index');
+    Route::post('/', 'Adm\KnowledgeObjectsController@store')->name('object.store');
+    Route::get('/show/{profile}', 'Adm\KnowledgeObjectsController@show')->name('object.show');
+    Route::put('/{profile}', 'Adm\KnowledgeObjectsController@update')->name('object.update');
+    Route::delete('/{profile}', 'Adm\KnowledgeObjectsController@destroy')->name('object.destroy');
 });
 
 Route::group(['prefix' => 'type-of-evaluation'], function (){
@@ -90,9 +90,9 @@ Route::group(['prefix' => 'question'], function (){
     Route::put('/validate/{question}', 'Professor\QuestionController@validateQuestion')->name('question.validateQuestion');
     Route::post('/duplicate/{question}', 'Professor\QuestionController@duplicate')->name('question.duplicate');
     //objects
-    Route::get('/object-question/{idQuestion}', 'Professor\QuestionHasKnowledgeObjectController@index')->name('question.index');
+    Route::get('/object-question/{idQuestion}', 'Professor\QuestionHasKnowledgeObjectController@index')->name('question.objects.index');
     Route::post('/addobject/', 'Professor\QuestionHasKnowledgeObjectController@addKnowledgeObject')->name('question.addKnowledgeObject');
-    Route::put('/update-object/{id}', 'Professor\QuestionHasKnowledgeObjectController@update')->name('question.update');
+    Route::put('/update-object/{id}', 'Professor\QuestionHasKnowledgeObjectController@update')->name('question.objects.update');
     Route::delete('/deleteobject/{id}', 'Professor\QuestionHasKnowledgeObjectController@deleteKnowledgeObject')->name('question.deleteKnowledgeObject');
     //keyword
     Route::get('/keyword/{idQuestion}', 'Professor\KeywordsQuestionController@index')->name('keyword.index');
@@ -114,7 +114,7 @@ Route::group(['prefix' => 'rank'], function (){
 });
 
 Route::group(['prefix' => 'evaluation/practice'], function (){
-    Route::get('/', 'Practice\EvaluationPracticeController@index')->name('evaluation.index');
+    Route::get('/', 'Practice\EvaluationPracticeController@index')->name('evaluation.practice.index');
     Route::get('/show/{evaluation}', 'Practice\EvaluationPracticeController@show')->name('evaluation.practice.show');
     Route::get('/how-many-questions', 'Practice\EvaluationPracticeController@showHowManyQuestions')->name('evaluation.practice.showHowManyQuestions');
     Route::post('/', 'Practice\EvaluationPracticeController@store')->name('evaluation.practice.store');

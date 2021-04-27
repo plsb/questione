@@ -75,7 +75,7 @@ const CourseDetails = props => {
       let response = {};
       let acao = "";
       if(!id) {
-        response = await api.post('/type-of-evaluation/', data);
+        response = await api.post('/type-of-evaluation', data);
         acao = "cadastrado";
       } else {
         response = await api.put('type-of-evaluation/'+id, data);

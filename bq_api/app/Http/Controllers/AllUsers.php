@@ -45,6 +45,7 @@ class AllUsers extends Controller
 
         $arr_id_courses = [];
         $questions = Question::where('fk_type_of_evaluation_id', $id_type_of_evaluation)
+            ->whereNotNull('fk_skill_id')
             ->groupBy('fk_course_id')
             ->get('fk_course_id');
         foreach ($questions as $q){

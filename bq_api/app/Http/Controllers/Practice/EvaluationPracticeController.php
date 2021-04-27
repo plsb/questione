@@ -251,6 +251,7 @@ class EvaluationPracticeController extends Controller
         $fk_skill_id = $request->fk_skill_id;
         $questions = Question::where('fk_type_of_evaluation_id', '=', $typeEvaluation->id)
             ->where('fk_course_id', $course->id)
+            ->whereNotNull('fk_skill_id')
             ->when($fk_skill_id, function ($query, $fk_skill_id) {
                 //pega questões validadas de todos os usuário
                 return $query->where('fk_skill_id', '=', $fk_skill_id);
