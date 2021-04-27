@@ -38,6 +38,12 @@ const useStyles = makeStyles(() => ({
     backgroundColor: '#2196f3',
     color: '#fff',
   },
+  chippurple: {
+    margin: 3,
+    marginTop: '16px',
+    backgroundColor: '#4a148c',
+    color: '#fff',
+  },
   chipred: {
     margin: 3,
     marginTop: '16px',
@@ -204,7 +210,7 @@ const EvaluationsResultStudentTable = props => {
                                           )}
 
                                           {application.evaluation_application.evaluation.practice === 1 && (
-                                            <Chip label="Pratique" className={clsx(classes.chipblue, className)} size="small"/>
+                                            <Chip label="Pratique" className={clsx(classes.chippurple, className)} size="small"/>
                                           )}
 
                                           {application.finalized_at && application.finished_automatically === 0 && (

@@ -29,7 +29,7 @@ const Topbar = props => {
 
   useEffect(() => {
     if (window.location.pathname.indexOf('/evaluation-practice') !== -1) {
-      setBackground('#4615b2');
+      setBackground('#4a148c');
     } else {
       setBackground('#3a7cf7');
     }

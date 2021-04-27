@@ -79,7 +79,10 @@ const useStyles = makeStyles(theme => ({
           skill: {
               display: 'flex',
           }
-      }
+      },
+    card: {
+        marginBottom: 10
+    }
   }));
 
 // import { Container } from './styles';
@@ -88,7 +91,7 @@ function QuestionItem({ question, index }) {
     const classes = useStyles();
 
     return (
-        <Card>
+        <Card className={classes.card}>
             <CardContent className={classes.lineQuestion}>
                 <Typography variant="h5" color="textSecondary" component="h2">
                     QUESTÃO - {index + 1}
