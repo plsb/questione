@@ -98,6 +98,8 @@ Route::group(['prefix' => 'question'], function (){
     Route::get('/keyword/{idQuestion}', 'Professor\KeywordsQuestionController@index')->name('keyword.index');
     Route::post('/keyword/', 'Professor\KeywordsQuestionController@store')->name('keyword.store');
     Route::delete('/keyword/{idQuestion}', 'Professor\KeywordsQuestionController@delete')->name('keyword.delete');
+
+    Route::post('/image', 'Professor\QuestionController@upload')->name('question.image');
 });
 
 Route::group(['prefix' => 'questionitem'], function (){
