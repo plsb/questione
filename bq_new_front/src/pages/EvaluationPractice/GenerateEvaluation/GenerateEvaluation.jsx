@@ -185,6 +185,7 @@ const GenerateEvaluation = props => {
 
   async function getAreas() {
     const referenceId = typeOfEvaluationList.filter((item) => item.description === formState.values.typeOfEvaluation)[0].id;
+    console.log(referenceId);
 
     try {
       const response = await api.get(`/all/courses-with-questions-practice/${referenceId}`);
@@ -287,6 +288,12 @@ const GenerateEvaluation = props => {
       errors: errors || {}
     }));
   }, [formState.values]);
+
+  useEffect(() => {
+    if (formState.values.typeOfEvaluation && formState.values.typeOfEvaluation !== 'select') {
+      getAreas();
+    } 
+  }, [formState.values.typeOfEvaluation]);
 
   const handleChange = event => {
     event.target.value = event.target.value === 'select' ? null : event.target.value;

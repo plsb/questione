@@ -98,10 +98,12 @@ const EvaluationPracticeQuestions = props => {
 
   async function loadQuestions(page){
     try {
-      let url = `/evaluation/practice/has-questions/${codigoEvaluation}`;
+      let url = `/evaluation/practice/has-questions/${codigoEvaluation}&page=${page}`;
       const response = await api.get(url);
       if(response.status == 200) {
-        setQuestions(response.data);
+        setTotal(response.data.total);
+
+        setQuestions(response.data.data);
       } else {
         setQuestions([]);
       }
@@ -116,7 +118,7 @@ const EvaluationPracticeQuestions = props => {
   };
 
   useEffect(() => {
-    loadQuestions();
+    loadQuestions(1);
   }, [refresh]);
 
   // const updateSearch = (e) => {
