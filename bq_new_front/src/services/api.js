@@ -24,7 +24,7 @@ function loadAlert(icon, message) {
 }
 
 const api = axios.create({
-  // baseURL: 'https://bancodequestoes.ifce.edu.br/api',
+  //baseURL: 'https://bancodequestoes.ifce.edu.br/api',
   //baseURL: 'https://200.17.32.102/api',
     baseURL: 'http://127.0.0.1:8000/api',
   /*headers: {

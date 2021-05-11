@@ -552,4 +552,17 @@ class QuestionController extends Controller
         }
     }
 
+    public function upload(Request $request){
+        $name = '';
+        if($request->hasFile('image')){
+            $name = time();
+            $image = $request->file('image')->storeAs('imagens', $name);
+
+        }
+
+        return response()->json([
+            'iamge' => $name
+        ], 202);
+    }
+
 }
