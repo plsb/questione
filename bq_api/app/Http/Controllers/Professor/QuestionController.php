@@ -562,7 +562,7 @@ class QuestionController extends Controller
 
         return response()->json([
             'image' => 'http://127.0.0.1:8000/storage/imagens/'.$name.'.jpg'
-        ], 202);
+        ], 200);
     }
 
 }
