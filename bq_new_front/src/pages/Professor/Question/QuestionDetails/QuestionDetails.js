@@ -136,48 +136,26 @@ const QuestionDetails = props => {
         history.goBack();
     };
 
-    function example_image_upload_handler (blobInfo, success, failure, progress) {
-        var xhr, formData;
-        
-        xhr = new XMLHttpRequest();
-        xhr.withCredentials = false;
-        xhr.open('POST', 'postAcceptor.php');
-        
-        xhr.upload.onprogress = function (e) {
-            progress(e.loaded / e.total * 100);
-        };
-        
-        xhr.onload = function() {
-            var json;
-        
-            if (xhr.status === 403) {
-            failure('HTTP Error: ' + xhr.status, { remove: true });
-            return;
+    async function image_upload_handler (blobInfo, success, failure, progress) {
+        try {
+            let formData = new FormData();
+            formData.append('image', blobInfo.blob(), blobInfo.filename());
+
+            const response = await api.post('question/image', formData);
+
+            if(response.status === 200){
+                success(response.data.image);
+            } else if (response.status === 202) {
+                // if(response.data.message){
+                //     loadAlert('error', response.data.message);
+                // } else if(response.data.errors[0].description){
+                //     loadAlert('error', response.data.errors[0].description);
+                // }
+                failure('Ocorreu um erro ao realizar o upload');
             }
-        
-            if (xhr.status < 200 || xhr.status >= 300) {
-            failure('HTTP Error: ' + xhr.status);
-            return;
-            }
-        
-            json = JSON.parse(xhr.responseText);
-        
-            if (!json || typeof json.location != 'string') {
-            failure('Invalid JSON: ' + xhr.responseText);
-            return;
-            }
-        
-            success(json.location);
-        };
-        
-        xhr.onerror = function () {
-            failure('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
-        };
-        
-        formData = new FormData();
-        formData.append('file', blobInfo.blob(), blobInfo.filename());
-        
-        xhr.send(formData);
+        } catch (error) {
+            failure('Ocorreu um erro ao realizar o upload');
+        }
     };
 
     async function saveQuestion(){
@@ -416,7 +394,7 @@ const QuestionDetails = props => {
                               menubar: false,
                               file_picker_types: 'image',
                               images_upload_url: 'postAcceptor.php',
-                              images_upload_handler: example_image_upload_handler,
+                              images_upload_handler: image_upload_handler,
                               automatic_uploads: true,
                               plugins: [
                                   'textpattern advlist autolink lists link image charmap print',
@@ -433,30 +411,6 @@ const QuestionDetails = props => {
               </div>
               <div style={{padding: "30px"}}>
                   <b className="item1">Enunciado</b>
-                  <Editor
-                      apiKey="ndvo85oqtt9mclsdb6g3jc5inqot9gxupxd0scnyypzakm18"
-                      init={{
-
-                          plugins: 'image code',
-                          toolbar: 'undo redo | image code',
-
-                          /* without images_upload_url set, Upload tab won't show up*/
-                          images_upload_url: 'postAcceptor.php',
-                          images_upload_base_path: '/Users/pelusb/Downloads/',
-
-                          /* we override default upload handler to simulate successful upload*/
-                         /* images_upload_handler: function (blobInfo, success, failure) {
-                              setTimeout(function () {
-                                  /* no matter what you upload, we will turn it into TinyMCE logo :)*/
-                                 /* success('http://moxiecode.cachefly.net/tinymce/v9/images/logo.png');
-                              }, 2000);
-                          },*/
-                          content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-                      }}
-                      value={stem}
-                      onEditorChange={handleChangeStem}
-                      name="stem"
-                      key="stem"/>
                   <Editor
                       apiKey="ndvo85oqtt9mclsdb6g3jc5inqot9gxupxd0scnyypzakm18"
                       init={{
