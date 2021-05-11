@@ -556,12 +556,12 @@ class QuestionController extends Controller
         $name = '';
         if($request->hasFile('image')){
             $name = time();
-            $image = $request->file('image')->storeAs('imagens', $name);
+            $image = $request->file('image')->storeAs('imagens', $name.'.jpg');
 
         }
 
         return response()->json([
-            'iamge' => $name
+            'image' => 'http://127.0.0.1:8000/storage/imagens/'.$name.'.jpg'
         ], 202);
     }
 
