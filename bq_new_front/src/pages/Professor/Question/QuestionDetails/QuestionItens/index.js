@@ -20,7 +20,12 @@ const useStyles = makeStyles({
     },
     btRemove: {
         color: '#f44336',
-        marginRight: 2
+        marginRight: 2,
+    },
+    btnRemoveWrapper: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginBottom: '8px',
     }
 });
 
@@ -235,29 +240,14 @@ const QuestionItens = props => {
 
     return (
        <div>
-           <div style={{marginTop: "20px"}}>
-               <Grid
-                   container
-                   direction="row"
-                   justify="center"
-                   alignItems="center">
-                   <Tooltip title="A questão deverá ter no mínimo 02 e no máximo 05 alternativas, sendo apenas UMA correta.">
-                       { btAddItem == true ?
-                           <Button color="primary" variant="outlined"  onClick={handleAddItem}>Adicionar Alternativa</Button> :
-                           <Button color="primary" variant="outlined"  disabled>Adicionar Alternativa</Button>
-                       }
-                   </Tooltip>
-                   <Tooltip title="A questão deverá ter no mínimo 02 e no máximo 05 alternativas, sendo apenas UMA correta.">
-                       {btRemoveItem == true ?
-                           <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined"  onClick={handleRemoveItem}>Remover Alternativa</Button> :
-                           <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined"  disabled>Remover Alternativa</Button>
-                       }
-                   </Tooltip>
-               </Grid>
-           </div>
            {inputItens.map((inputField, index) => (
                <div style={{padding: "30px"}}>
-                   <b className="item1">Alternativa de resposta {index+1}:</b>
+                    <div className={classes.btnRemoveWrapper}>
+                        <b className="item1">Alternativa de resposta {index+1}:</b>
+                        {(index > 1 && inputItens.length === index + 1) && (
+                            <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined"  onClick={handleRemoveItem}>Remover</Button> 
+                        )}
+                    </div>
                    <Editor
                        key={"item"+index}
                        apiKey="ndvo85oqtt9mclsdb6g3jc5inqot9gxupxd0scnyypzakm18"
@@ -296,6 +286,26 @@ const QuestionItens = props => {
 
                </div>
            ))}
+           <div style={{margin: "20px 0px", paddingLeft: '30px'}}>
+               <Grid
+                   container
+                   direction="row"
+                   justify="flex-start"
+                   alignItems="flex-start">
+                   <Tooltip title="A questão deverá ter no mínimo 02 e no máximo 05 alternativas, sendo apenas UMA correta.">
+                       { btAddItem == true ?
+                           <Button color="primary" variant="outlined"  onClick={handleAddItem}>Adicionar Alternativa</Button> :
+                           <Button color="primary" variant="outlined"  disabled>Adicionar Alternativa</Button>
+                       }
+                   </Tooltip>
+                   {/* <Tooltip title="A questão deverá ter no mínimo 02 e no máximo 05 alternativas, sendo apenas UMA correta.">
+                       {btRemoveItem == true ?
+                           <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined"  onClick={handleRemoveItem}>Remover Alternativa</Button> :
+                           <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined"  disabled>Remover Alternativa</Button>
+                       }
+                   </Tooltip> */}
+               </Grid>
+           </div>
            <Grid
                container
                direction="row"
