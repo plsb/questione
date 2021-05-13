@@ -16,6 +16,7 @@ use App\Skill;
 use App\TypeOfEvaluation;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use Validator;
 
 class QuestionController extends Controller
@@ -552,16 +553,27 @@ class QuestionController extends Controller
         }
     }
 
-    public function upload(Request $request){
-        $name = '';
-        if($request->hasFile('image')){
-            $name = time();
-            $image = $request->file('image')->storeAs('imagens', $name.'.jpg');
+    public function upload_image(Request $request){
+        //$user = auth('api')->user();
+        $storagePath = null;
+        if(!$request->hasFile('image')){
+            return response()->json([
+                'message' => 'A imagem não foi informada.',
+            ], 202);
+        }
+        if(filesize($request->file('image')) > 150000){
+            return response()->json([
+                'message' => 'A imagem deve ter no máximo 150 kb.'
+            ], 202);
 
         }
+        $name = time();
+        //$image = $request->file('image')->storeAs('imagens', $name.'.jpg');
+        //$storagePath = $request->file('image')->storeAs('images', $user->id.'_'.$name.'.jpg', 's3', 'public');
+        $storagePath = Storage::disk('s3')->put("images", $request->file('image'), 'public');
 
         return response()->json([
-            'image' => 'http://127.0.0.1:8000/storage/imagens/'.$name.'.jpg'
+            'url_image' => 'https://questione.s3-us-west-2.amazonaws.com/'.$storagePath,
         ], 200);
     }
 
