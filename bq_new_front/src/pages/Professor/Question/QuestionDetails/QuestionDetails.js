@@ -136,21 +136,21 @@ const QuestionDetails = props => {
         history.goBack();
     };
 
-    async function image_upload_handler (blobInfo, success, failure, progress) {
+    async function imageUploadHandler (blobInfo, success, failure, progress) {
         try {
             let formData = new FormData();
             formData.append('image', blobInfo.blob(), blobInfo.filename());
 
-            const response = await api.post('question/image', formData);
+            if (blobInfo.blob().size > 150000) {
+                failure('A imagem deve ter no máximo 150kb');
+                return;
+            }
+
+            const response = await api.post('question/upload-image', formData);
 
             if(response.status === 200){
-                success(response.data.image);
+                success(response.data.url_image);
             } else if (response.status === 202) {
-                // if(response.data.message){
-                //     loadAlert('error', response.data.message);
-                // } else if(response.data.errors[0].description){
-                //     loadAlert('error', response.data.errors[0].description);
-                // }
                 failure('Ocorreu um erro ao realizar o upload');
             }
         } catch (error) {
@@ -394,7 +394,7 @@ const QuestionDetails = props => {
                               menubar: false,
                               file_picker_types: 'image',
                               images_upload_url: 'postAcceptor.php',
-                              images_upload_handler: image_upload_handler,
+                              images_upload_handler: imageUploadHandler,
                               automatic_uploads: true,
                               plugins: [
                                   'textpattern advlist autolink lists link image charmap print',
@@ -418,7 +418,8 @@ const QuestionDetails = props => {
                           menubar: false,
                           file_picker_types: 'image',
                           images_upload_url: 'postAcceptor.php',
-                          automatic_uploads: false,
+                          images_upload_handler: imageUploadHandler,
+                          automatic_uploads: true,
                           plugins: [
                               'textpattern advlist autolink lists link image charmap print',
                               ' preview hr anchor pagebreak code media save',
