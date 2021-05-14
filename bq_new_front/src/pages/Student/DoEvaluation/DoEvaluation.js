@@ -386,7 +386,7 @@ const DoEvaluation = props => {
                       onClick={(event) => event.stopPropagation()}
                       onFocus={(event) => event.stopPropagation()}
                       control={(
-                        <Tooltip title={data.answer != null ? 'Esta questão já foi respondida' : 'NÃO respondida'}>
+                        <Tooltip title={data.answer != null ? 'Esta questão já foi respondida' : 'Não respondida'}>
                           <Checkbox
                             className={data.answer != null ? '' : classes.hide}
                             checked={data.answer != null}

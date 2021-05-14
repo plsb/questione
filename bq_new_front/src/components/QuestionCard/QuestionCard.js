@@ -499,21 +499,17 @@ const QuestionCard = props => {
         <CardContent>
             <div className={classes.lineQuestion}>
 
-                { question.reference !== "" && question.reference !== null ?
-                    <div>
-                        <Typography variant="button" color="textSecondary" component="p">
-                            Referência:
-                        </Typography>
-                        <div> { question.reference } </div>
-                        <br />
-                    </div>
-                    : null}
                  { question.year !== '' && question.year !== null ?
                     <div>
                         <Typography variant="button" color="textSecondary" component="p">
                             Ano:
                         </Typography>
-                        <div> { question.year } </div>
+                        <div> { question.year }
+                            { question.fk_type_of_evaluation_id !== '' && question.fk_type_of_evaluation_id !== null ?
+                                      ' - '+question.type_of_evaluation.description
+                                : null}
+                        </div>
+
                         <br />
                     </div>
                     : null}

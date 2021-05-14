@@ -21,11 +21,11 @@ import 'react-dropzone-uploader/dist/styles.css';
 
 const schema = {
   fk_course_id: {
-    presence: { allowEmpty: false, message: 'O curso é obrigatório.' },
+    presence: { allowEmpty: false, message: 'A área é obrigatório.' },
     numericality: {
       onlyInteger: true,
       greaterThan: 0,
-      message: 'Escolha um curso.',
+      message: 'Escolha uma área.',
     }
   }
 };
@@ -35,7 +35,7 @@ const useStyles = makeStyles(() => ({
 
 const UserRequestCourseDetails = props => {
   const { className, history, ...rest } = props;
-  const [courses, setCourses] = useState([{'id': '0', 'description': '- Escolha um curso -'}]);
+  const [courses, setCourses] = useState([{'id': '0', 'description': '- Escolha uma área -'}]);
   const [file, setFile] = useState(null);
 
   const classes = useStyles();
@@ -79,7 +79,7 @@ const UserRequestCourseDetails = props => {
 
   async function storeCourseProfessorDetails(){
     if(!formState.values.fk_course_id){
-      loadAlert('error', 'Informe o curso.');
+      loadAlert('error', 'Informe a área.');
       return ;
     }
 
@@ -174,11 +174,11 @@ const UserRequestCourseDetails = props => {
           </IconButton>
         </div>
         <CardHeader
-          subheader="Selecione abaixo o curso que deseja ter permissão para construir questões. O comprovante
+          subheader="Selecione abaixo a área que deseja ter permissão para contribuir com questões. O comprovante
               deverá está no formato PDF. São exemplos de comprovantes: declaração assinada pela coordenação de curso,
               portarias (NDE, Colegiado ou outras que comprovem a atuação como professor), diário de classe do sistema acadêmico,
-              ou outro documento que comprove que você é professor do curso solicitado."
-          title="Solicitação para curso"/>
+              ou outro documento que comprove que você é professor da área solicitada."
+          title="Solicitação para área"/>
         <Divider />
         <CardContent>
           <Grid
@@ -190,7 +190,7 @@ const UserRequestCourseDetails = props => {
               xs={12}>
               <TextField
                 fullWidth
-                label="Curso"
+                label="Área"
                 margin="dense"
                 name="fk_course_id"
                 onChange={handleChange}

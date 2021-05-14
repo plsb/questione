@@ -567,7 +567,7 @@ class QuestionController extends Controller
             ], 202);
 
         }
-        $name = time();
+        //$name = time();
         //$image = $request->file('image')->storeAs('imagens', $name.'.jpg');
         //$storagePath = $request->file('image')->storeAs('images', $user->id.'_'.$name.'.jpg', 's3', 'public');
         $storagePath = Storage::disk('s3')->put("images", $request->file('image'), 'public');
