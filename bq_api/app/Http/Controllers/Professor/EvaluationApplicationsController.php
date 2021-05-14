@@ -115,6 +115,52 @@ class EvaluationApplicationsController extends Controller
             $verifyApplication = EvaluationApplication::where('id_application',$id_evaluation)->get();
         } while(sizeof($verifyApplication)>0);
 
+        //verifica se as horas iniciais ou finais foram informadas e se a data inicial não é menor que a atual
+        if($request->date_start){
+            if($request->date_start < date('Y-m-d')){
+                return response()->json([
+                    'message' => 'A data para iniciar a avaliação deve ser maior ou igual a data atual.'
+                ], 202);
+            }
+            if(!$request->time_start){
+                return response()->json([
+                    'message' => 'A hora para iniciar a prova deve ser informada.'
+                ], 202);
+            }
+        }
+        if($request->date_finish){
+            if(!$request->time_finish){
+                return response()->json([
+                    'message' => 'A hora para finalizar a prova deve ser informada.'
+                ], 202);
+            }
+        }
+        //verifica se foi informado a data final e o tempo para finalizar. Os dois não podem ser informados ao mesmo tempo
+        if($request->date_finish && $request->time_to_finalize){
+            return response()->json([
+                'message' => 'Deverá ser informado um tempo para finalizar a prova ou uma data para finalizar. '.
+                'Os dois campos não podem ser informados para uma mesma aplicação'
+            ], 202);
+        }
+        //verifica se a data final não é menor que a data e hora inicial.
+        if($request->date_start && $request->date_finish){
+            if($request->date_finish < $request->date_start){
+                return response()->json([
+                    'message' => 'A data para finalizar a prova não pode ser menor que a data para iniciar.'
+                ], 202);
+            }
+            //verifica se as datas são iguais
+            if($request->date_finish == $request->date_start){
+                if($request->time_start && $request->time_finish){
+                    if($request->time_finish <= $request->time_start){
+                        return response()->json([
+                            'message' => 'A hora para finalizar a prova não pode ser menor que a hora para iniciar.'
+                        ], 202);
+                    }
+                }
+            }
+        }
+
         $evaluation_application = new EvaluationApplication();
         $evaluation_application->id_application = $id_evaluation;
         $evaluation_application->description = $request->description;
@@ -122,6 +168,8 @@ class EvaluationApplicationsController extends Controller
         $evaluation_application->date_start = $request->date_start;
         $evaluation_application->time_start = $request->time_start;
         $evaluation_application->time_to_finalize = $request->time_to_finalize;
+        $evaluation_application->date_finish = $request->date_finish;
+        $evaluation_application->time_finish = $request->time_finish;
         $evaluation_application->status = 0;
         $evaluation_application->save();
 
@@ -167,6 +215,52 @@ class EvaluationApplicationsController extends Controller
             ], 202);
         }
 
+        //verifica se as horas iniciais ou finais foram informadas e se a data inicial não é menor que a atual
+        if($request->date_start){
+            if($request->date_start < date('Y-m-d')){
+                return response()->json([
+                    'message' => 'A data para iniciar a avaliação deve ser maior ou igual a data atual.'
+                ], 202);
+            }
+            if(!$request->time_start){
+                return response()->json([
+                    'message' => 'A hora para iniciar a prova deve ser informada.'
+                ], 202);
+            }
+        }
+        if($request->date_finish){
+            if(!$request->time_finish){
+                return response()->json([
+                    'message' => 'A hora para finalizar a prova deve ser informada.'
+                ], 202);
+            }
+        }
+        //verifica se foi informado a data final e o tempo para finalizar. Os dois não podem ser informados ao mesmo tempo
+        if($request->date_finish && $request->time_to_finalize){
+            return response()->json([
+                'message' => 'Deverá ser informado um tempo para finalizar a prova ou uma data para finalizar. '.
+                    'Os dois campos não podem ser informados para uma mesma aplicação'
+            ], 202);
+        }
+        //verifica se a data final não é menor que a data e hora inicial.
+        if($request->date_start && $request->date_finish){
+            if($request->date_finish < $request->date_start){
+                return response()->json([
+                    'message' => 'A data para finalizar a prova não pode ser menor que a data para iniciar.'
+                ], 202);
+            }
+            //verifica se as datas são iguais
+            if($request->date_finish == $request->date_start){
+                if($request->time_start && $request->time_finish){
+                    if($request->time_finish <= $request->time_start){
+                        return response()->json([
+                            'message' => 'A hora para finalizar a prova não pode ser menor que a hora para iniciar.'
+                        ], 202);
+                    }
+                }
+            }
+        }
+
         $evaluation_application->description = $request->description;
         if($request->random_questions) {
             $evaluation_application->random_questions = $request->random_questions;
@@ -181,6 +275,8 @@ class EvaluationApplicationsController extends Controller
         $evaluation_application->date_start = $request->date_start;
         $evaluation_application->time_start = $request->time_start;
         $evaluation_application->time_to_finalize = $request->time_to_finalize;
+        $evaluation_application->date_finish = $request->date_finish;
+        $evaluation_application->time_finish = $request->time_finish;
         $evaluation_application->save();
 
         return response()->json([
