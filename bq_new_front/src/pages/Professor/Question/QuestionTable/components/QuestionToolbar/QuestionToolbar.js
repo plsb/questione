@@ -11,7 +11,7 @@ import {Button,
   RadioGroup,
   FormControlLabel,
   Radio, Tooltip, Card, CardActions, CardContent, Collapse,
-  IconButton, Hidden} from '@material-ui/core';
+  IconButton, Hidden, Grid} from '@material-ui/core';
 import {withRouter} from "react-router-dom";
 import api from "../../../../../../services/api";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -206,6 +206,16 @@ const QuestionToolbar = props => {
           </Button>
         </div>
         <Card className={classes.root}>
+          <div style={{ margin: '16px' }}>
+            Para mais informações sobre o módulo questões,&nbsp;
+            <a
+              href="https://docs.google.com/document/d/1JzpLbCMDaOQbGubzB6l1KDBaPjGro10-x2OHxdFLtqU/edit?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              clique aqui
+            </a>
+          </div>
           <CardContent>
               <FormControl component="fieldset">
                 <RadioGroup aria-label="gender" name="gender1" value={searchText[0] ? searchText[0].value : 'S'} onChange={handleChangeSelect}>

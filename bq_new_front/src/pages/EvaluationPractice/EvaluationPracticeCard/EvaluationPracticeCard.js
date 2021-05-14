@@ -212,7 +212,7 @@ const EvaluationPracticeCard = props => {
                     loadAlert('error', response.data.message);
                 }
             } else {
-                if (response.data.length !== 0) {
+                if (response.data.data.length !== 0) {
                     setHasQuestions(true);
                 }
             }
@@ -275,9 +275,9 @@ const EvaluationPracticeCard = props => {
                 keepMounted
                 open={Boolean(anchorEl)}
                 onClose={handleClose}>
-                {evaluation.status == 1 && hasQuestions ? <MenuItem onClick={() => history.push(`/evaluation-practice/applications-evaluation/${props.evaluation.id}`)}>Ver aplicações</MenuItem> : null}
+                {(evaluation.status == 1 && hasQuestions ? <MenuItem onClick={() => history.push(`/evaluation-practice/applications-evaluation/${props.evaluation.id}`)}>Ver aplicações</MenuItem> : null)}
                 {evaluation.status == 1 && hasQuestions ? <MenuItem onClick={() => history.push(`/generate-evaluation/${props.evaluation.id}/questions`)}>Ver questões</MenuItem> : null}
-                {evaluation.status == 1 && !hasQuestions ? <MenuItem onClick={handleGenerateEvaluation}>Gerar Avaliação</MenuItem> : null}
+                {(evaluation.status == 1 && !hasQuestions ? <MenuItem onClick={handleGenerateEvaluation}>Gerar Avaliação</MenuItem> : null)}
                 {/* <MenuItem onClick={duplicate}>Duplicar</MenuItem> */}
                 {evaluation.status == 1 ? <MenuItem onClick={() => changeStatus(2)}>Arquivar</MenuItem> : null}
                 {evaluation.status == 2 ? <MenuItem onClick={() => changeStatus(1)}>Ativar</MenuItem> : null}

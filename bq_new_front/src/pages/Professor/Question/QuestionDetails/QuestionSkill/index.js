@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { uniqueId } from 'lodash';
 import {
     MenuItem,
     TextField,
@@ -203,11 +204,11 @@ const QuestionSkill = props => {
         if(length == 3){
             return ;
         }
-        values.push({ idItem: 0, objectSelected: 0 });
+        values.push({ idItem: 0, objectSelected: 0, id: `${uniqueId()}${Date.now()}` });
         setInputObjects(values);
     };
 
-    const handleRemoveObjects = () => {
+    const handleRemoveObjects = (id) => {
         const values = [...inputObjects];
         const length = inputObjects.length;
         //se só tiver um elemento ele retorna pois não pode excluir
@@ -219,8 +220,8 @@ const QuestionSkill = props => {
             objectsDelete.push({ idItem: element.idItem })
         }
         //pega último elemtno antes de excluir
-        values.splice(length-1, 1);
-        setInputObjects(values);
+        // values.splice(length-1, 1);
+        setInputObjects((lastObjects) => lastObjects.filter((object) => object.id !== id));
 
     };
 
@@ -348,26 +349,8 @@ const QuestionSkill = props => {
                     ))}
                 </TextField>
             </div>
-           <div style={{marginTop: "20px"}}>
-               <Grid
-                   container
-                   direction="row"
-                   justify="center"
-                   alignItems="center">
-                   <Tooltip title="A questão deverá ter no máximo 03 objetos de conhecimento.">
-                       { btAddObject == true ?
-                       <Button color="primary" variant="outlined" onClick={handleAddObjects}>Adicionar Objeto</Button> :
-                           <Button color="primary" variant="outlined" disabled>Adicionar Objeto</Button>
-                       }
-                   </Tooltip>
-                   {btRemoveObject == true ?
-                       <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined" onClick={handleRemoveObjects}>Remover Objeto</Button> :
-                       <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined" disabled>Remover Objeto</Button>
-                   }
-               </Grid>
-           </div>
            {inputObjects.map((inputField, index) => (
-                <div style={{marginTop: "10px"}}>
+                <div style={{marginTop: "10px", display: 'flex', alignItems: 'center' }}>
                         <TextField
                             id={"obj"+index}
                             select
@@ -384,8 +367,27 @@ const QuestionSkill = props => {
                                 </MenuItem>
                             ))}
                         </TextField>
+                        <Button style={{marginLeft: "10px", marginTop: '2px', maxHeight: '38px'}} className={clsx(classes.btRemove, className)} variant="outlined" onClick={() => handleRemoveObjects(inputField.id)}>Remover</Button> 
                 </div>
            ))}
+           <div style={{margin: "20px 0px"}}>
+               <Grid
+                   container
+                   direction="row"
+                   justify="flex-start"
+                   alignItems="center">
+                   <Tooltip title="A questão deverá ter no máximo 03 objetos de conhecimento.">
+                       { btAddObject == true ?
+                       <Button color="primary" variant="outlined" onClick={handleAddObjects}>Adicionar Objeto</Button> :
+                           <Button color="primary" variant="outlined" disabled>Adicionar Objeto</Button>
+                       }
+                   </Tooltip>
+                   {/* {btRemoveObject == true ?
+                       <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined" onClick={() => handleRemoveObjects()}>Remover Objeto</Button> :
+                       <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined" disabled>Remover Objeto</Button>
+                   } */}
+               </Grid>
+           </div>
            <Grid
                container
                direction="row"

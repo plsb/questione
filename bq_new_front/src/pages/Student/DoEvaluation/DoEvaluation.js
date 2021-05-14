@@ -13,7 +13,7 @@ import {
   Avatar,
   CardContent,
   CardActions, List, ListItem, Button, CircularProgress,
-    Backdrop, Grid
+    Backdrop, Grid, Tooltip
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import api from "../../../services/api";
@@ -29,6 +29,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import Dialog from "@material-ui/core/Dialog";
+
+import './styles.css';
 
 const useStyles = makeStyles({
   root: {
@@ -51,6 +53,9 @@ const useStyles = makeStyles({
     color: '#ffffff',
     marginRight: 10
   },
+  hide: {
+    opacity: 0,
+  }
 });
 
 const DoEvaluation = props => {
@@ -313,6 +318,16 @@ const DoEvaluation = props => {
                         {'Professor(a): '+application.evaluation.user.name}
                       </Typography>
                     )}
+                    <Typography variant="button" color="textSecondary" component="p">
+                        Para mais informações sobre como responder a avaliação,&nbsp;
+                        <a
+                          href="https://docs.google.com/document/d/1o_rd-CN_Or0X9gk1c9aB6oB69jWMi-zOGJ7gs8LNEvc/edit?usp=sharing"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          clique aqui
+                        </a>
+                    </Typography>
                     {!enableButtonStart && dateTimeToFinalized && (
                       <Typography variant="button" color="textSecondary" component="p">
                         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -339,7 +354,7 @@ const DoEvaluation = props => {
                   className={classes.buttons}
                   variant="contained"
                   color="primary"
-                  onClick={onClickOpenDialogStart}
+                  onClick={startEvaluation}
                   disabled={!enableButtonStart}
                 >
                   {application && application.student_started === 1 ? 'Continuar' : 'Iniciar' }
@@ -370,9 +385,14 @@ const DoEvaluation = props => {
                       aria-label="Acknowledge"
                       onClick={(event) => event.stopPropagation()}
                       onFocus={(event) => event.stopPropagation()}
-                      control={<Checkbox
-                                checked={data.answer != null}
-                              />}
+                      control={(
+                        <Tooltip title={data.answer != null ? 'Esta questão já foi respondida' : 'NÃO respondida'}>
+                          <Checkbox
+                            className={data.answer != null ? '' : classes.hide}
+                            checked={data.answer != null}
+                          />
+                        </Tooltip>
+                      )}
                       label={(i + 1) <10 ? ('Questão 00' + (i + 1)) :
                               (i + 1) <100 ? ('Questão 0' + (i + 1)) : (i + 1)}
                   />
@@ -410,7 +430,18 @@ const DoEvaluation = props => {
                 </ExpansionPanelDetails>
               </ExpansionPanel>
           ))}
-
+          {!enableButtonStart && (
+            <Button
+              className={clsx(classes.chipRed, className)}
+              variant="contained"
+              color="#e57373"
+              onClick={onClickOpenDialogFinsh}
+              disabled={enableButtonStart}
+              style={{ margin: '16px 0px', marginLeft: '16px' }}
+            >
+              Finalizar
+            </Button>
+          )}
         </div>
               : null}
         <DialogQuestione handleClose={onClickCloseDialogStart}
