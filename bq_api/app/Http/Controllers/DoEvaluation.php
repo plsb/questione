@@ -12,6 +12,7 @@ use App\Notifications\StudentFinishEvaluationToProfessorNotification;
 use App\Question;
 use App\User;
 use Cassandra\Date;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Validator;
 use App\Http\Controllers\Controller;
@@ -38,7 +39,7 @@ class DoEvaluation extends Controller
                 ], 202);
             }
         }
-        //procura o cabeçalho da avaliação para saber se o aluno já iniciou a aavaliação
+        //procura o cabeçalho da avaliação para saber se o aluno já iniciou a avaliação
         $head_answer = AnswersHeadEvaluation::where('fk_user_id', $user->id)
             ->where('fk_application_evaluation_id', $evaluation_application->id)->first();
 
@@ -102,11 +103,13 @@ class DoEvaluation extends Controller
         $head_answer = AnswersHeadEvaluation::where('fk_user_id', $user->id)
             ->where('fk_application_evaluation_id', $application->id)->first();
 
+        //pega a data atual
+        $dateNow = date('Y-m-d');
         if($head_answer){
             //verifica se tem avaliação e já foi finalizada
             if($head_answer->finalized_at != null){
                 return response()->json([
-                    'message' => 'Avaliação já foi respondida pelo usuário.'
+                    'message' => 'Avaliação já foi respondida por você.'
                 ], 202);
             }
 
@@ -131,7 +134,7 @@ class DoEvaluation extends Controller
 
                    return response()->json([
                        'closed' => '1',
-                       'message' => 'O horário atual não é permitido para realizar a avaliação. A sua avaliação foi encerrada automaticamente.'
+                       'message' => 'O seu tempo para finalizar a avaliação acabou. A sua avaliação foi encerrada automaticamente.'
                    ], 202);
                }
            }
@@ -139,8 +142,6 @@ class DoEvaluation extends Controller
         } else {
             //verifica se o professor pre detemrinou uma data e horário específico para iniciar a avaliação
             if($application->date_start){
-                //pega a data atual
-                $dateNow = date('Y-m-d');
                 //verifica se a data atual é igual a data de iniciar a avaliação
                 if($application->date_start == $dateNow){
                     //verifica se tem hora inicial
@@ -150,16 +151,16 @@ class DoEvaluation extends Controller
                         $timeFinisedEvaluationStarted = new \DateTime(date('H:i'));
                         //pega hora que foi inserida pelo professor para iniciar a avaliação
                         $timeInserted = new \DateTime($application->time_start);
-                        //diminui 20 minutos para especificar o tempo inicial para iniciar limite
-                        $timeStartedEvaluationStarted->sub(new \DateInterval('PT20M'));
-                        //aumenta 20 minutos para especificar o tempo final pata iniciar limite
-                        $timeFinisedEvaluationStarted->add(new \DateInterval('PT20M'));
+                        //diminui 05 minutos para especificar o tempo inicial para iniciar limite
+                        $timeStartedEvaluationStarted->sub(new \DateInterval('PT5M'));
+                        //aumenta 05 minutos para especificar o tempo final pata iniciar limite
+                        $timeFinisedEvaluationStarted->add(new \DateInterval('PT5M'));
 
                         //horário que o estudante deve iniciar a avaliação
                         $timeStudentShouldStarted = new \DateTime($application->time_start);
                         $timeStudentShouldFinished = new \DateTime($application->time_start);
-                        $timeStudentShouldStarted->sub(new \DateInterval('PT20M'));
-                        $timeStudentShouldFinished->add(new \DateInterval('PT20M'));
+                        $timeStudentShouldStarted->sub(new \DateInterval('PT5M'));
+                        $timeStudentShouldFinished->add(new \DateInterval('PT5M'));
 
                         if(!($timeInserted >= $timeStartedEvaluationStarted && $timeInserted <= $timeFinisedEvaluationStarted)){
                             return response()->json([
@@ -181,6 +182,28 @@ class DoEvaluation extends Controller
             $head_answer->finalized_at = null;
             $head_answer->save();
 
+        }
+        if($application->date_finish){ //verifica se existe date_finish
+            //verifica se a data de finalizar é menor que a atual
+            if($application->date_finish <= $dateNow){
+                //verifica se existe hora para terminar
+                if($application->time_finish){
+                    //$timeFinish = new \DateTime($application->time_finish); // converte a hora em DateTime
+                    //verifica se a hora já passou
+                    $hour = date('H:i');
+                    if($application->time_finish < $hour){
+
+                        $head_answer->finalized_at = date('Y-m-d H:i:s');
+                        $head_answer->finished_automatically = 1;
+                        $head_answer->save();
+
+                        return response()->json([
+                            'closed' => '1',
+                            'message' => 'O prazo para finalizar a avaliação já se encerrou. A avaliação foi encerrada automaticamente.'
+                        ], 202);
+                    }
+                }
+            }
         }
 
         foreach ($questions_evaluations as $question){
@@ -313,8 +336,31 @@ class DoEvaluation extends Controller
 
                 return response()->json([
                     'closed' => '1',
-                    'message' => 'O horário atual não é permitido para realizar a avaliação. A sua avaliação foi encerrada automaticamente.'
+                    'message' => 'O seu tempo para finalizar a avaliação acabou. A sua avaliação foi encerrada automaticamente.'
                 ], 202);
+            }
+        } else { //verifica se a avaliação tem uma data e uma hora de encerramento
+            if($application_evaluation->date_finish){ //verifica se existe date_finish
+                //verifica se a data de finalizar é menor que a atual
+                if($application_evaluation->date_finish <= date('Y-m-d')){
+                    //verifica se existe hora para terminar
+                    if($application_evaluation->time_finish){
+                        //$timeFinish = new \DateTime($application->time_finish); // converte a hora em DateTime
+                        //verifica se a hora já passou
+                        $hour = date('H:i');
+                        if($application_evaluation->time_finish < $hour){
+
+                            $answer_head->finalized_at = date('Y-m-d H:i:s');
+                            $answer_head->finished_automatically = 1;
+                            $answer_head->save();
+
+                            return response()->json([
+                                'closed' => '1',
+                                'message' => 'O prazo para finalizar a avaliação já se encerrou. A avaliação foi encerrada automaticamente.'
+                            ], 202);
+                        }
+                    }
+                }
             }
         }
 

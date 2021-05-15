@@ -406,6 +406,32 @@ class EvaluationApplicationsController extends Controller
                     $ans_while->save();
                 }
             }
+        } else { //verifica se a avaliação tem uma data e uma hora de encerramento
+            if($application->date_finish){ //verifica se existe date_finish
+                //verifica se a data de finalizar é menor que a atual
+                if($application->date_finish <= date('Y-m-d')){
+                    //verifica se existe hora para terminar
+                    if($application->time_finish){
+                        //$timeFinish = new \DateTime($application->time_finish); // converte a hora em DateTime
+                        //verifica se a hora já passou
+                        $hour = date('H:i');
+                        if($application->time_finish < $hour){
+
+                            $answerHeadNotEnded = AnswersHeadEvaluation::where('fk_application_evaluation_id', '=', $idApplication)
+                                ->whereNull('finalized_at')
+                                ->orderBy('id')
+                                ->get();
+                            //percorre todas as avaliações que não possuem data de finalização
+                            foreach($answerHeadNotEnded as $ans_while){
+                                    $ans_while->finalized_at = date('Y-m-d H:i:s');
+                                    $ans_while->finished_automatically = 1;
+                                    $ans_while->save();
+                            }
+
+                        }
+                    }
+                }
+            }
         }
 
         $answerHead = AnswersHeadEvaluation::where('fk_application_evaluation_id', '=', $idApplication)
