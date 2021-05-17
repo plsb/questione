@@ -144,7 +144,7 @@ const UserRequestCourseTable = props => {
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell className={classes.headTable}>Curso</TableCell>
+                      <TableCell className={classes.headTable}>Área</TableCell>
                       <TableCell className={classes.headTable}>Dt. Solicitação</TableCell>
                       <TableCell className={classes.headTable}>Situação</TableCell>
                     </TableRow>

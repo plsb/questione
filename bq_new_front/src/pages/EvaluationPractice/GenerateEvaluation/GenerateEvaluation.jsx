@@ -121,7 +121,7 @@ const GenerateEvaluation = props => {
   }
 
   async function saveGenerateEvaluation() {
-    
+
     try {
       const referenceId = typeOfEvaluationList.filter((item) => item.description === formState.values.typeOfEvaluation)[0].id;
       const areaId = areaList.filter((item) => item.description === formState.values.area)[0].id;
@@ -292,7 +292,7 @@ const GenerateEvaluation = props => {
   useEffect(() => {
     if (formState.values.typeOfEvaluation && formState.values.typeOfEvaluation !== 'select') {
       getAreas();
-    } 
+    }
   }, [formState.values.typeOfEvaluation]);
 
   const handleChange = event => {
@@ -346,7 +346,7 @@ const GenerateEvaluation = props => {
           </IconButton>
         </div>
         <CardHeader
-          subheader=""
+          subheader="Campos obrigatórios estão marcados com (*)."
           title="Gerar Avaliação" />
         <Divider />
         <CardContent>
@@ -360,8 +360,8 @@ const GenerateEvaluation = props => {
               xs={12}
             >
               <div className={classes.selectGroup}>
-                <b className="item1" style={{ marginRight: '32px' }}>Tipo de avaliação</b>
-                <Tooltip title="Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar no campo tipo de avaliação." placement="right">
+                <b className="item1" style={{ marginRight: '32px' }}>Tipo de avaliação *</b>
+                <Tooltip title="Você deve escolher o tipo de avaliação para filtrar questões. O campo tipo de avaliação representa um agrupamento de questões. Ex: Enem, Enade, dentre outros." placement="right">
                   <Select
                     labelId="typeOfEvaluation-label"
                     id="typeOfEvaluation"
@@ -411,8 +411,8 @@ const GenerateEvaluation = props => {
                   xs={12}
                 >
                   <div className={classes.selectGroup}>
-                    <b className="item1" style={{ marginRight: '32px' }}>Área</b>
-                    <Tooltip title="Área" placement="right">
+                    <b className="item1" style={{ marginRight: '32px' }}>Área *</b>
+                    <Tooltip title="Você deve escolher a área de conhecimento para filtrar questões." placement="right">
                       <Select
                         labelId="area-label"
                         id="area"
@@ -465,7 +465,7 @@ const GenerateEvaluation = props => {
                 >
                   <div className={classes.selectGroup}>
                     <b className="item1" style={{ marginRight: '32px' }}>Competência</b>
-                    <Tooltip title="" placement="right">
+                    <Tooltip title="A competência é opcional. Caso não seja selecionada uma competência, o sistema irá sugerir questões de todas as competências da área selecionada. " placement="right">
                       <Select
                         labelId="skills-label"
                         id="skills"
@@ -494,45 +494,47 @@ const GenerateEvaluation = props => {
                 <Grid
                   item
                   md={4}
-                  xs={12}
-                >
-                  <TextField
-                    fullWidth
-                    error={hasError('initial_period')}
-                    helperText={
-                      hasError('initial_period') ? formState.errors.initial_period[0] : null
-                    }
-                    label="Período (Ano inicial) - Opcional"
-                    margin="dense"
-                    name="initial_period"
-                    onChange={handleChange}
-                    value={formState.values.initial_period || ''}
-                    variant="outlined"
-                    type="number"
-                    disabled={renderConfigQuestions}
-                  />
+                  xs={12}>
+                  <Tooltip title="O período (ano inicial e final) é opcional. Caso seja informado, as questões serão filtradas pelo período informado." placement="right">
+                    <TextField
+                      fullWidth
+                      error={hasError('initial_period')}
+                      helperText={
+                        hasError('initial_period') ? formState.errors.initial_period[0] : null
+                      }
+                      label="Período (Ano inicial) - Opcional"
+                      margin="dense"
+                      name="initial_period"
+                      onChange={handleChange}
+                      value={formState.values.initial_period || ''}
+                      variant="outlined"
+                      type="number"
+                      disabled={renderConfigQuestions}
+                    />
+                  </Tooltip>
                 </Grid>
 
                 <Grid
                   item
                   md={4}
-                  xs={12}
-                >
-                  <TextField
-                    fullWidth
-                    error={hasError('final_period')}
-                    helperText={
-                      hasError('final_period') ? formState.errors.final_period[0] : null
-                    }
-                    label="Período (Ano final) - Opcional"
-                    margin="dense"
-                    name="final_period"
-                    onChange={handleChange}
-                    value={formState.values.final_period || ''}
-                    variant="outlined"
-                    type="number"
-                    disabled={renderConfigQuestions}
-                  />
+                  xs={12}>
+                  <Tooltip title="O período (ano inicial e final) é opcional. Caso seja informado, as questões serão filtradas pelo período informado." placement="right">
+                    <TextField
+                      fullWidth
+                      error={hasError('final_period')}
+                      helperText={
+                        hasError('final_period') ? formState.errors.final_period[0] : null
+                      }
+                      label="Período (Ano final) - Opcional"
+                      margin="dense"
+                      name="final_period"
+                      onChange={handleChange}
+                      value={formState.values.final_period || ''}
+                      variant="outlined"
+                      type="number"
+                      disabled={renderConfigQuestions}
+                    />
+                  </Tooltip>
                 </Grid>
               </>
             )}
@@ -541,15 +543,14 @@ const GenerateEvaluation = props => {
               <Grid
                 item
                 md={12}
-                xs={12}
-              >
-                <Button
-                  color="primary"
-                  variant="outlined"
-                  disabled={!formState.isValid}
-                  onClick={handleHowManyQuestions}>
-                  Configurar questões
-                </Button>
+                xs={12}>
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    disabled={!formState.isValid}
+                    onClick={handleHowManyQuestions}>
+                    Configurar questões
+                  </Button>
               </Grid>
             )}
 
@@ -564,38 +565,38 @@ const GenerateEvaluation = props => {
           <CardContent>
             <Grid
               container
-              spacing={1}
-            >
+              spacing={1}>
               <Grid
                 item
                 md={12}
-                xs={12}
-              >
-                <Typography variant="h4" color="textPrimary" component="h4">
-                  {'Total de questões disponíveis: ' + amountQuestions}
+                xs={12}>
+                <Typography variant="button" color="secondary" component="h4">
+                  {amountQuestions == 1 ? 'Baseado no filtro acima, o sistema possui ' + amountQuestions +' questão disponível.' :
+                      'Baseado no filtro acima, o sistema possui ' + amountQuestions +' questões disponíveis.'}
                 </Typography>
               </Grid>
 
               <Grid
                   item
                   md={4}
-                  xs={12}
-                >
-                  <TextField
-                    fullWidth
-                    error={hasError('amount_questions')}
-                    helperText={
-                      hasError('amount_questions') ? formState.errors.amount_questions[0] : null
-                    }
-                    label="Quantidade de questões"
-                    margin="dense"
-                    name="amount_questions"
-                    onChange={handleChange}
-                    value={formState.values.amount_questions || ''}
-                    variant="outlined"
-                    type="number"
-                    disabled={amountQuestions === 0}
-                  />
+                  xs={12}>
+                  <Tooltip title="Neste campo deve ser informada a quantidade de questões desejáveis para que o sistema gere sua avaliação. O valor não pode ser superior ao total de questões disponíveis." placement="right">
+                    <TextField
+                      fullWidth
+                      error={hasError('amount_questions')}
+                      helperText={
+                        hasError('amount_questions') ? formState.errors.amount_questions[0] : null
+                      }
+                      label="Quantidade de questões"
+                      margin="dense"
+                      name="amount_questions"
+                      onChange={handleChange}
+                      value={formState.values.amount_questions || ''}
+                      variant="outlined"
+                      type="number"
+                      disabled={amountQuestions === 0}
+                    />
+                  </Tooltip>
                 </Grid>
 
               <Grid

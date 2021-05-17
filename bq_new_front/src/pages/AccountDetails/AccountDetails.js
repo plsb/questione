@@ -11,7 +11,7 @@ import {
   Grid,
   Button,
   TextField,
-  IconButton
+  IconButton, Zoom, Tooltip
 } from '@material-ui/core';
 import api from "../../services/api";
 import Swal from "sweetalert2";
@@ -223,9 +223,12 @@ const AccountDetails = props => {
             <Grid
                 className={classes.statsItem}
                 item>
-              <Button color="primary" onClick={onRequest}>
-                Solicitar Acesso para cursos
-              </Button>
+              <Tooltip TransitionComponent={Zoom} placement="top"
+                       title="Você pode solicitar acesso a uma determinada área para contribuir com novas questões, ou aplicar avaliações.">
+                <Button color="primary" onClick={onRequest}>
+                  Solicitar Acesso para áreas
+                </Button>
+              </Tooltip>
             </Grid>
 
           </Grid>

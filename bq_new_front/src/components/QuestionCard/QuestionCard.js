@@ -25,7 +25,7 @@ import {withRouter} from "react-router-dom";
 import ReactHtmlParser from 'react-html-parser';
 import api from "../../services/api";
 import {DialogQuestione} from "../index";
-import Stars from '@material-ui/icons/StarsRounded';
+import AssignmentTurnedIn from '@material-ui/icons/AssignmentTurnedIn';
 import moment from "moment";
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -399,12 +399,6 @@ const QuestionCard = props => {
                                             question.id < 100000 ? 'Questão - 0' + question.id :
                                                 question.id
                         }
-                    </Typography>
-                    { question.course  !== null ?
-                    <Typography variant="button" color="textSecondary" component="h2">
-                        {'Área de origem: '+question.course.description}
-                    </Typography> : null }
-                    <div>
                         { question.skill !== null && question.knowledge_objects[0] &&
                         question.question_items.length >= 2 && question.course  !== null
                             ?
@@ -412,13 +406,19 @@ const QuestionCard = props => {
                                     pelo menos duas alternativas,
                                     um curso associado, uma competência associada e pelo menos um
                                     objeto de conhecimento associado.">
-                                <Stars
-                                    style={{marginTop: '1px'}}
-                                    color="secondary"/>
+                                <AssignmentTurnedIn
+                                    color="secondary"
+                                    fontSize="small"/>
 
                             </Tooltip>
                             :
                             null }
+                    </Typography>
+                    { question.course  !== null ?
+                    <Typography variant="button" color="textSecondary" component="h2">
+                        {'Área de origem: '+question.course.description}
+                    </Typography> : null }
+                    <div>
                         { question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
                             <Chip label="Inserida por você" className={clsx(classes.chipGreen, className)} size="small"/> : null}
                         { question.validated == 1 ?

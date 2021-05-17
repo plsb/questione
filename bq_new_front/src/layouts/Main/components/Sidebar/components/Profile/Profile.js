@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import {Avatar, Grid, Link, Typography} from '@material-ui/core';
+import {Avatar, Grid, Link, Tooltip, Typography, Zoom} from '@material-ui/core';
 import {getInitials} from "../../../../../../helpers";
 import {Link as RouterLink} from "react-router-dom";
 import Chip from '@material-ui/core/Chip';
@@ -70,16 +70,19 @@ const Profile = props => {
         </Grid>
       <Typography variant="body2">{user.email}</Typography>
       <Typography variant="body2">{user.level}</Typography>
-      <Typography
-          variant="body2">
-        Atualize seu Perfil {' '}
-        <Link
-            component={RouterLink}
-            to="/account"
-            variant="body2" className="update-profile">
-          clicando aqui.
-        </Link>
-      </Typography>
+        <Tooltip TransitionComponent={Zoom} placement="top"
+                 title="Você pode modificar o seu nome ou solicitar acesso para contribuir com alguma área, clicando aqui.">
+          <Typography
+              variant="body2">
+                Atualize seu Perfil {' '}
+                <Link
+                    component={RouterLink}
+                    to="/account"
+                    variant="body2" className="update-profile">
+                  clicando aqui.
+                </Link>
+          </Typography>
+        </Tooltip>
         { localStorage.getItem("@Questione-acess-level-user") != 1 ?
         <Chip
             className="tour-questione"

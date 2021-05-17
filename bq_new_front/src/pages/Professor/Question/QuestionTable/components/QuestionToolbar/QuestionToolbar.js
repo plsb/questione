@@ -175,7 +175,7 @@ const QuestionToolbar = props => {
     }
   }, [courseSelect]);
 
-  const [expanded, setExpanded] = React.useState(true);
+  const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);

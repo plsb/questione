@@ -47,7 +47,7 @@ const UserRequestCourseToolbar = props => {
       {...rest}
       className={clsx(classes.root, className)}>
       <div className={classes.row}>
-        <Typography variant="h3" className={classes.title}>{'Solicitações de Cursos'}</Typography>
+        <Typography variant="h3" className={classes.title}>{'Solicitações de Áreas'}</Typography>
         <span className={classes.spacer} />
         <Button className={classes.exportButton}
                 onClick={onClickNewRequest} variant="contained"

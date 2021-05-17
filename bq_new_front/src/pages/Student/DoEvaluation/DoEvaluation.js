@@ -350,25 +350,26 @@ const DoEvaluation = props => {
 
             <CardActions disableSpacing>
               <div>
-                <Button
-                  className={classes.buttons}
-                  variant="contained"
-                  color="primary"
-                  onClick={startEvaluation}
-                  disabled={!enableButtonStart}
-                >
-                  {application && application.student_started === 1 ? 'Continuar' : 'Iniciar' }
-                </Button>
-
-                <Button
-                  className={clsx(classes.chipRed, className)}
-                  variant="contained"
-                  color="#e57373"
-                  onClick={onClickOpenDialogFinsh}
-                  disabled={enableButtonStart}
-                >
-                  Finalizar
-                </Button>
+                <Tooltip title="Você poderá iniciar/continuar sua avaliação clicando neste botão." placement="top">
+                  <Button
+                    className={classes.buttons}
+                    variant="contained"
+                    color="primary"
+                    onClick={startEvaluation}
+                    disabled={!enableButtonStart}>
+                    {application && application.student_started === 1 ? 'Continuar' : 'Iniciar' }
+                  </Button>
+                </Tooltip>
+                <Tooltip title="Você poderá finalizar sua avaliação clicando neste botão." placement="top">
+                  <Button
+                    className={clsx(classes.chipRed, className)}
+                    variant="contained"
+                    color="#e57373"
+                    onClick={onClickOpenDialogFinsh}
+                    disabled={enableButtonStart}>
+                    Finalizar
+                  </Button>
+                </Tooltip>
               </div>
 
             </CardActions>
@@ -414,16 +415,18 @@ const DoEvaluation = props => {
                     </Typography>
                     <br />
                     {data.evaluation_question_without_correct.question_without_correct.question_items_without_correct.map(item => (
-                        <List className={classes.lineItemQuestion}
-                              key={item.id}
-                              onClick={handleToggle(item.id)}
-                              component="nav" aria-label="secondary mailbox folder">
-                          <ListItem key={item.id}
-                                    selected={data.answer == item.id}
-                              button onClick={(event) => handleListItemClick(event, data.id, item.id)}>
-                            { ReactHtmlParser (item.description)  }
-                          </ListItem>
-                        </List>
+                        <Tooltip title="Clique para escolher esta alternativa." placement="top-start">
+                          <List className={classes.lineItemQuestion}
+                                key={item.id}
+                                onClick={handleToggle(item.id)}
+                                component="nav" aria-label="secondary mailbox folder">
+                            <ListItem key={item.id}
+                                      selected={data.answer == item.id}
+                                button onClick={(event) => handleListItemClick(event, data.id, item.id)}>
+                              { ReactHtmlParser (item.description)  }
+                            </ListItem>
+                          </List>
+                        </Tooltip>
                     ))}
 
                   </div>

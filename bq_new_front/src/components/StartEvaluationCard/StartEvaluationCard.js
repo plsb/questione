@@ -9,7 +9,9 @@ import {
   Typography,
   Grid,
   Divider,
-  Box
+  Box,
+    Tooltip,
+    Zoom
 } from '@material-ui/core';
 import QuestionAnswer from '@material-ui/icons/QuestionAnswer';
 import Swal from "sweetalert2";
@@ -103,13 +105,16 @@ const StartEvaluationCard = props => {
                     justify="center"
                     className={classes.gridInputCodeContainer}>
                 <Grid item>
-                  <input
-                      className={classes.inputCode}
-                      type="text"
-                      name="name"
-                      placeholder="código?"
-                      onChange={handleChange}
-                      autoComplete="off"/>
+                  <Tooltip TransitionComponent={Zoom} placement="top"
+                           title="Informe o código de alguma avaliação que deseja responder, depois é só clicar no botão Participar!">
+                    <input
+                        className={classes.inputCode}
+                        type="text"
+                        name="name"
+                        placeholder="código?"
+                        onChange={handleChange}
+                        autoComplete="off"/>
+                  </Tooltip>
 
                 </Grid>
                 <Grid item>
@@ -134,11 +139,11 @@ const StartEvaluationCard = props => {
           <Grid
             className={classes.statsItem}
             item>
-            <Typography
-                display="inline"
-                variant="body2">
-              Infome o código da avaliação.
-            </Typography>
+              <Typography
+                  display="inline"
+                  variant="body2">
+                Infome o código da avaliação.
+              </Typography>
           </Grid>
           <Grid
               className={classes.statsItem}

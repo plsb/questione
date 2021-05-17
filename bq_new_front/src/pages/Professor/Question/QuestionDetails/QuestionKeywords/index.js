@@ -164,7 +164,7 @@ const QuestionKeywords = props => {
                    direction="row"
                    justify="flex-star"
                    alignItems="flex-start">
-                   <Tooltip placement="top" title="Selecione a palavra-chave que deseja adicionar. Caso NÃO encontre nesta listagem, clique no ícone ao lado para adicionar33.">
+                   <Tooltip placement="top" title="Selecione a palavra-chave que deseja adicionar. Caso NÃO encontre nesta listagem, clique no ícone ao lado para adicionar.">
                        <Autocomplete
                            autoSelect={true}
                            style={{marginTop: '100px'}}
