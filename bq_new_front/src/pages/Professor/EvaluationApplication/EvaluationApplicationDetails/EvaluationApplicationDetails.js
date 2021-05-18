@@ -56,7 +56,8 @@ const EvaluationApplicationDetails = props => {
   const { idApplication } = props.match.params;
   const [checkedRandom, setCheckedRandom] = React.useState(false);
   const [checkedShowResult, setCheckedShowResult] = React.useState(false);
-  const [checkedDefineDateAndHour, setCheckedDefineDateAndHour] = React.useState(false);
+  const [checkedDefineDateAndHourInitial, setCheckedDefineDateAndHourInitial] = React.useState(false);
+  const [checkedDefineDateAndHourFinal, setCheckedDefineDateAndHourFinal] = React.useState(false);
   const [checkedDefineDuration, setCheckedDefineDuration] = React.useState(false);
 
   const classes = useStyles();
@@ -93,7 +94,7 @@ const EvaluationApplicationDetails = props => {
 
   async function saveApplicationDetails(){
     try {
-      const { description, date, hour, duration } = formState.values;
+      const { description, date, hour, date_finish, hour_finish, duration } = formState.values;
 
       const random_questions = checkedRandom;
       const show_results = checkedShowResult;
@@ -103,6 +104,8 @@ const EvaluationApplicationDetails = props => {
         show_results,
         date_start: date !== '' ? date : null,
         time_start: hour !== '' ? hour : null,
+        date_finish: date_finish !== '' ? date_finish : null,
+        time_finish: hour_finish !== '' ? hour_finish : null,
         time_to_finalize: duration !== '' ? duration : null,
       }
       const response = await api.put('evaluation/applications/'+idApplication, data);
@@ -133,7 +136,10 @@ const EvaluationApplicationDetails = props => {
         setCheckedRandom(response.data.random_questions == 1 ? true : false);
         setCheckedShowResult(response.data.show_results == 1 ? true : false);
         if (response.data.date_start) {
-          setCheckedDefineDateAndHour(true);
+          setCheckedDefineDateAndHourInitial(true);
+        }
+        if (response.data.date_finish) {
+          setCheckedDefineDateAndHourFinal(true);
         }
         if (response.data.time_to_finalize) {
           setCheckedDefineDuration(true);
@@ -144,6 +150,8 @@ const EvaluationApplicationDetails = props => {
             'description': response.data.description,
             'date': response.data.date_start,
             'hour': response.data.time_start,
+            'date_finish': response.data.date_finish,
+            'hour_finish': response.data.time_finish,
             'duration': response.data.time_to_finalize,
           },
           touched: {
@@ -196,7 +204,7 @@ const EvaluationApplicationDetails = props => {
     setCheckedShowResult(event.target.checked);
   }
 
-  const handleChangeDefineDateAndHour = event => {
+  const handleChangeDefineDateAndHourInitial = event => {
     if (!event.target.checked) {
       setFormState({
         ...formState,
@@ -207,7 +215,29 @@ const EvaluationApplicationDetails = props => {
         },
       })
     }
-    setCheckedDefineDateAndHour(event.target.checked);
+    setCheckedDefineDateAndHourInitial(event.target.checked);
+  }
+
+  const handleChangeDefineDateAndHourFinal = event => {
+    if (!event.target.checked) {
+      setFormState({
+        ...formState,
+        values: {
+          ...formState.values,
+          date_finish: '',
+          hour_finish: '',
+        },
+      })
+    }
+    setCheckedDefineDateAndHourFinal(event.target.checked);
+    setCheckedDefineDuration(false);
+    setFormState({
+      ...formState,
+      values: {
+        ...formState.values,
+        duration: '',
+      },
+    })
   }
 
   const handleChangeDefineDuration = event => {
@@ -221,10 +251,20 @@ const EvaluationApplicationDetails = props => {
       })
     }
     setCheckedDefineDuration(event.target.checked);
+    setCheckedDefineDateAndHourFinal(false);
+    setFormState({
+      ...formState,
+      values: {
+        ...formState.values,
+        date_finish: '',
+        hour_finish: '',
+      },
+    })
   }
 
-  const hasError = field =>
-      formState.touched[field] && formState.errors[field] ? true : false;
+  const hasError = field => {
+    return formState.touched[field] && formState.errors[field] ? true : false;
+  }
 
   const handleBack = () => {
     history.goBack();
@@ -327,8 +367,8 @@ const EvaluationApplicationDetails = props => {
             <FormControlLabel
               control={
                 <Switch
-                  checked={checkedDefineDateAndHour}
-                  onChange={handleChangeDefineDateAndHour}
+                  checked={checkedDefineDateAndHourInitial}
+                  onChange={handleChangeDefineDateAndHourInitial}
                   name="define_date_and_hour"
                   color="primary"
                 />
@@ -336,7 +376,7 @@ const EvaluationApplicationDetails = props => {
               label="Definir data e hora inicial?"
             />
 
-            {checkedDefineDateAndHour && (
+            {checkedDefineDateAndHourInitial && (
               <>
                 <TextField
                   // error={hasError('description')}
@@ -385,6 +425,64 @@ const EvaluationApplicationDetails = props => {
             <FormControlLabel
               control={
                 <Switch
+                  checked={checkedDefineDateAndHourFinal}
+                  onChange={handleChangeDefineDateAndHourFinal}
+                  name="define_date_and_hour_final"
+                  color="primary"
+                />
+              }
+              label="Definir data e hora final?"
+            />
+
+            {checkedDefineDateAndHourFinal && !checkedDefineDuration && (
+              <>
+                <TextField
+                  // error={hasError('description')}
+                  // helperText={
+                  //   hasError('description') ? formState.errors.description[0] : null
+                  // }
+                  type="date"
+                  label="Data de fim da avaliação"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  margin="dense"
+                  name="date_finish"
+                  onChange={handleChange}
+                  value={formState.values.date_finish || ''}
+                  variant="outlined"
+                  className={classes.inputInline}
+                />
+
+                <TextField
+                  // error={hasError('description')}
+                  // helperText={
+                  //   hasError('description') ? formState.errors.description[0] : null
+                  // }
+                  type="time"
+                  label="Hora de fim da avaliação"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  margin="dense"
+                  name="hour_finish"
+                  onChange={handleChange}
+                  value={formState.values.hour_finish || ''}
+                  variant="outlined"
+                  className={classes.inputInline}
+                />
+              </>
+            )}
+          </Grid>
+          <Grid
+            item
+            md={6}
+            xs={12}
+            className={classes.row}
+          >
+            <FormControlLabel
+              control={
+                <Switch
                   checked={checkedDefineDuration}
                   onChange={handleChangeDefineDuration}
                   name="define_duration"
@@ -394,7 +492,7 @@ const EvaluationApplicationDetails = props => {
               label="Definir duração?"
             />
 
-            {checkedDefineDuration && (
+            {checkedDefineDuration && !checkedDefineDateAndHourFinal && (
               <TextField
                 // error={hasError('description')}
                 // helperText={

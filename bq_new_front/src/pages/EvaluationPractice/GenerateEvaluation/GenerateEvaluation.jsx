@@ -185,7 +185,6 @@ const GenerateEvaluation = props => {
 
   async function getAreas() {
     const referenceId = typeOfEvaluationList.filter((item) => item.description === formState.values.typeOfEvaluation)[0].id;
-    console.log(referenceId);
 
     try {
       const response = await api.get(`/all/courses-with-questions-practice/${referenceId}`);
@@ -289,14 +288,48 @@ const GenerateEvaluation = props => {
     }));
   }, [formState.values]);
 
-  useEffect(() => {
-    if (formState.values.typeOfEvaluation && formState.values.typeOfEvaluation !== 'select') {
-      getAreas();
-    }
-  }, [formState.values.typeOfEvaluation]);
-
   const handleChange = event => {
     event.target.value = event.target.value === 'select' ? null : event.target.value;
+
+    if (event.target.name === 'typeOfEvaluation' && renderConfigArea) {
+      setRenderConfigArea(false);
+      setRenderConfigSkills(false);
+
+      setFormState({
+        ...formState,
+        values: {
+          ...formState.values,
+          [event.target.name]: event.target.value,
+          area: null,
+          skills: null,
+        },
+        touched: {
+          ...formState.touched,
+          [event.target.name]: true
+        }
+      });
+
+      return;
+    }
+
+    if (event.target.name === 'area' && renderConfigSkills) {
+      setRenderConfigSkills(false);
+
+      setFormState({
+        ...formState,
+        values: {
+          ...formState.values,
+          [event.target.name]: event.target.value,
+          skills: null,
+        },
+        touched: {
+          ...formState.touched,
+          [event.target.name]: true
+        }
+      });
+
+      return;
+    }
 
     setFormState({
       ...formState,

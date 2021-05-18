@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
     Button,
@@ -7,10 +7,10 @@ import {
     Tooltip, Grid
 } from "@material-ui/core";
 import PropTypes from "prop-types";
-import {withRouter} from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import Swal from "sweetalert2";
 import clsx from "clsx";
-import {Editor} from "@tinymce/tinymce-react";
+import { Editor } from "@tinymce/tinymce-react";
 import api from "../../../../../services/api";
 import Save from "@material-ui/icons/Save";
 
@@ -32,7 +32,7 @@ const useStyles = makeStyles({
 
 
 const QuestionItens = props => {
-    const { className, history, idQuestion, ...rest } = props;
+    const { className, history, idQuestion, imageUploadHandler, ...rest } = props;
     const [inputItens, setInputItens] = useState([
         { idItem: 0, description: '', correct: 0 },
         { idItem: 0, description: '', correct: 0 }
@@ -67,10 +67,10 @@ const QuestionItens = props => {
 
     useEffect(() => {
         const length = inputItens.length;
-        if(length == 2){
+        if (length == 2) {
             setBtAddItem(true);
             setBtRemoveItem(false);
-        } else if(length == 5){
+        } else if (length == 5) {
             setBtAddItem(false);
             setBtRemoveItem(true);
         } else {
@@ -80,12 +80,12 @@ const QuestionItens = props => {
 
     }, [inputItens]);
 
-    async function loadItens(){
+    async function loadItens() {
         try {
-            const response = await api.get('questionitem?fk_question_id='+idQuestion);
-            if(response.status === 200){
+            const response = await api.get('questionitem?fk_question_id=' + idQuestion);
+            if (response.status === 200) {
                 const values = [];
-                if(response.data.length>0) {
+                if (response.data.length > 0) {
                     response.data.forEach(function logArrayElements(element, index, array) {
                         values.push({
                             idItem: response.data[index].id,
@@ -111,8 +111,8 @@ const QuestionItens = props => {
         const values = [...inputItens];
         const length = inputItens.length;
         //o máximo são três objetos de conhecimento
-        if(length == 5){
-            return ;
+        if (length == 5) {
+            return;
         }
         values.push({ idItem: 0, description: '', correct: 0 });
         setInputItens(values);
@@ -123,14 +123,14 @@ const QuestionItens = props => {
         const values = [...inputItens];
         const length = inputItens.length;
         //se só tiver um elemento ele retorna pois não pode excluir
-        if(length==2){
-            return ;
+        if (length == 2) {
+            return;
         }
-        const element = values[length-1];
-        if(element.idItem > 0){
+        const element = values[length - 1];
+        if (element.idItem > 0) {
             itemDelete.push({ idItem: element.idItem })
         }
-        values.splice(length-1, 1);
+        values.splice(length - 1, 1);
         setInputItens(values);
     };
 
@@ -138,7 +138,7 @@ const QuestionItens = props => {
         const values = [...inputItens];
         values[indexCorrect].correct = 1;
         values.forEach(function logArrayElements(element, index, array) {
-            if(index == indexCorrect){
+            if (index == indexCorrect) {
             } else {
                 values[index].correct = 0;
             }
@@ -146,10 +146,10 @@ const QuestionItens = props => {
         setInputItens(values);
     }
 
-    async function deleteItem(element){
+    async function deleteItem(element) {
         try {
-            const response = await api.delete('questionitem/'+element.idItem);
-            if(response.status == 200 || response.status == 201){
+            const response = await api.delete('questionitem/' + element.idItem);
+            if (response.status == 200 || response.status == 201) {
 
             } else {
 
@@ -159,10 +159,10 @@ const QuestionItens = props => {
         }
     }
 
-    async function saveItem(elements){
+    async function saveItem(elements) {
         try {
             //elements.forEach(async function logArrayElements(element, index, array) {
-            for(var i = 0; i < elements.length; i++){
+            for (var i = 0; i < elements.length; i++) {
                 let element = elements[i];
                 let response = {};
                 const description = element.description;
@@ -177,16 +177,16 @@ const QuestionItens = props => {
                 const id = element.idItem;
                 let acao = "";
 
-                if(id === 0){
+                if (id === 0) {
                     response = await api.post('questionitem', data);
                     acao = "cadastradas";
                 } else {
-                    response = await api.put('questionitem/'+id,data);
+                    response = await api.put('questionitem/' + id, data);
                     acao = "atualizadas";
                 }
 
-                if(response.status == 200 || response.status == 201){
-                    loadAlert('success', 'Alternativas da questão '+acao+'.');
+                if (response.status == 200 || response.status == 201) {
+                    loadAlert('success', 'Alternativas da questão ' + acao + '.');
                     inputItens[i].idItem = response.data.id;
                 } else {
 
@@ -203,22 +203,22 @@ const QuestionItens = props => {
         let correct = false;
         let text = true;
         inputItens.forEach(function logArrayElements(element, index, array) {
-            if(inputItens[index].description === ''){
+            if (inputItens[index].description === '') {
                 text = false;
             }
-            if(inputItens[index].correct === 1){
+            if (inputItens[index].correct === 1) {
                 correct = true;
             }
         });
         //verifica se faltou alguma descrição
-        if(text === false){
+        if (text === false) {
             loadAlert('error', 'Informe a descrição de todas as alternativas');
-            return ;
+            return;
         }
         //verifica se marcou algum item como correto
-        if(correct === false){
+        if (correct === false) {
             loadAlert('error', 'Informe a alternativa correta');
-            return ;
+            return;
         }
         itemDelete.forEach(function logArrayElements(element, index, array) {
             deleteItem(element);
@@ -231,7 +231,7 @@ const QuestionItens = props => {
     const handleChangeItem = (e, indexEdit) => {
         const values = [...inputItens];
         values.forEach(function logArrayElements(element, index, array) {
-            if(index == indexEdit){
+            if (index == indexEdit) {
                 values[index].description = e;
             }
         });
@@ -239,88 +239,89 @@ const QuestionItens = props => {
     }
 
     return (
-       <div>
-           {inputItens.map((inputField, index) => (
-               <div style={{padding: "30px"}}>
+        <div>
+            {inputItens.map((inputField, index) => (
+                <div style={{ padding: "30px" }}>
                     <div className={classes.btnRemoveWrapper}>
-                        <b className="item1">Alternativa de resposta {index+1}:</b>
+                        <b className="item1">Alternativa de resposta {index + 1}:</b>
                         {(index > 1 && inputItens.length === index + 1) && (
-                            <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined"  onClick={handleRemoveItem}>Remover</Button> 
+                            <Button style={{ marginLeft: "10px" }} className={clsx(classes.btRemove, className)} variant="outlined" onClick={handleRemoveItem}>Remover</Button>
                         )}
                     </div>
-                   <Editor
-                       key={"item"+index}
-                       apiKey="ndvo85oqtt9mclsdb6g3jc5inqot9gxupxd0scnyypzakm18"
-                       init={{
-                           height: 150,
-                           menubar: false,
-                           file_picker_types: 'image',
-                           images_upload_url: 'postAcceptor.php',
-                           automatic_uploads: false,
-                           plugins: [
-                               'textpattern advlist autolink lists link image charmap print',
-                               ' preview hr anchor pagebreak code media save',
-                               'table contextmenu charmap'
-                           ],
-                           toolbar:
-                               'insertfile undo redo | fontselect fontsizeselect | bold italic underline superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview FMathEditor  charmap'
-                       }}
-                       name={"item"+index}
-                       value={inputItens[index].description}
-                       onEditorChange={(e) => handleChangeItem(e, index)}/>
-                       <FormControlLabel
-                           control={
-                               <Tooltip title="Se marcado, indica que o item está correto">
-                                   <Switch
-                                       id={'sw'+index}
-                                       onChange={(event) => handleChangeCorrect(event, index)}
-                                       checked={inputItens[index].correct}
-                                       name={"checked"+index}
-                                       color="primary"
-                                       label
-                                   />
-                               </Tooltip>
-                           }
-                           label="É correto?"
-                       />
+                    <Editor
+                        key={"item" + index}
+                        apiKey="ndvo85oqtt9mclsdb6g3jc5inqot9gxupxd0scnyypzakm18"
+                        init={{
+                            height: 150,
+                            menubar: false,
+                            file_picker_types: 'image',
+                            images_upload_url: 'postAcceptor.php',
+                            images_upload_handler: imageUploadHandler,
+                            automatic_uploads: true,
+                            plugins: [
+                                'textpattern advlist autolink lists link image charmap print',
+                                ' preview hr anchor pagebreak code media save',
+                                'table contextmenu charmap'
+                            ],
+                            toolbar:
+                                'insertfile undo redo | fontselect fontsizeselect | bold italic underline superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview FMathEditor  charmap'
+                        }}
+                        name={"item" + index}
+                        value={inputItens[index].description}
+                        onEditorChange={(e) => handleChangeItem(e, index)} />
+                    <FormControlLabel
+                        control={
+                            <Tooltip title="Se marcado, indica que o item está correto">
+                                <Switch
+                                    id={'sw' + index}
+                                    onChange={(event) => handleChangeCorrect(event, index)}
+                                    checked={inputItens[index].correct}
+                                    name={"checked" + index}
+                                    color="primary"
+                                    label
+                                />
+                            </Tooltip>
+                        }
+                        label="É correto?"
+                    />
 
-               </div>
-           ))}
-           <div style={{margin: "20px 0px", paddingLeft: '30px'}}>
-               <Grid
-                   container
-                   direction="row"
-                   justify="flex-start"
-                   alignItems="flex-start">
-                   <Tooltip title="A questão deverá ter no mínimo 02 e no máximo 05 alternativas, sendo apenas UMA correta.">
-                       { btAddItem == true ?
-                           <Button color="primary" variant="outlined"  onClick={handleAddItem}>Adicionar Alternativa</Button> :
-                           <Button color="primary" variant="outlined"  disabled>Adicionar Alternativa</Button>
-                       }
-                   </Tooltip>
-                   {/* <Tooltip title="A questão deverá ter no mínimo 02 e no máximo 05 alternativas, sendo apenas UMA correta.">
+                </div>
+            ))}
+            <div style={{ margin: "20px 0px", paddingLeft: '30px' }}>
+                <Grid
+                    container
+                    direction="row"
+                    justify="flex-start"
+                    alignItems="flex-start">
+                    <Tooltip title="A questão deverá ter no mínimo 02 e no máximo 05 alternativas, sendo apenas UMA correta.">
+                        {btAddItem == true ?
+                            <Button color="primary" variant="outlined" onClick={handleAddItem}>Adicionar Alternativa</Button> :
+                            <Button color="primary" variant="outlined" disabled>Adicionar Alternativa</Button>
+                        }
+                    </Tooltip>
+                    {/* <Tooltip title="A questão deverá ter no mínimo 02 e no máximo 05 alternativas, sendo apenas UMA correta.">
                        {btRemoveItem == true ?
                            <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined"  onClick={handleRemoveItem}>Remover Alternativa</Button> :
                            <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined"  disabled>Remover Alternativa</Button>
                        }
                    </Tooltip> */}
-               </Grid>
-           </div>
-           <Grid
-               container
-               direction="row"
-               justify="center"
-               alignItems="center">
-               <Button
-                   variant="contained"
-                   color="primary"
-                   className={classes.button}
-                   endIcon={<Save/>}
-                   onClick={onClickItens}>
-                   Salvar
+                </Grid>
+            </div>
+            <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center">
+                <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                    endIcon={<Save />}
+                    onClick={onClickItens}>
+                    Salvar
                </Button>
-           </Grid>
-       </div>
+            </Grid>
+        </div>
 
     );
 }

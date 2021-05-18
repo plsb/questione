@@ -63,6 +63,7 @@ const DoEvaluation = props => {
   const { codeAplication } = props.match.params;
   const [application, setApplication] = useState([]);
   const [answers, setAnswers] = useState([]);
+  const [totalAnswers, setTotalAnswers] = useState(0);
   const [dateTimeToFinalized, setDateTimeToFinalized] = useState(null);
   const [dateServer, setDateServer] = useState(new Date());
   const [dialogStart, setDialogStart] = useState(false);
@@ -169,6 +170,15 @@ const DoEvaluation = props => {
           return ;
         }
         setAnswers(response.data[0]);
+
+        let totalAlreadyAnswer = 0;
+        response.data[0].forEach((item) => {
+          if (item.answer) {
+            totalAlreadyAnswer = totalAlreadyAnswer +  1;
+          }
+        });
+        setTotalAnswers(totalAlreadyAnswer);
+
         setDateTimeToFinalized(response.data.date_time_to_finalized);
         setDateServer(response.data.date_time_to_finalized);
 
@@ -242,14 +252,24 @@ const DoEvaluation = props => {
       if (response.status === 202) {
         if(response.data.message){
           loadAlert('error', response.data.message);
+          if (response.data.closed) {
+            history.push('/home');
+          }
         }
       }  else if(response.status == 200){
         const values = answers;
+        let totalAlreadyAnswer = 0;
         values.forEach(function logArrayElements(element, index, array) {
           if(element.id == answerId){
             element.answer = itemQuestionSelected;
           }
+
+          if (element.answer) {
+            totalAlreadyAnswer = totalAlreadyAnswer + 1;
+          }
         });
+
+        setTotalAnswers(totalAlreadyAnswer);
         setAnswers(values);
         setRefresh(refresh+1);
       }
@@ -291,7 +311,7 @@ const DoEvaluation = props => {
   };
 
   return (
-      <div>
+      <div className="do-evaluation-screen">
         <Backdrop className={classes.backdrop} open={openBackdrop} onClick={handleCloseBackdrop}>
           <CircularProgress color="inherit" />
         </Backdrop>
@@ -344,32 +364,40 @@ const DoEvaluation = props => {
                         </div>
                       </Typography>
                     )}
+                    {answers.length !== 0 && (
+                      <Typography variant="button" color="textSecondary" component="p">
+                        Questões respondidas:
+                        <b> {totalAnswers+'/'+answers.length}</b>
+                      </Typography>
+                    )}
                   </div>
                 }
             />
 
             <CardActions disableSpacing>
-              <div>
-                <Tooltip title="Você poderá iniciar/continuar sua avaliação clicando neste botão." placement="top">
-                  <Button
-                    className={classes.buttons}
-                    variant="contained"
-                    color="primary"
-                    onClick={startEvaluation}
-                    disabled={!enableButtonStart}>
-                    {application && application.student_started === 1 ? 'Continuar' : 'Iniciar' }
-                  </Button>
-                </Tooltip>
-                <Tooltip title="Você poderá finalizar sua avaliação clicando neste botão." placement="top">
-                  <Button
-                    className={clsx(classes.chipRed, className)}
-                    variant="contained"
-                    color="#e57373"
-                    onClick={onClickOpenDialogFinsh}
-                    disabled={enableButtonStart}>
-                    Finalizar
-                  </Button>
-                </Tooltip>
+              <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <Tooltip title="Você poderá iniciar/continuar sua avaliação clicando neste botão." placement="top">
+                    <Button
+                      className={classes.buttons}
+                      variant="contained"
+                      color="primary"
+                      onClick={startEvaluation}
+                      disabled={!enableButtonStart}>
+                      {application && application.student_started === 1 ? 'Continuar' : 'Iniciar' }
+                    </Button>
+                  </Tooltip>
+                  <Tooltip title="Você poderá finalizar sua avaliação clicando neste botão." placement="top">
+                    <Button
+                      className={clsx(classes.chipRed, className)}
+                      variant="contained"
+                      color="#e57373"
+                      onClick={onClickOpenDialogFinsh}
+                      disabled={enableButtonStart}>
+                      Finalizar
+                    </Button>
+                  </Tooltip>
+                </div>
               </div>
 
             </CardActions>
@@ -428,8 +456,9 @@ const DoEvaluation = props => {
                           </List>
                         </Tooltip>
                     ))}
-
                   </div>
+
+                  
                 </ExpansionPanelDetails>
               </ExpansionPanel>
           ))}

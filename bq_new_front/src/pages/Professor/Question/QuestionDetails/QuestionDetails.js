@@ -404,7 +404,7 @@ const QuestionDetails = props => {
                               toolbar:
                                   'insertfile undo redo | fontselect fontsizeselect | bold italic underline superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview  charmap'
                           }}
-                          value={baseText}
+                          value={baseText}imageUploadHandler
                           onEditorChange={handleChangeBaseText}
                           name="base_text"
                           key="base_text"/>
@@ -451,7 +451,7 @@ const QuestionDetails = props => {
           </TabPanel>
           {/* INTES */}
           <TabPanel value={value} index={1}>
-                <QuestionItens idQuestion={idQuestion}/>
+                <QuestionItens idQuestion={idQuestion} imageUploadHandler={imageUploadHandler} />
 
           </TabPanel>
           {/* CURSO E COMPETÊNCIA*/}
