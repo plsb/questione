@@ -255,6 +255,8 @@ class DoEvaluation extends Controller
 
             //$answers->date_time_to_finalized = new \DateTime($timeStudentShouldFinishedEvaluation);
             $date_time_to_finalized = new \DateTime($timeStudentShouldFinishedEvaluation);
+        } else if($application->date_finish){
+            $date_time_to_finalized = new \DateTime($application->date_finish . $application->time_finish);
         }
 
         $date_server =  new \DateTime();
