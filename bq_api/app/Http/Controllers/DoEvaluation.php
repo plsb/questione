@@ -162,15 +162,24 @@ class DoEvaluation extends Controller
                         $timeStudentShouldStarted->sub(new \DateInterval('PT5M'));
                         $timeStudentShouldFinished->add(new \DateInterval('PT5M'));
 
+                        $dateCanStart = new \DateTime($application->date_start);
+
                         if(!($timeInserted >= $timeStartedEvaluationStarted && $timeInserted <= $timeFinisedEvaluationStarted)){
                             return response()->json([
                                 'message' => 'A avaliação não pode ser iniciada. '.
-                                    'O estudante deveria ter iniciado entre o horário '.$timeStudentShouldStarted->format('H:i').
+                                    'O estudante só pode iniciar esta avaliação entre o horário '.$timeStudentShouldStarted->format('H:i').
                                     ' e '. $timeStudentShouldFinished->format('H:i').' do dia '
-                                    .$timeStudentShouldFinished->format('d/m/Y')
+                                    .$dateCanStart->format('d/m/Y')
                             ], 202);
                         }
                     }
+                } else {
+                    $dateCanStart = new \DateTime($application->date_start);
+                    return response()->json([
+                        'message' => 'A avaliação não pode ser iniciada. '.
+                            'O estudante só pode iniciar esta avaliação no dia '
+                            .$dateCanStart->format('d/m/Y'). ' às '.$application->time_start
+                    ], 202);
                 }
 
             }
