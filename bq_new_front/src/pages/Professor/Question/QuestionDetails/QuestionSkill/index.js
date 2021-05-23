@@ -204,7 +204,7 @@ const QuestionSkill = props => {
         if (length == 3) {
             return;
         }
-        values.push({ idItem: `${uniqueId()}${Date.now()}`, objectSelected: 0 });
+        values.push({ idItem: `knowledge-object-${uniqueId()}${Date.now()}`, objectSelected: 0 });
         setInputObjects(values);
     };
 
@@ -271,7 +271,7 @@ const QuestionSkill = props => {
             }
 
             let response = {};
-            if (element.idItem > 0) {
+            if (element.idItem !== 0 && `${element.idItem}`.indexOf('knowledge-object-') === -1) {
                 response = await api.put('question/update-object/' + element.idItem, data);
             } else {
                 response = await api.post('question/addobject', data);
