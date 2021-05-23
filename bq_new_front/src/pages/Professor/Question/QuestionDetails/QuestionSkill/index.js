@@ -278,7 +278,8 @@ const QuestionSkill = props => {
             }
 
             if (response.status === 200) {
-                inputObjects[index].idItem = response.data.id;
+                inputObjects[index].idItem = response.data[0].id;
+                setInputObjects(inputObjects);
                 loadAlert('success', 'Objetos de conhecimento atualizados.');
             }
         } catch (error) {
