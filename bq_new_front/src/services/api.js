@@ -48,22 +48,22 @@ api.interceptors.response.use(async response => {
   const { response: { data, status } } = error;
 
   //verifica se o código de resposta é 401 (não autorizado ou 500 (erro interno no servidor)
-  if (status === 401) {
-    loadAlert('error', 'Não autorizado.');
-    logout();
-    window.location.href = '/sign-in';
-    return false;
-  } else if (status === 500) {
-    loadAlert('error', 'Erro interno no servidor da API.');
-    logout();
-    window.location.href = '/sign-in';
-    return false;
-  }
-  if(data) {
-    loadAlert('error', data.message);
-  } else {
-    loadAlert('error', error);
-  }
+  // if (status === 401) {
+  //   loadAlert('error', 'Não autorizado.');
+  //   logout();
+  //   window.location.href = '/sign-in';
+  //   return false;
+  // } else if (status === 500) {
+  //   loadAlert('error', 'Erro interno no servidor da API.');
+  //   logout();
+  //   window.location.href = '/sign-in';
+  //   return false;
+  // }
+  // if(data) {
+  //   loadAlert('error', data.message);
+  // } else {
+  //   loadAlert('error', error);
+  // }
 
 
 });

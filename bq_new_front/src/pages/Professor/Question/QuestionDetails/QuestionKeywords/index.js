@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
     TextField,
     Grid, Tooltip, Chip, IconButton, DialogTitle, Dialog, DialogContent,
-    DialogContentText, Button, DialogActions
+    DialogContentText, Button, DialogActions, Typography
 } from "@material-ui/core";
 import api from "../../../../../services/api";
 import PropTypes from "prop-types";
-import {withRouter} from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import Swal from "sweetalert2";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import HighlightOff from '@material-ui/icons/HighlightOff';
@@ -22,11 +22,23 @@ const useStyles = makeStyles({
         color: '#f44336',
         marginRight: 2
     },
-    chip:{
+    chip: {
         backgroundColor: '#448aff',
         color: '#ffebee',
     },
-
+    mb1: {
+        marginBottom: '8px',
+    },
+    textButton: {
+        textTransform: 'initial',
+        marginTop: '2px',
+    },
+    textButtonLarge: {
+        width: '100%',
+        textTransform: 'initial',
+        marginTop: '16px',
+        marginBottom: '16px',
+    }
 });
 
 const QuestionKeywords = props => {
@@ -58,20 +70,20 @@ const QuestionKeywords = props => {
         });
     }
 
-    async function loadKeywordsAll(){
+    async function loadKeywordsAll() {
         try {
             const response = await api.get('all/keywords');
-            if(response.status === 200){
+            if (response.status === 200) {
                 setKeywordsAll(response.data);
             }
         } catch (error) {
         }
     }
 
-    async function loadKeywordsQuestion(){
+    async function loadKeywordsQuestion() {
         try {
-            const response = await api.get('question/keyword/'+idQuestion);
-            if(response.status === 200){
+            const response = await api.get('question/keyword/' + idQuestion);
+            if (response.status === 200) {
                 setKeywordsQuestion(response.data);
             }
         } catch (error) {
@@ -83,7 +95,7 @@ const QuestionKeywords = props => {
         loadKeywordsQuestion();
     }, []);
 
-    async function addKeyWord(value){
+    async function addKeyWord(value) {
         try {
             const fk_question_id = idQuestion;
             const keyword = value;
@@ -94,29 +106,29 @@ const QuestionKeywords = props => {
             const response = await api.post('question/keyword', data);
 
             if (response.status === 202) {
-                if(response.data.message){
+                if (response.data.message) {
                     loadAlert('error', response.data.message);
                 }
-            } else if(response.status === 200){
+            } else if (response.status === 200) {
                 loadKeywordsQuestion();
                 loadKeywordsAll();
-                loadAlert('success', 'Palavra-chave '+value+', cadastrada.');
+                loadAlert('success', 'Palavra-chave ' + value + ', cadastrada.');
             }
         } catch (error) {
 
         }
     }
 
-    async function deleteKeyword(value){
+    async function deleteKeyword(value) {
         try {
-            let url = 'question/keyword/'+value+'?fk_question_id='+idQuestion;
+            let url = 'question/keyword/' + value + '?fk_question_id=' + idQuestion;
 
             const response = await api.delete(url);
             if (response.status === 202) {
-                if(response.data.message){
+                if (response.data.message) {
                     loadAlert('error', response.data.message);
                 }
-            } else if(response.status === 200){
+            } else if (response.status === 200) {
                 loadKeywordsQuestion();
                 loadKeywordsAll();
                 loadAlert('success', 'Palavra-chave excluida.');
@@ -127,7 +139,7 @@ const QuestionKeywords = props => {
     }
 
     const selectKeyWord = (event, newValue) => {
-        if(newValue!=null){
+        if (newValue != null) {
             addKeyWord(newValue.keyword);
         }
     }
@@ -156,78 +168,92 @@ const QuestionKeywords = props => {
     };
 
     return (
-       <div>
+        <div>
 
-           <div style={{marginTop: "10px"}}>
-               <Grid
-                   container
-                   direction="row"
-                   justify="flex-star"
-                   alignItems="flex-start">
-                   <Tooltip placement="top" title="Selecione a palavra-chave que deseja adicionar. Caso NÃO encontre nesta listagem, clique no ícone ao lado para adicionar.">
-                       <Autocomplete
-                           autoSelect={true}
-                           style={{marginTop: '100px'}}
-                           id="keywords"
-                           options={keywordsAll}
-                           getOptionLabel={(option) => option.keyword}
-                           onChange={(event, newValue) => selectKeyWord(event, newValue)}
-                           style={{ width: 300 }}
-                           renderInput={(params) =>
-                               <TextField {...params} label="Palavra-chave" variant="outlined" />}
-                       />
-                   </Tooltip>
-                   <Tooltip title="Adicionar uma palavra chave." aria-label="add" style={{marginLeft: '8px'}}>
-                       <IconButton aria-label="delete"
-                                   onClick={handleClickOpen}>
-                           <AddIcon />
-                       </IconButton>
-                   </Tooltip>
-               </Grid>
-           </div>
-           <Grid
-               container
-               direction="row"
-               justify="flex-star"
-               alignItems="flex-start" style={{marginTop: '20px'}}>
-               {keywordsQuestion.map((row) => (
-                   <div style={{marginRight: '7px', marginTop: '7px'}}>
-                           <Chip
-                               label={row.keyword}
-                               clickable
-                               color="secondary"
-                               onDelete={() => deleteKeyword(row.id)}
-                               deleteIcon={<HighlightOff     />}
-                               className={clsx(classes.chip, className)}/>
-                   </div>
-               ))}
-           </Grid>
-           <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-               <DialogTitle id="form-dialog-title">Palavra-chave</DialogTitle>
-               <DialogContent>
-                   <DialogContentText>
-                      Informe a a palavra chave que deseja adicionar a sua questão.
+            <div style={{ marginTop: "10px" }}>
+                <Grid
+                    container
+                    direction="row"
+                    justify="flex-star"
+                    alignItems="center"
+                >
+                    <Tooltip placement="top" title="Selecione a palavra-chave que deseja adicionar. Caso NÃO encontre nesta listagem, clique no ícone ao lado para adicionar.">
+                        <div style={{ display: 'flex', alignItems: 'flex-start', marginLeft: '16px', flexDirection: 'column' }}>
+                            <Typography variant="h5" color="textSecondary" component="h2" className={classes.mb1}>Pesquise por palavras-chave</Typography>
+                            <Autocomplete
+                                autoSelect={true}
+                                style={{ marginTop: '100px' }}
+                                id="keywords"
+                                options={keywordsAll}
+                                getOptionLabel={(option) => option.keyword}
+                                onChange={(event, newValue) => selectKeyWord(event, newValue)}
+                                style={{ width: 300 }}
+                                renderInput={(params) =>
+                                    <TextField {...params} label="Palavra-chave" variant="outlined" />}
+                            />
+                        </div>
+                    </Tooltip>
+                    <Tooltip title="Adicionar uma palavra chave." aria-label="add" style={{ marginLeft: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', marginLeft: '16px', marginTop: '30px' }}>
+                            <Button aria-label="delete"
+                                onClick={handleClickOpen}>
+                                <AddIcon />
+                                <Typography variant="h5" color="textSecondary" component="p" className={classes.textButton}>
+                                    Adicionar nova palavra chave
+                                </Typography>
+                            </Button>
+                        </div>
+                    </Tooltip>
+                </Grid>
+            </div>
+            <Grid
+                container
+                direction="row"
+                justify="flex-star"
+                alignItems="flex-start" style={{ marginTop: '20px', paddingLeft: '16px' }}>
+                {keywordsQuestion.length > 0 && (
+                    <Typography variant="h5" color="textSecondary" component="p" className={classes.textButtonLarge}>
+                        Palavras-chave cadastradas:
+                    </Typography>
+                )}
+                {keywordsQuestion.map((row) => (
+                    <div style={{ marginRight: '7px', marginTop: '7px' }}>
+                        <Chip
+                            label={row.keyword}
+                            clickable
+                            color="secondary"
+                            onDelete={() => deleteKeyword(row.id)}
+                            deleteIcon={<HighlightOff />}
+                            className={clsx(classes.chip, className)} />
+                    </div>
+                ))}
+            </Grid>
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title">Palavra-chave</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Informe a a palavra chave que deseja adicionar a sua questão.
                    </DialogContentText>
-                   <TextField
-                       autoFocus
-                       margin="dense"
-                       value={keyWordNew}
-                       onChange={handleChangeKeyword}
-                       id="name"
-                       label="Palavra-chave"
-                       fullWidth
-                   />
-               </DialogContent>
-               <DialogActions>
-                   <Button onClick={handleClose} color="primary">
-                       Cancelar
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        value={keyWordNew}
+                        onChange={handleChangeKeyword}
+                        id="name"
+                        label="Palavra-chave"
+                        fullWidth
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                        Cancelar
                    </Button>
-                   <Button onClick={handleSaveKeyword} color="primary">
-                       Salvar
+                    <Button onClick={handleSaveKeyword} color="primary">
+                        Salvar
                    </Button>
-               </DialogActions>
-           </Dialog>
-       </div>
+                </DialogActions>
+            </Dialog>
+        </div>
 
     );
 }

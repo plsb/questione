@@ -38,6 +38,7 @@ const QuestionSkill = props => {
     const [btRemoveObject, setBtRemoveObject] = useState(false);
     const [question, setQuestion] = useState(false);
     const [objectsDelete, setObjectsDelete] = useState([]);
+    const [objectLoading, setObjectLoading] = useState(false);
 
     const classes = useStyles();
 
@@ -75,9 +76,11 @@ const QuestionSkill = props => {
         try {
             const response = await api.get('all/courses-user');
             setCourses([{ 'id': '0', 'description': 'Todos as áreas' }, ...response.data]);
-            setCourseSelect(0);
+            
             if (question.fk_course_id != null) {
                 setCourseSelect(question.fk_course_id);
+            } else {
+                setCourseSelect(0);
             }
 
         } catch (error) {
@@ -87,6 +90,8 @@ const QuestionSkill = props => {
 
     async function loadObjectsSelectQuestion() {
         try {
+            setObjectLoading(true);
+
             const response = await api.get('question/object-question/' + idQuestion);
 
             if (response.status === 200) {
@@ -110,22 +115,25 @@ const QuestionSkill = props => {
                         setInputObjects([{ idItem: 0, objectSelected: 0 }]);
                     }
                 }
-
             }
-        } catch (error) {
 
+            setObjectLoading(false);
+        } catch (error) {
+            setObjectLoading(false);
         }
     }
 
     async function loadObjects() {
         try {
+            setObjectLoading(true);
+
             const response = await api.get('all/objects?fk_course_id=' + courseSelect);
             setObjects([{ 'id': '0', 'description': 'Todos os objetos' }, ...response.data]);
             //setObjectSelect(0);
             loadObjectsSelectQuestion();
-
+            setObjectLoading(false);
         } catch (error) {
-
+            setObjectLoading(false);
         }
     }
 
@@ -253,17 +261,21 @@ const QuestionSkill = props => {
 
     async function deleteObject(idObject) {
         try {
+            setObjectLoading(true);
             const response = await api.delete('question/deleteobject/' + idObject);
             if (response.status === 200 || response.status === 201) {
-
+                
             }
+            setObjectLoading(false);
         } catch (error) {
-
+            setObjectLoading(false);
         }
     }
 
     async function saveObject(element, index) {
         try {
+            setObjectLoading(true);
+
             const fk_question_id = question.id;
             const fk_knowledge_object = element.objectSelected;
             const data = {
@@ -282,8 +294,10 @@ const QuestionSkill = props => {
                 setInputObjects(inputObjects);
                 loadAlert('success', 'Objetos de conhecimento atualizados.');
             }
-        } catch (error) {
 
+            setObjectLoading(false);
+        } catch (error) {
+            setObjectLoading(false);
         }
     }
 
@@ -400,7 +414,9 @@ const QuestionSkill = props => {
                     className={classes.button}
                     onClick={onClickSkill}
                     endIcon={<Save />}
-                    style={{ marginTop: '20px' }}>
+                    style={{ marginTop: '20px' }}
+                    disabled={objectLoading}
+                >    
                     Salvar
                </Button>
             </Grid>

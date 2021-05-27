@@ -190,6 +190,7 @@ const QuestionToolbar = props => {
   }
 
   const [value, setValue] = React.useState('');
+  const [inputValue, setInputValue] = React.useState('');
 
   return (
       <div
@@ -318,13 +319,12 @@ const QuestionToolbar = props => {
                     id="keywords"
                     value={value}
                     onChange={(event, newValue) => {
-
                       setValue(newValue);
                     }}
-                    inputValue={searchText[4] ? searchText[4].keyword : ""}
+                    inputValue={searchText[4] ? searchText[4].keyword : inputValue}
                     onInputChange={(event, newInputValue) => {
-
                       searchText[4].keyword = newInputValue;
+                      setInputValue(newInputValue);
                     }}
                     id="controllable-states-demo"
                     options={keywordsAll}
