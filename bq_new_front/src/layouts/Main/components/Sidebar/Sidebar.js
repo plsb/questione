@@ -84,12 +84,12 @@ const Sidebar = props => {
       icon: <Ballot />,
       className: 'evaluation-professor',
     },
-    {
-      title: 'Aplicações',
-      href: '/applications-evaluation',
-      icon: <Assignment />,
-      className: 'applications-professor',
-    },
+    // {
+    //   title: 'Aplicações',
+    //   href: '/applications-evaluation',
+    //   icon: <Assignment />,
+    //   className: 'applications-professor',
+    // },
     {
       title: 'Pratique',
       href: '/evaluation-practice',

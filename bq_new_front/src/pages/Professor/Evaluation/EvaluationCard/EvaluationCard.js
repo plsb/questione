@@ -50,7 +50,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const EvaluationCard = props => {
-  const { className, history, refresh, setRefresh, evaluation, ...rest } = props;
+  const { className, history, refresh, setRefresh, evaluation, setTabValue, ...rest } = props;
   const [anchorEl, setAnchorEl] = React.useState(null);
     const [open, setOpen] = React.useState(false);
     const [descriptionNewApplication, setDescriptionNewApplication] = React.useState('');
@@ -173,7 +173,8 @@ const EvaluationCard = props => {
             } else {
                 loadAlert('success', 'Nova aplicação cadastrada.');
                 setDescriptionNewApplication('');
-                history.push('/applications-evaluation');
+                // history.push('/applications-evaluation');
+                setTabValue(1);
             }
 
         } catch (error) {

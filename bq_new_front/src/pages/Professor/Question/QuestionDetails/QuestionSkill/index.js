@@ -212,6 +212,7 @@ const QuestionSkill = props => {
         if (length == 3) {
             return;
         }
+
         values.push({ idItem: `knowledge-object-${uniqueId()}${Date.now()}`, objectSelected: 0 });
         setInputObjects(values);
     };
@@ -234,6 +235,11 @@ const QuestionSkill = props => {
     };
 
     const handleInputChangeObject = (event, index) => {
+        // const alreadyAdded = inputObjects.some((object) => object.objectSelected === event.target.value);
+        // if (alreadyAdded) {
+        //     return;
+        // }
+
         const values = [...inputObjects];
         values[index].objectSelected = event.target.value;
 
@@ -302,7 +308,6 @@ const QuestionSkill = props => {
     }
 
     const onClickSkill = () => {
-
         if (courseSelect == 0) {
             loadAlert('error', 'Informe a área.');
             return;
@@ -311,8 +316,21 @@ const QuestionSkill = props => {
             objectsDelete.forEach(function logArrayElements(element, index, array) {
                 deleteObject(element.idItem);
             });
+
             if (inputObjects.length > 0) {
-                inputObjects.forEach(function logArrayElements(element, index, array) {
+                const reduced = [];
+
+                inputObjects.forEach((item) => {
+                    var duplicated  = reduced.findIndex(redItem => {
+                        return item.objectSelected === redItem.objectSelected;
+                    }) > -1;
+
+                    if(!duplicated) {
+                        reduced.push(item);
+                    }
+                });
+
+                reduced.forEach(function logArrayElements(element, index, array) {
                     if (element.objectSelected != 0) {
                         saveObject(element, index);
                     } else {

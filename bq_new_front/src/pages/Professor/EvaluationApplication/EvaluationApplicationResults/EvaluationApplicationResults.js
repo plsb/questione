@@ -493,13 +493,19 @@ const EvaluationApplicationResults = props => {
                                                     {'Tempo de prova: '+result.total_time}
                                                   </Typography> : null }
                                             </p>
+                                            <p>
+                                              {result.finished_automatically === 1 ?
+                                                  <Typography color="textPrimary" variant="caption">
+                                                    Finalizada automaticamente
+                                                  </Typography> : null }
+                                            </p>
                                           </React.Fragment>
                                         }>
                                         <TableCell className={classes.bodyStudent}>
                                           <div className={classes.labelStudent}>
                                             {result.student}
                                             <Typography color="textSecondary" variant="caption">
-                                              {result.total_time == 'Avaliação não finalizada.' ? result.total_time : 'Tempo: '+result.total_time}
+                                              {result.finished_automatically === 1 ? 'Finalizada automaticamente' : result.total_time == 'Avaliação não finalizada.' ? result.total_time : 'Tempo: '+result.total_time}
                                             </Typography>
                                           </div>
                                         </TableCell>
