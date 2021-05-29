@@ -200,6 +200,16 @@ const EvaluationTable = props => {
         <div className={classes.content}>
           <Card
             className={clsx(classes.root, className)}>
+            <div style={{ margin: '16px' }}>
+              Para mais informações sobre o módulo avaliações,&nbsp;
+              <a
+                href="https://docs.google.com/document/d/1FKDHngeXQd5r8CEE8V4EAZFlrM75Nl99vI13zJ3MbTY/edit?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                clique aqui
+              </a>
+            </div>
             <CardHeader
               avatar={
                 <div>
