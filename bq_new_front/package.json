@@ -22,6 +22,7 @@
     "react-dom": "^16.13.1",
     "react-dropzone-uploader": "^2.11.0",
     "react-file-download": "^0.3.5",
+    "react-google-charts": "^3.0.15",
     "react-html-parser": "^2.0.2",
     "react-icons": "^3.10.0",
     "react-native-masked-text": "^1.13.0",
