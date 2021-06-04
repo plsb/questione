@@ -265,12 +265,57 @@ class EvaluationApplicationsController extends Controller
         if($request->random_questions) {
             $evaluation_application->random_questions = $request->random_questions;
         } else {
-            $evaluation_application->random_questions = false;
+            $evaluation_application->random_questions = 0;
         }
+        //liberar resultado
         if($request->show_results) {
             $evaluation_application->show_results = $request->show_results;
+            if(!($request->date_release_results && $request->time_release_results)){
+                return response()->json([
+                    'message' => 'Deve ser informada a data e a hora para liberação dos resultados da avaliação.'
+                ], 202);
+            } else {
+                if($request->date_release_results < date('Y-m-d')){
+                    return response()->json([
+                        'message' => 'A data para liberar os resultados da avaliação deve ser maior ou igual a data atual.'
+                    ], 202);
+                } else if($request->date_release_results == date('Y-m-d')){
+                    if($request->time_release_results <= date('H:i')){
+                        return response()->json([
+                            'message' => 'A hora para liberar os resultados da avaliação deve ser maior que a hora atual.'
+                        ], 202);
+                    }
+                }
+                //verifica a data e hora final da avaliação. A liberação dos resultados deve acontecer após essa data e hora
+                if($request->date_finish){
+                    if($request->date_finish > $request->date_release_results){
+                        return response()->json([
+                            'message' => 'A data para liberar os resultados da avaliação deve ser maior ou igual a data de encerramento da avaliação.'
+                        ], 202);
+                    } else if($request->date_finish == $request->date_release_results){
+                        if($request->time_finish >= $request->time_release_results){
+                            return response()->json([
+                                'message' => 'A hora para liberar os resultados da avaliação deve ser maior que a hora de encerramento da avaliação.'
+                            ], 202);
+                        }
+                    }
+                }
+
+            }
+
+            $evaluation_application->date_release_results = $request->date_release_results;
+            $evaluation_application->time_release_results = $request->time_release_results;
+            if($request->release_preview_question){
+                $evaluation_application->release_preview_question = $request->release_preview_question;
+            } else {
+                $evaluation_application->release_preview_question = 0;
+            }
+
         } else {
-            $evaluation_application->show_results = false;
+            $evaluation_application->date_release_results = null;
+            $evaluation_application->time_release_results = null;
+            $evaluation_application->show_results = 0;
+            $evaluation_application->release_preview_question = 0;
         }
         $evaluation_application->date_start = $request->date_start;
         $evaluation_application->time_start = $request->time_start;

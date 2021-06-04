@@ -9,7 +9,7 @@ class EvaluationApplication extends Model
     protected $table = 'evaluation_application';
     protected $fillable = ['id', 'id_application', 'description','fk_evaluation_id', 'status',
         'random_questions', 'show_results', 'date_start', 'time_start', 'time_to_finalize',
-        'date_finish', 'time_finish','created_at'];
+        'date_finish', 'time_finish', 'date_release_results', 'time_release_results', 'release_preview_question','created_at'];
     protected $hidden = [];
 
     protected $dates = [
