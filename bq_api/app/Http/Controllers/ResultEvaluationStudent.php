@@ -63,8 +63,23 @@ class ResultEvaluationStudent extends Controller
         $application_evaluation = EvaluationApplication::where('id', $head_answer->fk_application_evaluation_id)->first();
         if($application_evaluation->show_results == 0){
             return response()->json([
-                'message' => 'Os resultado não foi liberado.',
+                'message' => 'O resultado não está liberado.',
             ], 202);
+        }
+        if($application_evaluation->date_release_results){
+            if($application_evaluation->date_release_results > date('Y-m-d')){
+                return response()->json([
+                    'message' => 'O resultado desta avaliação estará disponível no dia '.$application_evaluation->date_release_results.' e hora '.
+                        $application_evaluation->time_release_results,
+                ], 202);
+            } else if($application_evaluation->date_release_results == date('Y-m-d')){
+                if($application_evaluation->time_release_results > date('H:i')){
+                    return response()->json([
+                        'message' => 'O resultado desta avaliação estará disponível no dia '.$application_evaluation->date_release_results.' e hora '.
+                            $application_evaluation->time_release_results,
+                    ], 202);
+                }
+            }
         }
 
         if($head_answer->finalized_at == null){
