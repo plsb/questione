@@ -19,6 +19,7 @@ import {Close, FormatListBulleted, PlayArrow} from "@material-ui/icons";
 const useStyles = makeStyles(() => ({
   root: {
     margin: 10,
+    position: 'relative',
   },
   content: {
     padding: 0
@@ -58,6 +59,11 @@ const useStyles = makeStyles(() => ({
   },
   dFlex: {
     display: 'flex',
+  },
+  releaseResultsMessage: {
+    position: 'absolute',
+    top: '16px',
+    left: '16px',
   }
 }));
 
@@ -160,33 +166,43 @@ const EvaluationsResultStudentTable = props => {
                           <TableBody>
                             {evaluations.map(application => (
                                 <Card
-                                    {...rest}
-                                    className={classes.root}>
+                                  {...rest}
+                                  className={classes.root}
+                                >
+                                  {application.evaluation_application.date_release_results && (
+                                    <div className={classes.releaseResultsMessage}>
+                                      Data de liberação dos resultados:
+                                      <span> </span>
+                                      {moment(`${application.evaluation_application.date_release_results} ${application.evaluation_application.time_release_results}`).format('DD/MM/YYYY hh:mm')}
+                                    </div>
+                                  )}
                                   <CardHeader
                                       className={classes.head}
                                       action={
-                                        <div className={classes.dFlex}>
-                                          { application.evaluation_application.show_results == 1 && application.finalized_at ?
-                                          <Tooltip title="Visualizar resultados">
-                                            <IconButton
-                                                aria-label="copy"
-                                                onClick={() => results(application.id)}>
-                                              <FormatListBulleted/>
-                                            </IconButton>
-                                          </Tooltip>
-                                            :
-                                              application.evaluation_application.show_results == 0 && application.finalized_at && <span className={classes.labelRed}>{'Resultado não liberado.'}</span>
-                                          }
+                                        <div>
+                                          <div className={classes.dFlex}>
+                                            { application.evaluation_application.show_results == 1 && application.finalized_at ?
+                                            <Tooltip title="Visualizar resultados">
+                                              <IconButton
+                                                  aria-label="copy"
+                                                  onClick={() => results(application.id)}>
+                                                <FormatListBulleted/>
+                                              </IconButton>
+                                            </Tooltip>
+                                              :
+                                                application.evaluation_application.show_results == 0 && application.finalized_at && <span className={classes.labelRed}>{'Resultado não liberado.'}</span>
+                                            }
 
-                                          {!application.finalized_at && application.finished_automatically === 0 && (
-                                              <Tooltip title="Realizar avaliação">
-                                                  <IconButton
-                                                      aria-label="settings"
-                                                      onClick={() => history.push(`/code/${application.evaluation_application.id_application}`)}>
-                                                      <PlayArrow />
-                                                  </IconButton>
-                                              </Tooltip>
-                                          )}
+                                            {!application.finalized_at && application.finished_automatically === 0 && (
+                                                <Tooltip title="Realizar avaliação">
+                                                    <IconButton
+                                                        aria-label="settings"
+                                                        onClick={() => history.push(`/code/${application.evaluation_application.id_application}`)}>
+                                                        <PlayArrow />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            )}
+                                          </div>
                                         </div>
                                       }/>
                                       <CardContent>

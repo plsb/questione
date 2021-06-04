@@ -20,6 +20,14 @@ import { Close, Done, Block } from "@material-ui/icons";
 import { withStyles } from "@material-ui/core/styles";
 import Swal from "sweetalert2";
 
+// import Button from '@material-ui/core/Button';
+// import Snackbar from '@material-ui/core/Snackbar';
+// import MuiAlert from '@material-ui/lab/Alert';
+
+// function Alert(props) {
+//   return <MuiAlert elevation={6} variant="filled" {...props} />;
+// }
+
 const useStyles = makeStyles(() => ({
   root: {
     margin: 10,
@@ -145,6 +153,7 @@ const EvaluationsResultDetails = props => {
   const { idHead } = props.match.params;
   const [head, setHead] = useState([]);
   const [questions, setQuestions] = useState(null);
+  // const [showSnackbar, setShowSnackbar] = useState(true);
 
   const classes = useStyles();
 
@@ -179,8 +188,10 @@ const EvaluationsResultDetails = props => {
       } if (response.status == 202) {
         if (response.data.message) {
           loadAlert('error', response.data.message);
+          // showSnackbar(true);
           setQuestions([]);
           setHead([]);
+          history.push('/student/result-evaluations/');
         } else {
           setQuestions([]);
           setHead([]);
@@ -223,10 +234,24 @@ const EvaluationsResultDetails = props => {
         {...props}
       />
     );
-  }
+  };
+
+  // const handleCloseSnackbar = () => {
+  //   setShowSnackbar(false);
+  // };
 
   return (
     <div>
+      {/* <Snackbar open={showSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity="success">
+          This is a success message! asd ada sda dd adad a sda d asd asd asd asd asd as da sd ad a sd ad a da d ad a da d asd a da sd ad a da d ad a d
+        </Alert>
+      </Snackbar> */}
+      {/* <Alert severity="error">This is an error message!</Alert>
+      <Alert severity="warning">This is a warning message!</Alert>
+      <Alert severity="info">This is an information message!</Alert>
+      <Alert severity="success">This is a success message!</Alert> */}
+
       <Card
         {...rest}
         className={clsx(classes.root, className)}>
@@ -330,40 +355,7 @@ const EvaluationsResultDetails = props => {
                         <span className={classes.percentageRed}><Close /></span>}
                   </div>
                 ))}
-
-                <Chart
-                  width={1366}
-                  height={720}
-                  chartType="ColumnChart"
-                  loader={<div>Caregando gráfico</div>}
-                  data={
-                    questions.map((result, i) => ([`Questão ${i + 1}`, result.correct]))
-                  }
-                  options={{
-                    title: 'Resultado das respostas',
-                    chartArea: { width: '30%' },
-                    hAxis: {
-                      title: 'Questão',
-                      minValue: 0,
-                    },
-                    vAxis: {
-                      title: 'Acertadas/Erradas',
-                    },
-                  }}
-                  legendToggle
-                />
               </TabPanel>
-
-              {console.log(questions.map((result, i) => ([`Questão ${i + 1}`, result.correct == 1 ? 0 : 1])))}
-
-              {/* [
-                    ['City', '2010 Population', '2000 Population'],
-                    ['New York City, NY', 8175000, 8008000],
-                    ['Los Angeles, CA', 3792000, 3694000],
-                    ['Chicago, IL', 2695000, 2896000],
-                    ['Houston, TX', 2099000, 1953000],
-                    ['Philadelphia, PA', 1526000, 1517000],
-                  ] */}
 
               <TabPanel value={tabValue} index={1}>
                 <Chart

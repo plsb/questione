@@ -12,6 +12,12 @@ import {
   Button,
   TextField, IconButton, FormControlLabel, Switch, Tooltip, Typography
 } from '@material-ui/core';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import Collapse from '@material-ui/core/Collapse';
+import StarBorder from '@material-ui/icons/StarBorder';
 import api from "../../../../services/api";
 import Swal from "sweetalert2";
 import validate from "validate.js";
@@ -37,6 +43,12 @@ const useStyles = makeStyles(() => ({
   },
   row: {
     margin: '16px 0px',
+  },
+  subGroup: {
+    background: '#FAFAFA',
+    padding: '8px',
+    borderRadius: '4px',
+    border: '1px solid #eeeeee',
   }
 }));
 
@@ -56,6 +68,7 @@ const EvaluationApplicationDetails = props => {
   const { idApplication } = props.match.params;
   const [checkedRandom, setCheckedRandom] = React.useState(false);
   const [checkedShowResult, setCheckedShowResult] = React.useState(false);
+  const [checkedReleasePreviewQuestion, setCheckedReleasePreviewQuestion] = React.useState(false);
   const [checkedDefineDateAndHourInitial, setCheckedDefineDateAndHourInitial] = React.useState(false);
   const [checkedDefineDateAndHourFinal, setCheckedDefineDateAndHourFinal] = React.useState(false);
   const [checkedDefineDuration, setCheckedDefineDuration] = React.useState(false);
@@ -94,19 +107,32 @@ const EvaluationApplicationDetails = props => {
 
   async function saveApplicationDetails(){
     try {
-      const { description, date, hour, date_finish, hour_finish, duration } = formState.values;
+      const {
+        description,
+        date,
+        hour,
+        date_finish,
+        hour_finish,
+        duration,
+        date_release_results,
+        time_release_results,
+      } = formState.values;
 
       const random_questions = checkedRandom;
       const show_results = checkedShowResult;
+      const release_preview_question = checkedReleasePreviewQuestion;
       const data = {
         description,
         random_questions,
         show_results,
-        date_start: date !== '' ? date : null,
-        time_start: hour !== '' ? hour : null,
-        date_finish: date_finish !== '' ? date_finish : null,
-        time_finish: hour_finish !== '' ? hour_finish : null,
-        time_to_finalize: duration !== '' ? duration : null,
+        date_start: checkedDefineDateAndHourInitial && date !== '' ? date : null,
+        time_start: checkedDefineDateAndHourInitial && hour !== '' ? hour : null,
+        date_finish: checkedDefineDateAndHourFinal && date_finish !== '' ? date_finish : null,
+        time_finish: checkedDefineDateAndHourFinal && hour_finish !== '' ? hour_finish : null,
+        time_to_finalize: checkedDefineDuration && duration !== '' ? duration : null,
+        date_release_results: checkedShowResult && date_release_results !== '' ? date_release_results : null,
+        time_release_results: checkedShowResult && time_release_results !== '' ? time_release_results : null,
+        release_preview_question,
       }
       const response = await api.put('evaluation/applications/'+idApplication, data);
       if (response.status === 202) {
@@ -144,6 +170,9 @@ const EvaluationApplicationDetails = props => {
         if (response.data.time_to_finalize) {
           setCheckedDefineDuration(true);
         }
+        if (response.data.release_preview_question) {
+          setCheckedReleasePreviewQuestion(true);
+        }
 
         setFormState(formState => ({
           values: {
@@ -153,6 +182,9 @@ const EvaluationApplicationDetails = props => {
             'date_finish': response.data.date_finish,
             'hour_finish': response.data.time_finish,
             'duration': response.data.time_to_finalize,
+            'date_release_results': response.data.date_release_results,
+            'time_release_results': response.data.time_release_results,
+            'release_preview_question': response.data.release_preview_question
           },
           touched: {
             ...formState.touched,
@@ -202,6 +234,10 @@ const EvaluationApplicationDetails = props => {
 
   const handleChangeShowResult = event => {
     setCheckedShowResult(event.target.checked);
+  }
+
+  const handleChangeReleasePreviewQuestion = event => {
+    setCheckedReleasePreviewQuestion(event.target.checked);
   }
 
   const handleChangeDefineDateAndHourInitial = event => {
@@ -331,32 +367,101 @@ const EvaluationApplicationDetails = props => {
                       label="Questões aleatórias?"
                   />
               </TooltipCustomized>
-              <TooltipCustomized
-                  title={
-                    <React.Fragment>
-                      <p>
-                        <Typography color="textPrimary" variant="body2">
-                          {'Caso esta opção fique ativa, todos os estudantes terão acesso' +
-                          ' ao resultado da sua avaliação. No resultado é apenas apresentado' +
-                          ' se o estudante acertou ou errou as questões. A questão completa não' +
-                          ' é apresentada ao estudante.'}
-                        </Typography>
-                      </p>
-                    </React.Fragment>
-                  }>
-                <FormControlLabel
-                    control={
-                      <Switch
-                          checked={checkedShowResult}
-                          onChange={handleChangeShowResult}
-                          name="show_results"
-                          color="primary"
-                      />
-                    }
-                    label="Liberar o resultado?"
-                />
-              </TooltipCustomized>
             </Grid>
+          </Grid>
+          <Grid
+            item
+            md={6}
+            xs={12}
+            className={classes.row}
+          >
+            <TooltipCustomized
+              title={
+                <React.Fragment>
+                  <p>
+                    <Typography color="textPrimary" variant="body2">
+                      {'Caso esta opção fique ativa, todos os estudantes terão acesso' +
+                      ' ao resultado da sua avaliação. No resultado é apenas apresentado' +
+                      ' se o estudante acertou ou errou as questões. A questão completa não' +
+                      ' é apresentada ao estudante.'}
+                    </Typography>
+                  </p>
+                </React.Fragment>
+              }>
+              <FormControlLabel
+                  control={
+                    <Switch
+                        checked={checkedShowResult}
+                        onChange={handleChangeShowResult}
+                        name="show_results"
+                        color="primary"
+                    />
+                  }
+                  label="Liberar o resultado?"
+              />
+              </TooltipCustomized>
+
+              <List
+                component="nav"
+                aria-labelledby="nested-list-subheader"
+                className={classes.root}
+              >
+                <Collapse in={checkedShowResult} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding className={classes.subGroup}>
+                    <ListItem className={classes.nested}>
+                      <TextField
+                        // error={hasError('description')}
+                        // helperText={
+                        //   hasError('description') ? formState.errors.description[0] : null
+                        // }
+                        type="date"
+                        label="Data da liberação"
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        margin="dense"
+                        name="date_release_results"
+                        onChange={handleChange}
+                        value={formState.values.date_release_results || ''}
+                        variant="outlined"
+                        className={classes.inputInline}
+                      />
+                    </ListItem>
+                    <ListItem className={classes.nested}>
+                      <TextField
+                        // error={hasError('description')}
+                        // helperText={
+                        //   hasError('description') ? formState.errors.description[0] : null
+                        // }
+                        type="time"
+                        label="Hora da liberação"
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        margin="dense"
+                        name="time_release_results"
+                        onChange={handleChange}
+                        value={formState.values.time_release_results || ''}
+                        variant="outlined"
+                        className={classes.inputInline}
+                      />
+                    </ListItem>
+                    <ListItem className={classes.nested}>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                              checked={checkedReleasePreviewQuestion}
+                              onChange={handleChangeReleasePreviewQuestion}
+                              name="release_preview_question"
+                              color="primary"
+                          />
+                        }
+                        label="Liberar visualização das questões"
+                      />
+                    </ListItem>
+                  </List>
+                </Collapse>
+              </List>
           </Grid>
           <Grid
             item
@@ -376,45 +481,54 @@ const EvaluationApplicationDetails = props => {
               label="Definir data e hora inicial?"
             />
 
-            {checkedDefineDateAndHourInitial && (
-              <>
-                <TextField
-                  // error={hasError('description')}
-                  // helperText={
-                  //   hasError('description') ? formState.errors.description[0] : null
-                  // }
-                  type="date"
-                  label="Data da avaliação"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  margin="dense"
-                  name="date"
-                  onChange={handleChange}
-                  value={formState.values.date || ''}
-                  variant="outlined"
-                  className={classes.inputInline}
-                />
-
-                <TextField
-                  // error={hasError('description')}
-                  // helperText={
-                  //   hasError('description') ? formState.errors.description[0] : null
-                  // }
-                  type="time"
-                  label="Hora de início"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  margin="dense"
-                  name="hour"
-                  onChange={handleChange}
-                  value={formState.values.hour || ''}
-                  variant="outlined"
-                  className={classes.inputInline}
-                />
-              </>
-            )}
+            <List
+              component="nav"
+              aria-labelledby="nested-list-subheader"
+              className={classes.root}
+            >
+              <Collapse in={checkedDefineDateAndHourInitial} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding className={classes.subGroup}>
+                  <ListItem className={classes.nested}>
+                    <TextField
+                      // error={hasError('description')}
+                      // helperText={
+                      //   hasError('description') ? formState.errors.description[0] : null
+                      // }
+                      type="date"
+                      label="Data da avaliação"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      margin="dense"
+                      name="date"
+                      onChange={handleChange}
+                      value={formState.values.date || ''}
+                      variant="outlined"
+                      className={classes.inputInline}
+                    />
+                  </ListItem>
+                  <ListItem className={classes.nested}>
+                    <TextField
+                      // error={hasError('description')}
+                      // helperText={
+                      //   hasError('description') ? formState.errors.description[0] : null
+                      // }
+                      type="time"
+                      label="Hora de início"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      margin="dense"
+                      name="hour"
+                      onChange={handleChange}
+                      value={formState.values.hour || ''}
+                      variant="outlined"
+                      className={classes.inputInline}
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+            </List>
           </Grid>
           <Grid
             item
@@ -434,45 +548,54 @@ const EvaluationApplicationDetails = props => {
               label="Definir data e hora final?"
             />
 
-            {checkedDefineDateAndHourFinal && !checkedDefineDuration && (
-              <>
-                <TextField
-                  // error={hasError('description')}
-                  // helperText={
-                  //   hasError('description') ? formState.errors.description[0] : null
-                  // }
-                  type="date"
-                  label="Data de fim da avaliação"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  margin="dense"
-                  name="date_finish"
-                  onChange={handleChange}
-                  value={formState.values.date_finish || ''}
-                  variant="outlined"
-                  className={classes.inputInline}
-                />
-
-                <TextField
-                  // error={hasError('description')}
-                  // helperText={
-                  //   hasError('description') ? formState.errors.description[0] : null
-                  // }
-                  type="time"
-                  label="Hora de fim da avaliação"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  margin="dense"
-                  name="hour_finish"
-                  onChange={handleChange}
-                  value={formState.values.hour_finish || ''}
-                  variant="outlined"
-                  className={classes.inputInline}
-                />
-              </>
-            )}
+            <List
+              component="nav"
+              aria-labelledby="nested-list-subheader"
+              className={classes.root}
+            >
+              <Collapse in={(checkedDefineDateAndHourFinal && !checkedDefineDuration)} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding className={classes.subGroup}>
+                  <ListItem className={classes.nested}>
+                    <TextField
+                      // error={hasError('description')}
+                      // helperText={
+                      //   hasError('description') ? formState.errors.description[0] : null
+                      // }
+                      type="date"
+                      label="Data de fim da avaliação"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      margin="dense"
+                      name="date_finish"
+                      onChange={handleChange}
+                      value={formState.values.date_finish || ''}
+                      variant="outlined"
+                      className={classes.inputInline}
+                    />
+                  </ListItem>
+                  <ListItem className={classes.nested}>
+                    <TextField
+                      // error={hasError('description')}
+                      // helperText={
+                      //   hasError('description') ? formState.errors.description[0] : null
+                      // }
+                      type="time"
+                      label="Hora de fim da avaliação"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      margin="dense"
+                      name="hour_finish"
+                      onChange={handleChange}
+                      value={formState.values.hour_finish || ''}
+                      variant="outlined"
+                      className={classes.inputInline}
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+            </List>
           </Grid>
           <Grid
             item
@@ -492,25 +615,35 @@ const EvaluationApplicationDetails = props => {
               label="Definir duração?"
             />
 
-            {checkedDefineDuration && !checkedDefineDateAndHourFinal && (
-              <TextField
-                // error={hasError('description')}
-                // helperText={
-                //   hasError('description') ? formState.errors.description[0] : null
-                // }
-                type="time"
-                label="Duração da prova em horas"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                margin="dense"
-                name="duration"
-                onChange={handleChange}
-                value={formState.values.duration || ''}
-                variant="outlined"
-                className={classes.inputInline}
-              />
-            )}
+            <List
+              component="nav"
+              aria-labelledby="nested-list-subheader"
+              className={classes.root}
+            >
+              <Collapse in={(checkedDefineDuration && !checkedDefineDateAndHourFinal)} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding className={classes.subGroup}>
+                  <ListItem className={classes.nested}>
+                    <TextField
+                      // error={hasError('description')}
+                      // helperText={
+                      //   hasError('description') ? formState.errors.description[0] : null
+                      // }
+                      type="time"
+                      label="Duração da prova em horas"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      margin="dense"
+                      name="duration"
+                      onChange={handleChange}
+                      value={formState.values.duration || ''}
+                      variant="outlined"
+                      className={classes.inputInline}
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+            </List>
           </Grid>
         </CardContent>
         <Divider />
