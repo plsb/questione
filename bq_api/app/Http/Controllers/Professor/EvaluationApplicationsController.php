@@ -286,6 +286,20 @@ class EvaluationApplicationsController extends Controller
                         ], 202);
                     }
                 }
+                //verifica a data e hora inicial da avaliação. A liberação dos resultados deve acontecer após essa data e hora
+                if($request->date_start){
+                    if($request->date_start > $request->date_release_results){
+                        return response()->json([
+                            'message' => 'A data para liberar os resultados da avaliação deve ser maior ou igual a data de início da avaliação.'
+                        ], 202);
+                    } else if($request->date_start == $request->date_release_results){
+                        if($request->time_start >= $request->time_release_results){
+                            return response()->json([
+                                'message' => 'A hora para liberar os resultados da avaliação deve ser maior que a hora de início da avaliação.'
+                            ], 202);
+                        }
+                    }
+                }
                 //verifica a data e hora final da avaliação. A liberação dos resultados deve acontecer após essa data e hora
                 if($request->date_finish){
                     if($request->date_finish > $request->date_release_results){

@@ -73,7 +73,7 @@ class ResultEvaluationStudent extends Controller
                         $application_evaluation->time_release_results,
                 ], 202);
             } else if($application_evaluation->date_release_results == date('Y-m-d')){
-                if($application_evaluation->time_release_results > date('H:i')){
+                if($application_evaluation->time_release_results > date('H:i:s')){
                     return response()->json([
                         'message' => 'O resultado desta avaliação estará disponível na data '.$application_evaluation->date_release_results.' e hora '.
                             $application_evaluation->time_release_results,

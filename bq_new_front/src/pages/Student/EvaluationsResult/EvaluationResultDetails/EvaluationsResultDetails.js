@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ReactDOM  from 'react-dom';
 import Chart from "react-google-charts";
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -19,6 +20,8 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { Close, Done, Block } from "@material-ui/icons";
 import { withStyles } from "@material-ui/core/styles";
 import Swal from "sweetalert2";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 // import Button from '@material-ui/core/Button';
 // import Snackbar from '@material-ui/core/Snackbar';
@@ -154,6 +157,7 @@ const EvaluationsResultDetails = props => {
   const [head, setHead] = useState([]);
   const [questions, setQuestions] = useState(null);
   // const [showSnackbar, setShowSnackbar] = useState(true);
+  const [openSnack, setOpenSnack] = React.useState(true);
 
   const classes = useStyles();
 
@@ -171,6 +175,7 @@ const EvaluationsResultDetails = props => {
   });
 
   function loadAlert(icon, message) {
+
     Toast.fire({
       icon: icon,
       title: message
@@ -187,7 +192,8 @@ const EvaluationsResultDetails = props => {
         setHead(response.data);
       } if (response.status == 202) {
         if (response.data.message) {
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message); //https://www.npmjs.com/package/react-toastify/v/1.4.3
+          //loadAlert('error', response.data.message);
           // showSnackbar(true);
           setQuestions([]);
           setHead([]);

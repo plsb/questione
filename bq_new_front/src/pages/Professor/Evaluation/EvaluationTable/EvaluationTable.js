@@ -207,7 +207,7 @@ const EvaluationTable = props => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                clique aqui
+                clique aqui.
               </a>
             </div>
             <CardHeader

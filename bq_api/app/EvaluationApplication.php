@@ -17,6 +17,25 @@ class EvaluationApplication extends Model
         'updated_at',
     ];
 
+    protected $appends = ['canShowResults'];
+
+    public function getCanShowResultsAttribute(){
+        if($this->show_results == 1){
+            if($this->date_release_results != null){
+                if($this->date_release_results == date('Y-m-d')){ //verifica se a data de liberar os resultados é igual a data atual
+                    if($this->time_release_results <= date('H:i:s')){ //verifica se a hora de liberar os resultados é maior que a hora atual
+                        return 1;
+                    }
+                } else if($this->date_release_results < date('Y-m-d')) {
+                    return 1;
+                }
+                return 0;
+            }
+            return 1;
+        }
+        return 0;
+    }
+
     public function evaluation(){
         return $this->belongsTo(Evaluation::class, 'fk_evaluation_id')
             ->with('user');

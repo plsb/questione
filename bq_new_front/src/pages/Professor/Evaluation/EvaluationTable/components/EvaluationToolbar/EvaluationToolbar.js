@@ -54,12 +54,14 @@ const EvaluationToolbar = props => {
         <Typography variant="h3" className={classes.title}>{'Avaliações'}</Typography>
         <span className={classes.spacer} />
         <Button className={classes.exportButton}
-                onClick={onClickRequestUsers}>Avaliações arquivadas</Button>
+                onClick={onClickRequestUsers}>Arquivadas</Button>
+      </div>
+      <div className={classes.row}>
         <Button
             color="primary"
             variant="contained"
             onClick={onClickNewCourse}>
-          Nova Avaliação
+          Cadastrar
         </Button>
       </div>
       <div className={classes.row}>

@@ -15,6 +15,8 @@ import api from "../../../../services/api";
 import ToolbarEvaluation
   from "./EvaluationResultToolbar/EvaluationResultStudentToolbar";
 import {Close, FormatListBulleted, PlayArrow} from "@material-ui/icons";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -125,6 +127,7 @@ const EvaluationsResultStudentTable = props => {
 
   return (
       <div className={classes.root}>
+        <ToastContainer autoClose={10000} position="bottom-center"/>
         <ToolbarEvaluation
             onChangeSearch={updateSearch.bind(this)}
             searchText={searchText}
@@ -169,19 +172,20 @@ const EvaluationsResultStudentTable = props => {
                                   {...rest}
                                   className={classes.root}
                                 >
-                                  {application.evaluation_application.date_release_results && (
+                                  {/*application.evaluation_application.canShowResults == 0 && (
                                     <div className={classes.releaseResultsMessage}>
                                       Data de liberação dos resultados:
                                       <span> </span>
-                                      {moment(`${application.evaluation_application.date_release_results} ${application.evaluation_application.time_release_results}`).format('DD/MM/YYYY hh:mm')}
+                                      {moment(`${application.evaluation_application.date_release_results} ${application.evaluation_application.time_release_results}`).format('DD/MM/YYYY H:mm')}
                                     </div>
-                                  )}
+                                  )*/}
                                   <CardHeader
                                       className={classes.head}
                                       action={
                                         <div>
                                           <div className={classes.dFlex}>
-                                            { application.evaluation_application.show_results == 1 && application.finalized_at ?
+                                            { application.evaluation_application.show_results == 1 &&
+                                                application.evaluation_application.canShowResults == 1 && application.finalized_at ?
                                             <Tooltip title="Visualizar resultados">
                                               <IconButton
                                                   aria-label="copy"
@@ -190,7 +194,10 @@ const EvaluationsResultStudentTable = props => {
                                               </IconButton>
                                             </Tooltip>
                                               :
-                                                application.evaluation_application.show_results == 0 && application.finalized_at && <span className={classes.labelRed}>{'Resultado não liberado.'}</span>
+                                                application.evaluation_application.canShowResults == 0 && application.evaluation_application.show_results == 1
+                                                    ? <span className={classes.labelRed}>{'Disponível em: '+moment(`${application.evaluation_application.date_release_results} ${application.evaluation_application.time_release_results}`).format('H:mm DD/MM/YYYY')}</span>
+                                                        :
+                                                          application.evaluation_application.show_results == 0 && application.finalized_at && <span className={classes.labelRed}>{'Resultado indisponível.'}</span>
                                             }
 
                                             {!application.finalized_at && application.finished_automatically === 0 && (
@@ -221,7 +228,7 @@ const EvaluationsResultStudentTable = props => {
 
                                           {application.finalized_at && (
                                             <Typography variant="h5" color="textSecondary" component="h2">
-                                              {'Data de realização: '+moment(application.finalized_at).format('DD/MM/YYYY hh:mm') }
+                                              {'Data de realização: '+moment(application.finalized_at).format('DD/MM/YYYY H:mm') }
                                             </Typography>
                                           )}
 

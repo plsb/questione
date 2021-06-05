@@ -51,7 +51,7 @@ const EvaluationApplicationToolbar = props => {
       {...rest}
       className={clsx(classes.root, className)}>
       <div className={classes.row}>
-        <Typography variant="h3" className={classes.title}>{'Aplicações das Avaliações'}</Typography>
+        <Typography variant="h3" className={classes.title}>{'Aplicações'}</Typography>
         <span className={classes.spacer} />
       </div>
       <div className={classes.row}>

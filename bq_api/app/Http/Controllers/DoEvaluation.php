@@ -167,9 +167,9 @@ class DoEvaluation extends Controller
                         if(!($timeInserted >= $timeStartedEvaluationStarted && $timeInserted <= $timeFinisedEvaluationStarted)){
                             return response()->json([
                                 'message' => 'A avaliação não pode ser iniciada. '.
-                                    'O estudante só pode iniciar esta avaliação entre o horário '.$timeStudentShouldStarted->format('H:i').
+                                    'O estudante só poderá iniciar esta avaliação entre o horário '.$timeStudentShouldStarted->format('H:i').
                                     ' e '. $timeStudentShouldFinished->format('H:i').' do dia '
-                                    .$dateCanStart->format('d/m/Y')
+                                    .$dateCanStart->format('d/m/Y').'.'
                             ], 202);
                         }
                     }
@@ -177,8 +177,8 @@ class DoEvaluation extends Controller
                     $dateCanStart = new \DateTime($application->date_start);
                     return response()->json([
                         'message' => 'A avaliação não pode ser iniciada. '.
-                            'O estudante só pode iniciar esta avaliação no dia '
-                            .$dateCanStart->format('d/m/Y'). ' às '.$application->time_start
+                            'O estudante só poderá iniciar esta avaliação no dia '
+                            .$dateCanStart->format('d/m/Y'). ' às '.$application->time_start.'.'
                     ], 202);
                 }
 

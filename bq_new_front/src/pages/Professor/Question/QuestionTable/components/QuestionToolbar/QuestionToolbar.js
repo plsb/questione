@@ -199,6 +199,8 @@ const QuestionToolbar = props => {
         <div className={classes.row}>
           <Typography variant="h3" className={classes.title}>{'Questões'}</Typography>
           <span className={classes.spacer} />
+        </div>
+        <div className={classes.row}>
           <Button
               color="primary"
               variant="contained"
