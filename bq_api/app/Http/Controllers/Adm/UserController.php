@@ -26,7 +26,7 @@ class UserController extends Controller
     public function addExternalQuestion(Request $request, $id){
         $user = User::find($id);
 
-        if($request->add_external_question){
+        if(!$request->add_external_question){
             return response()->json([
                 'message' => 'Informe o campo.'
             ], 202);
