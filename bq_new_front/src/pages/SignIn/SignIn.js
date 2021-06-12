@@ -180,7 +180,7 @@ const SignIn = props => {
 
         login(response.data.token, response.data[0].name,
                 response.data[0].email, response.data[0].acess_level,
-                response.data[0].id, response.data[0].show_tour);
+                response.data[0].id, response.data[0].show_tour, response.data[0].add_external_question);
 
         loadAlert('success', response.data[0].name+', seja bem-vindo!');
         history.push('/home');

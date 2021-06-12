@@ -3,6 +3,7 @@ import ReactDOM  from 'react-dom';
 import Chart from "react-google-charts";
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
+import ReactHtmlParser from "react-html-parser";
 import { makeStyles } from '@material-ui/styles';
 import {
   Card,
@@ -11,7 +12,8 @@ import {
   Divider,
   IconButton,
   Typography, Grid, Tooltip,
-  Paper, LinearProgress, Box
+  Paper, LinearProgress, Box,
+  List, ListItem
 } from '@material-ui/core';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -22,6 +24,16 @@ import { withStyles } from "@material-ui/core/styles";
 import Swal from "sweetalert2";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import CheckIcon from '@material-ui/icons/Check';
+import CloseIcon from '@material-ui/icons/Close';
+
+import './styles.css';
 
 // import Button from '@material-ui/core/Button';
 // import Snackbar from '@material-ui/core/Snackbar';
@@ -31,12 +43,15 @@ import 'react-toastify/dist/ReactToastify.min.css';
 //   return <MuiAlert elevation={6} variant="filled" {...props} />;
 // }
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     margin: 10,
   },
   content: {
     padding: 0
+  },
+  ml: {
+    marginLeft: '8px',
   },
   headQuestion: {
     width: '90.0px',
@@ -119,7 +134,45 @@ const useStyles = makeStyles(() => ({
     padding: '12px',
     fontWeight: 'bold',
     fontSize: '14px'
-  }
+  },
+  lineQuestion: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    margin: 30
+  },
+  lineItemQuestion: {
+    width: '100%'
+  },
+  correct: {
+    color: 'green',
+  },
+  incorrect: {
+    color: 'red',
+  },
+  bgCorrect: {
+    background: 'green',
+    color: '#ffffff',
+  },
+  bgIncorrect: {
+    background: 'red',
+    color: '#ffffff',
+  },
+  paper: {
+    display: 'flex',
+    marginBottom: 10,
+    '& > *': {
+        margin: theme.spacing(2),
+    },
+  },
+  paperWrong: {
+      backgroundColor: '#ef9a9a',
+      color: '#212121',
+  },
+  paperRight: {
+      backgroundColor: '#80cbc4',
+      color: '#212121',
+  },
 }));
 
 const TooltipCustomized = withStyles((theme) => ({
@@ -182,6 +235,8 @@ const EvaluationsResultDetails = props => {
     });
   }
 
+  const [showQuestionPreview, setShowQuestionPreview] = React.useState(false);
+
   async function findHead() {
     try {
 
@@ -189,6 +244,8 @@ const EvaluationsResultDetails = props => {
 
       if (response.status == 200) {
         setQuestions(response.data.questions);
+        setShowQuestionPreview(response.data.question_preview);
+
         setHead(response.data);
       } if (response.status == 202) {
         if (response.data.message) {
@@ -221,6 +278,12 @@ const EvaluationsResultDetails = props => {
 
   const handleChangeTab = (event, newValue) => {
     setTabValue(newValue);
+  };
+
+  const [expanded, setExpanded] = React.useState(false);
+
+  const handleChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
   };
 
   function a11yProps(index) {
@@ -310,57 +373,175 @@ const EvaluationsResultDetails = props => {
               </Tabs>
 
               <TabPanel value={tabValue} index={0}>
-                {questions.map((result, i) => (
-                  <div style={{ marginBottom: '30px' }}>
-                    <Typography align="center" style={{ fontWeight: 'bold' }}
-                      variant="h5" component="h2">
-                      {'Questão ' + (i + 1)}
-                    </Typography>
-                    {result.skill ?
-                      <Grid
-                        container
-                        direction="row"
-                        justify="center"
-                        alignItems="center">
-                        <Typography align="center"
-                          variant="body2" color="textPrimary"
-                          style={{ fontWeight: 'bold', marginRight: '5px' }} >
-                          Competência:
-                                  </Typography>
-                        <Typography align="center"
-                          variant="body2" color="textPrimary" >
-                          {result.skill.description}
-                        </Typography>
-                      </Grid>
-                      : null}
-                    {result.objects ?
-                      <Grid
-                        container
-                        direction="row"
-                        justify="center"
-                        alignItems="center">
-                        <Typography align="center"
-                          variant="body2" color="textPrimary"
-                          style={{ fontWeight: 'bold', marginRight: '5px' }} >
-                          Objeto(s) de Conhecimento:
-                                    </Typography>
-                        <Typography align="center"
-                          variant="body2" color="textPrimary" >
-                          {result.objects.map(item => (
-                            item.object.description + '; '
+                {showQuestionPreview ? (
+                  questions.map((data, i) => (
+                    <ExpansionPanel expanded={expanded === i} key={data.question.id} onChange={handleChange(i)}>
+                      {console.log(data)}
+                      <ExpansionPanelSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-label="Expand"
+                        aria-controls="additional-actions1-content"
+                        id="additional-actions1-header"
+                      >
+                        {/* <FormControlLabel
+                          aria-label="Acknowledge"
+                          onClick={(event) => event.stopPropagation()}
+                          onFocus={(event) => event.stopPropagation()}
+                          control={(
+                            // <Tooltip title={data.question.answer != null ? 'Esta questão já foi respondida' : 'Não respondida'}>
+                            //   <Checkbox
+                            //     className={data.question.answer != null ? '' : classes.hide}
+                            //     checked={data.question.answer != null}
+                            //   />
+                            // </Tooltip>
+                          )}
+                          label={(i + 1) <10 ? ('Questão 00' + (i + 1)) :
+                                    (i + 1) <100 ? ('Questão 0' + (i + 1)) : (i + 1)}
+                        /> */}
+                       
+                         Questão {i + 1}
+                         <span className={classes.ml}>
+                            {data.correct == 1 ? (
+                              <CheckIcon className={classes.correct} />
+                            ) : (
+                              <CloseIcon className={classes.incorrect} />
+                            )}
+                        </span>
+                      </ExpansionPanelSummary>
+                      <ExpansionPanelDetails key={data.question.id}>
+                        <div className={classes.lineQuestion}>
+                          {data.question.skill ?
+                            <Grid
+                              container
+                              direction="row"
+                              justify="center"
+                              alignItems="center">
+                              <Typography align="center"
+                                variant="body2" color="textPrimary"
+                                style={{ fontWeight: 'bold', marginRight: '5px' }} >
+                                Competência:
+                                        </Typography>
+                              <Typography align="center"
+                                variant="body2" color="textPrimary" >
+                                {data.question.skill.description}
+                              </Typography>
+                            </Grid>
+                            : null}
+                          {data.question.objects ?
+                            <Grid
+                              container
+                              direction="row"
+                              justify="center"
+                              alignItems="center">
+                              <Typography align="center"
+                                variant="body2" color="textPrimary"
+                                style={{ fontWeight: 'bold', marginRight: '5px' }} >
+                                Objeto(s) de Conhecimento:
+                                          </Typography>
+                              <Typography align="center"
+                                variant="body2" color="textPrimary" >
+                                {data.question.objects.map(item => (
+                                  item.object.description + '; '
+                                ))}
+                              </Typography>
+                            </Grid>
+                            : null}
+                          <Typography variant="button" color="textSecondary" component="p">
+                            Texto base:
+                          </Typography>
+                          <div> { ReactHtmlParser (data.question.base_text) } </div>
+                          <br/>
+                          <Typography variant="button" color="textSecondary" component="p">
+                            Enunciado:
+                          </Typography>
+                          <div> { ReactHtmlParser (data.question.stem) } </div>
+                          <br />
+                          <Typography variant="button" color="textSecondary" component="p">
+                            Alternativas:
+                          </Typography>
+                          <br />
+                          {data.question.items.map(item => (
+                             item.correct_item == 1 ?
+                              <Paper className={clsx(classes.paper, classes.paperRight)}   variant="outlined"> { ReactHtmlParser (item.description)  }</Paper>
+                              : <Paper className={clsx(classes.paper, data.answer == item.id && item.correct_item == 0 ? classes.paperWrong : '')} variant="outlined"> { ReactHtmlParser (item.description) } </Paper>
+
+                              // <Tooltip title="Clique para escolher esta alternativa." placement="top-start">
+                              //   <List
+                              //     className={classes.lineItemQuestion}
+                              //     key={item.id}
+                              //     // onClick={handleToggle(item.id)}
+                              //     component="nav" aria-label="secondary mailbox folder"
+                              //   >
+                              //     <ListItem
+                              //       key={item.id}
+                              //       selected={data.question.answer == item.id}
+                              //       button
+                              //       className={`
+                              //         ${item.correct_item == 1 && classes.bgCorrect} ${data.answer == item.id && item.correct_item == 0 && classes.bgIncorrect}`}
+                              //       // onClick={(event) => handleListItemClick(event, data.id, item.id)}
+                              //     >
+                              //       { ReactHtmlParser (item.description)  }
+                              //     </ListItem>
+                              //   </List>
+                              // </Tooltip>
                           ))}
-                        </Typography>
-                      </Grid>
-                      : null}
-                    {result.answer == null ?
-                      <span className={classes.percentageNull}><Block /></span>
-                      :
-                      result.correct == 1 ?
-                        <span className={classes.percentageGreen}><Done /></span>
+                        </div>
+                      </ExpansionPanelDetails>
+                    </ExpansionPanel>
+                  ))
+                ) : (
+                  questions.map((result, i) => (
+                    <div style={{ marginBottom: '30px' }}>
+                      <Typography align="center" style={{ fontWeight: 'bold' }}
+                        variant="h5" component="h2">
+                        {'Questão ' + (i + 1)}
+                      </Typography>
+                      {result.skill ?
+                        <Grid
+                          container
+                          direction="row"
+                          justify="center"
+                          alignItems="center">
+                          <Typography align="center"
+                            variant="body2" color="textPrimary"
+                            style={{ fontWeight: 'bold', marginRight: '5px' }} >
+                            Competência:
+                                    </Typography>
+                          <Typography align="center"
+                            variant="body2" color="textPrimary" >
+                            {result.skill.description}
+                          </Typography>
+                        </Grid>
+                        : null}
+                      {result.objects ?
+                        <Grid
+                          container
+                          direction="row"
+                          justify="center"
+                          alignItems="center">
+                          <Typography align="center"
+                            variant="body2" color="textPrimary"
+                            style={{ fontWeight: 'bold', marginRight: '5px' }} >
+                            Objeto(s) de Conhecimento:
+                                      </Typography>
+                          <Typography align="center"
+                            variant="body2" color="textPrimary" >
+                            {result.objects.map(item => (
+                              item.object.description + '; '
+                            ))}
+                          </Typography>
+                        </Grid>
+                        : null}
+                      {result.answer == null ?
+                        <span className={classes.percentageNull}><Block /></span>
                         :
-                        <span className={classes.percentageRed}><Close /></span>}
-                  </div>
-                ))}
+                        result.correct == 1 ?
+                          <span className={classes.percentageGreen}><Done /></span>
+                          :
+                          <span className={classes.percentageRed}><Close /></span>}
+                    </div>
+                  ))
+                )}
               </TabPanel>
 
               <TabPanel value={tabValue} index={1}>

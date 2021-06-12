@@ -30,6 +30,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
     "react-timer-hook": "^3.0.2",
+    "react-toastify": "^7.0.4",
     "reactour": "^1.17.0",
     "reactstrap": "^8.4.1",
     "styled-components": "^4.4.1",
