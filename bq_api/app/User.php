@@ -18,7 +18,7 @@ class User extends Authenticatable implements JWTSubject
 
     protected $table = 'users';
     protected $fillable = ['id', 'name', 'email', 'cpf', 'password','acess_level',
-                        'email_verified_at', 'show_tour'];
+                        'email_verified_at', 'show_tour', 'add_external_question'];
     protected $hidden = ['password', 'cpf'];
 
     public function getJWTIdentifier()

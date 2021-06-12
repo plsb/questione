@@ -23,6 +23,23 @@ class UserController extends Controller
         return response()->json($users, 200);
     }
 
+    public function addExternalQuestion(Request $request, $id){
+        $user = User::find($id);
+
+        if($request->add_external_question){
+            return response()->json([
+                'message' => 'Informe o campo.'
+            ], 202);
+        }
+        $user->add_external_question = $request->add_external_question;
+        $user->save();
+
+        return response()->json([
+            'message' => 'Usuário editado com sucesso.'
+        ], 200);
+
+    }
+
     public function isProfessor(Request $request, $id)
     {
         //Ativa ou desativa o usuário como professor
