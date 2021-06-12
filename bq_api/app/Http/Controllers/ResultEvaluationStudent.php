@@ -60,7 +60,9 @@ class ResultEvaluationStudent extends Controller
             ], 202);
         }
 
-        $application_evaluation = EvaluationApplication::where('id', $head_answer->fk_application_evaluation_id)->first();
+        $application_evaluation = EvaluationApplication::where('id', $head_answer->fk_application_evaluation_id)
+            ->with('evaluation')
+            ->first();
         if($application_evaluation->show_results == 0){
             return response()->json([
                 'message' => 'O resultado não está liberado.',
@@ -90,7 +92,12 @@ class ResultEvaluationStudent extends Controller
 
         $resultHeadAnswer = array();
 
+        $preview_question = ($application_evaluation->evaluation->practice == 1)
+            || ($application_evaluation->evaluation->practice == 0 &&
+                $application_evaluation->release_preview_question == 1);
+
         $answer = AnswersEvaluation::where('fk_answers_head_id', $head_answer->id)->get();
+        $questionComplete = array();
         $resultAnswer = array();
         $qtdCorrect = 0;
         $qtdIncorrect = 0;
@@ -116,13 +123,31 @@ class ResultEvaluationStudent extends Controller
                 ->with('object')
                 ->get();
 
-            $auxAnswer= (object)[
-                'question' => $question->id,
-                'skill' => $skill,
-                'objects' => $objects,
-                'correct' => $correct,
-                'answer' => $as->answer,
-            ];
+            if($preview_question){
+                $itens = QuestionItem::where('fk_question_id', $question->id)
+                    ->orderby('id')
+                    ->get();
+
+                $auxAnswer= (object)[
+                    'question' => $question,
+                    'itens' => $itens,
+                    'skill' => $skill,
+                    'objects' => $objects,
+                    'correct' => $correct,
+                    'answer' => $as->answer,
+                ];
+            } else {
+                $auxAnswer= (object)[
+                    'question' => $question->id,
+                    'itens' => null,
+                    'skill' => $skill,
+                    'objects' => $objects,
+                    'correct' => $correct,
+                    'answer' => $as->answer,
+                ];
+            }
+
+
             $resultAnswer[] = $auxAnswer;
         }
 
@@ -131,6 +156,7 @@ class ResultEvaluationStudent extends Controller
             'qtdCorrect' => $qtdCorrect,
             'qtdIncorrect' => $qtdIncorrect,
             'questions' => $resultAnswer,
+            'question_preview' => $preview_question
 
         ];
 

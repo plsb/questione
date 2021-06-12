@@ -110,6 +110,7 @@ class EvaluationApplicationsPracticeController extends Controller
         $evaluation_application->fk_evaluation_id = $id;
         $evaluation_application->status = 1; //sempre será 1
         $evaluation_application->show_results = 1; //sempre será 1
+        $evaluation_application->time_release_results = 1; //sempre será 1
         $evaluation_application->save();
 
         return response()->json([
