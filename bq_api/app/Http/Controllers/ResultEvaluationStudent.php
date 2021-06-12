@@ -97,7 +97,6 @@ class ResultEvaluationStudent extends Controller
                 $application_evaluation->release_preview_question == 1);
 
         $answer = AnswersEvaluation::where('fk_answers_head_id', $head_answer->id)->get();
-        $questionComplete = array();
         $resultAnswer = array();
         $qtdCorrect = 0;
         $qtdIncorrect = 0;
@@ -124,11 +123,11 @@ class ResultEvaluationStudent extends Controller
                 ->get();
 
             if($preview_question){
-                $itens = QuestionItem::where('fk_question_id', $question->id)
+                $items = QuestionItem::where('fk_question_id', $question->id)
                     ->orderby('id')
                     ->get();
 
-                $question->itens = $itens;
+                $question->items = $items;
 
                 $auxAnswer= (object)[
                     'question' => $question,
@@ -140,7 +139,6 @@ class ResultEvaluationStudent extends Controller
             } else {
                 $auxAnswer= (object)[
                     'question' => $question->id,
-                    'itens' => null,
                     'skill' => $skill,
                     'objects' => $objects,
                     'correct' => $correct,
