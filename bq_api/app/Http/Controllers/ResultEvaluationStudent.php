@@ -128,9 +128,10 @@ class ResultEvaluationStudent extends Controller
                     ->orderby('id')
                     ->get();
 
+                $question->itens = $itens;
+
                 $auxAnswer= (object)[
                     'question' => $question,
-                    'itens' => $itens,
                     'skill' => $skill,
                     'objects' => $objects,
                     'correct' => $correct,
