@@ -34,7 +34,7 @@ Route::group(['prefix' => 'all'], function (){
 Route::group(['prefix' => 'user'], function (){
     Route::get('/', 'Adm\UserController@index')->name('user.index');
     Route::post('/isprofessor/{user}', 'Adm\UserController@isProfessor')->name('user.isProfessor');
-    Route::post('/add-external-questions/{idUser}', 'Adm\UserController@addExternalQuestion')->name('user.addExternalQuestion');
+    Route::put('/add-external-questions/{idUser}', 'Adm\UserController@addExternalQuestion')->name('user.addExternalQuestion');
 });
 
 Route::group(['prefix' => 'course-professor'], function (){
