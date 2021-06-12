@@ -13,7 +13,8 @@ import {
   TableHead,
   TableRow,
   Typography,
-  TablePagination
+  TablePagination,
+  Checkbox
 } from '@material-ui/core';
 import api from '../../../services/api';
 
@@ -94,6 +95,8 @@ const UsersTable = props => {
     });
   }
 
+  const [checkedList, setCheckedList] = useState([]);
+
   async function loadUsers(page){
     try {
       let url = 'user?page='+page;
@@ -105,6 +108,17 @@ const UsersTable = props => {
         setTotal(response.data.total);
       }
       setUsers(response.data.data);
+      // console.log('bbbbbbb',response.data.data);
+      // console.log('AAAAAAAAAAAAAAAAAAAAA = ', response.data.data.map((user) => ({ id: user.id, checked: user.add_external_question == 1 ? true : false })));
+      setCheckedList(response.data.data.map((user) => ({ id: user.id, checked: user.add_external_question == 1 ? true : false })));
+
+      // setCheckedList((lastList) => lastList.map((item, index) => {
+      //   if (item.id == userId) {
+      //     item.checked = add_external_question
+      //   }
+  
+      //   return item;
+      // }));
     } catch (error) {
 
     }
@@ -132,6 +146,27 @@ const UsersTable = props => {
     setRowsPerPage(event.target.value);
   };
 
+  const updateExternalQuestions = async (event, userId, checked) => {
+    const add_external_question = event.target.checked;
+
+    setCheckedList((lastList) => lastList.map((item, index) => {
+      if (item.id == userId) {
+        item.checked = add_external_question
+      }
+
+      return item;
+    }));
+
+    try {
+      let url = 'user/add-external-questions/'+userId;
+      const response = await api.put(url, {
+        add_external_question: add_external_question ? 1 : 0,
+      });
+    } catch (error) {
+
+    }
+  };
+
   return (
     <div className={classes.root}>
       <UsersToolbar
@@ -150,10 +185,12 @@ const UsersTable = props => {
                       <TableCell className={classes.headTable}>Nome</TableCell>
                       <TableCell className={classes.headTable}>Email</TableCell>
                       <TableCell className={classes.headTable}>Nível de Acesso</TableCell>
+                      <TableCell className={classes.headTable}>Questões externas</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {users.map(user => (
+                    {console.log(users)}
+                    {users.map((user, index) => (
                         <TableRow
                             className={classes.tableRow}
                             hover
@@ -173,6 +210,9 @@ const UsersTable = props => {
                             {user.acess_level === 0 ? "Aluno" :
                               user.acess_level === 1 ? "Administrador" :
                                 user.acess_level === 2 ? "Professor" : ""}
+                          </TableCell>
+                          <TableCell>
+                            <Checkbox checked={checkedList[index] && checkedList[index].checked} onChange={(event, checked) => updateExternalQuestions(event, user.id, checked)} />
                           </TableCell>
                         </TableRow>
                     ))}
