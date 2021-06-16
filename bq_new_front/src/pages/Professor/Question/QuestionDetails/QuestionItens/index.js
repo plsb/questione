@@ -8,11 +8,11 @@ import {
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
-import Swal from "sweetalert2";
 import clsx from "clsx";
 import { Editor } from "@tinymce/tinymce-react";
 import api from "../../../../../services/api";
 import Save from "@material-ui/icons/Save";
+import { toast } from 'react-toastify';
 
 const useStyles = makeStyles({
     root: {
@@ -44,26 +44,6 @@ const QuestionItens = props => {
 
 
     const classes = useStyles();
-
-    //configuration alert
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'bottom-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        onOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-    });
-
-    function loadAlert(icon, message) {
-        Toast.fire({
-            icon: icon,
-            title: message
-        });
-    }
 
     useEffect(() => {
         const length = inputItens.length;
@@ -186,11 +166,11 @@ const QuestionItens = props => {
                 }
 
                 if (response.status == 200 || response.status == 201) {
-                    loadAlert('success', 'Alternativas da questão ' + acao + '.');
+                    toast.success('Alternativas da questão ' + acao + '.');
                     inputItens[i].idItem = response.data.id;
                 } else {
 
-                    loadAlert('error', 'Erro ao inserir alternativa.');
+                    toast.error( 'Erro ao inserir alternativa.');
                 }
             }
 
@@ -212,12 +192,12 @@ const QuestionItens = props => {
         });
         //verifica se faltou alguma descrição
         if (text === false) {
-            loadAlert('error', 'Informe a descrição de todas as alternativas');
+            toast.error( 'Informe a descrição de todas as alternativas');
             return;
         }
         //verifica se marcou algum item como correto
         if (correct === false) {
-            loadAlert('error', 'Informe a alternativa correta');
+            toast.error('Informe a alternativa correta');
             return;
         }
         itemDelete.forEach(function logArrayElements(element, index, array) {
@@ -243,7 +223,7 @@ const QuestionItens = props => {
             {inputItens.map((inputField, index) => (
                 <div style={{ padding: "30px" }}>
                     <div className={classes.btnRemoveWrapper}>
-                        <b className="item1">Alternativa de resposta {index + 1}:</b>
+                        <b className="item1">Alternativa de resposta {index + 1} *:</b>
                         {(index > 1 && inputItens.length === index + 1) && (
                             <Button style={{ marginLeft: "10px" }} className={clsx(classes.btRemove, className)} variant="outlined" onClick={handleRemoveItem}>Remover</Button>
                         )}

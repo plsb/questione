@@ -17,8 +17,8 @@ export { default as ObjectTable} from './Administrator/Object/ObjectTable';
 export { default as ObjectDetails} from './Administrator/Object/ObjectDetails';
 export { default as CourseTable } from './Administrator/Course/CourseTable';
 export { default as CourseDetails } from './Administrator/Course/CourseDetails';
-export { default as ProfileTable } from './Administrator/Profile/ProfileTable';
-export { default as ProfileDetails } from './Administrator/Profile/ProfileDetails';
+// export { default as ProfileTable } from './Administrator/Ant_Profile/ProfileTable';
+// export { default as ProfileDetails } from './Administrator/Ant_Profile/ProfileDetails';
 
 export { default as EvaluationTable } from './Professor/Evaluation/EvaluationTable';
 export { default as EvaluationArchiveTable } from './Professor/Evaluation/EvaluationArchiveTable';

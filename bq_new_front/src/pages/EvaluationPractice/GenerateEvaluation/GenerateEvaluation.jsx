@@ -13,12 +13,10 @@ import {
   Tooltip, Select, MenuItem, Typography
 } from '@material-ui/core';
 import api from "../../../services/api";
-import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 import validate from "validate.js";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import useTypeOfEvaluations from '../../../hooks/useTypeOfEvaluations';
-import useCourses from '../../../hooks/useCourses';
-import useCoursesWithQuestions from '../../../hooks/useCoursesWithQuestions';
 
 const schema = {
   description: {
@@ -100,26 +98,6 @@ const GenerateEvaluation = props => {
     errors: {}
   });
 
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
   async function saveGenerateEvaluation() {
 
     try {
@@ -145,17 +123,17 @@ const GenerateEvaluation = props => {
 
       if (response.status === 202) {
         if (response.data.message) {
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
         } else if (response.data.errors[0].description) {
-          loadAlert('error', response.data.errors[0].description);
+          toast.error(response.data.errors[0].description);
         }
       } else {
-        loadAlert('success', 'Avaliação gerada com sucesso!');
+        toast.success('Avaliação gerada com sucesso!');
         loadQuestions();
         history.push('/evaluation-practice');
       }
     } catch (error) {
-      // console.log(error);
+
     }
   }
 
@@ -164,7 +142,7 @@ const GenerateEvaluation = props => {
       const response = await api.get('evaluation/practice/show/' + id);
       if (response.status === 202) {
         if (response.data.message) {
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
         }
       } else {
         setFormState(formState => ({
@@ -225,7 +203,7 @@ const GenerateEvaluation = props => {
         // setRenderConfigQuestions(true);
       }
     } catch (error) {
-      console.log(error);
+
     }
   }
 
@@ -252,7 +230,7 @@ const GenerateEvaluation = props => {
         setRenderConfigQuestions(true);
       }
     } catch (error) {
-      console.log(error);
+
     }
   }
 
@@ -268,7 +246,7 @@ const GenerateEvaluation = props => {
         // setRenderConfigQuestions(true);
       }
     } catch (error) {
-      console.log(error);
+
     }
   }
 

@@ -13,7 +13,7 @@ import {
   TextField, IconButton
 } from '@material-ui/core';
 import api from "../../../../services/api";
-import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 import validate from "validate.js";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
@@ -54,33 +54,13 @@ const ObjectDetails = props => {
     errors: {}
   });
 
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
   async function loadCourses(){
     try {
       const response = await api.get('all/courses');
 
       setCourses([...courses, ...response.data]);
     } catch (error) {
-      loadAlert('error', 'Erro de conexão.');
+      toast.error('Erro de conexão.');
     }
   }
 
@@ -103,14 +83,14 @@ const ObjectDetails = props => {
       }
       if (response.status === 202) {
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
         } else if(response.data.errors[0].description){
-          loadAlert('error', response.data.errors[0].description);
+          toast.error(response.data.errors[0].description);
         } if(response.data.errors[0].fk_course_id){
-          loadAlert('error', response.data.errors[0].fk_course_id);
+          toast.error(response.data.errors[0].fk_course_id);
         }
       } else {
-        loadAlert('success', 'Objeto de Conhecimento '+acao+'.');
+        toast.success('Objeto de Conhecimento '+acao+'.');
         history.push('/objects');
       }
 
@@ -125,7 +105,7 @@ const ObjectDetails = props => {
 
       if (response.status === 202) {
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
         }
       } else {
         setFormState(formState => ({

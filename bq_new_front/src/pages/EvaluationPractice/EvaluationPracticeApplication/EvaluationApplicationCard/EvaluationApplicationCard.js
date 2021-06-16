@@ -12,7 +12,7 @@ import {
     CardContent, Chip, Switch, Tooltip
 } from '@material-ui/core';
 import moment from 'moment';
-import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 import { withRouter } from "react-router-dom";
 import api from "../../../../services/api";
 import { Edit, FormatListBulleted, MoreVert, PlayArrow } from "@material-ui/icons";
@@ -77,26 +77,6 @@ const EvaluationApplicationCard = props => {
 
     }, []);
 
-    //configuration alert
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'bottom-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        onOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-    });
-
-    function loadAlert(icon, message) {
-        Toast.fire({
-            icon: icon,
-            title: message
-        });
-    }
-
     const onEdit = (id) => {
         history.push(`/evaluation-practice/${idApplication}/applications-evaluation/details/${id}`);
     }
@@ -132,7 +112,7 @@ const EvaluationApplicationCard = props => {
             const response = await api.get(url);
             if (response.status === 202) {
                 if (response.data.message) {
-                    loadAlert('error', response.data.message);
+                    toast.error(response.data.message);
                 }
             } else {
                 const responseStatus = response.data;

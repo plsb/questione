@@ -20,7 +20,6 @@ import {
 } from '@material-ui/core';
 import Rating from '@material-ui/lab/Rating';
 import {MoreVert, PlaylistAdd, ExpandMoreRounded, Edit} from '@material-ui/icons';
-import Swal from "sweetalert2";
 import {withRouter} from "react-router-dom";
 import ReactHtmlParser from 'react-html-parser';
 import api from "../../services/api";
@@ -28,6 +27,7 @@ import {DialogQuestione} from "../index";
 import AssignmentTurnedIn from '@material-ui/icons/AssignmentTurnedIn';
 import moment from "moment";
 import CloseIcon from '@material-ui/icons/Close';
+import { toast } from 'react-toastify';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -162,14 +162,14 @@ const QuestionCard = props => {
             const response = await api.post(url, data);
             if (response.status === 202) {
                 if(response.data.message){
-                    loadAlert('error', response.data.message);
+                    toast.error(response.data.message);
                 } else if(response.data.errors[0].rank){
-                    loadAlert('error', response.data.errors[0].rank);
+                    toast.error(response.data.errors[0].rank);
                 } if(response.data.errors[0].fk_question_id){
-                    loadAlert('error', response.data.errors[0].fk_question_id);
+                    toast.error(response.data.errors[0].fk_question_id);
                 }
             } else {
-                loadAlert('success', 'Classificação cadastrada.');
+                toast.success('Classificação cadastrada.');
             }
         } catch (error) {
             setEvaluations([]);
@@ -201,27 +201,6 @@ const QuestionCard = props => {
         loadEvaluations();
 
     }, []);
-
-
-    //configuration alert
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'bottom-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        onOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-    });
-
-    function loadAlert(icon, message) {
-        Toast.fire({
-            icon: icon,
-            title: message
-        });
-    }
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
@@ -267,10 +246,10 @@ const QuestionCard = props => {
             const response = await api.delete(url);
             if (response.status === 202) {
                 if(response.data.message){
-                    loadAlert('error', response.data.message);
+                    toast.error(response.data.message);
                 }
             } else {
-                loadAlert('success', 'Questão excluída.');
+                toast.success('Questão excluída.');
                 setRefresh(refresh+1);
             }
         } catch (error) {
@@ -289,10 +268,10 @@ const QuestionCard = props => {
             const response = await api.delete(url);
             if (response.status === 202) {
                 if(response.data.message){
-                    loadAlert('error', response.data.message);
+                    toast.error(response.data.message);
                 }
             } else {
-                loadAlert('success', 'Questão excluída da avaliação.');
+                toast.success('Questão excluída da avaliação.');
                 setRefresh(refresh+1);
             }
         } catch (error) {
@@ -306,7 +285,7 @@ const QuestionCard = props => {
 
     async function handleChangeValidated() {
         if(question.validated == 1){
-            loadAlert('error', 'Uma questão que já foi habilitada não pode ser desabilitada.');
+            toast.error('Uma questão que já foi habilitada não pode ser desabilitada.');
             return ;
         }
         try {
@@ -314,10 +293,10 @@ const QuestionCard = props => {
             const response = await api.put(url);
             if (response.status === 202) {
                 if(response.data.message){
-                    loadAlert('error', response.data.message);
+                    toast.error(response.data.message);
                 }
             } else {
-                loadAlert('success', 'Questão habilitada.');
+                toast.success('Questão habilitada.');
                 setRefresh(refresh+1);
             }
         } catch (error) {
@@ -332,10 +311,10 @@ const QuestionCard = props => {
             const response = await api.post(url);
             if (response.status === 202) {
                 if(response.data.message){
-                    loadAlert('error', response.data.message);
+                    toast.error(response.data.message);
                 }
             } else {
-                loadAlert('success', 'Questão duplicada.');
+                toast.success('Questão duplicada.');
                 setRefresh(refresh+1);
             }
         } catch (error) {
@@ -347,7 +326,7 @@ const QuestionCard = props => {
 
     const handleChooseEvaluation = () => {
         if(question.fk_user_id !== parseInt(localStorage.getItem("@Questione-id-user")) && rank == 0){
-            loadAlert('error', 'Antes de aplicar a questão, você deve classificá-la.')
+            toast.error('Antes de aplicar a questão, você deve classificá-la.')
             return;
         }
         setOpenEvalationChoose(true);
@@ -370,10 +349,10 @@ const QuestionCard = props => {
 
             if (response.status === 202) {
                 if(response.data.message){
-                    loadAlert('error', response.data.message);
+                    toast.error(response.data.message);
                 }
             } else {
-                loadAlert('success', 'Questão adicionada na avaliação.');
+                toast.success('Questão adicionada na avaliação.');
             }
         } catch (error) {
 

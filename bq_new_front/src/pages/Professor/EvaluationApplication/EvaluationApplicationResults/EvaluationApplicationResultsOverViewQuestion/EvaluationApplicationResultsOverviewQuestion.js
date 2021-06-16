@@ -8,7 +8,7 @@ import {
   CardContent, IconButton, Paper,
   Box, Typography, Collapse, Tooltip,
 } from '@material-ui/core';
-import { Done, Close, ExpandMoreRounded } from "@material-ui/icons";
+import { ExpandMoreRounded } from "@material-ui/icons";
 import ReactHtmlParser from "react-html-parser";
 import {withStyles} from "@material-ui/core/styles";
 

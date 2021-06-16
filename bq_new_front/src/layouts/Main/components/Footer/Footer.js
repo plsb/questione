@@ -54,7 +54,7 @@ const Footer = props => {
               target="_blank">
               IFCE
           </Link>
-          . 2020
+          . 2021
       </Typography>
         <Typography variant="body1">
             Para saber mais informações sobre o Questione

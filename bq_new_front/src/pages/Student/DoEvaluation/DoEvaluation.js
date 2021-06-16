@@ -20,15 +20,9 @@ import api from "../../../services/api";
 import {getInitials} from "../../../helpers";
 import ReactHtmlParser from "react-html-parser";
 import clsx from "clsx";
-import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 import {DialogQuestione} from "../../../components";
 import Timer from "../../../components/Timer";
-
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogActions from "@material-ui/core/DialogActions";
-import Dialog from "@material-ui/core/Dialog";
 
 import './styles.css';
 
@@ -79,19 +73,6 @@ const DoEvaluation = props => {
 
   const classes = useStyles();
 
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
   function getExpiryTimestamp(timestampTime) {
     // const { date } = dateServer;
     // const time = new Date(date.replace(' ', 'T'));
@@ -103,35 +84,28 @@ const DoEvaluation = props => {
     return time;
   }
 
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
   async function listApplication() {
     try {
       const response = await api.get('evaluation/get-application/'+codeAplication);
 
       if(response.status == 200){
         if(response.data.status == 0){
-          loadAlert('error', 'A avaliação está desabilitada.');
+          toast.error('A avaliação está desabilitada.');
           history.push('/home');
           return ;
         }
         if(response.data.evaluation.status == 2){
-          loadAlert('error', 'A avaliação está arquivada.');
+          toast.error('A avaliação está arquivada.');
           history.push('/home');
           return ;
         }
         setApplication(response.data);
       } else if (response.status == 202) {
-        loadAlert('error', response.data.message);
+        toast.error(response.data.message);
         history.push('/home');
         return ;
       } else {
-        loadAlert('error', 'Ocorreu um erro ao buscar a avaliação.');
+        toast.error('Ocorreu um erro ao buscar a avaliação.');
         history.push('/home');
         return ;
       }
@@ -158,14 +132,14 @@ const DoEvaluation = props => {
       if (response.status === 202) {
         setOpenBackdrop(false);
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
           if (response.data.closed) {
             history.push('/home');
           }
         }
       } else if(response.status == 200){
         if(response.data.status == 0){
-          loadAlert('error', 'Avaliação está desabilitada.');
+          toast.error('Avaliação está desabilitada.');
           history.push('/home');
           return ;
         }
@@ -200,10 +174,10 @@ const DoEvaluation = props => {
 
       if (response.status === 202) {
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
         }
       } else if(response.status == 200){
-        loadAlert('error', 'Tempo para responder a avaliação esgotado!');
+        toast.error('Tempo para responder a avaliação esgotado!');
         history.push('/student/result-evaluations');
       }
     } catch (error) {
@@ -218,10 +192,10 @@ const DoEvaluation = props => {
 
       if (response.status === 202) {
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
         }
       } else if(response.status == 200){
-        loadAlert('success', 'Avaliação respondida com sucesso!');
+        toast.success('Avaliação respondida com sucesso!');
         history.push('/student/result-evaluations');
       }
     } catch (error) {
@@ -251,7 +225,7 @@ const DoEvaluation = props => {
 
       if (response.status === 202) {
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
           if (response.data.closed) {
             history.push('/home');
           }
@@ -458,7 +432,7 @@ const DoEvaluation = props => {
                     ))}
                   </div>
 
-                  
+
                 </ExpansionPanelDetails>
               </ExpansionPanel>
           ))}

@@ -6,22 +6,17 @@ import {
   Card,
   CardActions,
   CardContent,
-  // Avatar,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  // Typography,
   TablePagination,
   Tooltip,
   Button,
-  // responsiveFontSizes,
 } from '@material-ui/core';
 import api from '../../../../services/api';
-
-// import { getInitials } from '../../../../helpers';
-import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 import UsersToolbar from "./components/TypeOfEvaluationToolbar";
 import Delete from "@material-ui/icons/Delete";
 import Edit from "@material-ui/icons/Edit";
@@ -82,26 +77,6 @@ const TypeOfEvaluationTable = props => {
   const [open, setOpen] = React.useState(false);
   const [idTypeOfEvaluationDelete, setIdTypeOfEvaluationDelete] = React.useState(0);
 
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
   async function loadTypeOfEvaluations(page){
     try {
       let url = '/type-of-evaluation?page='+page;
@@ -157,10 +132,10 @@ const TypeOfEvaluationTable = props => {
 
       if (response.status === 202) {
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
         }
       } else {
-        loadAlert('success', 'Tipo de avaliação excluído.');
+        toast.success('Tipo de avaliação excluído.');
         loadTypeOfEvaluations(page+1);
       }
     } catch (error) {

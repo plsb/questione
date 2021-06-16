@@ -21,15 +21,12 @@ import api from "../../../../services/api";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { Close, Done, Block } from "@material-ui/icons";
 import { withStyles } from "@material-ui/core/styles";
-import Swal from "sweetalert2";
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -145,10 +142,10 @@ const useStyles = makeStyles((theme) => ({
     width: '100%'
   },
   correct: {
-    color: 'green',
+    color: '#80cbc4',
   },
   incorrect: {
-    color: 'red',
+    color: '#ef9a9a',
   },
   bgCorrect: {
     background: 'green',
@@ -169,9 +166,15 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: '#ef9a9a',
       color: '#212121',
   },
+  paperWrongFont: {
+    color: '#ef9a9a',
+  },
   paperRight: {
       backgroundColor: '#80cbc4',
       color: '#212121',
+  },
+  paperRightFont: {
+    color: '#80cbc4',
   },
 }));
 
@@ -214,27 +217,6 @@ const EvaluationsResultDetails = props => {
 
   const classes = useStyles();
 
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
   const [showQuestionPreview, setShowQuestionPreview] = React.useState(false);
 
   async function findHead() {
@@ -250,7 +232,7 @@ const EvaluationsResultDetails = props => {
       } if (response.status == 202) {
         if (response.data.message) {
           toast.error(response.data.message); //https://www.npmjs.com/package/react-toastify/v/1.4.3
-          //loadAlert('error', response.data.message);
+          //toast.error(response.data.message);
           // showSnackbar(true);
           setQuestions([]);
           setHead([]);
@@ -343,18 +325,16 @@ const EvaluationsResultDetails = props => {
                   <Typography align="center"
                     variant="body2" color="textPrimary"
                     style={{
-                      fontWeight: 'bold', fontSize: '14px', marginRight: '5px',
-                      color: '#009688'
-                    }} >
+                      fontWeight: 'bold', fontSize: '15px', marginRight: '5px',
+                    }} className={classes.paperRightFont}>
                     {head.qtdCorrect >= 2 ? 'Você acertou ' + head.qtdCorrect + ' questões.'
                       : 'Você acertou ' + head.qtdCorrect + ' questão.'}
                   </Typography>
                   <Typography align="center"
                     variant="body2" color="textPrimary"
                     style={{
-                      fontWeight: 'bold', fontSize: '14px', marginRight: '5px',
-                      color: '#EC0B43'
-                    }} >
+                      fontWeight: 'bold', fontSize: '15px', marginRight: '5px',
+                    }} className={classes.paperWrongFont}>
                     {head.qtdIncorrect >= 2 ? 'Você errou ' + head.qtdIncorrect + ' questões.'
                       : 'Você errou ' + head.qtdIncorrect + ' questão.'}
                   </Typography>
@@ -369,14 +349,13 @@ const EvaluationsResultDetails = props => {
                 aria-label="nav tabs example"
               >
                 <LinkTab label="Questões" href="#" {...a11yProps(0)} />
-                <LinkTab label="Gráfico" href="#" {...a11yProps(1)} />
+                {/*<LinkTab label="Gráfico" href="#" {...a11yProps(1)} />*/}
               </Tabs>
 
               <TabPanel value={tabValue} index={0}>
                 {showQuestionPreview ? (
                   questions.map((data, i) => (
                     <ExpansionPanel expanded={expanded === i} key={data.question.id} onChange={handleChange(i)}>
-                      {console.log(data)}
                       <ExpansionPanelSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-label="Expand"
@@ -398,7 +377,7 @@ const EvaluationsResultDetails = props => {
                           label={(i + 1) <10 ? ('Questão 00' + (i + 1)) :
                                     (i + 1) <100 ? ('Questão 0' + (i + 1)) : (i + 1)}
                         /> */}
-                       
+
                          Questão {i + 1}
                          <span className={classes.ml}>
                             {data.correct == 1 ? (
@@ -462,9 +441,15 @@ const EvaluationsResultDetails = props => {
                           <br />
                           {data.question.items.map(item => (
                              item.correct_item == 1 ?
-                              <Paper className={clsx(classes.paper, classes.paperRight)}   variant="outlined"> { ReactHtmlParser (item.description)  }</Paper>
-                              : <Paper className={clsx(classes.paper, data.answer == item.id && item.correct_item == 0 ? classes.paperWrong : '')} variant="outlined"> { ReactHtmlParser (item.description) } </Paper>
-
+                                 <div>
+                                    <Paper className={clsx(classes.paper, classes.paperRight)}   variant="outlined"> { ReactHtmlParser (item.description)  }</Paper>
+                                   {data.answer == item.id && item.correct_item == 1 ? <p className={classes.paperRightFont}>Você marcou esta alternativa e acertou.</p> :
+                                       <p className={classes.paperRightFont}>Esta é a alterantiva correta.</p>}
+                                 </div>
+                              : <div>
+                                 <Paper className={clsx(classes.paper, data.answer == item.id && item.correct_item == 0 ? classes.paperWrong : '')} variant="outlined"> { ReactHtmlParser (item.description) } </Paper>
+                                   {data.answer == item.id && item.correct_item == 0 ? <p className={classes.paperWrongFont}>Você marcou esta alternativa e errou.</p> : null}
+                                 </div>
                               // <Tooltip title="Clique para escolher esta alternativa." placement="top-start">
                               //   <List
                               //     className={classes.lineItemQuestion}
@@ -544,7 +529,7 @@ const EvaluationsResultDetails = props => {
                 )}
               </TabPanel>
 
-              <TabPanel value={tabValue} index={1}>
+              {/*<TabPanel value={tabValue} index={1}>
                 <Chart
                   width="100%"
                   height={200}
@@ -577,7 +562,7 @@ const EvaluationsResultDetails = props => {
                   }}
                   legendToggle
                 />
-              </TabPanel>
+              </TabPanel>*/}
             </div>
           }
         </CardContent>

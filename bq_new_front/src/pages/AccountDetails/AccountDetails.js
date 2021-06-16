@@ -14,7 +14,7 @@ import {
   IconButton, Zoom, Tooltip
 } from '@material-ui/core';
 import api from "../../services/api";
-import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 import validate from "validate.js";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import {logout, updateNameUser} from "../../services/auth";
@@ -54,26 +54,6 @@ const AccountDetails = props => {
     errors: {}
   });
 
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
   async function saveDetails(){
     try {
       const name = formState.values.name;
@@ -83,13 +63,13 @@ const AccountDetails = props => {
       const response = await api.put('all/update-profile-user', data);
       if (response.status === 200) {
         updateNameUser(response.data[0].name);
-        loadAlert('success', 'Perfil de '+name+' atualizado.');
+        toast.success('Perfil de '+name+' atualizado.');
         history.push('/home');
       } else if (response.status === 202) {
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
         } else if(response.data.errors[0].name){
-          loadAlert('error', response.data.errors[0].name);
+          toast.error(response.data.errors[0].name);
         }
       }
 

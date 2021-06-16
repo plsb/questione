@@ -15,7 +15,7 @@ import {
 } from '@material-ui/core';
 import api from '../../../../services/api';
 import { StatusBullet } from '../../../../components';
-import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 import RequestUsersToolbar from "./components/RequestUsersToolbar";
 import Edit from "@material-ui/icons/Edit";
 import PropTypes from "prop-types";
@@ -85,26 +85,6 @@ const RequestUsersTable = props => {
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
   const [searchText, setSearchText] = useState(0);
-
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
 
   async function loadCourseProfessor(page, situation){
     try {

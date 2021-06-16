@@ -15,13 +15,13 @@ import {
   TablePagination, Tooltip, Button
 } from '@material-ui/core';
 import api from '../../../../services/api';
-
-import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 import ObjectToolbar from "./components/ObjectToolbar";
 import PropTypes from "prop-types";
 import {DialogQuestione} from "../../../../components";
 import Delete from "@material-ui/icons/Delete";
 import Edit from "@material-ui/icons/Edit";
+
 const useStyles = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(2),
@@ -77,26 +77,6 @@ const ObjectTable = props => {
   const [open, setOpen] = React.useState(false);
   const [idObjectDelete, setIdObjectDelete] = React.useState(0);
 
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
   async function loadObject(page){
     try {
       let url = 'object?page='+page;
@@ -131,10 +111,10 @@ const ObjectTable = props => {
       const response = await api.delete(url);
       if (response.status === 202) {
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
         }
       } else {
-        loadAlert('success', 'Objeto de Conhecimento excluído.');
+        toast.success('Objeto de Conhecimento excluído.');
         loadObject(page+1);
       }
     } catch (error) {

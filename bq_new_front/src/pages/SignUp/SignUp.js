@@ -10,7 +10,7 @@ import {
   Typography
 } from '@material-ui/core';
 import api from '../../services/api';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 import { cpfMask } from './../../common/mask'
 
 const schema = {
@@ -150,26 +150,6 @@ const SignUp = props => {
 
   };
 
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
   async function handleSignUp(e){
     e.preventDefault();
     try {
@@ -186,18 +166,18 @@ const SignUp = props => {
 
       if (response.status === 202) {
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
         } else if(response.data.errors[0].name){
-          loadAlert('error', response.data.errors[0].name);
+          toast.error(response.data.errors[0].name);
         } if(response.data.errors[0].cpf){
-          loadAlert('error', response.data.errors[0].cpf);
+          toast.error(response.data.errors[0].cpf);
         } else if(response.data.errors[0].email){
-          loadAlert('error', response.data.errors[0].email);
+          toast.error(response.data.errors[0].email);
         } if(response.data.errors[0].password){
-          loadAlert('error', response.data.errors[0].password);
+          toast.error(response.data.errors[0].password);
         }
       } else {
-        loadAlert('success', response.data[0].name+', cadastrado!');
+        toast.success(response.data[0].name+', cadastrado!');
         history.push('/sign-in');
       }
     } catch (error) {

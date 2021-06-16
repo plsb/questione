@@ -8,11 +8,11 @@ import {
 import api from "../../../../../services/api";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
-import Swal from "sweetalert2";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import HighlightOff from '@material-ui/icons/HighlightOff';
 import clsx from "clsx";
 import AddIcon from '@material-ui/icons/Add';
+import { toast } from 'react-toastify';
 
 const useStyles = makeStyles({
     root: {
@@ -49,26 +49,6 @@ const QuestionKeywords = props => {
     const [keyWordNew, setKeyWordNew] = React.useState('');
 
     const classes = useStyles();
-
-    //configuration alert
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'bottom-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        onOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-    });
-
-    function loadAlert(icon, message) {
-        Toast.fire({
-            icon: icon,
-            title: message
-        });
-    }
 
     async function loadKeywordsAll() {
         try {
@@ -107,12 +87,12 @@ const QuestionKeywords = props => {
 
             if (response.status === 202) {
                 if (response.data.message) {
-                    loadAlert('error', response.data.message);
+                    toast.error( response.data.message);
                 }
             } else if (response.status === 200) {
                 loadKeywordsQuestion();
                 loadKeywordsAll();
-                loadAlert('success', 'Palavra-chave ' + value + ', cadastrada.');
+                toast.success('Palavra-chave ' + value + ', cadastrada.');
             }
         } catch (error) {
 
@@ -126,12 +106,12 @@ const QuestionKeywords = props => {
             const response = await api.delete(url);
             if (response.status === 202) {
                 if (response.data.message) {
-                    loadAlert('error', response.data.message);
+                    toast.error( response.data.message);
                 }
             } else if (response.status === 200) {
                 loadKeywordsQuestion();
                 loadKeywordsAll();
-                loadAlert('success', 'Palavra-chave excluida.');
+                toast.success('Palavra-chave excluida.');
             }
         } catch (error) {
 

@@ -15,7 +15,7 @@ import {
 import { MoreVert, Edit } from '@material-ui/icons';
 import moment from 'moment';
 import api from "../../../../services/api";
-import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 import {withRouter} from "react-router-dom";
 import {DialogQuestione} from "../../../../components";
 import CloseIcon from "@material-ui/icons/Close";
@@ -57,26 +57,6 @@ const EvaluationCard = props => {
 
   const classes = useStyles();
 
-    //configuration alert
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'bottom-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        onOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-    });
-
-    function loadAlert(icon, message) {
-        Toast.fire({
-            icon: icon,
-            title: message
-        });
-    }
-
   const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
   };
@@ -93,10 +73,10 @@ const EvaluationCard = props => {
       try {
           const response = await api.post('evaluation/duplicate/'+evaluation.id);
           if (response.status === 200) {
-              loadAlert('success', 'Avaliação cadastrada(duplicada).');
+              toast.success('Avaliação cadastrada(duplicada).');
               setRefresh(refresh+1);
           } else {
-              loadAlert('error', 'Erro ao mduar o status da avaliação.');
+              toast.error('Erro ao mduar o status da avaliação.');
           }
 
       } catch (error) {
@@ -112,13 +92,13 @@ const EvaluationCard = props => {
           const response = await api.put('evaluation/change-status/'+evaluation.id, data);
           if (response.status === 200) {
               if (status == 1){
-                  loadAlert('success', 'Avaliação ativa.');
+                  toast.success('Avaliação ativa.');
               } else {
-                  loadAlert('success', 'Avaliação arquivada.');
+                  toast.success('Avaliação arquivada.');
               }
               setRefresh(refresh+1);
           } else {
-              loadAlert('error', 'Erro ao mduar o status da avaliação.');
+              toast.error('Erro ao mduar o status da avaliação.');
           }
 
       } catch (error) {
@@ -140,10 +120,10 @@ const EvaluationCard = props => {
             const response = await api.delete(url);
             if (response.status === 202) {
                 if(response.data.message){
-                    loadAlert('error', response.data.message);
+                    toast.error(response.data.message);
                 }
             } else {
-                loadAlert('success', 'Avaliação excluída.');
+                toast.success('Avaliação excluída.');
                 setRefresh(refresh+1);
             }
         } catch (error) {
@@ -156,7 +136,7 @@ const EvaluationCard = props => {
         try {
             if(descriptionNewApplication.length < 5){
                 setOpenNewApplication(false);
-                loadAlert('error', 'Informe uma descrição com no mínimo 05 caracteres');
+                toast.error('Informe uma descrição com no mínimo 05 caracteres');
                 return ;
             }
             const fk_evaluation_id = evaluation.id;
@@ -167,11 +147,11 @@ const EvaluationCard = props => {
             const response = await api.post('evaluation/add-application', data);
             if (response.status === 202) {
                 if(response.data.message){
-                    loadAlert('error', response.data.message);
+                    toast.error(response.data.message);
                 }
                 setOpenNewApplication(false);
             } else {
-                loadAlert('success', 'Nova aplicação cadastrada.');
+                toast.success('Nova aplicação cadastrada.');
                 setDescriptionNewApplication('');
                 // history.push('/applications-evaluation');
                 setTabValue(1);

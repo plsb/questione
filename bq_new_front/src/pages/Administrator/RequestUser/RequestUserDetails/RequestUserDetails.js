@@ -13,7 +13,7 @@ import {
   TextField, IconButton, Link
 } from '@material-ui/core';
 import api from "../../../../services/api";
-import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const useStyles = makeStyles(() => ({
@@ -33,26 +33,6 @@ const RequestUserDetails = props => {
     errors: {}
   });
 
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
   async function updateCourseProfessorDetails(){
     try {
       const valid = formState.values.valid;
@@ -63,12 +43,12 @@ const RequestUserDetails = props => {
       const response = await api.put('course-professor/'+codigoCourseProfessor, data);
       if (response.status == 202) {
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error( response.data.message);
         } else if(response.data.errors[0].valid){
-          loadAlert('error', response.data.errors[0].valid);
+          toast.error(response.data.errors[0].valid);
         }
       } else {
-        loadAlert('success', 'Solicitação atualizada.');
+        toast.success( 'Solicitação atualizada.');
         history.push('/users/requests/');
       }
 
@@ -106,7 +86,7 @@ const RequestUserDetails = props => {
       const response = await api.get('course-professor/show/'+id);
       if (response.status === 202) {
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
         }
       } else {
         setReceipt(response.data[0].receipt);

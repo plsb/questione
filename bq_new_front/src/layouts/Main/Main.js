@@ -172,9 +172,15 @@ const stepsProfessor = [
         content: 'Na opção Avaliações, você poderá criar, arquivar ou excluir avaliações. Uma avaliação só poderá ser excluída caso não tenha' +
             ' nenhuma aplicação cadastrada. As questões só poderão ser adicionadas à avaliação pelo menu Questões. Mas as questões da avaliação podem' +
             ' ser visualizadas na opção editar avaliação. Aqui também é possível cadastrar novas aplicações para avaliações. Uma mesma' +
-            ' avaliação poderá ser aplicada várias vezes.',
+            ' avaliação poderá ser aplicada várias vezes.'+
+            ' Na opção Aplicações, você poderá editar e ativar aplicações de uma avaliação. Uma aplicação só poderá ser respondida pelos' +
+            ' estudantes caso esteja Ativa. Você também poderá escolher opções para sua aplicação, como: se as questões da prova serão distribuída de forma' +
+            ' randômica; se permite mostrar o gabarito para os estudantes após a finalização; configurar uma data e hora para iniciar a avaliação; ' +
+            'e configurar a quantidade de horas de duração da avaliação.' +
+            ' Aqui também é possível visualizar os resultados da aplicação por aluno, por questão,' +
+            ' por competência e objeto de conhecimento.',
     },
-    {
+    /*{
         selector: '.applications-professor',
         content: 'Na opção Aplicações, você poderá editar e ativar aplicações de uma avaliação. Uma aplicação só poderá ser respondida pelos' +
             ' estudantes caso esteja Ativa. Você também poderá escolher opções para sua aplicação, como: se as questões da prova serão distribuída de forma' +
@@ -182,7 +188,7 @@ const stepsProfessor = [
             'e configurar a quantidade de horas de duração da avaliação.' +
             ' Aqui também é possível visualizar os resultados da aplicação por aluno, por questão,' +
             ' por competência e objeto de conhecimento.',
-    },
+    },*/
     {
         selector: '.result-evaluations',
         content: 'Na opção Avaliações respondidas, você poderá visualizar o gabarito das avaliações que você respondeu. O conteúdo da questão' +

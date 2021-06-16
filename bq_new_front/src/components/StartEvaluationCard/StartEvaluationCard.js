@@ -14,7 +14,7 @@ import {
     Zoom
 } from '@material-ui/core';
 import QuestionAnswer from '@material-ui/icons/QuestionAnswer';
-import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 import {withRouter} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
@@ -74,20 +74,13 @@ const StartEvaluationCard = props => {
 
   const classes = useStyles();
 
-  function loadAlert(icon, message) {
-    Swal.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
   const handleChange = (event) => {
     setCodigo(event.target.value);
   }
 
   async function onClickButton() {
     if(codigo == ''){
-      loadAlert('error', 'Informe o código da avaliação.');
+      toast.error('Informe o código da avaliação.');
     } else {
       history.push('/code/'+codigo);
     }

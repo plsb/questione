@@ -10,7 +10,7 @@ import {
     CardContent, Chip, Switch, Tooltip
 } from '@material-ui/core';
 import moment from 'moment';
-import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 import {withRouter} from "react-router-dom";
 import api from "../../../../services/api";
 import { Edit, FormatListBulleted } from "@material-ui/icons";
@@ -74,26 +74,6 @@ const EvaluationApplicationCard = props => {
 
     }, []);
 
-    //configuration alert
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'bottom-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        onOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-    });
-
-    function loadAlert(icon, message) {
-        Toast.fire({
-            icon: icon,
-            title: message
-        });
-    }
-
   const onEdit = (id) => {
       history.push('/applications-evaluation/details/'+id);
   }
@@ -108,15 +88,14 @@ const EvaluationApplicationCard = props => {
             const response = await api.put(url);
             if (response.status === 202) {
                 if(response.data.message){
-                    loadAlert('error', response.data.message);
+                    toast.error(response.data.message);
                 }
             } else {
                 const new_evaluation = response.data[0];
                 setEvaluationApplication(new_evaluation);
 
-                loadAlert('success', 'Modificado o status da aplicação.');
+                toast.success('Modificado o status da aplicação.');
             }
-            //window.location.reload();
         } catch (error) {
 
         }

@@ -14,7 +14,7 @@ import {
   TableRow, TableHead, TablePagination, LinearProgress
 } from '@material-ui/core';
 import api from "../../../../services/api";
-import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 import validate from "validate.js";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import QuestionCard from "../../../../components/QuestionCard";
@@ -70,26 +70,6 @@ const EvaluationDetails = props => {
     errors: {}
   });
 
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
   async function saveEvaluationDetails(){
     try {
       const description = formState.values.description;
@@ -109,12 +89,12 @@ const EvaluationDetails = props => {
       }
       if (response.status === 202) {
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
         } else if(response.data.errors[0].description){
-          loadAlert('error', response.data.errors[0].description);
+          toast.error(response.data.errors[0].description);
         }
       } else {
-        loadAlert('success', 'Avaluação '+acao+'.');
+        toast.success('Avaluação '+acao+'.');
         history.push('/evaluations');
       }
 
@@ -142,7 +122,7 @@ const EvaluationDetails = props => {
       const response = await api.get('evaluation/show/'+id);
       if (response.status === 202) {
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
         }
       } else {
         setFormState(formState => ({

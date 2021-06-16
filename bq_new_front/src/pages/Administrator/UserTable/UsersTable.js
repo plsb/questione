@@ -17,10 +17,10 @@ import {
   Checkbox
 } from '@material-ui/core';
 import api from '../../../services/api';
-
 import { getInitials } from '../../../helpers';
-import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 import UsersToolbar from "./components/UsersToolbar";
+
 const useStyles = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(2),
@@ -75,26 +75,6 @@ const UsersTable = props => {
   const [total, setTotal] = useState(0);
   const [searchText, setSearchText] = useState('');
 
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
   const [checkedList, setCheckedList] = useState([]);
 
   async function loadUsers(page){
@@ -108,17 +88,8 @@ const UsersTable = props => {
         setTotal(response.data.total);
       }
       setUsers(response.data.data);
-      // console.log('bbbbbbb',response.data.data);
-      // console.log('AAAAAAAAAAAAAAAAAAAAA = ', response.data.data.map((user) => ({ id: user.id, checked: user.add_external_question == 1 ? true : false })));
       setCheckedList(response.data.data.map((user) => ({ id: user.id, checked: user.add_external_question == 1 ? true : false })));
 
-      // setCheckedList((lastList) => lastList.map((item, index) => {
-      //   if (item.id == userId) {
-      //     item.checked = add_external_question
-      //   }
-  
-      //   return item;
-      // }));
     } catch (error) {
 
     }
@@ -160,8 +131,9 @@ const UsersTable = props => {
     try {
       let url = 'user/add-external-questions/'+userId;
       const response = await api.put(url, {
-        add_external_question: add_external_question ? 1 : 0,
+        add_external_question: add_external_question,
       });
+
     } catch (error) {
 
     }
@@ -189,7 +161,6 @@ const UsersTable = props => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {console.log(users)}
                     {users.map((user, index) => (
                         <TableRow
                             className={classes.tableRow}

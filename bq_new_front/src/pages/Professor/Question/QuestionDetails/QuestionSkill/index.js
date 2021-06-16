@@ -9,9 +9,9 @@ import {
 import api from "../../../../../services/api";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
-import Swal from "sweetalert2";
 import clsx from "clsx";
 import Save from "@material-ui/icons/Save";
+import { toast } from 'react-toastify';
 
 const useStyles = makeStyles({
     root: {
@@ -25,9 +25,9 @@ const useStyles = makeStyles({
 
 const QuestionSkill = props => {
     const { className, idQuestion, history, ...rest } = props;
-    const [courses, setCourses] = useState([{ 'id': '0', 'description': 'Todos as áreas' }]);
-    const [objects, setObjects] = useState([]);
-    const [skills, setSkills] = useState([]);
+    const [courses, setCourses] = useState([{ 'id': '0', 'description': 'Todas as áreas' }]);
+    const [objects, setObjects] = useState([{ 'id': '0', 'description': 'Todos os objetos' }]);
+    const [skills, setSkills] = useState([{ 'id': '0', 'description': 'Todas as competências' }]);
     const [courseSelect, setCourseSelect] = useState(0);
     const [objectSelect, setObjectSelect] = useState([]);
     const [skillSelect, setSkillSelect] = useState([]);
@@ -41,26 +41,6 @@ const QuestionSkill = props => {
     const [objectLoading, setObjectLoading] = useState(false);
 
     const classes = useStyles();
-
-    //configuration alert
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'bottom-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        onOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-    });
-
-    function loadAlert(icon, message) {
-        Toast.fire({
-            icon: icon,
-            title: message
-        });
-    }
 
     async function loadQuestion() {
         try {
@@ -76,7 +56,7 @@ const QuestionSkill = props => {
         try {
             const response = await api.get('all/courses-user');
             setCourses([{ 'id': '0', 'description': 'Todos as áreas' }, ...response.data]);
-            
+
             if (question.fk_course_id != null) {
                 setCourseSelect(question.fk_course_id);
             } else {
@@ -186,6 +166,12 @@ const QuestionSkill = props => {
 
     useEffect(() => {
         loadCourses();
+        if (question.fk_course_id != null) {
+            setCourseSelect(question.fk_course_id);
+        } else {
+            setCourseSelect(0);
+        }
+
     }, [question]);
 
     useEffect(() => {
@@ -258,7 +244,7 @@ const QuestionSkill = props => {
             }
             const response = await api.put('question/update-course-skill/' + idQuestion, data);
             if (response.status === 200) {
-                loadAlert('success', 'Questão atualizada.');
+                toast.success('Questão atualizada.');
             }
         } catch (error) {
 
@@ -270,7 +256,7 @@ const QuestionSkill = props => {
             setObjectLoading(true);
             const response = await api.delete('question/deleteobject/' + idObject);
             if (response.status === 200 || response.status === 201) {
-                
+
             }
             setObjectLoading(false);
         } catch (error) {
@@ -298,7 +284,7 @@ const QuestionSkill = props => {
             if (response.status === 200) {
                 inputObjects[index].idItem = response.data[0].id;
                 setInputObjects(inputObjects);
-                loadAlert('success', 'Objetos de conhecimento atualizados.');
+                toast.success( 'Objetos de conhecimento atualizados.');
             }
 
             setObjectLoading(false);
@@ -309,7 +295,7 @@ const QuestionSkill = props => {
 
     const onClickSkill = () => {
         if (courseSelect == 0) {
-            loadAlert('error', 'Informe a área.');
+            toast.error('Informe a área.');
             return;
         } else {
             saveSkill();
@@ -434,7 +420,7 @@ const QuestionSkill = props => {
                     endIcon={<Save />}
                     style={{ marginTop: '20px' }}
                     disabled={objectLoading}
-                >    
+                >
                     Salvar
                </Button>
             </Grid>

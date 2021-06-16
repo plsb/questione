@@ -18,8 +18,7 @@ import {
 } from '@material-ui/core';
 import api from '../../../../services/api';
 import CloseIcon from "@material-ui/icons/Close";
-
-import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 import UsersToolbar from "./components/EvaluationApplicationToolbar";
 import PropTypes from "prop-types";
 import EvaluationApplicationCard from "../EvaluationApplicationCard";
@@ -91,26 +90,6 @@ const EvaluationApplicationTable = props => {
   const [open, setOpen] = React.useState(false);
   const [descriptionNewApplication, setDescriptionNewApplication] = React.useState('');
 
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
   async function loadEvaluationsApplications(page){
     try {
       let url = `evaluation/practice/list-applications/${idApplication}?page=+${page}`;
@@ -125,7 +104,7 @@ const EvaluationApplicationTable = props => {
         setEvaluationsApplications([]);
       }
     } catch (error) {
-      console.log(error);
+
     }
   }
 
@@ -155,7 +134,7 @@ const EvaluationApplicationTable = props => {
       try {
           if (descriptionNewApplication.length < 5) {
               setOpenNewApplication(false);
-              loadAlert('error', 'Informe uma descrição com no mínimo 05 caracteres');
+              toast.error('Informe uma descrição com no mínimo 05 caracteres');
               return;
           }
           const fk_evaluation_id = idApplication;
@@ -166,11 +145,11 @@ const EvaluationApplicationTable = props => {
           const response = await api.post(`evaluation/practice/add-application/${fk_evaluation_id}`, data);
           if (response.status === 202) {
               if (response.data.message) {
-                  loadAlert('error', response.data.message);
+                  toast.error(response.data.message);
               }
               setOpenNewApplication(false);
           } else {
-              loadAlert('success', 'Nova aplicação cadastrada.');
+              toast.success('Nova aplicação cadastrada.');
               setDescriptionNewApplication('');
               setOpenNewApplication(false);
               window.location.reload();
@@ -204,7 +183,7 @@ const EvaluationApplicationTable = props => {
           onClickSearch={onClickSearch}
           onClickHandleNewApplication={handleNewApplication}
         />
-            
+
 
         <div className={classes.content}>
           <Card

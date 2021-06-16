@@ -1,20 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import { makeStyles } from '@material-ui/styles';
 import {
   Card,
   CardActions,
   CardContent,
-  CircularProgress,
   Table,
   TableBody,
   LinearProgress,
   TablePagination, Grid, CardHeader
 } from '@material-ui/core';
 import api from '../../../../services/api';
-
-import Swal from "sweetalert2";
 import UsersToolbar from "./components/QuestionToolbar";
 import PropTypes from "prop-types";
 import QuestionCard from "../../../../components/QuestionCard/QuestionCard";
@@ -73,26 +69,6 @@ const QuestionTable = props => {
   const [refresh, setRefresh] = React.useState(0);
   const [page, setPage] = useState(0);
 
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
   async function loadQuestions(page){
     try {
       let url = 'question?page='+page;
@@ -147,7 +123,7 @@ const QuestionTable = props => {
         setQuestions([]);
       }
     } catch (error) {
-      //loadAlert('error', 'Erro de conexão.');
+      //toast.error( 'Erro de conexão.');
     }
   }
 

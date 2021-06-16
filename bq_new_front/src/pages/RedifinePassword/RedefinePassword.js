@@ -10,7 +10,7 @@ import {
   IconButton
 } from '@material-ui/core';
 import api from '../../services/api';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const schema = {
@@ -119,26 +119,6 @@ const RedefinePassword = props => {
     }));
   };
 
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
   async function handleRedefinePassword(event) {
     event.preventDefault();
     try {
@@ -151,12 +131,12 @@ const RedefinePassword = props => {
       const response = await api.post('redefinepw', data);
       if (response.status === 202) {
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
         } else if(response.data.errors[0].email){
-          loadAlert('error', response.data.errors[0].email);
+          toast.error(response.data.errors[0].email);
         }
       } else {
-        loadAlert('success', response.data.message);
+        toast.success(response.data.message);
         history.push('/home');
       }
     } catch (error) {

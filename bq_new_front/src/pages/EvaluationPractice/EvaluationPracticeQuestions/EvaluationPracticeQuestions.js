@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import {
   Card,
-//   CardActions,
   CardContent,
   Table,
   TableBody,
@@ -13,13 +12,10 @@ import {
 } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import api from '../../../services/api';
-// import QuestionCard from "../../../components/QuestionCard/QuestionCard";
 import QuestionItem from '../components/QuestionItem/QuestionItem';
-
-import Swal from "sweetalert2";
-// import UsersToolbar from "./components/EvaluationToolbar";
+import { toast } from 'react-toastify';
 import PropTypes from "prop-types";
-// import EvaluationPracticeCard from "../EvaluationPracticeCard";
+
 const useStyles = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(1),
@@ -74,27 +70,6 @@ const EvaluationPracticeQuestions = props => {
   // const [searchText, setSearchText] = useState('');
   // const [open, setOpen] = React.useState(false);
   const [refresh, setRefresh] = React.useState(0);
-
-
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  // function loadAlert(icon, message) {
-  //   Toast.fire({
-  //     icon: icon,
-  //     title: message
-  //   });
-  // }
 
   async function loadQuestions(page){
     try {

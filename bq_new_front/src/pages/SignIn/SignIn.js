@@ -10,7 +10,7 @@ import {
   Typography
 } from '@material-ui/core';
 import api from '../../services/api';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 import { login } from "../../services/auth";
 import {searchQuestions, searchQuestionsPage} from "../../services/seacrhQuestions";
 
@@ -138,26 +138,6 @@ const SignIn = props => {
     }));
   };
 
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
   async function handleSignIn(event) {
     event.preventDefault();
     try {
@@ -171,7 +151,7 @@ const SignIn = props => {
       const response = await api.post('login', data);
       if (response.status === 202) {
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
         }
       } else {
         searchQuestions('S', '', 0,
@@ -182,7 +162,7 @@ const SignIn = props => {
                 response.data[0].email, response.data[0].acess_level,
                 response.data[0].id, response.data[0].show_tour, response.data[0].add_external_question);
 
-        loadAlert('success', response.data[0].name+', seja bem-vindo!');
+        toast.info(response.data[0].name+', seja bem-vindo!');
         history.push('/home');
       }
 

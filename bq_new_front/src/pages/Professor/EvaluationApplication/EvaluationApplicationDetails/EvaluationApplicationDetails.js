@@ -14,12 +14,9 @@ import {
 } from '@material-ui/core';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
-import StarBorder from '@material-ui/icons/StarBorder';
 import api from "../../../../services/api";
-import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 import validate from "validate.js";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {withStyles} from "@material-ui/core/styles";
@@ -85,26 +82,6 @@ const EvaluationApplicationDetails = props => {
     errors: {}
   });
 
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
-
   async function saveApplicationDetails(){
     try {
       const {
@@ -135,15 +112,15 @@ const EvaluationApplicationDetails = props => {
         release_preview_question,
       }
       const response = await api.put('evaluation/applications/'+idApplication, data);
-      console.log(response);
+
       if (response.status === 202) {
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
         } else if(response.data.errors[0].description){
-          loadAlert('error', response.data.errors[0].description);
+          toast.error(response.data.errors[0].description);
         }
       } else {
-        loadAlert('success', 'Aplicação atualizada.');
+        toast.success('Aplicação atualizada.');
         history.push('/applications-evaluation');
       }
 
@@ -157,7 +134,7 @@ const EvaluationApplicationDetails = props => {
       const response = await api.get('/evaluation/applications/show/'+id);
       if (response.status === 202) {
         if(response.data.message){
-          loadAlert('error', response.data.message);
+          toast.error(response.data.message);
         }
       } else {
         setCheckedRandom(response.data.random_questions == 1 ? true : false);
@@ -384,7 +361,9 @@ const EvaluationApplicationDetails = props => {
                         {'Caso esta opção esteja habilitada, poderá ser configurada' +
                         ' data e hora em que o estudante deverá iniciar a avaliação.' +
                         ' Caso o estudante não inicie a avaliação no tempo programado, ' +
-                        ' o estudante ficará incapacitado de realizar a avaliação.'}
+                        ' o estudante ficará incapacitado de realizar a avaliação. A tolerância é de 05 minutos, '+
+                        ' ou seja, caso esteja programado para às 18 horas, a avaliação poderá ser iniciada entre '+
+                        ' 17:59 e 18:05.'}
                       </Typography>
                     </p>
                   </React.Fragment>

@@ -14,11 +14,11 @@ import { Editor } from '@tinymce/tinymce-react';
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Save from "@material-ui/icons/Save";
 import api from "../../../../services/api";
-import Swal from "sweetalert2";
 import QuestionSkill from "./QuestionSkill";
 import QuestionKeywords from "./QuestionKeywords";
 import useTypeOfEvaluations from '../../../../hooks/useTypeOfEvaluations';
 import { EXTERNAL_QUESTION } from '../../../../services/auth';
+import { toast } from 'react-toastify';
 
 const useStyles = makeStyles({
   root: {
@@ -106,26 +106,6 @@ const QuestionDetails = props => {
 
     const timer = React.useRef();
 
-    //configuration alert
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'bottom-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        onOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-    });
-
-    function loadAlert(icon, message) {
-        Toast.fire({
-            icon: icon,
-            title: message
-        });
-    }
-
   const handleChangeTab = (event, newValue) => {
       timer.current = setTimeout(() => {
           setValue(newValue);
@@ -169,7 +149,7 @@ const QuestionDetails = props => {
             }
 
             if (reference !== 'select') {
-                data.reference = reference;
+                data.fk_type_of_evaluation_id = reference;
             }
 
             let response = {};
@@ -183,13 +163,13 @@ const QuestionDetails = props => {
             }
 
             if(response.status === 200){
-                loadAlert('success', 'Questão '+acao+'.');
+                toast.success( 'Questão '+acao+'.');
                 setIdQuestionNew(response.data[0].id);
             } else if (response.status === 202) {
                 if(response.data.message){
-                    loadAlert('error', response.data.message);
+                    toast.error( response.data.message);
                 } else if(response.data.errors[0].description){
-                    loadAlert('error', response.data.errors[0].description);
+                    toast.error(response.data.errors[0].description);
                 }
             }
         } catch (error) {
@@ -198,10 +178,10 @@ const QuestionDetails = props => {
 
     const onClickTab1 = () => {
         if(baseText === ''){
-            loadAlert('error', 'Informe o texto base.');
+            toast.error('Informe o texto base.');
             return ;
         } else if(stem === ''){
-            loadAlert('error', 'Informe o enunciado.');
+            toast.error('Informe o enunciado.');
             return ;
         }
         saveQuestion();
@@ -228,11 +208,11 @@ const QuestionDetails = props => {
             const response = await api.get('question/show/'+id);
             if (response.status === 202) {
                 if(response.data.message){
-                    loadAlert('error', response.data.message);
+                    toast.error( response.data.message);
                 }
             } else {
                 setValidated(response.data[0].validated)
-                setReference(response.data[0].reference);
+                setReference(response.data[0].fk_type_of_evaluation_id);
                 setBaseText(response.data[0].base_text);
                 setYear(response.data[0].year);
                 setStem(response.data[0].stem);
@@ -344,7 +324,8 @@ const QuestionDetails = props => {
                   direction="row"
                   justify="center"
                   alignItems="center">
-                    {localStorage.getItem(EXTERNAL_QUESTION) && (
+                    {
+                        localStorage.getItem(EXTERNAL_QUESTION) == 1 && (
                         <>
                             <div className={classes.selectGroup}>
                                 <b className="item1" style={{ marginRight: '32px' }}>Tipo de avaliação</b>
@@ -361,11 +342,11 @@ const QuestionDetails = props => {
                                     >
                                         <MenuItem value="select">Selecione</MenuItem>
                                         {typeOfEvaluationList.map((type) => (
-                                            <MenuItem value={type.description}>{type.description}</MenuItem>
+                                            <MenuItem value={type.id}>{type.description}</MenuItem>
                                         ))}
                                     </Select>
                                 </Tooltip>
-                            </div> 
+                            </div>
                             <div className={classes.selectGroup}>
                                 <b className="item1" style={{ marginRight: '120px' }}>Ano</b>
                                 <Tooltip title="Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar o ano de tal questão.">
@@ -391,7 +372,7 @@ const QuestionDetails = props => {
                     )}
               </Grid>
               <div style={{padding: "30px"}}>
-                  <b className="item1">Texto base</b>
+                  <b className="item1">Texto base *</b>
                       <Editor
                           apiKey="viwc1vmqpf6f7ozb7m90ayace892e32hsg99bhpo06p6bz3d"
                           init={{
@@ -415,7 +396,7 @@ const QuestionDetails = props => {
                           key="base_text"/>
               </div>
               <div style={{padding: "30px"}}>
-                  <b className="item1">Enunciado</b>
+                  <b className="item1">Enunciado *</b>
                   <Editor
                       apiKey="ndvo85oqtt9mclsdb6g3jc5inqot9gxupxd0scnyypzakm18"
                       init={{

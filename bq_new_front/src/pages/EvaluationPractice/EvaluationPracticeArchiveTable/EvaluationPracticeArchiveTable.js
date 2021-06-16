@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import { makeStyles } from '@material-ui/styles';
 import {
   Card,
@@ -12,7 +11,7 @@ import {
 } from '@material-ui/core';
 import api from '../../../services/api';
 
-import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 import UsersToolbar from "./components/EvaluationToolbar";
 import PropTypes from "prop-types";
 import EvaluationPracticeCard from "../EvaluationPracticeCard";
@@ -69,26 +68,6 @@ const EvaluationPracticeArchiveTable = props => {
   const [searchText, setSearchText] = useState('');
   const [open, setOpen] = React.useState(false);
   const [refresh, setRefresh] = React.useState(0);
-
-  //configuration alert
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    onOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-  function loadAlert(icon, message) {
-    Toast.fire({
-      icon: icon,
-      title: message
-    });
-  }
 
   async function loadEvaluations(page){
     try {

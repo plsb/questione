@@ -449,7 +449,7 @@ class QuestionController extends Controller
 
         if($question->fk_course_id == null){
             return response()->json([
-                'message' => 'A questão não possui um curso associado.'
+                'message' => 'A questão não possui uma área associada.'
             ], 202);
         }
 
@@ -502,10 +502,10 @@ class QuestionController extends Controller
         $keywords = KeywordQuestion::where('fk_question_id', $question->id)->get();
 
         $new_question = new Question();
-        $new_question->base_text = $question->base_text;
+        $new_question->base_text = '(QUESTÃO DUPLICADA - Aapagar este texto) '.$question->base_text;
         $new_question->stem = $question->stem;
         $new_question->validated = 0;
-        $new_question->reference = '(Cópia) '.$question->reference;
+        $new_question->reference = $question->reference;
         $new_question->fk_skill_id = $question->fk_skill_id;
         $new_question->fk_user_id = $user->id;
         $new_question->fk_course_id = $question->fk_course_id;
