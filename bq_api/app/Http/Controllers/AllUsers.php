@@ -9,9 +9,7 @@ use App\KnowledgeObject;
 use App\Question;
 use App\Skill;
 use App\TypeOfEvaluation;
-use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Validator;
 
 class AllUsers extends Controller

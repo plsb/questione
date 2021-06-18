@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers;
-use App\Http\Controllers\Controller;
-use App\Jobs\SendEmailPasswordResert;
+
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Notifications\PasswordResetRequestNotifications;

@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use \Illuminate\Foundation\Application;
 
 class KeywordQuestion extends Model
 {

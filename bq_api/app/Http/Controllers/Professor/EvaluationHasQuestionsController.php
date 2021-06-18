@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Professor;
 
-use App\Course;
 use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
 use App\Question;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use Validator;
 use App\Http\Controllers\Controller;

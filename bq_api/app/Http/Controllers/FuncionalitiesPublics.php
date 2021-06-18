@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Course;
 use App\Evaluation;
 use App\Question;
 use App\User;
-use Illuminate\Http\Request;
 use Validator;
 
 class FuncionalitiesPublics extends Controller

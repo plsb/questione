@@ -112,6 +112,7 @@ class EvaluationController extends Controller
             ], 202);
         }
 
+
         $user = auth('api')->user();
 
         if($evaluation[0]->fk_user_id != $user->id){

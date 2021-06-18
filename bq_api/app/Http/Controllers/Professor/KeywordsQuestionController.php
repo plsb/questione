@@ -2,17 +2,8 @@
 
 namespace App\Http\Controllers\Professor;
 
-use App\Course;
-use App\CourseProfessor;
-use App\EvaluationHasQuestions;
 use App\KeywordQuestion;
-use App\KnowledgeObject;
-use App\Profile;
 use App\Question;
-use App\QuestionHasKnowledgeObject;
-use App\QuestionItem;
-use App\RankQuestion;
-use App\Skill;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Validator;

@@ -4,10 +4,7 @@ namespace App\Http\Controllers\Professor;
 
 use App\Course;
 use App\CourseProfessor;
-use App\EvaluationHasQuestions;
 use App\KeywordQuestion;
-use App\KnowledgeObject;
-use App\Profile;
 use App\Question;
 use App\QuestionHasKnowledgeObject;
 use App\QuestionItem;
@@ -123,8 +120,8 @@ class QuestionController extends Controller
             ->with('keywords')
             ->with('rankAvg')
             ->with('rankByUserActive')
+            ->with('difficultyByUserActive')
             ->with('course')
-            ->with('profile')
             ->with('skill')
             ->with('knowledgeObjects')
             ->with('user')
@@ -156,20 +153,6 @@ class QuestionController extends Controller
             }
         }
 
-        //verifica perfil
-        if($request->fk_profile_id){
-            $profile = Profile::find($request->fk_profile_id);
-            if(!$profile){
-                return response()->json([
-                    'message' => 'Perfil não encontrado.'
-                ], 202);
-            }
-            if($profile->fk_course_id != $course->id){
-                return response()->json([
-                    'message' => 'Operação não permitida. O perfil não pertence ao curso informado.'
-                ], 202);
-            }
-        }
         //verifica competência
         if($request->fk_skill_id){
             $skill = Skill::find($request->fk_skill_id);
@@ -224,7 +207,6 @@ class QuestionController extends Controller
     {
         $question = Question::where('id', '=', $id)
             ->with('course')
-            ->with('profile')
             ->with('skill')
             ->with('knowledgeObjects')
             ->with('user')
@@ -274,20 +256,6 @@ class QuestionController extends Controller
             }
         }
 
-        //verifica perfil
-        if($request->fk_profile_id){
-            $profile = Profile::find($request->fk_profile_id);
-            if(!$profile){
-                return response()->json([
-                    'message' => 'Perfil não encontrado.'
-                ], 202);
-            }
-            if($profile->fk_course_id != $course->id){
-                return response()->json([
-                    'message' => 'Operação não permitida. O perfil não pertence ao curso informado.'
-                ], 202);
-            }
-        }
         //verifica competência
         if($request->fk_skill_id){
             $skill = Skill::find($request->fk_skill_id);

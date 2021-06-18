@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Adm;
 
 use App\Course;
 use App\Question;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use Validator;
 use App\Http\Controllers\Controller;
