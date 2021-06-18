@@ -19,11 +19,10 @@ class CreateQuestaosTable extends Migration
             $table->text('enunciado', 8000);
             $table->boolean('validada');
             $table->boolean('dificuldade');
-            $table->integer('fk_perfil_id')->unsigned();
+
             $table->integer('fk_competencia_id')->unsigned();
             $table->integer('fk_usuario_id')->unsigned();
 
-            $table->foreign('fk_perfil_id')->references('id')->on('profiles')->onDelete('cascade');
             $table->foreign('fk_competencia_id')->references('id')->on('skills')->onDelete('cascade');
             $table->foreign('fk_usuario_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();

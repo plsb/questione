@@ -18,7 +18,6 @@ class Evaluation extends Model
             ->with('course')
             ->with('questionItems')
             ->with('skill')
-            ->with('profile')
             ->with('knowledgeObjects')
             ->with('keywords')
             ->withTimestamps();

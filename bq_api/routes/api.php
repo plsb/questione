@@ -59,17 +59,17 @@ Route::group(['prefix' => 'course'], function (){
 Route::group(['prefix' => 'skill'], function (){
     Route::get('/', 'Adm\SkillController@index')->name('skill.index');
     Route::post('/', 'Adm\SkillController@store')->name('skill.store');
-    Route::get('/show/{profile}', 'Adm\SkillController@show')->name('skill.show');
-    Route::put('/{profile}', 'Adm\SkillController@update')->name('skill.update');
-    Route::delete('/{profile}', 'Adm\SkillController@destroy')->name('skill.destroy');
+    Route::get('/show/{skill}', 'Adm\SkillController@show')->name('skill.show');
+    Route::put('/{skill}', 'Adm\SkillController@update')->name('skill.update');
+    Route::delete('/{skill}', 'Adm\SkillController@destroy')->name('skill.destroy');
 });
 
 Route::group(['prefix' => 'object'], function (){
     Route::get('/', 'Adm\KnowledgeObjectsController@index')->name('object.index');
     Route::post('/', 'Adm\KnowledgeObjectsController@store')->name('object.store');
-    Route::get('/show/{profile}', 'Adm\KnowledgeObjectsController@show')->name('object.show');
-    Route::put('/{profile}', 'Adm\KnowledgeObjectsController@update')->name('object.update');
-    Route::delete('/{profile}', 'Adm\KnowledgeObjectsController@destroy')->name('object.destroy');
+    Route::get('/show/{skill}', 'Adm\KnowledgeObjectsController@show')->name('object.show');
+    Route::put('/{skill}', 'Adm\KnowledgeObjectsController@update')->name('object.update');
+    Route::delete('/{skill}', 'Adm\KnowledgeObjectsController@destroy')->name('object.destroy');
 });
 
 Route::group(['prefix' => 'type-of-evaluation'], function (){
@@ -114,6 +114,10 @@ Route::group(['prefix' => 'rank'], function (){
     Route::get('/by-user/', 'Professor\RankQuestionController@rankByUser')->name('rank.rankByUser');
     Route::get('/by-question/', 'Professor\RankQuestionController@rankByQuestion')->name('rank.rankByQuestion');
     Route::post('/', 'Professor\RankQuestionController@storeUpdate')->name('rank.storeUpdate');
+});
+
+Route::group(['prefix' => 'difficulty'], function (){
+    Route::post('/', 'DifficultQuestionController@storeUpdate')->name('difficulty.storeUpdate');
 });
 
 Route::group(['prefix' => 'evaluation/practice'], function (){

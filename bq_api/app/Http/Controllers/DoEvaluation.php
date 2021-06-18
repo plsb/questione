@@ -3,19 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\AnswersEvaluation;
-use App\Course;
 use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
 use App\AnswersHeadEvaluation;
 use App\Notifications\StudentFinishEvaluationToProfessorNotification;
-use App\Question;
 use App\User;
-use Cassandra\Date;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use Validator;
-use App\Http\Controllers\Controller;
 
 class DoEvaluation extends Controller
 {

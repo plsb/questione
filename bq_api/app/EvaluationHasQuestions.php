@@ -15,7 +15,6 @@ class EvaluationHasQuestions extends Model
             ->with('course')
             ->with('questionItems')
             ->with('skill')
-            ->with('profile')
             ->with('knowledgeObjects')
             ->with('keywords');
     }
@@ -25,7 +24,6 @@ class EvaluationHasQuestions extends Model
             ->with('course')
             ->with('questionItemsWithoutCorrect')
             ->with('skill')
-            ->with('profile')
             ->with('knowledgeObjects')
             ->with('keywords');
     }

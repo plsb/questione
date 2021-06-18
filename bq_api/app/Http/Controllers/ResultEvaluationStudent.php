@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\AnswersEvaluation;
-use App\Course;
-use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
 use App\AnswersHeadEvaluation;
@@ -12,10 +10,8 @@ use App\Question;
 use App\QuestionHasKnowledgeObject;
 use App\QuestionItem;
 use App\Skill;
-use App\User;
 use Illuminate\Http\Request;
 use Validator;
-use App\Http\Controllers\Controller;
 
 class ResultEvaluationStudent extends Controller
 {

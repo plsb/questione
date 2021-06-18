@@ -8,7 +8,6 @@ use App\Notifications\RequestCourseProfessorNotifications;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Storage;
 use Validator;
 
 class CourseProfessorController extends Controller

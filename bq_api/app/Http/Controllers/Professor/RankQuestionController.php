@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Professor;
 
-use App\Evaluation;
-use App\EvaluationApplication;
-use App\EvaluationHasQuestions;
 use App\Question;
 use App\RankQuestion;
 use Illuminate\Http\Request;

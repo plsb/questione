@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Adm;
 
 use App\Question;
 use App\TypeOfEvaluation;
-use http\Env\Response;
 use Illuminate\Http\Request;
-use PHPUnit\Util\Type;
 use Validator;
 use App\Http\Controllers\Controller;
 
