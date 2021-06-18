@@ -212,7 +212,11 @@ const QuestionSkill = props => {
         }
         const element = values[length - 1];
         if (element.idItem > 0) {
-            objectsDelete.push({ idItem: element.idItem })
+            // objectsDelete.push({ idItem: element.idItem });
+            setObjectsDelete((lastObjectsDelete) => {
+                lastObjectsDelete.push({ idItem: element.idItem });
+                return lastObjectsDelete;
+            });
         }
         //pega último elemtno antes de excluir
         // values.splice(length-1, 1);
@@ -252,11 +256,12 @@ const QuestionSkill = props => {
     }
 
     async function deleteObject(idObject) {
+        console.log('Chamou');
         try {
             setObjectLoading(true);
             const response = await api.delete('question/deleteobject/' + idObject);
             if (response.status === 200 || response.status === 201) {
-
+                console.log('Sucesso');
             }
             setObjectLoading(false);
         } catch (error) {

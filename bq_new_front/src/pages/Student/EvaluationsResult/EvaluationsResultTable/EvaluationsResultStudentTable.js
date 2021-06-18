@@ -79,9 +79,9 @@ const EvaluationsResultStudentTable = props => {
 
   const classes = useStyles();
 
-  async function load(){
+  async function load(newPage){
     try {
-      const responseHead = await api.get('/evaluation/student/result/evaluations');
+      const responseHead = await api.get(`/evaluation/student/result/evaluations?page=${newPage}`);
       if (responseHead.status === 200) {
         setEvaluations(responseHead.data.data);
         setTotal(responseHead.data.total);
@@ -95,8 +95,7 @@ const EvaluationsResultStudentTable = props => {
   }
 
   useEffect(() => {
-    load();
-
+    load(1);
   }, []);
 
   const handleBack = () => {
@@ -168,6 +167,7 @@ const EvaluationsResultStudentTable = props => {
                         <Table>
                           <TableBody>
                             {evaluations.map(application => (
+                              <div key={application.id}>
                                 <Card
                                   {...rest}
                                   className={classes.root}
@@ -250,6 +250,7 @@ const EvaluationsResultStudentTable = props => {
                                         </div>
                                       </CardContent>
                                 </Card>
+                              </div>
                             ))}
                           </TableBody>
                         </Table>

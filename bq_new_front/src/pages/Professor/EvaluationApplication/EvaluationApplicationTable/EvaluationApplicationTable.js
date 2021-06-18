@@ -76,7 +76,7 @@ const EvaluationApplicationTable = props => {
         url += '&description='+searchText;
       }
       const response = await api.get(url);
-      if(response.status == 200) {
+      if(response.status == 200) {  
         setTotal(response.data.total);
         setEvaluationsApplications(response.data.data);
       } else {
@@ -151,7 +151,7 @@ const EvaluationApplicationTable = props => {
                         <Table>
                           <TableBody>
                             {evaluationsApplications.map(application => (
-                                <EvaluationApplicationCard application={application}/>
+                                <EvaluationApplicationCard application={application} key={application.id} />  
                             ))}
                           </TableBody>
                         </Table>

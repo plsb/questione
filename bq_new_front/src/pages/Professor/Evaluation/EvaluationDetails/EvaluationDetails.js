@@ -103,7 +103,7 @@ const EvaluationDetails = props => {
     }
   }
 
-  async function loadQuestionsEvaluation(id, page){
+  async function loadQuestionsEvaluation(id, page){ 
     try {
       const response = await api.get('evaluation/show/questions/'+id+'?page='+page);
       if (response.status === 200) {

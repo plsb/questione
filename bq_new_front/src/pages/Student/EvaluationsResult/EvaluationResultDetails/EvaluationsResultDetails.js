@@ -389,7 +389,7 @@ const EvaluationsResultDetails = props => {
                       </ExpansionPanelSummary>
                       <ExpansionPanelDetails key={data.question.id}>
                         <div className={classes.lineQuestion}>
-                          {data.question.skill ?
+                          {data.skill ?
                             <Grid
                               container
                               direction="row"
@@ -402,11 +402,11 @@ const EvaluationsResultDetails = props => {
                                         </Typography>
                               <Typography align="center"
                                 variant="body2" color="textPrimary" >
-                                {data.question.skill.description}
+                                {data.skill.description}
                               </Typography>
                             </Grid>
                             : null}
-                          {data.question.objects ?
+                          {data.objects ?
                             <Grid
                               container
                               direction="row"
@@ -419,7 +419,7 @@ const EvaluationsResultDetails = props => {
                                           </Typography>
                               <Typography align="center"
                                 variant="body2" color="textPrimary" >
-                                {data.question.objects.map(item => (
+                                {data.objects.map(item => (
                                   item.object.description + '; '
                                 ))}
                               </Typography>

@@ -8,7 +8,10 @@ function Timer({ expiryTimestamp, onExpire, setShowTimeDialog }) {
         seconds,
         minutes,
         hours,
+        days,
     } = useTimer({ expiryTimestamp, autoStart: true, onExpire, format: '12-hour' });
+
+    console.log('========> ', days);
 
     const addZeroToLeft = (value) => {
         if (`${value}`.length === 1) {
@@ -49,7 +52,14 @@ function Timer({ expiryTimestamp, onExpire, setShowTimeDialog }) {
 
     return (
         <div className="timer" style={{ width: 'max-content', padding: '0px 4px', fontWeight: 'bold', color: getTimeColor(hours, minutes, seconds) }}>
-            <span>{addZeroToLeft(hours)}</span>:<span>{addZeroToLeft(minutes)}</span>:<span>{addZeroToLeft(seconds)}</span>
+            {days > 0 && (
+                <>
+                    <span>{days} dias e </span>
+                </>
+            )}
+            <span>{addZeroToLeft(hours)}</span>:
+            <span>{addZeroToLeft(minutes)}</span>:
+            <span>{addZeroToLeft(seconds)}</span>
         </div>
     );
 }

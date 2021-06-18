@@ -25,6 +25,7 @@ import {
     EvaluationTable,
     EvaluationArchiveTable,
     EvaluationDetails,
+    EvaluationQuestions,
     SkillDetails,
     ObjectDetails,
     RequestUserDetails,
@@ -292,6 +293,13 @@ const Routes = () => (
                 layout={MainLayout}
                 typeUser={2}
                 path="/evaluations-archive" />
+            <RouteWithLayout
+                component={EvaluationQuestions}
+                exact
+                needToBeLogged={true}
+                layout={MainLayout}
+                typeUser={2}
+                path="/evaluation-questions/:evaluationId" />
             <RouteWithLayout
                 component={EvaluationDetails}
                 exact
