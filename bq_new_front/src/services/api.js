@@ -4,9 +4,9 @@ import React from "react";
 import { toast } from 'react-toastify';
 
 const api = axios.create({
-  baseURL: 'https://bancodequestoes.ifce.edu.br/api',
+  // baseURL: 'https://bancodequestoes.ifce.edu.br/api',
   //baseURL: 'https://200.17.32.102/api',
-   // baseURL: 'http://127.0.0.1:8000/api',
+   baseURL: 'http://127.0.0.1:8000/api',
   /*headers: {
     'Content-Type': 'application/json'
   }*/

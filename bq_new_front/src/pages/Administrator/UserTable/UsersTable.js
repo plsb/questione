@@ -75,8 +75,6 @@ const UsersTable = props => {
   const [total, setTotal] = useState(0);
   const [searchText, setSearchText] = useState('');
 
-  const [checkedList, setCheckedList] = useState([]);
-
   async function loadUsers(page){
     try {
       let url = 'user?page='+page;
@@ -84,12 +82,11 @@ const UsersTable = props => {
         url += '&name='+searchText;
       }
       const response = await api.get(url);
+
       if(response.status == 200) {
         setTotal(response.data.total);
       }
       setUsers(response.data.data);
-      setCheckedList(response.data.data.map((user) => ({ id: user.id, checked: user.add_external_question == 1 ? true : false })));
-
     } catch (error) {
 
     }
@@ -120,12 +117,11 @@ const UsersTable = props => {
   const updateExternalQuestions = async (event, userId, checked) => {
     const add_external_question = event.target.checked;
 
-    setCheckedList((lastList) => lastList.map((item, index) => {
-      if (item.id == userId) {
-        item.checked = add_external_question
+    setUsers((lastUserList) => lastUserList.map((user) => {
+      if (user.id == userId) {
+        user.add_external_question = checked;
       }
-
-      return item;
+      return user;
     }));
 
     try {
@@ -133,9 +129,13 @@ const UsersTable = props => {
       const response = await api.put(url, {
         add_external_question: add_external_question,
       });
-
     } catch (error) {
-
+      setUsers((lastUserList) => lastUserList.map((user) => {
+        if (user.id == userId) {
+          user.add_external_question = !checked;
+        }
+        return user;
+      }));
     }
   };
 
@@ -183,7 +183,10 @@ const UsersTable = props => {
                                 user.acess_level === 2 ? "Professor" : ""}
                           </TableCell>
                           <TableCell>
-                            <Checkbox checked={checkedList[index] && checkedList[index].checked} onChange={(event, checked) => updateExternalQuestions(event, user.id, checked)} />
+                            <Checkbox
+                              checked={user.add_external_question}
+                              onChange={(event, checked) => updateExternalQuestions(event, user.id, checked)}
+                            />
                           </TableCell>
                         </TableRow>
                     ))}

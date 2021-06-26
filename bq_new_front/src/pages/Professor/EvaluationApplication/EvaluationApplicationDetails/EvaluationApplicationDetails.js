@@ -121,7 +121,7 @@ const EvaluationApplicationDetails = props => {
         }
       } else {
         toast.success('Aplicação atualizada.');
-        history.push('/applications-evaluation');
+        history.push('/evaluations');
       }
 
     } catch (error) {

@@ -7,9 +7,9 @@ import {
     MenuItem, Menu,
     Typography,
     Tooltip,
-    Paper, Box, Grid
+    Paper, Box, Grid, Button
 } from '@material-ui/core';
-import { MoreVert } from '@material-ui/icons';
+import { MoreVert, Delete as DeleteIcon } from '@material-ui/icons';
 import { withRouter } from "react-router-dom";
 import ReactHtmlParser from 'react-html-parser';
 import api from '../../../../../services/api';
@@ -82,10 +82,35 @@ const useStyles = makeStyles(theme => ({
     lineQuestion: {
         marginLeft: 20,
     },
+    content: {
+        width: '100%',
+    },
+    questionActions: {
+        display: 'flex',
+        justifyContent: 'flex-end',
+    },
+    deleteButton: {
+        padding: '0px',
+        width: '32px',
+        minWidth: '32px',
+        height: '32px',
+        color: '#ff6333'
+    }
 }));
 
 const QuestionCard = props => {
-    const { className, history, question, setRefresh, refresh, id_evaluation, data, ...rest } = props;
+    const {
+        className,
+        history,
+        question,
+        setRefresh,
+        refresh,
+        id_evaluation,
+        data,
+        setQuestions,
+        hasApplication,
+        ...rest
+     } = props;
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [openDeleteQuestionEvaluation, setOpenDeleteQuestionEvaluation] = React.useState(false);
@@ -159,8 +184,9 @@ const QuestionCard = props => {
 
     async function deleteQuestionEvaluation() {
         setOpenDeleteQuestionEvaluation(false);
+
         try {
-            let url = 'evaluation/deletequestion/' + question.id + '+?fk_evaluation_id=' + id_evaluation;
+            let url = 'evaluation/deletequestion/' + question.fk_question_id + '+?fk_evaluation_id=' + id_evaluation;
             const fk_evaluation_id = id_evaluation;
             const data = {
                 fk_evaluation_id
@@ -172,10 +198,11 @@ const QuestionCard = props => {
                 }
             } else {
                 toast.success('Questão excluída da avaliação.');
+                setQuestions((lastQuestions) => lastQuestions.filter((currentQuestion) => currentQuestion.id !== question.id));
                 setRefresh(refresh + 1);
             }
         } catch (error) {
-
+            
         }
     }
 
@@ -183,7 +210,15 @@ const QuestionCard = props => {
         <div className={classes.content}>
             <div className={classes.lineQuestion}>
                 <div className={classes.questionActions}>
-                    <Box display="flex" justifyContent="flex-end" p={1} m={1} bgcolor="background.paper">
+                    {hasApplication == '0' && (
+                        <Tooltip title="Excluir questão da avaliação">
+                            <Button onClick={onClickOpenDialogQEvaluation} className={classes.deleteButton}>
+                                <DeleteIcon />
+                            </Button>
+                        </Tooltip>
+                    )}
+
+                    {/* <Box display="flex" justifyContent="flex-end" p={1} m={1} bgcolor="background.paper">
                         <Tooltip title="Opções">
                             <Box flexDirection="row" alignSelf="flex-end">
                                 <IconButton className={classes.labelRank} aria-label="settings"
@@ -202,7 +237,7 @@ const QuestionCard = props => {
                         onClose={handleClose}
                     >
                         <MenuItem onClick={onClickOpenDialogQEvaluation}>Excluir da Avaliação</MenuItem>
-                    </Menu>
+                    </Menu> */}
                     <DialogQuestione
                         handleClose={onClickCloseDialogQEvaluation}
                         open={openDeleteQuestionEvaluation}
@@ -213,7 +248,7 @@ const QuestionCard = props => {
                     />
                 </div>
 
-                {data.skill ?
+                {question.skill ?
                     <Grid
                         container
                         direction="row"
@@ -226,11 +261,11 @@ const QuestionCard = props => {
                         </Typography>
                         <Typography align="center"
                             variant="body2" color="textPrimary" >
-                            {data.skill.description}
+                            {question.skill.description}
                         </Typography>
                     </Grid>
                     : null}
-                {data.objects ?
+                {question.objects ?
                     <Grid
                         container
                         direction="row"
@@ -243,7 +278,7 @@ const QuestionCard = props => {
                         </Typography>
                         <Typography align="center"
                             variant="body2" color="textPrimary" >
-                            {data.objects.map(item => (
+                            {question.objects.map(item => (
                                 item.object.description + '; '
                             ))}
                         </Typography>
@@ -252,18 +287,18 @@ const QuestionCard = props => {
                 <Typography variant="button" color="textSecondary" component="p">
                     Texto base:
                 </Typography>
-                <div> {ReactHtmlParser(data.question.base_text)} </div>
+                <div> {ReactHtmlParser(question.question.base_text)} </div>
                 <br />
                 <Typography variant="button" color="textSecondary" component="p">
                     Enunciado:
                 </Typography>
-                <div> {ReactHtmlParser(data.question.stem)} </div>
+                <div> {ReactHtmlParser(question.question.stem)} </div>
                 <br />
                 <Typography variant="button" color="textSecondary" component="p">
                     Alternativas:
                 </Typography>
                 <br />
-                {data.question.question_items.map(item => (
+                {question.question.question_items.map(item => (
                     <div>
                         <Paper className={clsx(classes.paper)} variant="outlined"> {ReactHtmlParser(item.description)} </Paper>
                     </div>

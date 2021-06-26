@@ -12,6 +12,7 @@ import {
 import api from '../../services/api';
 import { toast } from 'react-toastify';
 import { cpfMask } from './../../common/mask'
+import { ToastContainer } from 'react-toastify';
 
 const schema = {
   name: {
@@ -165,23 +166,33 @@ const SignUp = props => {
       const response = await api.post('register', data);
 
       if (response.status === 202) {
+        console.log('Status 202');
+
         if(response.data.message){
           toast.error(response.data.message);
-        } else if(response.data.errors[0].name){
-          toast.error(response.data.errors[0].name);
-        } if(response.data.errors[0].cpf){
-          toast.error(response.data.errors[0].cpf);
-        } else if(response.data.errors[0].email){
-          toast.error(response.data.errors[0].email);
-        } if(response.data.errors[0].password){
-          toast.error(response.data.errors[0].password);
+        }
+        
+        if(response.data.errors[0].name[0]){
+          toast.error(response.data.errors[0].name[0]);
+        }
+        
+        if(response.data.errors[0].cpf[0]){
+          toast.error(response.data.errors[0].cpf[0]);
+        }
+        
+        if(response.data.errors[0].email[0]){
+          toast.error(response.data.errors[0].email[0]);
+        }
+        
+        if(response.data.errors[0].password[0]){
+          toast.error(response.data.errors[0].password[0]);
         }
       } else {
         toast.success(response.data[0].name+', cadastrado!');
         history.push('/sign-in');
       }
     } catch (error) {
-
+      
     }
   }
 
@@ -285,6 +296,7 @@ const SignUp = props => {
           </form>
         </div>
       </div>
+      <ToastContainer autoClose={8000} position="bottom-center"/>
     </div>
   );
 };

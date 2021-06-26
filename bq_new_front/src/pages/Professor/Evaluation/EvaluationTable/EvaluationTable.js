@@ -133,7 +133,7 @@ const EvaluationTable = props => {
     setRowsPerPage(event.target.value);
   };
 
-  const [tabValue, setTabValue] = useState(0);
+  const [tabValue, setTabValue] = useState(parseInt(localStorage.getItem('@questione/evaluation-tab')) || 0);
 
   function LinkTab(props) {
     return (
@@ -148,6 +148,7 @@ const EvaluationTable = props => {
   }
 
   const handleChangeTab = (event, newValue) => {
+    localStorage.setItem('@questione/evaluation-tab', newValue);
     setTabValue(newValue);
   };
 

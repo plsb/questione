@@ -221,6 +221,8 @@ const EvaluationsResultDetails = props => {
   const { className, history, ...rest } = props;
   const { evaluationId } = props.match.params;
   const [questions, setQuestions] = useState(null);
+  const [hasApplication, setHasApplication] = useState(null);
+  const [evaluationDescription, setEvaluationDescription] = useState('');
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [openDeleteQuestionEvaluation, setOpenDeleteQuestionEvaluation] = React.useState(false);
   const [refresh, setRefresh] = React.useState(0);
@@ -237,12 +239,14 @@ const EvaluationsResultDetails = props => {
     try {
       const response = await api.get('evaluation/show/questions/'+id);
       if (response.status === 200) {
-        setQuestions(response.data.data);
+        setQuestions(response.data.evaluation_questions);
+        setHasApplication(response.data.has_application);
+        setEvaluationDescription(response.data.evaluation.description);
       } else {
         setQuestions([]);
       }
     } catch (error) {
-
+      console.log(error);
     }
   }
 
@@ -349,8 +353,21 @@ const EvaluationsResultDetails = props => {
         </div>
         <CardHeader
           subheader=""
-          title="Questões da avaliação" />
+          title="Questões da avaliação"
+        />
         <Divider />
+        <Card className={classes.root}>
+          <CardHeader
+              avatar={
+                <div>
+                  <Typography variant="button" color="textSecondary" component="p">
+                    {'Avaliação: '+evaluationDescription}
+                  </Typography>
+                </div>
+              }
+          />
+        </Card>
+
         <CardContent>
           {questions == null ?
             <LinearProgress color="secondary" />
@@ -400,7 +417,12 @@ const EvaluationsResultDetails = props => {
                             Questão {i + 1}
                         </ExpansionPanelSummary>
                         <ExpansionPanelDetails key={data.question.id}>
-                          <EvaluationQuestionCard data={data} />
+                          <EvaluationQuestionCard
+                            question={data}
+                            id_evaluation={evaluationId}
+                            setQuestions={setQuestions}
+                            hasApplication={hasApplication}
+                          />
                         {/* <div className={classes.lineQuestion}>
                             <div className={classes.questionActions}>
                                 <Button onClick={() => {}} color="primary">
