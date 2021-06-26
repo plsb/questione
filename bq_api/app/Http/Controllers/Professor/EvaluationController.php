@@ -147,7 +147,7 @@ class EvaluationController extends Controller
 
         $evaluation_questions = EvaluationHasQuestions::where('fk_evaluation_id', $evaluation->id)
             ->with('question')
-            ->paginate(5);
+            ->get();
 
         return response()->json($evaluation_questions, 200);
     }
