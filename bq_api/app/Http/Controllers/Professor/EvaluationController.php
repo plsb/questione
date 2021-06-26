@@ -145,11 +145,23 @@ class EvaluationController extends Controller
             ], 202);
         }
 
+        $application = EvaluationApplication::where('fk_evaluation_id', '=', $evaluation->id)->get();
+        $has_application = 0;
+        if(sizeof($application)>0) {
+            $has_application = 1;
+        }
+
         $evaluation_questions = EvaluationHasQuestions::where('fk_evaluation_id', $evaluation->id)
             ->with('question')
             ->get();
+        
+        $result = (object)[
+            'evaluation' => $evaluation,
+            'has_application' => $has_application,
+            'evaluation_questions' => $evaluation_questions,
+        ];
 
-        return response()->json($evaluation_questions, 200);
+        return response()->json($result, 200);
     }
 
     public function update(Request $request, $id)
