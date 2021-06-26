@@ -228,6 +228,7 @@ const EvaluationCard = props => {
             open={Boolean(anchorEl)}
             onClose={handleClose}>
             { evaluation.status == 1 ? <MenuItem onClick={handleNewApplication}>Nova Aplicação</MenuItem> : null}
+            <MenuItem onClick={() => history.push(`/evaluation-questions/${evaluation.id}`)}>Ver questões</MenuItem>
             <MenuItem onClick={duplicate}>Duplicar</MenuItem>
             { evaluation.status == 1 ? <MenuItem onClick={() => changeStatus(2) }>Arquivar</MenuItem> : null}
             { evaluation.status == 2 ? <MenuItem onClick={() => changeStatus(1) }>Ativar</MenuItem> : null}
