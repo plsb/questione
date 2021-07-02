@@ -195,7 +195,7 @@ const EvaluationsResultStudentTable = props => {
                                             </Tooltip>
                                               :
                                                 application.evaluation_application.canShowResults == 0 && application.evaluation_application.show_results == 1
-                                                    ? <span className={classes.labelRed}>{'Disponível em: '+moment(`${application.evaluation_application.date_release_results} ${application.evaluation_application.time_release_results}`).format('H:mm DD/MM/YYYY')}</span>
+                                                    ? <span className={classes.labelRed}>{'Resultado em: '+moment(`${application.evaluation_application.date_release_results} ${application.evaluation_application.time_release_results}`).format('DD/MM/YYYY H:mm')}</span>
                                                         :
                                                           application.evaluation_application.show_results == 0 && application.finalized_at && <span className={classes.labelRed}>{'Resultado indisponível.'}</span>
                                             }

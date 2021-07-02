@@ -154,7 +154,7 @@ class EvaluationController extends Controller
         $evaluation_questions = EvaluationHasQuestions::where('fk_evaluation_id', $evaluation->id)
             ->with('question')
             ->get();
-        
+
         $result = (object)[
             'evaluation' => $evaluation,
             'has_application' => $has_application,

@@ -117,6 +117,7 @@ class QuestionController extends Controller
             })
             ->orderBy('id', 'desc')
             ->withCount('rank')
+            //->with('difficulty')
             ->with('keywords')
             ->with('rankAvg')
             ->with('rankByUserActive')

@@ -101,7 +101,7 @@ class AllUsers extends Controller
             ->select('id')
             ->get();
 
-        $keywords = KeywordQuestion::whereIn('fk_question_id', $questions)
+        $keywords = KeywordQuestion::whereIn('fk_question_id', $questions->makeHidden('difficulty')->toArray())
             ->select('keyword')
             ->distinct()
             ->orderBy('keyword')

@@ -185,6 +185,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'flex-end',
     marginBottom: '32px',
+  },
+  tituloCard: {
+    fontSize: '15px',
+    fontWeight: 'bold'
   }
 }));
 
@@ -331,6 +335,24 @@ const EvaluationsResultDetails = props => {
   //   setShowSnackbar(false);
   // };
 
+  const difficulty = (porc, totalCorrect) => {
+    if(totalCorrect < 20){
+      return ''
+    }
+    if (porc >= 0.86) {
+      return '- Dificuldade: Muito Fácil'
+    } else if(porc >= 0.61 && porc <= 0.85){
+      return '- Dificuldade: Fácil'
+    } else if(porc >= 0.41 && porc <= 0.60){
+      return '- Dificuldade: Média'
+    } else if(porc >= 0.16 && porc <= 0.40){
+      return '- Dificuldade: Difícil'
+    } else if(porc <= 0.15){
+      return '- Dificuldade: Muito Difícil'
+    }
+    return '';
+  }
+
   return (
     <div>
       {/* <Snackbar open={showSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
@@ -412,9 +434,12 @@ const EvaluationsResultDetails = props => {
                         expandIcon={<ExpandMoreIcon />}
                         aria-label="Expand"
                         aria-controls="additional-actions1-content"
-                        id="additional-actions1-header"
-                        >
-                            Questão {i + 1}
+                        id="additional-actions1-header">
+                          <p className={classes.tituloCard}>
+                            Questão {i + 1} {difficulty(data.question.difficulty.porc_correct,
+                                                                data.question.difficulty.total_answers)}
+                          </p>
+
                         </ExpansionPanelSummary>
                         <ExpansionPanelDetails key={data.question.id}>
                           <EvaluationQuestionCard
@@ -428,7 +453,7 @@ const EvaluationsResultDetails = props => {
                                 <Button onClick={() => {}} color="primary">
                                     <DeleteIcon /> Excluir questão
                                 </Button>
-                                
+
                                 <DialogQuestione
                                   handleClose={onClickCloseDialogQEvaluation}
                                   open={openDeleteQuestionEvaluation}

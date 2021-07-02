@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Question extends Model
 {
@@ -11,6 +12,25 @@ class Question extends Model
                                         'year', 'fk_type_of_evaluation_id',
                                         'fk_skill_id', 'fk_user_id', 'fk_course_id'];
     protected $hidden = [];
+
+    protected $appends = ['difficulty'];
+
+    public function getDifficultyAttribute(){
+        $results = DB::select( DB::raw("
+                                    select
+                                    sum(IF(a.answer = i.id, 1, 0)) as total_correct,
+                                    sum(IF(a.answer = i.id, 0, 1)) as total_incorrect,
+                                    count(*) total_answers,
+                                    round(sum(IF(a.answer = i.id, 1, 0))  / count(*),2) porc_correct,
+                                    round(sum(IF(a.answer = i.id, 0, 1))  / count(*),2) difficulty
+                                    from questions q
+                            inner join question_itens i on i.fk_question_id=q.id and i.correct_item=1
+                            inner join courses c on c.id=q.fk_course_id
+                            inner join evaluation_questions eq on eq.fk_question_id=q.id
+                            inner join answers a on a.fk_evaluation_question_id=eq.id
+                            where q.id = ".$this->id) );
+        return $results[0];
+    }
 
     public function typeOfEvaluation(){
         return $this->belongsTo(TypeOfEvaluation::class, 'fk_type_of_evaluation_id');

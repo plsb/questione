@@ -138,6 +138,7 @@ const EvaluationApplicationResultsOverviewQuestion = props => {
                       </div>
                     }
                     title={ 'Questão ' + (numberQuestion+1)}/>
+
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                   <CardContent>
                     <div className={classes.lineQuestion}>

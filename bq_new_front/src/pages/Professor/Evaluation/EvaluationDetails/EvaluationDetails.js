@@ -103,7 +103,7 @@ const EvaluationDetails = props => {
     }
   }
 
-  async function loadQuestionsEvaluation(id, page){ 
+  async function loadQuestionsEvaluation(id, page){
     try {
       const response = await api.get('evaluation/show/questions/'+id+'?page='+page);
       if (response.status === 200) {
@@ -240,55 +240,6 @@ const EvaluationDetails = props => {
             </Grid>
             <Divider />
           </Grid>
-          { questions == null ?
-              <LinearProgress color="secondary" />
-              :
-              questions[0] ?
-          <Grid
-              container
-              spacing={1}>
-            <Grid
-                item
-                md={12}
-                xs={12}>
-              <Table>
-                <TableHead>
-                  <TablePagination
-                      component="div"
-                      count={total}
-                      onChangePage={handlePageChange}
-                      onChangeRowsPerPage={handleRowsPerPageChange}
-                      page={page}
-                      rowsPerPage={rowsPerPage}
-                      rowsPerPageOptions={[5]}
-                  />
-                </TableHead>
-                <TableBody>
-                  {questions.map(question => (
-                      <QuestionCard
-                          question={question.question}
-                          id_evaluation={codigoEvaluation}
-                          setRefresh={setRefresh}
-                          refresh={refresh}/>
-                  ))}
-                </TableBody>
-                <TablePagination
-                    component="div"
-                    count={total}
-                    onChangePage={handlePageChange}
-                    onChangeRowsPerPage={handleRowsPerPageChange}
-                    page={page}
-                    rowsPerPage={rowsPerPage}
-                    rowsPerPageOptions={[5]}
-                />
-              </Table>
-            </Grid>
-          </Grid>
-              :
-                  codigoEvaluation?
-                       <span className={classes.labelRed}>Esta avaliação não possui questões</span>
-                      : null
-          }
         </CardContent>
         <Divider />
       </form>

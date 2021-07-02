@@ -176,6 +176,10 @@ const useStyles = makeStyles((theme) => ({
   paperRightFont: {
     color: '#80cbc4',
   },
+  tituloCard: {
+    fontSize: '15px',
+    fontWeight: 'bold'
+  }
 }));
 
 const TooltipCustomized = withStyles((theme) => ({
@@ -287,6 +291,24 @@ const EvaluationsResultDetails = props => {
     );
   };
 
+  const difficulty = (porc, totalCorrect) => {
+    if(totalCorrect < 20){
+      return ''
+    }
+    if (porc >= 0.86) {
+      return '- Dificuldade: Muito Fácil'
+    } else if(porc >= 0.61 && porc <= 0.85){
+      return '- Dificuldade: Fácil'
+    } else if(porc >= 0.41 && porc <= 0.60){
+      return '- Dificuldade: Média'
+    } else if(porc >= 0.16 && porc <= 0.40){
+      return '- Dificuldade: Difícil'
+    } else if(porc <= 0.15){
+      return '- Dificuldade: Muito Difícil'
+    }
+    return '';
+  }
+
   // const handleCloseSnackbar = () => {
   //   setShowSnackbar(false);
   // };
@@ -377,8 +399,11 @@ const EvaluationsResultDetails = props => {
                           label={(i + 1) <10 ? ('Questão 00' + (i + 1)) :
                                     (i + 1) <100 ? ('Questão 0' + (i + 1)) : (i + 1)}
                         /> */}
-
-                         Questão {i + 1}
+                        {console.log(data)}
+                        <p className={classes.tituloCard}>
+                          Questão {i + 1} {difficulty(data.question.difficulty.porc_correct,
+                            data.question.difficulty.total_answers)}
+                        </p>
                          <span className={classes.ml}>
                             {data.correct == 1 ? (
                               <CheckIcon className={classes.correct} />
@@ -390,41 +415,24 @@ const EvaluationsResultDetails = props => {
                       <ExpansionPanelDetails key={data.question.id}>
                         <div className={classes.lineQuestion}>
                           {data.skill ?
-                            <Grid
-                              container
-                              direction="row"
-                              justify="center"
-                              alignItems="center">
-                              <Typography align="center"
-                                variant="body2" color="textPrimary"
-                                style={{ fontWeight: 'bold', marginRight: '5px' }} >
-                                Competência:
-                                        </Typography>
-                              <Typography align="center"
-                                variant="body2" color="textPrimary" >
-                                {data.skill.description}
-                              </Typography>
-                            </Grid>
+                              <div>
+                                <Typography variant="button" color="textSecondary" component="p">
+                                  Competência:
+                                </Typography>
+                                {ReactHtmlParser(data.skill.description)}
+                              </div>
                             : null}
                           {data.objects ?
-                            <Grid
-                              container
-                              direction="row"
-                              justify="center"
-                              alignItems="center">
-                              <Typography align="center"
-                                variant="body2" color="textPrimary"
-                                style={{ fontWeight: 'bold', marginRight: '5px' }} >
-                                Objeto(s) de Conhecimento:
-                                          </Typography>
-                              <Typography align="center"
-                                variant="body2" color="textPrimary" >
+                              <div>
+                                <Typography variant="button" color="textSecondary" component="p">
+                                  Objeto(s) de Conhecimento:
+                                </Typography>
                                 {data.objects.map(item => (
-                                  item.object.description + '; '
+                                    ReactHtmlParser(item.object.description) + '; '
                                 ))}
-                              </Typography>
-                            </Grid>
+                              </div>
                             : null}
+                            <br />
                           <Typography variant="button" color="textSecondary" component="p">
                             Texto base:
                           </Typography>

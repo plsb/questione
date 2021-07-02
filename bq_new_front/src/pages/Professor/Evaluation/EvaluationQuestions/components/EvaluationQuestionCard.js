@@ -119,7 +119,7 @@ const QuestionCard = props => {
     const classes = useStyles();
 
     /* function loadRank(){
- 
+
          if(question.rank_avg.length !== 0){
              setRank(question.rank_avg[0].rank_avg);
          }
@@ -202,7 +202,7 @@ const QuestionCard = props => {
                 setRefresh(refresh + 1);
             }
         } catch (error) {
-            
+
         }
     }
 
@@ -244,46 +244,29 @@ const QuestionCard = props => {
                         onClickAgree={deleteQuestionEvaluation}
                         onClickDisagree={onClickCloseDialogQEvaluation}
                         mesage={'Deseja excluir a questão selecionada da avaliação?'}
-                        title={'Excluir Questão da Avaliaçao'}
+                        title={'Excluir Questão da Avaliação'}
                     />
                 </div>
 
-                {question.skill ?
-                    <Grid
-                        container
-                        direction="row"
-                        justify="center"
-                        alignItems="center">
-                        <Typography align="center"
-                            variant="body2" color="textPrimary"
-                            style={{ fontWeight: 'bold', marginRight: '5px' }} >
+                {question.question.skill ?
+                    <div>
+                        <Typography variant="button" color="textSecondary" component="p">
                             Competência:
                         </Typography>
-                        <Typography align="center"
-                            variant="body2" color="textPrimary" >
-                            {question.skill.description}
-                        </Typography>
-                    </Grid>
+                        {ReactHtmlParser(question.question.skill.description)}
+                    </div>
                     : null}
-                {question.objects ?
-                    <Grid
-                        container
-                        direction="row"
-                        justify="center"
-                        alignItems="center">
-                        <Typography align="center"
-                            variant="body2" color="textPrimary"
-                            style={{ fontWeight: 'bold', marginRight: '5px' }} >
+                {question.question.knowledge_objects ?
+                    <div>
+                        <Typography variant="button" color="textSecondary" component="p">
                             Objeto(s) de Conhecimento:
                         </Typography>
-                        <Typography align="center"
-                            variant="body2" color="textPrimary" >
-                            {question.objects.map(item => (
-                                item.object.description + '; '
-                            ))}
-                        </Typography>
-                    </Grid>
+                        {question.question.knowledge_objects.map(item => (
+                            ReactHtmlParser(item.description) + '; '
+                        ))}
+                    </div>
                     : null}
+                    <br />
                 <Typography variant="button" color="textSecondary" component="p">
                     Texto base:
                 </Typography>

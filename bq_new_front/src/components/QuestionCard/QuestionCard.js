@@ -95,6 +95,16 @@ const useStyles = makeStyles(theme => ({
     lineQuestion: {
         marginLeft: 20,
     },
+    colorLabelDifficulty: {
+        color: '#3f51b5',
+        fontSize: 16,
+        fontWeight: 'bold'
+    },
+    colorLabelDifficultyWithoutAnswer:{
+        color: '#f44336',
+        fontSize: 16,
+        fontWeight: 'bold'
+    }
 }));
 
 const QuestionCard = props => {
@@ -191,6 +201,10 @@ const QuestionCard = props => {
     useEffect(() => {
         loadRank();
     }, [question, rank]);
+
+    useEffect(() => {
+
+    }, [rank]);
 
     useEffect(() => {
 
@@ -326,7 +340,7 @@ const QuestionCard = props => {
 
     const handleChooseEvaluation = () => {
         if(question.fk_user_id !== parseInt(localStorage.getItem("@Questione-id-user")) && rank == 0){
-            toast.error('Antes de aplicar a questão, você deve classificá-la.')
+            toast.error('Antes de aplicar a questão, você deve avaliá-la escolhendo de 1 a 5 estrelas.')
             return;
         }
         setOpenEvalationChoose(true);
@@ -360,6 +374,24 @@ const QuestionCard = props => {
 
         setOpenEvalationChoose(false);
 
+    }
+
+    const difficulty = (porc, totalCorrect) => {
+        if(totalCorrect < 20){
+            return ""
+        }
+        if (porc >= 0.86) {
+            return 'Muito Fácil'
+        } else if(porc >= 0.61 && porc <= 0.85){
+            return 'Fácil'
+        } else if(porc >= 0.41 && porc <= 0.60){
+            return 'Média'
+        } else if(porc >= 0.16 && porc <= 0.40){
+            return 'Difícil'
+        } else if(porc <= 0.15){
+            return 'Muito Difícil'
+        }
+        return '';
     }
 
   return (
@@ -405,6 +437,37 @@ const QuestionCard = props => {
                                     <Chip label="Ativa" className={clsx(classes.chipGreen, className)} size="small"/> :
                                     <Chip label="Inativa" className={clsx(classes.chipRed, className)} size="small"/>}
                             </div>
+                            <div>
+                                { question.difficulty.total_answers == 0 ?
+                                    <p className={clsx(classes.colorLabelDifficultyWithoutAnswer)}>
+                                        {"Esta questão ainda não foi respondida em uma avaliação."}
+                                    </p>
+                                    :
+                                    <p className={clsx(classes.colorLabelDifficulty)}>
+                                        { question.difficulty.total_answers == 1 ?
+                                            "Esta questão só foi respondida "+question.difficulty.total_answers
+                                            +" vez."
+                                            :
+                                            "Das avaliações aplicadas, "+Math.round(question.difficulty.porc_correct*100)+ "% das "
+                                            +" respostas para esta questão foram corretas."}
+                                    </p>
+                                }
+                            </div>
+                            <div>
+                                { question.difficulty.total_answers > 20 ?
+                                    <p className={clsx(classes.colorLabelDifficulty)}>
+                                        {'Dificuldade: '+difficulty(question.difficulty.porc_correct,
+                                                    question.difficulty.total_answers)+'.'}
+                                    </p>
+                                    :
+                                    <p className={clsx(classes.colorLabelDifficultyWithoutAnswer)}>
+                                    {"Não foi possível calcular a dificuldade."}
+                                    </p>
+                                }
+
+
+                            </div>
+
 
                         </div>
                     }
