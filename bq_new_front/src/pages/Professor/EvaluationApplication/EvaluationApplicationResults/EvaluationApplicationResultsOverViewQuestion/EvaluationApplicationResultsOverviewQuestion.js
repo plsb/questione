@@ -95,6 +95,24 @@ const EvaluationApplicationResultsOverviewQuestion = props => {
     checkedB: true,
   });
 
+  const difficulty = (porc, totalCorrect) => {
+    if(totalCorrect < 20){
+      return ''
+    }
+    if (porc >= 0.86) {
+      return '- Dificuldade: Muito Fácil'
+    } else if(porc >= 0.61 && porc <= 0.85){
+      return '- Dificuldade: Fácil'
+    } else if(porc >= 0.41 && porc <= 0.60){
+      return '- Dificuldade: Média'
+    } else if(porc >= 0.16 && porc <= 0.40){
+      return '- Dificuldade: Difícil'
+    } else if(porc <= 0.15){
+      return '- Dificuldade: Muito Difícil'
+    }
+    return '';
+  }
+
   useEffect(() => {
 
   }, [cancel]);
@@ -137,7 +155,7 @@ const EvaluationApplicationResultsOverviewQuestion = props => {
                         </IconButton>
                       </div>
                     }
-                    title={ 'Questão ' + (numberQuestion+1)}/>
+                    title={`Questão ${(numberQuestion+1)} ${difficulty(result.difficulty.porc_correct, result.difficulty.total_answers)}`}/>
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                   <CardContent>
                     <div className={classes.lineQuestion}>
@@ -155,7 +173,7 @@ const EvaluationApplicationResultsOverviewQuestion = props => {
 
                         <br />
                       </div>
-                      { result.reference != "" && result.reference != null ?
+                      {/* { result.reference != "" && result.reference != null ?
                           <div>
                             <Typography variant="button" color="textSecondary" component="p">
                               Referência:
@@ -163,7 +181,7 @@ const EvaluationApplicationResultsOverviewQuestion = props => {
                             <div> { result.reference } </div>
                             <br />
                           </div>
-                          : null}
+                          : null} */}
                       { result.skill != null ?
                           <div>
                             <Typography variant="button" color="textSecondary" component="p">

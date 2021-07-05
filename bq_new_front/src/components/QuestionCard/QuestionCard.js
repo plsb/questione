@@ -288,6 +288,8 @@ const QuestionCard = props => {
                 toast.success('Questão excluída da avaliação.');
                 setRefresh(refresh+1);
             }
+
+            handleClose();
         } catch (error) {
 
         }
@@ -331,6 +333,8 @@ const QuestionCard = props => {
                 toast.success('Questão duplicada.');
                 setRefresh(refresh+1);
             }
+
+            handleClose();
         } catch (error) {
 
         }

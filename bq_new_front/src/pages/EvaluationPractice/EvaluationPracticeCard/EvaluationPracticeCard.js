@@ -97,6 +97,7 @@ const EvaluationPracticeCard = props => {
                     toast.success('Avaliação arquivada.');
                 }
                 setRefresh(refresh + 1);
+                handleClose();
                 // document.location.reload();
             } else {
                 toast.error('Erro ao mduar o status da avaliação.');
@@ -127,6 +128,8 @@ const EvaluationPracticeCard = props => {
                 toast.success('Avaliação excluída.');
                 setRefresh(refresh + 1);
             }
+
+            handleClose();
         } catch (error) {
 
         }
@@ -191,7 +194,7 @@ const EvaluationPracticeCard = props => {
                     toast.error(response.data.message);
                 }
             } else {
-                if (response.data.data.length !== 0) {
+                if (response.data.evaluationQuestions.data.length !== 0) {
                     setHasQuestions(true);
                 }
             }

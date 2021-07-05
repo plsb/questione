@@ -8,7 +8,8 @@ import {
   TableBody,
   TablePagination, CardHeader, Grid, LinearProgress,
   IconButton,
-  Divider
+  Divider,
+  Typography
 } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import api from '../../../services/api';
@@ -67,6 +68,7 @@ const EvaluationPracticeQuestions = props => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
+  const [evaluationDescription, setEvaluationDescription] = useState('');
   // const [searchText, setSearchText] = useState('');
   // const [open, setOpen] = React.useState(false);
   const [refresh, setRefresh] = React.useState(0);
@@ -75,10 +77,12 @@ const EvaluationPracticeQuestions = props => {
     try {
       let url = `/evaluation/practice/has-questions/${codigoEvaluation}&page=${page}`;
       const response = await api.get(url);
-      if(response.status == 200) {
-        setTotal(response.data.total);
 
-        setQuestions(response.data.data);
+      if(response.status == 200) {
+        setTotal(response.data.evaluationQuestions.total);
+        setEvaluationDescription(response.data.evaluation.description || '');
+
+        setQuestions(response.data.evaluationQuestions.data);
       } else {
         setQuestions([]);
       }
@@ -125,6 +129,17 @@ const EvaluationPracticeQuestions = props => {
           subheader=""
           title="Questões da avaliação" />
         <Divider />
+        <Card className={classes.root}>
+          <CardHeader
+              avatar={
+                <div>
+                  <Typography variant="button" color="textSecondary" component="p">
+                    {'Avaliação: '+evaluationDescription}
+                  </Typography>
+                </div>
+              }
+          />
+        </Card>
         {/* <UsersToolbar
             onChangeSearch={updateSearch.bind(this)}
             searchText={searchText}

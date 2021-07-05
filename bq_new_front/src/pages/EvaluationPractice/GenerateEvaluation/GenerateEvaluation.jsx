@@ -129,7 +129,7 @@ const GenerateEvaluation = props => {
         }
       } else {
         toast.success('Avaliação gerada com sucesso!');
-        loadQuestions();
+        // loadQuestions();
         history.push('/evaluation-practice');
       }
     } catch (error) {
@@ -234,21 +234,21 @@ const GenerateEvaluation = props => {
     }
   }
 
-  async function loadQuestions() {
-    try {
-      const referenceId = typeOfEvaluationList.filter((item) => item.description === formState.values.typeOfEvaluation)[0].id;
-      const areaId = areaList.filter((item) => item.description === formState.values.area)[0].id;
+  // async function loadQuestions() {
+  //   try {
+  //     const referenceId = typeOfEvaluationList.filter((item) => item.description === formState.values.typeOfEvaluation)[0].id;
+  //     const areaId = areaList.filter((item) => item.description === formState.values.area)[0].id;
 
-      const response = await api.get(`/evaluation/practice/has-questions/${codigoEvaluation}`);
+  //     const response = await api.get(`/evaluation/practice/has-questions/${codigoEvaluation}`);
 
-      if (response) {
-        // setAmountQuestions(response.data);
-        // setRenderConfigQuestions(true);
-      }
-    } catch (error) {
+  //     if (response) {
+  //       // setAmountQuestions(response.data);
+  //       // setRenderConfigQuestions(true);
+  //     }
+  //   } catch (error) {
 
-    }
-  }
+  //   }
+  // }
 
   useEffect(() => {
     if (codigoEvaluation) {

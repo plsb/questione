@@ -75,6 +75,7 @@ const EvaluationCard = props => {
           if (response.status === 200) {
               toast.success('Avaliação cadastrada(duplicada).');
               setRefresh(refresh+1);
+              handleClose();
           } else {
               toast.error('Erro ao mduar o status da avaliação.');
           }
@@ -97,6 +98,7 @@ const EvaluationCard = props => {
                   toast.success('Avaliação arquivada.');
               }
               setRefresh(refresh+1);
+              handleClose();
           } else {
               toast.error('Erro ao mduar o status da avaliação.');
           }
@@ -126,6 +128,8 @@ const EvaluationCard = props => {
                 toast.success('Avaliação excluída.');
                 setRefresh(refresh+1);
             }
+
+            handleClose();
         } catch (error) {
 
         }

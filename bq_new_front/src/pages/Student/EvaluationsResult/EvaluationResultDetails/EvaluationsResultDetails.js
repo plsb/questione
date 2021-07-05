@@ -216,6 +216,7 @@ const EvaluationsResultDetails = props => {
   const { idHead } = props.match.params;
   const [head, setHead] = useState([]);
   const [questions, setQuestions] = useState(null);
+  const [applicationDescription, setApplicationDescription] = useState(null);
   // const [showSnackbar, setShowSnackbar] = useState(true);
   const [openSnack, setOpenSnack] = React.useState(true);
 
@@ -231,6 +232,7 @@ const EvaluationsResultDetails = props => {
       if (response.status == 200) {
         setQuestions(response.data.questions);
         setShowQuestionPreview(response.data.question_preview);
+        setApplicationDescription(response.data.application.description);
 
         setHead(response.data);
       } if (response.status == 202) {
@@ -337,6 +339,19 @@ const EvaluationsResultDetails = props => {
           subheader=""
           title="Avaliação" />
         <Divider />
+        {applicationDescription && (
+          <Card className={classes.root}>
+            <CardHeader
+                avatar={
+                  <div>
+                    <Typography variant="button" color="textSecondary" component="p">
+                      {'Descrição da aplicação: '+applicationDescription}
+                    </Typography>
+                  </div>
+                }
+            />
+          </Card>
+        )}
         <CardContent>
           {questions == null ?
             <LinearProgress color="secondary" />

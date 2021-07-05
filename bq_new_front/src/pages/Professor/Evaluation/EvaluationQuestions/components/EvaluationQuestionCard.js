@@ -95,7 +95,10 @@ const useStyles = makeStyles(theme => ({
         minWidth: '32px',
         height: '32px',
         color: '#ff6333'
-    }
+    },
+    correct: {
+        backgroundColor: '#80cbc4',
+    },
 }));
 
 const QuestionCard = props => {
@@ -283,7 +286,8 @@ const QuestionCard = props => {
                 <br />
                 {question.question.question_items.map(item => (
                     <div>
-                        <Paper className={clsx(classes.paper)} variant="outlined"> {ReactHtmlParser(item.description)} </Paper>
+                        {console.log(item)}
+                        <Paper className={clsx(classes.paper, item.correct_item == 1 ?  classes.correct : null)} variant="outlined"> {ReactHtmlParser(item.description)} </Paper>
                     </div>
                 ))}
             </div>
