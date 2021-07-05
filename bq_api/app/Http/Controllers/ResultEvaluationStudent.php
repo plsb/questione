@@ -150,7 +150,7 @@ class ResultEvaluationStudent extends Controller
             'id' => $head_answer->id,
             'qtdCorrect' => $qtdCorrect,
             'qtdIncorrect' => $qtdIncorrect,
-            'aplicacao' => $application_evaluation,
+            'application' => $application_evaluation,
             'questions' => $resultAnswer,
             'question_preview' => $preview_question
 
