@@ -853,6 +853,7 @@ class EvaluationApplicationsController extends Controller
 
             $auxQuestion= (object)[
                 'idQuestion' => $question->id,
+                'difficulty' => $question->difficulty,
                 'cancel' => $ev_question->cancel,
                 'base_text' => $question->base_text,
                 'stem' => $question->stem,
