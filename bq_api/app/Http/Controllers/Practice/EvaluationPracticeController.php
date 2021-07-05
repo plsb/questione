@@ -215,6 +215,7 @@ class EvaluationPracticeController extends Controller
 
         $evaluationQuestions = EvaluationHasQuestions::where('fk_evaluation_id', $id)
             ->with('questionWithSkillAndObjects')
+            ->with('evaluation')
             ->paginate(10);
 
         return $evaluationQuestions;

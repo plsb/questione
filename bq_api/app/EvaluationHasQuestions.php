@@ -35,4 +35,8 @@ class EvaluationHasQuestions extends Model
             ->with('knowledgeObjects');
     }
 
+    public function evaluation(){
+        return $this->belongsTo(Evaluation::class, 'fk_evaluation_id');
+    }
+
 }
