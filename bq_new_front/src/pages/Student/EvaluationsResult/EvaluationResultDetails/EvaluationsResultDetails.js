@@ -462,6 +462,8 @@ const EvaluationsResultDetails = props => {
                             Alternativas:
                           </Typography>
                           <br />
+                          {data.answer == null ?
+                              <p className={classes.paperWrongFont}>Você não respondeu esta questão.</p> : null }
                           {data.question.items.map(item => (
                              item.correct_item == 1 ?
                                  <div>

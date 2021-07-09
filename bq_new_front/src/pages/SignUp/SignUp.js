@@ -166,25 +166,24 @@ const SignUp = props => {
       const response = await api.post('register', data);
 
       if (response.status === 202) {
-        console.log('Status 202');
 
         if(response.data.message){
           toast.error(response.data.message);
         }
-        
-        if(response.data.errors[0].name[0]){
+
+        if(response.data.errors[0].name){
           toast.error(response.data.errors[0].name[0]);
         }
-        
-        if(response.data.errors[0].cpf[0]){
+
+        if(response.data.errors[0].cpf){
           toast.error(response.data.errors[0].cpf[0]);
         }
-        
-        if(response.data.errors[0].email[0]){
+
+        if(response.data.errors[0].email){
           toast.error(response.data.errors[0].email[0]);
         }
-        
-        if(response.data.errors[0].password[0]){
+
+        if(response.data.errors[0].password){
           toast.error(response.data.errors[0].password[0]);
         }
       } else {
@@ -192,7 +191,7 @@ const SignUp = props => {
         history.push('/sign-in');
       }
     } catch (error) {
-      
+
     }
   }
 

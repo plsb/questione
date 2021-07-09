@@ -183,10 +183,11 @@ const UsersTable = props => {
                                 user.acess_level === 2 ? "Professor" : ""}
                           </TableCell>
                           <TableCell>
-                            <Checkbox
-                              checked={user.add_external_question}
-                              onChange={(event, checked) => updateExternalQuestions(event, user.id, checked)}
-                            />
+                            {user.acess_level === 2 ?
+                              <Checkbox
+                                checked={user.add_external_question}
+                                onChange={(event, checked) => updateExternalQuestions(event, user.id, checked)}
+                              /> : null }
                           </TableCell>
                         </TableRow>
                     ))}

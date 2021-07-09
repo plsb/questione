@@ -266,6 +266,7 @@ const QuestionCard = props => {
                 toast.success('Questão excluída.');
                 setRefresh(refresh+1);
             }
+            handleClose();
         } catch (error) {
 
         }
