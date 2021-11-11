@@ -334,6 +334,12 @@ class EvaluationApplicationsController extends Controller
         $evaluation_application->time_to_finalize = $request->time_to_finalize;
         $evaluation_application->date_finish = $request->date_finish;
         $evaluation_application->time_finish = $request->time_finish;
+        $evaluation_application->public_results = $request->public_results;
+        if($evaluation_application->public_results == 1){
+            $evaluation_application->can_see_students = $request->can_see_students;
+        } else {
+            $evaluation_application->can_see_students = 0;
+        }
         $evaluation_application->save();
 
         return response()->json([
@@ -432,10 +438,18 @@ class EvaluationApplicationsController extends Controller
 
         //verificar de quem é a avaliação
         $user = auth('api')->user();
-        if($evaluation->fk_user_id != $user->id){
+    
+        if($user->acess_level == 0){ // verifica se é um aluno que está tentando acessar
             return response()->json([
-                'message' => 'A avaliação pertence a outro usuário.'
+                'message' => 'Os resultados da avaliação não podem ser apresentados.'
             ], 202);
+        }
+        if($application->public_results == 0){ //verifica se os resultados são públicos
+            if($evaluation->fk_user_id != $user->id){ //se os resultados não forem públicos, verifica se o usuário que tenta acessar é o dono
+                return response()->json([
+                    'message' => 'Os resultados da avaliação não podem ser apresentados.'
+                ], 202);
+            }
         }
 
         //finaliza as avaliações de forma automática caso tenha passado o tempo para respondê-la
@@ -693,10 +707,17 @@ class EvaluationApplicationsController extends Controller
 
         //verificar de quem é a avaliação
         $user = auth('api')->user();
-        if($evaluation->fk_user_id != $user->id){
+        if($user->acess_level == 0){ // verifica se é um aluno que está tentando acessar
             return response()->json([
-                'message' => 'A avaliação pertence a outro usuário.'
+                'message' => 'Os resultados da avaliação não podem ser apresentados.'
             ], 202);
+        }
+        if($evaluation->public_results == 0){ //verifica se os resultados são públicos
+            if($evaluation->fk_user_id != $user->id){ //se os resultados não forem públicos, verifica se o usuário que tenta acessar é o dono
+                return response()->json([
+                    'message' => 'Os resultados da avaliação não podem ser apresentados.'
+                ], 202);
+            }
         }
 
 
@@ -912,10 +933,17 @@ class EvaluationApplicationsController extends Controller
 
         //verificar de quem é a avaliação
         $user = auth('api')->user();
-        if ($evaluation->fk_user_id != $user->id) {
+        if($user->acess_level == 0){ // verifica se é um aluno que está tentando acessar
             return response()->json([
-                'message' => 'A avaliação pertence a outro usuário.'
+                'message' => 'Os resultados da avaliação não podem ser apresentados.'
             ], 202);
+        }
+        if($evaluation->public_results == 0){ //verifica se os resultados são públicos
+            if($evaluation->fk_user_id != $user->id){ //se os resultados não forem públicos, verifica se o usuário que tenta acessar é o dono
+                return response()->json([
+                    'message' => 'Os resultados da avaliação não podem ser apresentados.'
+                ], 202);
+            }
         }
 
         $evaluation_question = EvaluationHasQuestions::where('fk_evaluation_id', $evaluation->id)->get();
