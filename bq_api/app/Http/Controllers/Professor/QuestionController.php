@@ -545,5 +545,4 @@ class QuestionController extends Controller
             'url_image' => 'https://questione.s3-us-west-2.amazonaws.com/'.$storagePath,
         ], 200);
     }
-
 }
