@@ -100,6 +100,9 @@ const EvaluationApplicationDetails = props => {
       const random_questions = checkedRandom;
       const show_results = checkedShowResult;
       const release_preview_question = checkedReleasePreviewQuestion;
+      const public_results = shareEvaluation;
+      const can_see_students = canViewStudentName;
+
       const data = {
         description,
         random_questions,
@@ -112,7 +115,8 @@ const EvaluationApplicationDetails = props => {
         date_release_results: checkedShowResult && date_release_results !== '' ? date_release_results : null,
         time_release_results: checkedShowResult && time_release_results !== '' ? time_release_results : null,
         release_preview_question,
-        // To do: Adicionar novos campos
+        public_results,
+        can_see_students
       }
       const response = await api.put('evaluation/applications/'+idApplication, data);
 
@@ -154,13 +158,12 @@ const EvaluationApplicationDetails = props => {
         if (response.data.release_preview_question) {
           setCheckedReleasePreviewQuestion(true);
         }
-        // To do: Atualizar novos estados
-        // if () {
-        //   setShareEvaluation(true);
-        // }
-        // if () {
-        //   setCanViewStudentName(true);
-        // }
+        if (response.data.public_results) {
+          setShareEvaluation(true);
+        }
+        if (response.data.can_see_students) {
+          setCanViewStudentName(true);
+        }
 
         setFormState(formState => ({
           values: {

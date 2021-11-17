@@ -85,7 +85,7 @@ const EvaluationApplicationCard = props => {
   }
 
     const copyLinkToClipboard = (id) => {
-        copyToClipboard('/applications-evaluation/results/'+id);
+        copyToClipboard(window.location.origin + '/applications-evaluation/results/' + id);
         toast.success('Link de respostas da aplicação copiado para a área de transferência');
     }
 
@@ -121,13 +121,15 @@ const EvaluationApplicationCard = props => {
                       action={
                           <div>
                               {/* To do: Verificar se a aplicação pode ser compartilhada */}
-                              <Tooltip title="Copiar link da avaliação">
-                                  <IconButton
-                                      aria-label="share"
-                                      onClick={() => copyLinkToClipboard(evaluationApplication.id)}>
-                                      <ShareIcon />
-                                  </IconButton>
-                              </Tooltip>
+                              {evaluationApplication.public_results === 1 && (
+                                <Tooltip title="Copiar link da avaliação">
+                                    <IconButton
+                                        aria-label="share"
+                                        onClick={() => copyLinkToClipboard(evaluationApplication.id)}>
+                                        <ShareIcon />
+                                    </IconButton>
+                                </Tooltip>
+                              )}
 
                               {evaluationApplication.evaluation.status == 1 ?
                               <Tooltip title="Habilite a questão para aplicações">
