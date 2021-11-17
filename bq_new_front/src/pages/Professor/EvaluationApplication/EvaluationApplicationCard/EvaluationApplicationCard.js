@@ -120,7 +120,6 @@ const EvaluationApplicationCard = props => {
                       className={classes.head}
                       action={
                           <div>
-                              {/* To do: Verificar se a aplicação pode ser compartilhada */}
                               {evaluationApplication.public_results === 1 && (
                                 <Tooltip title="Copiar link da avaliação">
                                     <IconButton
