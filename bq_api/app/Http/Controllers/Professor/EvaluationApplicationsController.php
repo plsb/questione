@@ -558,6 +558,8 @@ class EvaluationApplicationsController extends Controller
             $questions = array();
             $total_questions = 0;
             $count_corret_student = 0;
+
+            $count_total_students = 1;
             foreach ($answers as $ans) {
                 $total_questions++;
 
@@ -650,9 +652,15 @@ class EvaluationApplicationsController extends Controller
 
             }
 
+            $student_name = $student->name;
+            if($application->public_results && $application->can_see_students == 0
+                    && $evaluation->fk_user_id != $user->id){
+                        $student_name  = 'Aluno '.$count_total_students;
+            }
+
 
             $resultStudent = (object)[
-                'student' => $student->name,
+                'student' => $student_name,
                 'hr_start' => $head->created_at,
                 'hr_finished' => $head->finalized_at,
                 'finished_automatically' => $head->finished_automatically,
@@ -664,6 +672,7 @@ class EvaluationApplicationsController extends Controller
                 'percentage_correct' => number_format($percentage, 2),
             ];
             $students[] = $resultStudent;
+            $count_total_students = $count_total_students + 1;
         }
         usort(
 
