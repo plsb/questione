@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
+import { copyToClipboard } from '../../../../helpers/utils';
 import { makeStyles } from '@material-ui/styles';
 import {
     Card,
@@ -14,6 +15,7 @@ import { toast } from 'react-toastify';
 import {withRouter} from "react-router-dom";
 import api from "../../../../services/api";
 import { Edit, FormatListBulleted } from "@material-ui/icons";
+import ShareIcon from '@material-ui/icons/Share';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -82,6 +84,11 @@ const EvaluationApplicationCard = props => {
       history.push('/applications-evaluation/results/'+id);
   }
 
+    const copyLinkToClipboard = (id) => {
+        copyToClipboard(window.location.origin + '/applications-evaluation/results/' + id);
+        toast.success('Link de respostas da aplicação copiado para a área de transferência');
+    }
+
     async function onClickOpenDialogEnableApplication() {
         try {
             let url = 'evaluation/change-status-application/'+evaluationApplication.id;
@@ -113,6 +120,15 @@ const EvaluationApplicationCard = props => {
                       className={classes.head}
                       action={
                           <div>
+                              {evaluationApplication.public_results === 1 && (
+                                <Tooltip title="Copiar link da avaliação">
+                                    <IconButton
+                                        aria-label="share"
+                                        onClick={() => copyLinkToClipboard(evaluationApplication.id)}>
+                                        <ShareIcon />
+                                    </IconButton>
+                                </Tooltip>
+                              )}
 
                               {evaluationApplication.evaluation.status == 1 ?
                               <Tooltip title="Habilite a questão para aplicações">

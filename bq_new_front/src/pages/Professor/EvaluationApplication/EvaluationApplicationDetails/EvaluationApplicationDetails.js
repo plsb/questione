@@ -69,6 +69,8 @@ const EvaluationApplicationDetails = props => {
   const [checkedDefineDateAndHourInitial, setCheckedDefineDateAndHourInitial] = React.useState(false);
   const [checkedDefineDateAndHourFinal, setCheckedDefineDateAndHourFinal] = React.useState(false);
   const [checkedDefineDuration, setCheckedDefineDuration] = React.useState(false);
+  const [shareEvaluation, setShareEvaluation] = React.useState(false);
+  const [canViewStudentName, setCanViewStudentName] = React.useState(false);
 
   const classes = useStyles();
 
@@ -98,6 +100,9 @@ const EvaluationApplicationDetails = props => {
       const random_questions = checkedRandom;
       const show_results = checkedShowResult;
       const release_preview_question = checkedReleasePreviewQuestion;
+      const public_results = shareEvaluation;
+      const can_see_students = canViewStudentName;
+
       const data = {
         description,
         random_questions,
@@ -110,6 +115,8 @@ const EvaluationApplicationDetails = props => {
         date_release_results: checkedShowResult && date_release_results !== '' ? date_release_results : null,
         time_release_results: checkedShowResult && time_release_results !== '' ? time_release_results : null,
         release_preview_question,
+        public_results,
+        can_see_students
       }
       const response = await api.put('evaluation/applications/'+idApplication, data);
 
@@ -150,6 +157,12 @@ const EvaluationApplicationDetails = props => {
         }
         if (response.data.release_preview_question) {
           setCheckedReleasePreviewQuestion(true);
+        }
+        if (response.data.public_results) {
+          setShareEvaluation(true);
+        }
+        if (response.data.can_see_students) {
+          setCanViewStudentName(true);
         }
 
         setFormState(formState => ({
@@ -274,6 +287,18 @@ const EvaluationApplicationDetails = props => {
         hour_finish: '',
       },
     })
+  }
+
+  const handleChangeShareEvaluation = event => {
+    if (event.target.checked) {
+      setCanViewStudentName(false);
+    }
+
+    setShareEvaluation(event.target.checked);
+  }
+
+  const handleChangeCanViewStudentName = event => {
+    setCanViewStudentName(event.target.checked);
   }
 
   const hasError = field => {
@@ -676,6 +701,77 @@ const EvaluationApplicationDetails = props => {
                             />
                           }
                           label="Liberar visualização das questões"
+                      />
+                    </TooltipCustomized>
+                  </ListItem>
+                </List>
+              </Collapse>
+            </List>
+          </Grid>
+
+          <Grid
+              item
+              md={6}
+              xs={12}
+              className={classes.row}
+          >
+            <TooltipCustomized
+                title={
+                  <React.Fragment>
+                    <p>
+                      <Typography color="textPrimary" variant="body2">
+                        {'Caso esta opção esteja habilitada, todos os estudantes terão acesso' +
+                        ' ao resultado desta aplicação. Você pode configurar uma data e hora programada' +
+                        ' para que os estudantes tenham acesso aos resultados, e se o estudante' +
+                        ' poderá visualizar a questão completa ou não.'}
+                      </Typography>
+                    </p>
+                  </React.Fragment>
+                }>
+              <FormControlLabel
+                  control={
+                    <Switch
+                        checked={shareEvaluation}
+                        onChange={handleChangeShareEvaluation}
+                        name="share_evaluation"
+                        color="primary"
+                    />
+                  }
+                  label="Gerar link para compartilhar resultados com professores?"
+              />
+            </TooltipCustomized>
+
+            <List
+                component="nav"
+                aria-labelledby="nested-list-subheader"
+                className={classes.root}
+            >
+              <Collapse in={shareEvaluation} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding className={classes.subGroup}>
+                  <ListItem className={classes.nested}>
+                    <TooltipCustomized
+                        title={
+                          <React.Fragment>
+                            <p>
+                              <Typography color="textPrimary" variant="body2">
+                                {'Caso esta opção esteja habilitada, o estudante terá acesso' +
+                                ' a todas as informações das questões (texto base, enunciado e alternativas).' +
+                                ' Caso esteja desabilitada, o estudante poderá visualizar apenas se ' +
+                                ' acertou ou errou cada questão.'}
+                              </Typography>
+                            </p>
+                          </React.Fragment>
+                        }>
+                      <FormControlLabel
+                          control={
+                            <Switch
+                                checked={canViewStudentName}
+                                onChange={handleChangeCanViewStudentName}
+                                name="can_view_student_name"
+                                color="primary"
+                            />
+                          }
+                          label="Permitir visualização do nome dos alunos nos resultados?"
                       />
                     </TooltipCustomized>
                   </ListItem>
