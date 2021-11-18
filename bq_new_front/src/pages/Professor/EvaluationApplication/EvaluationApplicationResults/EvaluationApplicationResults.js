@@ -17,6 +17,7 @@ import { withStyles, makeStyles } from '@material-ui/core/styles';
 import EvaluationApplicationResultsOverviewQuestion from "./EvaluationApplicationResultsOverViewQuestion";
 import EvaluationApplicationResultsSkillObjects from "./EvaluationApplicationResultsSkillObjects";
 import moment from "moment";
+import { toast } from 'react-toastify';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -320,12 +321,15 @@ const EvaluationApplicationResults = props => {
         setAnswerStudents(response.data.students);
         setTotalVarianceStudents(response.data.variance_total);
         setAvgCorrectQuestions(response.data.avg_correct_question);
+      } else if (response.status === 202) {
+        history.push('/evaluations');
+        toast.error(response.data.message);
       } else {
         setAnswerStudents([]);
       }
 
     } catch (error) {
-
+      
     }
   }
 
