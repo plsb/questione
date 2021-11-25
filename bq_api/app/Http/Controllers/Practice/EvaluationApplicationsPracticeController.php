@@ -55,6 +55,7 @@ class EvaluationApplicationsPracticeController extends Controller
             })
             ->where('id_application', '!=', '')
             ->with('evaluation')
+            ->with('headAnswer')
             ->orderBy('id', 'DESC')
             ->paginate(10);
 

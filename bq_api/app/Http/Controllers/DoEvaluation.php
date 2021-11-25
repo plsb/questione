@@ -26,6 +26,11 @@ class DoEvaluation extends Controller
             ->with('evaluation')
             ->first();
         $user = auth('api')->user();
+        if(!$evaluation_application){
+            return response()->json([
+                'message' => 'A avaliação não foi encontrada.'
+            ], 202);
+        }
         if($evaluation_application->evaluation->practice == 1){
 
             if($user->id != $evaluation_application->evaluation->user->id){
@@ -50,6 +55,7 @@ class DoEvaluation extends Controller
             }
 
         }
+
 
         if($evaluation_application){
             return response()->json($evaluation_application, 200);

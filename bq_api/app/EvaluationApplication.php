@@ -9,7 +9,7 @@ class EvaluationApplication extends Model
     protected $table = 'evaluation_application';
     protected $fillable = ['id', 'id_application', 'description','fk_evaluation_id', 'status',
         'random_questions', 'show_results', 'date_start', 'time_start', 'time_to_finalize',
-        'date_finish', 'time_finish', 'date_release_results', 'time_release_results', 
+        'date_finish', 'time_finish', 'date_release_results', 'time_release_results',
         'public_results', 'can_see_students',
         'release_preview_question','created_at'];
     protected $hidden = [];
@@ -48,5 +48,10 @@ class EvaluationApplication extends Model
         return $this->belongsTo(Evaluation::class, 'fk_evaluation_id')
             ->with('user')
             ->with('questions');
+    }
+
+    public function headAnswer(){
+        return $this->hasOne(AnswersHeadEvaluation::class,
+            'fk_application_evaluation_id');
     }
 }
