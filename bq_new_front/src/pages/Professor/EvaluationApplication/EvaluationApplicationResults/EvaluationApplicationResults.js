@@ -18,6 +18,7 @@ import EvaluationApplicationResultsOverviewQuestion from "./EvaluationApplicatio
 import EvaluationApplicationResultsSkillObjects from "./EvaluationApplicationResultsSkillObjects";
 import moment from "moment";
 import { toast } from 'react-toastify';
+import { removeDestionationPath } from '../../../../services/navigation';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -256,6 +257,8 @@ const TooltipCustomized = withStyles((theme) => ({
 }))(Tooltip);
 
 const EvaluationApplicationResults = props => {
+  removeDestionationPath();
+
   const { className, history, ...rest } = props;
   const { idApplication } = props.match.params;
   const [ avgCorrectQuestions, setAvgCorrectQuestions ] = useState(0);

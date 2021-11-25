@@ -327,7 +327,8 @@ const Routes = () => (
                 layout={MainLayout}
                 needToBeLogged={true}
                 typeUser={2}
-                path="/applications-evaluation/results/:idApplication" />
+                path="/applications-evaluation/results/:idApplication"
+                goToDestination />
             <RouteWithLayout
                 component={QuestionTable}
                 exact
