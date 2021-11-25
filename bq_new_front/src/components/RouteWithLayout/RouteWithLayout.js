@@ -3,7 +3,7 @@ import {Redirect, Route} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {isAuthenticated} from "./../../services/auth";
 import validate from "validate.js";
-
+import { setDestionationPath } from '../../services/navigation';
 
 
 const RouteWithLayout = props => {
@@ -13,6 +13,11 @@ const RouteWithLayout = props => {
     typeUser 2 somente professor acessa.
                                  */
     const typeStorage = localStorage.getItem('@Questione-acess-level-user');
+
+    const getDestination = (path) => {
+      setDestionationPath(path);
+      return path;
+    };
 
     useEffect(() => {
 
@@ -32,7 +37,7 @@ const RouteWithLayout = props => {
                        <Redirect to={{ pathname: "/Unauthorized", state: { from: props.location } }} />
 
               ) : (
-                  <Redirect to={{ pathname: "/sign-in", state: { from: props.location } }} />
+                  <Redirect to={{ pathname: "/sign-in", state: { from: props.location, destination: props.goToDestination ? getDestination(matchProps.location.pathname) : null } }} />
               )
 
           ) : (

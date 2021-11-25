@@ -13,6 +13,7 @@ import api from '../../services/api';
 import { toast } from 'react-toastify';
 import { login } from "../../services/auth";
 import {searchQuestions, searchQuestionsPage} from "../../services/seacrhQuestions";
+import { getDestionationPath } from "../../services/navigation";
 
 const schema = {
   email: {
@@ -99,6 +100,7 @@ const useStyles = makeStyles(theme => ({
 
 const SignIn = props => {
   const { history } = props;
+  const destinationPath = getDestionationPath();
 
   const classes = useStyles();
 
@@ -140,6 +142,7 @@ const SignIn = props => {
 
   async function handleSignIn(event) {
     event.preventDefault();
+
     try {
       const email = formState.values.email;
       const password = formState.values.password;
@@ -163,10 +166,10 @@ const SignIn = props => {
                 response.data[0].id, response.data[0].show_tour, response.data[0].add_external_question);
 
         toast.info(response.data[0].name+', seja bem-vindo!');
-        history.push('/home');
+        history.push(destinationPath || '/home');
       }
 
-      history.push('/home');
+      history.push(destinationPath || '/home');
     } catch (error) {
       alert('Erro de autenticação', error);
     }
