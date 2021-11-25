@@ -82,7 +82,7 @@ const EvaluationApplicationCard = props => {
     }
 
     const results = (id) => {
-        history.push('/evaluation-practice/applications-evaluation/details/' + id);
+        history.push('/student/result-evaluations/details/' + id);
     }
 
     // async function onClickOpenDialogEnableApplication() {
@@ -154,7 +154,7 @@ const EvaluationApplicationCard = props => {
                                     <Tooltip title="Visualizar resultados">
                                         <IconButton
                                             aria-label="copy"
-                                            onClick={() => results(evaluationApplication.id)}>
+                                            onClick={() => results(evaluationApplication.head_answer.id)}>
                                             <FormatListBulleted />
                                         </IconButton>
                                     </Tooltip>

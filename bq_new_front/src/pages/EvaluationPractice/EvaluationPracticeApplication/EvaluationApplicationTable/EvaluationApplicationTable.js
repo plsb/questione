@@ -219,6 +219,7 @@ const EvaluationApplicationTable = props => {
                           md={12}
                           xs={12}>
                         <Table>
+                          {console.log(evaluationsApplications)}
                           <TableBody>
                             {evaluationsApplications.map(application => (
                                 <EvaluationApplicationCard application={application} idApplication={idApplication} />
