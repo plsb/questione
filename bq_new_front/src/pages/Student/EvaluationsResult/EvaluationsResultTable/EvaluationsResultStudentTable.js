@@ -9,7 +9,9 @@ import {
   CardContent,
   Divider,
   IconButton,
-  Typography, Table, TableBody, CardActions, TablePagination, Tooltip, Switch, Chip, Grid, LinearProgress
+  Typography, Table, TableBody, CardActions, TablePagination, Tooltip, Switch, Chip, Grid, LinearProgress,
+  Select,
+  MenuItem,
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import ToolbarEvaluation
@@ -77,11 +79,29 @@ const EvaluationsResultStudentTable = props => {
   const [total, setTotal] = useState(0);
   const [searchText, setSearchText] = useState('');
 
+  // Filters
+  const [openModuleSelect, setOpenModuleSelect] = useState(false);
+  const [selectedModule, setSelectedModule] = useState('select');
+  const [moduleOptions] = useState([
+    { title: 'Comum', value: 'common' },
+    { title: 'Pratique', value: 'practice' },
+  ]);
+
+  const [openStatusSelect, setOpenStatusSelect] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [statusOptions] = useState([
+    { title: 'Iniciada', value: 'started' },
+    { title: 'Finalizada', value: 'finished' },
+  ]);
+
   const classes = useStyles();
 
-  async function load(newPage){
+  async function load(newPage, currentModule, currentStatus){
     try {
-      const responseHead = await api.get(`/evaluation/student/result/evaluations?page=${newPage}`);
+      currentModule = currentModule === 'select' ? '' : currentModule;
+      currentStatus = currentStatus === 'select' ? '' : currentStatus;
+
+      const responseHead = await api.get(`/evaluation/student/result/evaluations?page=${newPage}&module=${currentModule}&status=${currentStatus}`);
       if (responseHead.status === 200) {
         setEvaluations(responseHead.data.data);
         setTotal(responseHead.data.total);
@@ -95,7 +115,7 @@ const EvaluationsResultStudentTable = props => {
   }
 
   useEffect(() => {
-    load(1);
+    load(1, selectedModule, selectedStatus);
   }, []);
 
   const handleBack = () => {
@@ -103,8 +123,20 @@ const EvaluationsResultStudentTable = props => {
   };
 
   const handlePageChange = (event, page) => {
-    load(page+1)
+    load(page+1, selectedModule, selectedStatus)
     setPage(page);
+  };
+
+  const handleModuleChange = (event) => {
+    const { value } = event.target;
+    setSelectedModule(value);
+    load(page, value, selectedStatus);
+  };
+
+  const handleStatusChange = (event) => {
+    const { value } = event.target;
+    setSelectedStatus(value);
+    load(page, selectedModule, value);
   };
 
   const handleRowsPerPageChange = event => {
@@ -117,7 +149,7 @@ const EvaluationsResultStudentTable = props => {
 
   const onClickSearch = (e) => {
     setPage(0);
-    load(1);
+    load(1, selectedModule, selectedStatus);
   }
 
   const results = (idHead) => {
@@ -137,8 +169,39 @@ const EvaluationsResultStudentTable = props => {
             <CardHeader
                 avatar={
                   <div>
+                      <Select
+                        labelId="module-label"
+                        id="module"
+                        name="module"
+                        open={openModuleSelect}
+                        onOpen={() => setOpenModuleSelect(true)}
+                        onClose={() => setOpenModuleSelect(false)}
+                        value={selectedModule || 'select'}
+                        onChange={handleModuleChange}
+                        className={classes.root}
+                      >
+                        <MenuItem value="select">Selecione</MenuItem>
+                        {moduleOptions.map((module) => (
+                          <MenuItem key={module.value} value={module.value}>{module.title}</MenuItem>
+                        ))}
+                      </Select>
 
-
+                      <Select
+                        labelId="module-label"
+                        id="module"
+                        name="module"
+                        open={openStatusSelect}
+                        onOpen={() => setOpenStatusSelect(true)}
+                        onClose={() => setOpenStatusSelect(false)}
+                        value={selectedStatus || 'select'}
+                        onChange={handleStatusChange}
+                        className={classes.root}
+                      >
+                        <MenuItem value="select">Selecione</MenuItem>
+                        {statusOptions.map((status) => (
+                          <MenuItem key={status.value} value={status.value}>{status.title}</MenuItem>
+                        ))}
+                      </Select>
                   </div>
                 }
                 action={
