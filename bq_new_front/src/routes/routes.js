@@ -51,6 +51,7 @@ import {
 } from '../pages';
 import QuestionTable from "../pages/Professor/Question/QuestionTable";
 import QuestionDetails from "../pages/Professor/Question/QuestionDetails";
+import StudentClass from '../pages/StudentClass';
 
 const Routes = () => (
     <BrowserRouter>
@@ -113,6 +114,13 @@ const Routes = () => (
                 typeUser={-1}
                 layout={MainLayout}
                 path="/new-request" />
+            <RouteWithLayout
+                component={StudentClass}
+                exact
+                needToBeLogged={true}
+                typeUser={-1}
+                layout={MainLayout}
+                path="/student-class" />
             {/* ROTAS DO ALUNO */}
             <RouteWithLayout
                 component={EvaluationPracticeTable}
