@@ -90,7 +90,7 @@ class ClassController extends Controller
         $class->fk_user_id = $user->id;
 
         $token = bin2hex(random_bytes(1));
-        $id_class = mb_strtoupper(substr(date('Y'), -2)."".date('Gis')."".$token);
+        $id_class = mb_strtoupper("C".substr(date('Y'), -2)."".date('Gis')."".$token);
 
         $class->id_class = $id_class;
 

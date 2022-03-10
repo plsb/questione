@@ -80,6 +80,11 @@ Route::group(['prefix' => 'type-of-evaluation'], function (){
     Route::delete('/{typeEvaluation}', 'Adm\TypeOfEvaluationController@destroy')->name('typeOfEvaluation.destroy');
 });
 
+Route::group(['prefix' => 'class/student'], function (){
+    Route::get('/', 'ClassStudentsStudent@index')->name('class.index');
+    Route::post('/', 'ClassStudentsStudent@store')->name('class.store');
+});
+
 //Rotas do usuário professor
 Route::group(['prefix' => 'class'], function (){
     Route::get('/', 'Professor\ClassController@index')->name('class.index');
@@ -88,6 +93,11 @@ Route::group(['prefix' => 'class'], function (){
     Route::put('/{class}', 'Professor\ClassController@update')->name('class.update');
     //Route::delete('/{class}', 'Professor\ClassController@destroy')->name('class.destroy');
     Route::put('/change-status/{class}', 'Professor\ClassController@changeStatus')->name('class.changeStatus');
+});
+
+Route::group(['prefix' => 'class/professor'], function (){
+    Route::get('/', 'Professor\ClassStudentsProfessor@index')->name('class.index');
+    //Route::post('/', 'ClassStudentsStudent@store')->name('class.store');
 });
 
 Route::group(['prefix' => 'question'], function (){
