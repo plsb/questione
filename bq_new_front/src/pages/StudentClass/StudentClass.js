@@ -15,6 +15,8 @@ import {
     TableBody
 } from '@material-ui/core';
 
+import StudentClassCard from '../../components/StudentClassCard';
+
 import useStyles from './styles';
 
 function StudentClass() {
@@ -97,13 +99,9 @@ function StudentClass() {
                                 >
                                     <Table>
                                         <TableBody>
-                                            {/* {evaluations.map(evaluation => (
-                                                <EvaluationCard evaluation={evaluation}
-                                                    setTabValue={setTabValue}
-                                                    setRefresh={setRefresh}
-                                                    refresh={refresh}
-                                                />
-                                            ))} */}
+                                            <StudentClassCard />
+                                            <StudentClassCard />
+                                            <StudentClassCard />
                                         </TableBody>
                                     </Table>
                                 </Grid>
