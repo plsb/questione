@@ -6,6 +6,8 @@ use App\AnswersEvaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
 use App\AnswersHeadEvaluation;
+use App\Http\Controllers\Practice\EvaluationPracticeController;
+use App\Http\Controllers\Professor\EvaluationController;
 use App\Question;
 use App\QuestionHasKnowledgeObject;
 use App\QuestionItem;
@@ -24,7 +26,28 @@ class ResultEvaluationStudent extends Controller
     public function evaluations(Request $request){
         $user = auth('api')->user();
 
+        $type = $request->type;
+        $situation = $request->situation;
+
         $head_answer = AnswersHeadEvaluation::where('fk_user_id',$user->id)
+            ->when($type == "P" || $type == "R" , function ($query) {
+                $user = auth('api')->user();
+
+                /*if($query == "P") {
+                    $listApplications = EvaluationController::where('fk_user_id', $user->id)
+                        ->where('practice', 1)->get();
+                } else {
+                    $listApplications = EvaluationController::where('fk_user_id', $user->id)
+                        ->where('practice', 0)->get();
+                }
+                $arr = array();
+                foreach ($listApplications as $key){
+                    //dd($enaq);
+                    $arr[] = $key->fk_question_id;
+                }
+                return $query->whereIn('id', $arr);*/
+                return $query->where('fk_application_evaluation_id.fk_evaluation_id.practice', '=', 1);
+            })
             ->with('evaluationApplication')
             ->orderBy('created_at', 'DESC')
             ->paginate(10);
