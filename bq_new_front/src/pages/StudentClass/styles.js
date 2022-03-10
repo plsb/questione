@@ -9,7 +9,7 @@ const useStyles = makeStyles({
         display: 'flex',
         justifyContent: 'space-between',
         padding: '0px 32px',
-    }
+    },
 });
 
 export default useStyles;
