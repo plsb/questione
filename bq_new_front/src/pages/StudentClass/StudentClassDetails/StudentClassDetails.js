@@ -121,18 +121,18 @@ const StudentClassDetails = props => {
         formState.touched[field] && formState.errors[field] ? true : false;
 
     useEffect(() => {
-        console.log('Loop');
+        const errors = validate(formState.values, schema);
+        setFormState(formState => ({
+            ...formState,
+            isValid: (errors || formState.values.course === 0) ? false : true,
+            errors: errors || {}
+        }));
+    }, [formState.values]);
 
+    useEffect(() => {
         if (studentClassId) {
             showStudentClass(studentClassId);
         }
-
-        // const errors = validate(formState.values, schema);
-        // setFormState(formState => ({
-        //     ...formState,
-        //     isValid: (errors || formState.values.course === 0) ? false : true,
-        //     errors: errors || {}
-        // }));
     }, [studentClassId]);
 
     return (

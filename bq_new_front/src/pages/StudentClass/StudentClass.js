@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { toast } from 'react-toastify';
+
+import api from "../../services/api";
 
 import {
     Card,
@@ -16,12 +19,18 @@ import {
 } from '@material-ui/core';
 
 import StudentClassCard from '../../components/StudentClassCard';
+import StudentClassToolbar from './components/StudentClassToolbar';
 
 import useStyles from './styles';
 
-function StudentClass() {
+function StudentClass({ history }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
-    const [studentClasses] = React.useState([]);
+    const [studentClasses, setStudentClasses] = React.useState([]);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [page, setPage] = React.useState(0);
+    const [total, setTotal] = React.useState(0);
+    const [searchText, setSearchText] = React.useState('');
+    const [status, setStatus] = React.useState(1);
 
     const classes = useStyles();
 
@@ -32,6 +41,50 @@ function StudentClass() {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const getStudentClasses = async (page, status) => {
+        try {
+            const response = await api.get(`class/`, {
+                params: {
+                    status,
+                    page,
+                },
+            });
+            if (response.status === 202) {
+                if (response.data.message) {
+                    toast.error(response.data.message);
+                }
+            } else {
+                setStudentClasses(response.data.data);
+                setTotal(response.data.total);
+                setPage(page);
+                setStatus(status);
+            }
+        } catch (e) {
+
+        }
+    };
+
+    const handlePageChange = (event, page) => {
+        getStudentClasses(page + 1, 1);
+        setPage(page);
+    };
+    
+    const handleRowsPerPageChange = event => {
+        setRowsPerPage(event.target.value);
+    };
+
+    const handleSearch = (e) => {
+        setSearchText(e.target.value);
+    }
+
+    // const onClickSearch = (e) => {
+    //     getStudentClasses(1);
+    // };
+
+    useEffect(() => {
+        getStudentClasses(1, 1);
+    }, []);
 
     return (
         <div className={classes.root}>
@@ -54,7 +107,7 @@ function StudentClass() {
                             onClose={handleClose}
                         >
                             <MenuItem onClick={() => {}}>Participar de uma turma</MenuItem>
-                            <MenuItem onClick={() => {}}>Criar nova turma</MenuItem>
+                            <MenuItem onClick={() => history.push('/student-class-details')}>Criar nova turma</MenuItem>
                         </Menu>
                     </div>
                 </CardActions>
@@ -63,23 +116,28 @@ function StudentClass() {
             <Card
                 className={classes.table}
             >
-                <div style={{ margin: '16px', marginLeft: '48px' }}>
+                {/* <div style={{ margin: '16px', marginLeft: '48px' }}>
                     Descrição sobre o módulo turmas
-                </div>
+                </div> */}
                 <CardHeader
                     avatar={
                         <div>
-
+                             <StudentClassToolbar
+                                onChangeSearch={handleSearch.bind(this)}
+                                searchText={searchText}
+                                onClickSearch={() => {}}
+                                handleStatusCallback={getStudentClasses}
+                            />
                         </div>
                     }
                     action={
                         <TablePagination
                             component="div"
-                            count={0}
-                            onChangePage={() => {}}
-                            onChangeRowsPerPage={() => {}}
-                            page={1}
-                            rowsPerPage={3}
+                            count={total}
+                            onChangePage={handlePageChange}
+                            onChangeRowsPerPage={handleRowsPerPageChange}
+                            page={page}
+                            rowsPerPage={rowsPerPage}
                             rowsPerPageOptions={[10]}
                         />
                     }
@@ -99,9 +157,17 @@ function StudentClass() {
                                 >
                                     <Table>
                                         <TableBody>
-                                            <StudentClassCard />
-                                            <StudentClassCard />
-                                            <StudentClassCard />
+                                            {studentClasses.map((studentClass) => (
+                                                <StudentClassCard
+                                                    key={studentClass.id}
+                                                    id={studentClass.id}
+                                                    classId={studentClass.id_class}
+                                                    title={studentClass.description}
+                                                    user={studentClass.user}
+                                                    showUser
+                                                    toFileCallback={() => getStudentClasses(1)}
+                                                />
+                                            ))}
                                         </TableBody>
                                     </Table>
                                 </Grid>
@@ -112,11 +178,11 @@ function StudentClass() {
                 <CardActions className={classes.actions}>
                     <TablePagination
                         component="div"
-                        count={0}
-                        onChangePage={() => {}}
-                        onChangeRowsPerPage={() => {}}
-                        page={1}
-                        rowsPerPage={3}
+                        count={total}
+                        onChangePage={handlePageChange}
+                        onChangeRowsPerPage={handleRowsPerPageChange}
+                        page={page}
+                        rowsPerPage={rowsPerPage}
                         rowsPerPageOptions={[10]}
                     />
                 </CardActions>
