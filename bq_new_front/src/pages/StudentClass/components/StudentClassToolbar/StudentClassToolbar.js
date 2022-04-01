@@ -4,23 +4,17 @@ import {withRouter} from "react-router-dom";
 import clsx from 'clsx';
 import FindInPage from '@material-ui/icons/SearchSharp';
 
-import { Button, Select, MenuItem } from '@material-ui/core';
+import { Button, MenuItem, TextField } from '@material-ui/core';
 
-import { SearchInput } from '../../../../components';
 
 import useStyles from './styles';
 
 const StudentClassToolbar = props => {
   const { className, onClickSearch, onChangeSearch, searchText, handleStatusCallback, history, ...rest } = props;
 
-  const [open, setOpen] = useState(false);
   const [value, setValue] = useState(1);
 
   const classes = useStyles();
-
-//   const onClickRequestUsers = () => {
-//     history.push('/users/requests');
-//   }
 
   const handleChange = (event) => {
     handleStatusCallback(1, event.target.value);
@@ -32,30 +26,38 @@ const StudentClassToolbar = props => {
       {...rest}
       className={clsx(classes.root, className)}>
       <div className={classes.row}>
-        {/* <SearchInput
-          className={classes.searchInput}
-          placeholder="Pesquisar"
-          onChange={onChangeSearch}
-          value={searchText}
-        />
-        <Button
-            onClick={onClickSearch}>
-          <FindInPage fontSize="large"/>
-        </Button> */}
-        <Select
-            labelId="type-of-evaluation-label"
+          <TextField
+            className={classes.root}
             id="type-of-evaluation"
-            open={open}
-            onClose={() => setOpen(false)}
-            onOpen={() => setOpen(true)}
+            select
+            label="Status"
             value={value}
             onChange={handleChange}
-            className={classes.root}
-            style={{ marginLeft: '16px' }}
-        >
+            helperText="Selecione um status para aplicar o filtro."
+            variant="outlined"
+            margin="dense"
+            style={{width: '300px'}}
+          >
             <MenuItem value={1}>Ativas</MenuItem>
             <MenuItem value={2}>Arquivadas</MenuItem>
-        </Select>
+        </TextField>
+
+        <TextField
+          label="Buscar"
+          helperText="Buscar por descrição"
+          margin="dense"
+          onChange={onChangeSearch}
+          value={searchText}
+          style={{ width: '300px', marginLeft: '16px' }}
+          variant="outlined"
+        />
+
+        <Button
+          onClick={onClickSearch}
+          className={classes.searchButton}
+        >  
+          <FindInPage fontSize="large"/>
+        </Button>
       </div>
     </div>
   );

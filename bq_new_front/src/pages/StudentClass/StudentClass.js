@@ -42,12 +42,13 @@ function StudentClass({ history }) {
         setAnchorEl(null);
     };
 
-    const getStudentClasses = async (page, status) => {
+    const getStudentClasses = async (page, status, description = '') => {
         try {
             const response = await api.get(`class/`, {
                 params: {
                     status,
                     page,
+                    description,
                 },
             });
             if (response.status === 202) {
@@ -78,9 +79,9 @@ function StudentClass({ history }) {
         setSearchText(e.target.value);
     }
 
-    // const onClickSearch = (e) => {
-    //     getStudentClasses(1);
-    // };
+    const onClickSearch = (e) => {
+        getStudentClasses(1, status, searchText);
+    };
 
     useEffect(() => {
         getStudentClasses(1, 1);
@@ -125,7 +126,7 @@ function StudentClass({ history }) {
                              <StudentClassToolbar
                                 onChangeSearch={handleSearch.bind(this)}
                                 searchText={searchText}
-                                onClickSearch={() => {}}
+                                onClickSearch={onClickSearch}
                                 handleStatusCallback={getStudentClasses}
                             />
                         </div>

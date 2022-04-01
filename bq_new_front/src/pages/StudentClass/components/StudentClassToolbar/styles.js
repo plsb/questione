@@ -5,8 +5,8 @@ const useStyles = makeStyles((theme) => ({
     row: {
         height: '42px',
         display: 'flex',
-        alignItems: 'center',
-        marginTop: theme.spacing(1)
+        alignItems: 'flex-start',
+        marginBottom: '32px'
     },
     spacer: {
         flexGrow: 1
@@ -20,9 +20,16 @@ const useStyles = makeStyles((theme) => ({
     searchInput: {
         marginRight: theme.spacing(1)
     },
+    searchButton: {
+        width: '48px',
+        minWidth: '48px',
+        height: '38px',
+        marginTop: '8px',
+        marginLeft: '2px',
+    },
     title: {
         fontWeight: 'bold'
-    }
+    },
 }));
 
 export default useStyles;
