@@ -17,7 +17,7 @@ const StudentClassToolbar = props => {
   const classes = useStyles();
 
   const handleChange = (event) => {
-    handleStatusCallback(1, event.target.value);
+    handleStatusCallback(1, event.target.value, searchText);
     setValue(event.target.value);
   };
 

@@ -19,6 +19,7 @@ import {
 } from '@material-ui/core';
 
 import StudentClassCard from '../../components/StudentClassCard';
+import DialogStudentClassRegister from '../../components/DialogStudentClassRegister';
 import StudentClassToolbar from './components/StudentClassToolbar';
 
 import useStyles from './styles';
@@ -27,10 +28,13 @@ function StudentClass({ history }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [studentClasses, setStudentClasses] = React.useState([]);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const [page, setPage] = React.useState(0);
+    const [page, setPage] = React.useState(1);
     const [total, setTotal] = React.useState(0);
     const [searchText, setSearchText] = React.useState('');
     const [status, setStatus] = React.useState(1);
+    const [refresh, setRefresh] = React.useState(1);
+    const [showRegisterDialog, setShowRegisterDialog] = React.useState(false);
+    const [registerLoading, setRegisterLoading] = React.useState(false);
 
     const classes = useStyles();
 
@@ -66,8 +70,31 @@ function StudentClass({ history }) {
         }
     };
 
+    const registerInStudentClasses = async (studentClassCode) => {
+        setRegisterLoading(true);
+
+        try {
+            const response = await api.post(`class/student/`, {
+                id_class: studentClassCode,
+            });
+
+            if (response.status === 202) {
+                if (response.data.message) {
+                    toast.error(response.data.message);
+                    setRegisterLoading(false);
+                }
+            } else {
+                toast.error("Inscrição realizada com sucesso!");
+                setRegisterLoading(false);
+                setShowRegisterDialog(false);
+            }
+        } catch (e) {
+
+        }
+    };
+
     const handlePageChange = (event, page) => {
-        getStudentClasses(page + 1, 1);
+        getStudentClasses(page + 1, 1, searchText);
         setPage(page);
     };
     
@@ -84,8 +111,8 @@ function StudentClass({ history }) {
     };
 
     useEffect(() => {
-        getStudentClasses(1, 1);
-    }, []);
+        getStudentClasses(page, status, searchText);
+    }, [refresh]);
 
     return (
         <div className={classes.root}>
@@ -107,7 +134,10 @@ function StudentClass({ history }) {
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
                         >
-                            <MenuItem onClick={() => {}}>Participar de uma turma</MenuItem>
+                            <MenuItem onClick={() => {
+                                setShowRegisterDialog(true);
+                                handleClose();
+                            }}>Participar de uma turma</MenuItem>
                             <MenuItem onClick={() => history.push('/student-class-details')}>Criar nova turma</MenuItem>
                         </Menu>
                     </div>
@@ -117,9 +147,9 @@ function StudentClass({ history }) {
             <Card
                 className={classes.table}
             >
-                {/* <div style={{ margin: '16px', marginLeft: '48px' }}>
-                    Descrição sobre o módulo turmas
-                </div> */}
+                <div style={{ margin: '16px', marginLeft: '16px' }}>
+                    Descrição sobre o módulo turmas...
+                </div>
                 <CardHeader
                     avatar={
                         <div>
@@ -165,8 +195,11 @@ function StudentClass({ history }) {
                                                     classId={studentClass.id_class}
                                                     title={studentClass.description}
                                                     user={studentClass.user}
+                                                    status={status}
                                                     showUser
-                                                    toFileCallback={() => getStudentClasses(1)}
+                                                    toFileCallback={() => {
+                                                        setRefresh(refresh + 1);
+                                                    }}
                                                 />
                                             ))}
                                         </TableBody>
@@ -188,6 +221,13 @@ function StudentClass({ history }) {
                     />
                 </CardActions>
           </Card>
+
+          <DialogStudentClassRegister
+            handleClose={() => setShowRegisterDialog(false)}
+            open={showRegisterDialog}
+            onClickRegister={registerInStudentClasses}
+            registerLoading={registerLoading}
+        />
         </div>
     );
 }

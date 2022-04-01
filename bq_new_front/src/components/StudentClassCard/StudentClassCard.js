@@ -21,7 +21,7 @@ import { MoreVert } from '@material-ui/icons';
 import useStyles from './styles';
 
 const StudendClassCard = props => {
-    const { id, title, classId, user, showUser, toFileCallback, history, ...rest } = props;
+    const { id, title, classId, user, status, showUser, toFileCallback, history, ...rest } = props;
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const classes = useStyles();
@@ -34,30 +34,10 @@ const StudendClassCard = props => {
         setAnchorEl(null);
     };
 
-    // async function onDelete(){
-    //     try {
-    //         let url = 'evaluation/'+evaluation.id;
-    //         const response = await api.delete(url);
-    //         if (response.status === 202) {
-    //             if(response.data.message){
-    //                 toast.error(response.data.message);
-    //             }
-    //         } else {
-    //             toast.success('Avaliação excluída.');
-    //             setRefresh(refresh+1);
-    //         }
-
-    //         handleClose();
-    //     } catch (error) {
-
-    //     }
-    //     setOpen(false);
-    // }
-
-    const toFile = async () => {
+    const toFile = async (newStatus) => {
         try {
             const response = await api.put(`class/change-status/${id}`, {
-                status: 2,
+                status: newStatus,
             });
 
             if (response.status === 202) {
@@ -65,7 +45,7 @@ const StudendClassCard = props => {
                     toast.error(response.data.message);
                 }
             } else {
-                toast.success('Avaliação arquivada.');
+                toast.success(newStatus === 2 ? 'Avaliação arquivada.' : 'Avaliação ativada.');
                 toFileCallback();
             }
 
@@ -111,17 +91,17 @@ const StudendClassCard = props => {
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
                 >
-                    <MenuItem onClick={() => history.push(`/student-class-details/${id}`)}>Editar</MenuItem>
-                    <MenuItem onClick={toFile}>Arquivar</MenuItem>
+                    {status === 1 && (
+                        <>
+                            <MenuItem onClick={() => history.push(`/student-class-details/${id}`)}>Editar</MenuItem>
+                            <MenuItem onClick={() => toFile(2)}>Arquivar</MenuItem>
+                        </>
+                    )}
+
+                    {status === 2 && (
+                        <MenuItem onClick={() => toFile(1)}>Ativar</MenuItem>
+                    )}
                 </Menu>
-                {/* <DialogQuestione
-                    handleClose={onClickCloseDialog}
-                    open={open}
-                    onClickAgree={onDelete}
-                    onClickDisagree={onClickCloseDialog}
-                    mesage={'Deseja excluir a turma selecionada?'}
-                    title={'Excluir Turma?'}
-                /> */}
         </Card>
     );
 };
