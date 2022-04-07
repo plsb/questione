@@ -42,9 +42,23 @@ class ClassStudentsStudent extends Controller
             $arr[] = $class_s->fk_class_id;
         }
 
-        $class = ClassQuestione::whereIn('id', $arr)
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $class = [];
+
+        if($request->description){
+            $class = ClassQuestione::whereIn('id', $arr)
+                ->where(
+                    function ($query) use ($request) {
+                        $query->where('description', 'like', $request->description ? '%'.$request->description.'%' : null);
+                    })
+                ->orderBy('created_at', 'desc')
+                ->with('user')
+                ->paginate(10);
+        } else {
+            $class = ClassQuestione::whereIn('id', $arr)
+                ->orderBy('created_at', 'desc')
+                ->with('user')
+                ->paginate(10);
+        }
 
         return response()->json($class, 200);
     }
