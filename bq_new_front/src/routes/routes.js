@@ -53,6 +53,7 @@ import QuestionTable from "../pages/Professor/Question/QuestionTable";
 import QuestionDetails from "../pages/Professor/Question/QuestionDetails";
 import StudentClass from '../pages/StudentClass';
 import StudentClassDetails from '../pages/StudentClass/StudentClassDetails';
+import StudentClassroom from '../pages/StudentClassroom/StudentClassroom';
 
 const Routes = () => (
     <BrowserRouter>
@@ -116,12 +117,12 @@ const Routes = () => (
                 layout={MainLayout}
                 path="/new-request" />
             <RouteWithLayout
-                component={StudentClass}
+                component={StudentClassroom}
                 exact
                 needToBeLogged={true}
                 typeUser={-1}
                 layout={MainLayout}
-                path="/student-class" />
+                path="/student-classroom" />
             {/* ROTAS DO ALUNO */}
             <RouteWithLayout
                 component={EvaluationPracticeTable}
@@ -366,6 +367,13 @@ const Routes = () => (
                 typeUser={-1}
                 layout={MainLayout}
                 path="/student-class-details" />
+            <RouteWithLayout
+                component={StudentClass}
+                exact
+                needToBeLogged={true}
+                typeUser={-1}
+                layout={MainLayout}
+                path="/student-class" />
 
             <RouteWithLayout
                 component={Unauthorized}
@@ -379,6 +387,7 @@ const Routes = () => (
                 layout={MinimalLayout}
                 needToBeLogged={false}
                 component={PageNotFound} />
+            
         </Switch>
     </BrowserRouter>
 );

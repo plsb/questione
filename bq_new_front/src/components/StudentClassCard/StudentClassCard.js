@@ -21,7 +21,7 @@ import { MoreVert } from '@material-ui/icons';
 import useStyles from './styles';
 
 const StudendClassCard = props => {
-    const { id, title, classId, user, status, showUser, toFileCallback, history, ...rest } = props;
+    const { id, title, classId, user, status, showUser, toFileCallback, isOwner, history, ...rest } = props;
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const classes = useStyles();
@@ -91,15 +91,19 @@ const StudendClassCard = props => {
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
                 >
-                    {status === 1 && (
+                    {status === 1 && isOwner && (
                         <>
                             <MenuItem onClick={() => history.push(`/student-class-details/${id}`)}>Editar</MenuItem>
                             <MenuItem onClick={() => toFile(2)}>Arquivar</MenuItem>
                         </>
                     )}
 
-                    {status === 2 && (
+                    {status === 2 && isOwner && (
                         <MenuItem onClick={() => toFile(1)}>Ativar</MenuItem>
+                    )}
+
+                    {!isOwner && (
+                        <MenuItem onClick={() => {}}>Acessar</MenuItem>
                     )}
                 </Menu>
         </Card>

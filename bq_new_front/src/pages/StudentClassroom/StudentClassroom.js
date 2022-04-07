@@ -7,9 +7,6 @@ import {
     Card,
     CardHeader,
     CardActions,
-    Button,
-    Menu,
-    MenuItem,
     TablePagination,
     CardContent,
     LinearProgress,
@@ -19,13 +16,11 @@ import {
 } from '@material-ui/core';
 
 import StudentClassCard from '../../components/StudentClassCard';
-import DialogStudentClassRegister from '../../components/DialogStudentClassRegister';
 import StudentClassToolbar from './components/StudentClassToolbar';
 
 import useStyles from './styles';
 
-function StudentClass({ history }) {
-    const [anchorEl, setAnchorEl] = React.useState(null);
+function StudentClassroom({ history }) {
     const [studentClasses, setStudentClasses] = React.useState([]);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [page, setPage] = React.useState(1);
@@ -33,22 +28,12 @@ function StudentClass({ history }) {
     const [searchText, setSearchText] = React.useState('');
     const [status, setStatus] = React.useState(1);
     const [refresh, setRefresh] = React.useState(1);
-    const [showRegisterDialog, setShowRegisterDialog] = React.useState(false);
-    const [registerLoading, setRegisterLoading] = React.useState(false);
 
     const classes = useStyles();
 
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const getStudentClasses = async (page, status, description = '') => {
+    const getStudentClassrooms = async (page, status, description = '') => {
         try {
-            const response = await api.get(`class/`, {
+            const response = await api.get(`class/student/`, {
                 params: {
                     status,
                     page,
@@ -70,31 +55,8 @@ function StudentClass({ history }) {
         }
     };
 
-    const registerInStudentClasses = async (studentClassCode) => {
-        setRegisterLoading(true);
-
-        try {
-            const response = await api.post(`class/student/`, {
-                id_class: studentClassCode,
-            });
-
-            if (response.status === 202) {
-                if (response.data.message) {
-                    toast.error(response.data.message);
-                    setRegisterLoading(false);
-                }
-            } else {
-                toast.success("Inscrição realizada com sucesso!");
-                setRegisterLoading(false);
-                setShowRegisterDialog(false);
-            }
-        } catch (e) {
-
-        }
-    };
-
     const handlePageChange = (event, page) => {
-        getStudentClasses(page + 1, 1, searchText);
+        getStudentClassrooms(page + 1, 1, searchText);
         setPage(page);
     };
     
@@ -107,11 +69,11 @@ function StudentClass({ history }) {
     }
 
     const onClickSearch = (e) => {
-        getStudentClasses(1, status, searchText);
+        getStudentClassrooms(1, status, searchText);
     };
 
     useEffect(() => {
-        getStudentClasses(page, status, searchText);
+        getStudentClassrooms(page, status, searchText);
     }, [refresh]);
 
     return (
@@ -119,27 +81,12 @@ function StudentClass({ history }) {
             <Card className={classes.header}>
                 <CardHeader
                     avatar={(
-                        <h3>Turmas</h3>
+                        <h3>Turmas em que estou matriculado</h3>
                     )}
                 />
                 <CardActions>
                     <div className={classes.headerActions}>
-                        <Button aria-controls="simple-menu" aria-haspopup="true" color="primary" variant="contained" onClick={handleClick}>
-                            Nova turma
-                        </Button>
-                        <Menu
-                            id="simple-menu"
-                            anchorEl={anchorEl}
-                            keepMounted
-                            open={Boolean(anchorEl)}
-                            onClose={handleClose}
-                        >
-                            <MenuItem onClick={() => {
-                                setShowRegisterDialog(true);
-                                handleClose();
-                            }}>Participar de uma turma</MenuItem>
-                            <MenuItem onClick={() => history.push('/student-class-details')}>Criar nova turma</MenuItem>
-                        </Menu>
+                        
                     </div>
                 </CardActions>
             </Card>
@@ -148,7 +95,7 @@ function StudentClass({ history }) {
                 className={classes.table}
             >
                 <div style={{ margin: '16px', marginLeft: '16px' }}>
-                    Descrição sobre o módulo turmas...
+                    Aqui são listadas as turmas em que estou matriculado.
                 </div>
                 <CardHeader
                     avatar={
@@ -157,7 +104,7 @@ function StudentClass({ history }) {
                                 onChangeSearch={handleSearch.bind(this)}
                                 searchText={searchText}
                                 onClickSearch={onClickSearch}
-                                handleStatusCallback={getStudentClasses}
+                                handleStatusCallback={getStudentClassrooms}
                             />
                         </div>
                     }
@@ -196,8 +143,6 @@ function StudentClass({ history }) {
                                                     title={studentClass.description}
                                                     user={studentClass.user}
                                                     status={status}
-                                                    showUser
-                                                    isOwner
                                                     toFileCallback={() => {
                                                         setRefresh(refresh + 1);
                                                     }}
@@ -222,15 +167,8 @@ function StudentClass({ history }) {
                     />
                 </CardActions>
           </Card>
-
-          <DialogStudentClassRegister
-            handleClose={() => setShowRegisterDialog(false)}
-            open={showRegisterDialog}
-            onClickRegister={registerInStudentClasses}
-            registerLoading={registerLoading}
-        />
         </div>
     );
 }
 
-export default StudentClass;
+export default StudentClassroom;
