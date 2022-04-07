@@ -52,6 +52,7 @@ import {
 import QuestionTable from "../pages/Professor/Question/QuestionTable";
 import QuestionDetails from "../pages/Professor/Question/QuestionDetails";
 import StudentClass from '../pages/StudentClass';
+import StudentClassDetails from '../pages/StudentClass/StudentClassDetails';
 
 const Routes = () => (
     <BrowserRouter>
@@ -351,6 +352,20 @@ const Routes = () => (
                 needToBeLogged={true}
                 typeUser={2}
                 path="/question-details/:idQuestion?" />
+            <RouteWithLayout
+                component={StudentClassDetails}
+                exact
+                needToBeLogged={true}
+                typeUser={-1}
+                layout={MainLayout}
+                path="/student-class-details/:studentClassId" />
+            <RouteWithLayout
+                component={StudentClassDetails}
+                exact
+                needToBeLogged={true}
+                typeUser={-1}
+                layout={MainLayout}
+                path="/student-class-details" />
 
             <RouteWithLayout
                 component={Unauthorized}

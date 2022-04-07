@@ -1,9 +1,10 @@
 import React from 'react';
 import {withRouter} from "react-router-dom";
 import PropTypes from 'prop-types';
+import { toast } from 'react-toastify';
 // import moment from 'moment';
 
-// import api from "../../../../services/api";
+import api from "../../services/api";
 
 import {
     Card,
@@ -20,7 +21,7 @@ import { MoreVert } from '@material-ui/icons';
 import useStyles from './styles';
 
 const StudendClassCard = props => {
-    const { className, history, refresh, setRefresh, evaluation, setTabValue, ...rest } = props;
+    const { id, title, classId, user, status, showUser, toFileCallback, history, ...rest } = props;
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const classes = useStyles();
@@ -33,25 +34,26 @@ const StudendClassCard = props => {
         setAnchorEl(null);
     };
 
-    // async function onDelete(){
-    //     try {
-    //         let url = 'evaluation/'+evaluation.id;
-    //         const response = await api.delete(url);
-    //         if (response.status === 202) {
-    //             if(response.data.message){
-    //                 toast.error(response.data.message);
-    //             }
-    //         } else {
-    //             toast.success('Avaliação excluída.');
-    //             setRefresh(refresh+1);
-    //         }
+    const toFile = async (newStatus) => {
+        try {
+            const response = await api.put(`class/change-status/${id}`, {
+                status: newStatus,
+            });
 
-    //         handleClose();
-    //     } catch (error) {
+            if (response.status === 202) {
+                if(response.data.message){
+                    toast.error(response.data.message);
+                }
+            } else {
+                toast.success(newStatus === 2 ? 'Avaliação arquivada.' : 'Avaliação ativada.');
+                toFileCallback();
+            }
 
-    //     }
-    //     setOpen(false);
-    // }
+            handleClose();
+        } catch (error) {
+
+        }
+    };
 
     return (
         <Card
@@ -70,12 +72,15 @@ const StudendClassCard = props => {
                             </Tooltip>
                         </div>
                     }
-                    title="Nome da turma"
+                    title={title}
                 />
 
                 <CardContent>
                     <Typography color="textSecondary" variant="h6">
-                        {'As informações da turma vão aqui'}
+                        <span>Código da turma:</span> {classId}
+                    </Typography>
+                    <Typography color="textSecondary" variant="h6">
+                        {showUser && user.name}
                     </Typography>
                 </CardContent>
 
@@ -86,17 +91,17 @@ const StudendClassCard = props => {
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
                 >
-                    <MenuItem onClick={() => {}}>Opção 1</MenuItem>
-                    <MenuItem onClick={() => {}}>Opção 2</MenuItem>
+                    {status === 1 && (
+                        <>
+                            <MenuItem onClick={() => history.push(`/student-class-details/${id}`)}>Editar</MenuItem>
+                            <MenuItem onClick={() => toFile(2)}>Arquivar</MenuItem>
+                        </>
+                    )}
+
+                    {status === 2 && (
+                        <MenuItem onClick={() => toFile(1)}>Ativar</MenuItem>
+                    )}
                 </Menu>
-                {/* <DialogQuestione
-                    handleClose={onClickCloseDialog}
-                    open={open}
-                    onClickAgree={onDelete}
-                    onClickDisagree={onClickCloseDialog}
-                    mesage={'Deseja excluir a turma selecionada?'}
-                    title={'Excluir Turma?'}
-                /> */}
         </Card>
     );
 };
