@@ -8,7 +8,7 @@ const useStyles = makeStyles({
         width: '100%',
         display: 'flex',
         justifyContent: 'space-between',
-        padding: '0px 8px 0px 0px',
+        padding: '16px 8px 16px 0px',
     },
 });
 
