@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Professor;
 
 use App\ClassQuestione;
+use App\ClassStudents;
 use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
@@ -66,7 +67,59 @@ class ClassController extends Controller
         $queries = DB::getQueryLog();
         //dd($queries);
 
-        return response()->json($class, 200);
+        $class_students_student = ClassStudents::where('fk_user_id',$user->id)
+            ->get();
+
+        $arr = array();
+        foreach ($class_students_student as $class_s){
+            //dd($enaq);
+            $arr[] = $class_s->fk_class_id;
+        }
+
+        /*
+         * Essa função abaixo é muito simular a contida no
+         * ClassStudentsStudent. O motivo é que o professor poderá ter turmas
+         * que gerencia e turmas em que ele tem funnção de aluno
+         */
+        $class_students_student = ClassStudents::where('fk_user_id',$user->id)
+            ->get();
+
+        if(sizeof($class_students_student)==0){
+            return response()->json([
+                'message' => 'O usuário não possui turmas.'
+            ], 202);
+        }
+
+        $arr = array();
+        foreach ($class_students_student as $class_s){
+            //dd($enaq);
+            $arr[] = $class_s->fk_class_id;
+        }
+
+        $class_professor_are_student = [];
+
+        if($request->description){
+            $class_professor_are_student = ClassQuestione::whereIn('id', $arr)
+                ->where(
+                    function ($query) use ($request) {
+                        $query->where('description', 'like', $request->description ? '%'.$request->description.'%' : null);
+                    })
+                ->orderBy('created_at', 'desc')
+                ->with('user')
+                ->paginate(10);
+        } else {
+            $class_professor_are_student = ClassQuestione::whereIn('id', $arr)
+                ->orderBy('created_at', 'desc')
+                ->with('user')
+                ->paginate(10);
+        }
+        /*
+            O retorno é um array, nna posição
+
+            [0] - turmas que o professor criou e gerencia
+            [1] - turmas que o professor tem a função de aluno
+        */
+        return response()->json([$class, $class_professor_are_student], 200);
     }
 
     public function store(Request $request)
