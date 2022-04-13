@@ -84,12 +84,6 @@ class ClassController extends Controller
         $class_students_student = ClassStudents::where('fk_user_id',$user->id)
             ->get();
 
-        if(sizeof($class_students_student)==0){
-            return response()->json([
-                'message' => 'O usuário não possui turmas.'
-            ], 202);
-        }
-
         $arr = array();
         foreach ($class_students_student as $class_s){
             //dd($enaq);
