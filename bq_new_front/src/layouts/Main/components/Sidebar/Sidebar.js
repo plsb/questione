@@ -97,6 +97,12 @@ const Sidebar = props => {
       className: 'practice',
     },
     {
+      title: 'Turmas',
+      href: '/student-class',
+      icon: <ExtensionIcon />,
+      className: 'practice',
+    },
+    {
       title: 'Avaliações respondidas',
       href: '/student/result-evaluations',
       icon: <Assessment />,
@@ -116,6 +122,12 @@ const Sidebar = props => {
       href: '/student/result-evaluations',
       icon: <Assessment />,
       className: 'result-evaluations',
+    },
+    {
+      title: 'Turmas',
+      href: '/student-classroom',
+      icon: <ExtensionIcon />,
+      className: 'practice',
     },
   ];
 
