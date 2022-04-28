@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Professor;
 
 use App\ClassQuestione;
 use App\ClassStudents;
+use App\Course;
 use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
@@ -25,12 +26,14 @@ class ClassController extends Controller
 
     private $rules = [
         'description' => 'required|max:300|min:4',
+        'fk_course_id' => 'required',
     ];
 
     private $messages = [
         'description.required' => 'A DESCRIÇÃO é obrigatória.',
         'description.max' => 'O máximo de alfanuméricos aceitáveis para a DESCRIÇÃO é 300.',
         'description.min' => 'O minímo de alfanuméricos aceitáveis para a DESCRIÇÃO é 04.',
+        'fk_course_id.required' => 'O CURSO é obrigatório.',
     ];
 
     public function index(Request $request)
@@ -55,12 +58,14 @@ class ClassController extends Controller
                      })
                 ->orderBy('created_at', 'desc')
                 ->with('user')
+                ->with('course')
                 ->paginate(10);
         } else {
             $class = ClassQuestione::where('fk_user_id', '=', $user->id)
                 ->where('status', $request->status)
                 ->orderBy('created_at', 'desc')
                 ->with('user')
+                ->with('course')
                 ->paginate(10);
         }
 
@@ -100,11 +105,13 @@ class ClassController extends Controller
                     })
                 ->orderBy('created_at', 'desc')
                 ->with('user')
+                ->with('course')
                 ->paginate(10);
         } else {
             $class_professor_are_student = ClassQuestione::whereIn('id', $arr)
                 ->orderBy('created_at', 'desc')
                 ->with('user')
+                ->with('course')
                 ->paginate(10);
         }
         /*
@@ -128,10 +135,18 @@ class ClassController extends Controller
             return response($json_str, 202);
         }
 
+        $course = Course::where('id', $request->fk_course_id)->first();
+        if(!$course){
+            return response()->json([
+                'message' => 'O curso não foi encontrado.'
+            ], 202);
+        }
+
         $user = auth('api')->user();
 
         $class = new ClassQuestione();
         $class->description = $request->description;
+        $class->fk_course_id = $request->fk_course_id;
 
         $class->status = 1;
         $class->fk_user_id = $user->id;
@@ -153,6 +168,7 @@ class ClassController extends Controller
     {
         $class = ClassQuestione::where('id', '=', $id)
             ->with('user')
+            ->with('course')
             ->get();
         if(sizeof($class) == 0){
             return response()->json([
@@ -191,7 +207,15 @@ class ClassController extends Controller
             ], 202);
         }
 
+        $course = Course::where('id', $request->fk_course_id)->first();
+        if(!$course){
+            return response()->json([
+                'message' => 'O curso não foi encontrado.'
+            ], 202);
+        }
+
         $class->description = $request->description;
+        $class->fk_course_id = $request->fk_course_id;
         $class->save();
 
         return response()->json([
