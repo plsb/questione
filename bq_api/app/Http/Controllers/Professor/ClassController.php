@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Professor;
 use App\ClassQuestione;
 use App\ClassStudents;
 use App\Course;
+use App\CourseProfessor;
 use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
@@ -255,6 +256,24 @@ class ClassController extends Controller
             $class
         ], 200);
 
+    }
+
+    public function courses(Request $request)
+    {
+        $user = auth('api')->user();
+
+        $cp = CourseProfessor::where('fk_user_id',$user->id)
+            ->orderBy('created_at','DESC')
+            ->with('user')
+            ->with('course')->get();
+
+        $arr = array();
+        foreach ($cp as $key){
+            //dd($enaq);
+            $arr[] = $key->course->description;
+        }
+
+        return response()->json($arr, 200);
     }
 
 }

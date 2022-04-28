@@ -88,6 +88,7 @@ Route::group(['prefix' => 'class/student'], function (){
 
 //Rotas do usuário professor
 Route::group(['prefix' => 'class'], function (){
+    Route::get('/courses', 'Professor\ClassController@courses')->name('class.index');
     Route::get('/', 'Professor\ClassController@index')->name('class.index');
     Route::post('/', 'Professor\ClassController@store')->name('class.store');
     Route::get('/show/{class}', 'Professor\ClassController@show')->name('class.show');
