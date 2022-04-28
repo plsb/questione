@@ -270,7 +270,7 @@ class ClassController extends Controller
         $arr = array();
         foreach ($cp as $key){
             //dd($enaq);
-            $arr[] = $key->course->description;
+            $arr[] = $key->course;
         }
 
         return response()->json($arr, 200);
