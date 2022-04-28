@@ -103,7 +103,7 @@ const StudendClassCard = props => {
                     )}
 
                     {!isOwner && (
-                        <MenuItem onClick={() => {}}>Acessar</MenuItem>
+                        <MenuItem onClick={() => history.push(`/student-class/${id}`)}>Acessar</MenuItem>
                     )}
                 </Menu>
         </Card>
