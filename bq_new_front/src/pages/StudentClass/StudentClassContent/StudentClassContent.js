@@ -20,12 +20,15 @@ import {
     Tab,
     Box,
     Typography,
+    IconButton,
     // TextField
 } from '@material-ui/core';
 
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+
 import useStyles from './styles';
 
-function StudentClassContent({ history }) {    
+function StudentClassContent({ history, ...rest }) {    
     const [refresh, setRefresh] = React.useState(1);
     const [tabValue, setTabValue] = useState(0);
 
@@ -77,6 +80,12 @@ function StudentClassContent({ history }) {
 
     return (
         <div className={classes.root}>
+            <div className={classes.contentHeader}>
+                <IconButton onClick={() => history.push('/student-class')}>
+                    <ArrowBackIcon />
+                </IconButton>
+            </div>
+
             <Tabs
                 variant="fullWidth"
                 value={tabValue}

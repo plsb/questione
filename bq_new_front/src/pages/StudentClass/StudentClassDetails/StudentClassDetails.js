@@ -14,7 +14,9 @@ import {
     Grid,
     Button,
     TextField,
-    IconButton
+    IconButton,
+    Select,
+    MenuItem
 } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
@@ -28,6 +30,9 @@ const schema = {
             maximum: 300,
             message: 'A descrição deve conter no mínimo 4 e no máximo 300 caracteres.'
         }
+    },
+    course: {
+        presence: { allowEmpty: false, message: 'Você deve selecionar o curso' },
     }
 };
 
@@ -44,15 +49,27 @@ const StudentClassDetails = props => {
         errors: {}
     });
 
+    const [courseList, setCourseList] = useState([]);
+    const [courseSelectIsOpen, setCourseSelectIsOpen] = useState(false);
+    
+    const handleCourseSelectClose = () => {
+        setCourseSelectIsOpen(false);
+    };
+
+    const handleCourseSelectOpen = () => {
+        setCourseSelectIsOpen(true);
+    };
+
     const handleBack = () => {
         history.goBack();
     };
 
     async function saveStudentClass() {
         try {
-            const description = formState.values.description;
+            const { description, course } = formState.values;
             const data = {
-                description
+                description,
+                fk_course_id: course,
             }
 
             let response = {};
@@ -92,6 +109,7 @@ const StudentClassDetails = props => {
                 setFormState(formState => ({
                     values: {
                         'description': response.data[0].description,
+                        'course': response.data[0].course.id,
                     },
                     touched: {
                         ...formState.touched,
@@ -100,6 +118,17 @@ const StudentClassDetails = props => {
             }
         } catch (error) {
 
+        }
+    }
+
+    async function getCourses() {
+        try {
+          const response = await api.get(`/class/courses`);
+          if (response) {
+            setCourseList(response.data);
+          }
+        } catch (error) {
+          setCourseList([]);
         }
     }
 
@@ -130,6 +159,7 @@ const StudentClassDetails = props => {
     }, [formState.values]);
 
     useEffect(() => {
+        getCourses();
         if (studentClassId) {
             showStudentClass(studentClassId);
         }
@@ -163,6 +193,33 @@ const StudentClassDetails = props => {
                             md={12}
                             xs={12}
                         >
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                                <p className="item1" style={{ marginRight: '16px' }}>Curso</p>
+                                {/* GET  */}
+                                {/* No body do request o attr vai ser  */}
+
+                                <Select
+                                    labelId="course-label"
+                                    id="course"
+                                    name="course"
+                                    open={courseSelectIsOpen}
+                                    onClose={handleCourseSelectClose}
+                                    onOpen={handleCourseSelectOpen}
+                                    value={formState.values.course || 'select'}
+                                    onChange={handleChange}
+                                    className={classes.root}
+                                    error={hasError('course')}
+                                    helperText={
+                                        hasError('course') ? formState.errors.course[0] : null
+                                    }
+                                >
+                                    <MenuItem value="select">Selecione</MenuItem>
+                                    {courseList.map((course) => (
+                                        <MenuItem key={course.id} value={course.id}>{course.description}</MenuItem>
+                                    ))}
+                                </Select>
+                            </div>
+
                             <TextField
                                 fullWidth
                                 error={hasError('description')}
