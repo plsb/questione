@@ -155,9 +155,9 @@ class ClassStudentsStudent extends Controller
 
         sort($arr);
 
-        $object = (object) $arr;
+        //$object = (object) $arr;
 
-        return response()->json($object, 200);
+        return response()->json($arr, 200);
     }
 
     //deleta uma turma, caso o aluno não possua dados de questionários
