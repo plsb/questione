@@ -26,6 +26,8 @@ import {
 
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
+import People from './People';
+
 import useStyles from './styles';
 
 function StudentClassContent({ history, ...rest }) {    
@@ -123,7 +125,7 @@ function StudentClassContent({ history, ...rest }) {
                 <Card className={classes.header}>
                     <CardContent>
                         <div style={{ margin: '16px', marginLeft: '16px' }}>
-                            Tab 3
+                            <People />
                         </div>
                     </CardContent>
                 </Card>
