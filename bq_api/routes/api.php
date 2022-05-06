@@ -81,7 +81,7 @@ Route::group(['prefix' => 'type-of-evaluation'], function (){
 
 Route::group(['prefix' => 'class/student'], function (){
     Route::get('/', 'ClassStudentsStudent@index')->name('class.index');
-    Route::get('/details/', 'ClassStudentsStudent@details')->name('class.details');
+    Route::get('/details/{id}', 'ClassStudentsStudent@details')->name('class.details');
     Route::post('/', 'ClassStudentsStudent@store')->name('class.store');
     Route::delete('/{id}', 'ClassStudentsStudent@destroy')->name('class.destroy');
 });

@@ -115,15 +115,15 @@ class ClassStudentsStudent extends Controller
     }
 
     //trazer informações (nome de professores e alunos) da turma
-    public function details(Request $request)
+    public function details($id)
     {
-        if (!$request->id_class) {
+        if (!$id) {
             return response()->json([
                 'message' => 'Informe o código da turma.'
             ], 202);
         }
 
-        $class_verify = ClassQuestione::where('id_class', $request->id_class)->first();
+        $class_verify = ClassQuestione::where('id_class', $id)->first();
 
         if (!$class_verify) {
             return response()->json([
