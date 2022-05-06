@@ -123,7 +123,7 @@ class ClassStudentsStudent extends Controller
             ], 202);
         }
 
-        $class_verify = ClassQuestione::where('id_class', $id)->first();
+        $class_verify = ClassQuestione::where('id', $id)->first();
 
         if (!$class_verify) {
             return response()->json([
