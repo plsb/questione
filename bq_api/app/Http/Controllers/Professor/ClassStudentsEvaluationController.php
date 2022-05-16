@@ -42,12 +42,18 @@ class ClassStudentsEvaluationController extends Controller
         $user = auth('api')->user();
         DB::enableQueryLog();
 
+        if(!$request->fk_class_id){
+            return response()->json([
+                'message' => 'Informme o código da turma.'
+            ], 202);
+        }
+
         //pesquisa por codigo ou descrição
         //dd($request->id_evaluation);
         if($request->id_evaluation || $request->description){
             $evaluation = Evaluation::where('fk_user_id', '=', $user->id)
                 ->where('status', 1)
-                ->where('fk_class_id', $$request->fk_class_id)
+                ->where('fk_class_id', $request->fk_class_id)
                 ->where('practice', 0)
                 ->where(
                     function ($query) use ($request) {
@@ -59,7 +65,7 @@ class ClassStudentsEvaluationController extends Controller
         } else {
             $evaluation = Evaluation::where('fk_user_id', '=', $user->id)
                 ->where('status', 1)
-                ->where('fk_class_id', $$request->fk_class_id)
+                ->where('fk_class_id', $request->fk_class_id)
                 ->where('practice', 0)
                 ->orderBy('created_at', 'desc')
                 ->with('user')
