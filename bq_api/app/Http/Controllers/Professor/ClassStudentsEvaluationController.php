@@ -47,7 +47,7 @@ class ClassStudentsEvaluationController extends Controller
         if($request->id_evaluation || $request->description){
             $evaluation = Evaluation::where('fk_user_id', '=', $user->id)
                 ->where('status', 1)
-                ->whereNotNull('fk_class_id')
+                ->where('fk_class_id', $$request->fk_class_id)
                 ->where('practice', 0)
                 ->where(
                     function ($query) use ($request) {
@@ -59,7 +59,7 @@ class ClassStudentsEvaluationController extends Controller
         } else {
             $evaluation = Evaluation::where('fk_user_id', '=', $user->id)
                 ->where('status', 1)
-                ->whereNotNull('fk_class_id')
+                ->where('fk_class_id', $$request->fk_class_id)
                 ->where('practice', 0)
                 ->orderBy('created_at', 'desc')
                 ->with('user')
