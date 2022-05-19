@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
-import {Button, TextField, Typography} from '@material-ui/core';
+import {Button, Typography} from '@material-ui/core';
 import FindInPage from '@material-ui/icons/SearchSharp';
 
 import { SearchInput } from '../../../../../../../components';
@@ -34,16 +34,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const EvaluationToolbar = props => {
-  const { className, onClickSearch, onChangeSearch, searchText, history, ...rest } = props;
+  const { className, onClickSearch, onChangeSearch, searchText, studentClassId, history, ...rest } = props;
 
   const classes = useStyles();
 
-  const onClickRequestUsers = () => {
-    history.push('/evaluations-archive');
-  }
-
-  const onClickNewCourse = e => {
-    history.push('/evaluation-details');
+  const onClickNewEvaluation = e => {
+    history.push(`/student-class/${studentClassId}/evaluation-details`);
   }
 
   return (
@@ -56,7 +52,7 @@ const EvaluationToolbar = props => {
         <Button
           color="primary"
           variant="contained"
-          onClick={onClickNewCourse}
+          onClick={onClickNewEvaluation}
         >
           Cadastrar
         </Button>

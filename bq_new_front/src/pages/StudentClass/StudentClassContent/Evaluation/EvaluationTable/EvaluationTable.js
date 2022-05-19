@@ -115,6 +115,7 @@ const EvaluationTable = props => {
         onChangeSearch={updateSearch.bind(this)}
         searchText={searchText}
         onClickSearch={onClickSearch}
+        studentClassId={props.studentClassId}
       />
       <div className={classes.content}>
         <Card
@@ -154,6 +155,7 @@ const EvaluationTable = props => {
                         <EvaluationCard evaluation={evaluation}
                           setTabValue={() => {}}
                           setRefresh={setRefresh}
+                          studentClassId={props.studentClassId}
                           refresh={refresh}
                         />
                       ))}

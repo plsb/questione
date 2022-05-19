@@ -10,14 +10,11 @@ import {
   Grid,
   Button,
   TextField, IconButton,
-  TableBody, Table, TableCell,
-  TableRow, TableHead, TablePagination, LinearProgress
 } from '@material-ui/core';
-import api from "../../../../services/api";
+import api from "../../../../../services/api";
 import { toast } from 'react-toastify';
 import validate from "validate.js";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import QuestionCard from "../../../../components/QuestionCard";
 
 const schema = {
   description: {
@@ -52,16 +49,11 @@ const useStyles = makeStyles(() => ({
 
 const EvaluationDetails = props => {
   const { className, history, ...rest } = props;
-  const { codigoEvaluation } = props.match.params;
+  const { id: classId, codigoEvaluation } = props.match.params;
 
   const classes = useStyles();
 
-  const [questions, setQuestions] = useState(null);
   const [refresh, setRefresh] = React.useState(0);
-
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [page, setPage] = useState(0);
-  const [total, setTotal] = useState(0);
 
   const [formState, setFormState] = useState({
     isValid: false,
@@ -76,15 +68,16 @@ const EvaluationDetails = props => {
 
       const id = formState.values.id;
       const data = {
-        description
+        description,
+        fk_class_id: classId,
       }
       let response= {};
       let acao = "";
       if(!id) {
-         response = await api.post('evaluation', data);
+         response = await api.post('class/evaluation', data);
          acao = "cadastrada";
       } else {
-         response = await api.put('evaluation/'+id, data);
+         response = await api.put('class/evaluation/'+id, data);
         acao = "atualizada";
       }
       if (response.status === 202) {
@@ -94,24 +87,10 @@ const EvaluationDetails = props => {
           toast.error(response.data.errors[0].description);
         }
       } else {
-        toast.success('Avaluação '+acao+'.');
-        history.push('/evaluations');
+        toast.success('Avaliação '+acao+'.');
+        history.push(`/student-class/${classId}`);
       }
 
-    } catch (error) {
-
-    }
-  }
-
-  async function loadQuestionsEvaluation(id, page){
-    try {
-      const response = await api.get('evaluation/show/questions/'+id+'?page='+page);
-      if (response.status === 200) {
-        setQuestions(response.data.data);
-        setTotal(response.data.total);
-      } else {
-        setQuestions([]);
-      }
     } catch (error) {
 
     }
@@ -119,7 +98,7 @@ const EvaluationDetails = props => {
 
   async function findAEvaluation(id){
     try {
-      const response = await api.get('evaluation/show/'+id);
+      const response = await api.get('class/evaluation/show/'+id);
       if (response.status === 202) {
         if(response.data.message){
           toast.error(response.data.message);
@@ -127,7 +106,6 @@ const EvaluationDetails = props => {
       } else {
         setFormState(formState => ({
           values: {
-            'questions': response.data[0].questions,
             'description': response.data[0].description,
             'id': response.data[0].id
           },
@@ -135,7 +113,6 @@ const EvaluationDetails = props => {
             ...formState.touched,
           }
         }));
-        //setQuestions(response.data[0].questions);
       }
     } catch (error) {
 
@@ -145,11 +122,7 @@ const EvaluationDetails = props => {
   useEffect(() => {
     if(codigoEvaluation){
       findAEvaluation(codigoEvaluation);
-      loadQuestionsEvaluation(codigoEvaluation);
-    } else {
-      setQuestions([]);
     }
-
   }, [refresh]);
 
   useEffect(() => {
@@ -160,7 +133,7 @@ const EvaluationDetails = props => {
       isValid: (errors || formState.values.course==0) ? false : true,
       errors: errors || {}
     }));
-  }, [formState.values, questions]);
+  }, [formState.values]);
 
   const handleChange = event => {
     setFormState({
@@ -177,21 +150,10 @@ const EvaluationDetails = props => {
   };
 
   const hasError = field =>
-      formState.touched[field] && formState.errors[field] ? true : false;
+    formState.touched[field] && formState.errors[field] ? true : false;
 
   const handleBack = () => {
     history.goBack();
-  };
-
-  const handlePageChange = (event, page) => {
-    if(codigoEvaluation) {
-      loadQuestionsEvaluation(codigoEvaluation, page + 1)
-    }
-    setPage(page);
-  };
-
-  const handleRowsPerPageChange = event => {
-    setRowsPerPage(event.target.value);
   };
 
   return (

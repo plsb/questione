@@ -55,6 +55,7 @@ import StudentClass from '../pages/StudentClass';
 import StudentClassDetails from '../pages/StudentClass/StudentClassDetails';
 import StudentClassroom from '../pages/StudentClassroom/StudentClassroom';
 import StudentClassContent from '../pages/StudentClass/StudentClassContent';
+import StudentClassEvaluationDetails from '../pages/StudentClass/StudentClassContent/Evaluation/EvaluationDetails';
 
 const Routes = () => (
     <BrowserRouter>
@@ -375,6 +376,20 @@ const Routes = () => (
                 typeUser={-1}
                 layout={MainLayout}
                 path="/student-class/:id" />
+            <RouteWithLayout
+                component={StudentClassEvaluationDetails}
+                exact
+                needToBeLogged={true}
+                typeUser={-1}
+                layout={MainLayout}
+                path="/student-class/:id/evaluation-details/:codigoEvaluation?" />
+            <RouteWithLayout
+                component={StudentClassContent}
+                exact
+                needToBeLogged={true}
+                typeUser={-1}
+                layout={MainLayout}
+                path="/student-class/:id/" />
             <RouteWithLayout
                 component={StudentClass}
                 exact
