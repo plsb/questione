@@ -51,11 +51,13 @@ import {
 } from '../pages';
 import QuestionTable from "../pages/Professor/Question/QuestionTable";
 import QuestionDetails from "../pages/Professor/Question/QuestionDetails";
-import StudentClass from '../pages/StudentClass';
-import StudentClassDetails from '../pages/StudentClass/StudentClassDetails';
+
+import StudentClassProfessorList from '../pages/StudentClass/Professor/StudentClass';
+import StudentClassProfessorDetails from '../pages/StudentClass/Professor/StudentClassDetails';
+// import StudentClassContent from '../pages/StudentClass/StudentClassContent';
+// import StudentClassEvaluationDetails from '../pages/StudentClass/StudentClassContent/Evaluation/EvaluationDetails';
+
 import StudentClassroom from '../pages/StudentClassroom/StudentClassroom';
-import StudentClassContent from '../pages/StudentClass/StudentClassContent';
-import StudentClassEvaluationDetails from '../pages/StudentClass/StudentClassContent/Evaluation/EvaluationDetails';
 
 const Routes = () => (
     <BrowserRouter>
@@ -356,47 +358,47 @@ const Routes = () => (
                 typeUser={2}
                 path="/question-details/:idQuestion?" />
             <RouteWithLayout
+                component={StudentClassProfessorDetails}
+                exact
+                needToBeLogged={true}
+                typeUser={-1}
+                layout={MainLayout}
+                path="/student-class-details/:studentClassId/professor" />
+            {/* <RouteWithLayout
                 component={StudentClassDetails}
                 exact
                 needToBeLogged={true}
                 typeUser={-1}
                 layout={MainLayout}
-                path="/student-class-details/:studentClassId" />
-            <RouteWithLayout
-                component={StudentClassDetails}
-                exact
-                needToBeLogged={true}
-                typeUser={-1}
-                layout={MainLayout}
-                path="/student-class-details" />
-            <RouteWithLayout
+                path="/student-class-details" /> */}
+            {/* <RouteWithLayout
                 component={StudentClassContent}
                 exact
                 needToBeLogged={true}
                 typeUser={-1}
                 layout={MainLayout}
-                path="/student-class/:id" />
-            <RouteWithLayout
+                path="/student-class/:id" /> */}
+            {/* <RouteWithLayout
                 component={StudentClassEvaluationDetails}
                 exact
                 needToBeLogged={true}
                 typeUser={-1}
                 layout={MainLayout}
-                path="/student-class/:id/evaluation-details/:codigoEvaluation?" />
-            <RouteWithLayout
+                path="/student-class/:id/evaluation-details/:codigoEvaluation?" /> */}
+            {/* <RouteWithLayout
                 component={StudentClassContent}
                 exact
                 needToBeLogged={true}
                 typeUser={-1}
                 layout={MainLayout}
-                path="/student-class/:id/" />
+                path="/student-class/:id/" /> */}
             <RouteWithLayout
-                component={StudentClass}
+                component={StudentClassProfessorList}
                 exact
                 needToBeLogged={true}
                 typeUser={-1}
                 layout={MainLayout}
-                path="/student-class" />
+                path="/student-class/professor" />
 
             <RouteWithLayout
                 component={Unauthorized}

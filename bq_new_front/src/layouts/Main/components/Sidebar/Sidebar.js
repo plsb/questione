@@ -98,7 +98,7 @@ const Sidebar = props => {
     },
     {
       title: 'Turmas',
-      href: '/student-class',
+      href: '/student-class/professor',
       icon: <ExtensionIcon />,
       className: 'practice',
     },
@@ -125,7 +125,7 @@ const Sidebar = props => {
     },
     {
       title: 'Turmas',
-      href: '/student-classroom',
+      href: '/student-class/student',
       icon: <ExtensionIcon />,
       className: 'practice',
     },
