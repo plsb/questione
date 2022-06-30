@@ -4,6 +4,10 @@ const useStyles = makeStyles({
     root: {
         width: '100%',
     },
+    content: {
+        padding: 0,
+        marginTop: '16px',
+    },
     header: {
         width: '100%',
         display: 'flex',

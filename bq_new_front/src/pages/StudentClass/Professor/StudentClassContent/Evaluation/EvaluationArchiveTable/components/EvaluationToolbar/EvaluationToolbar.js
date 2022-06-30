@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
-import {Button, TextField, Typography} from '@material-ui/core';
+import {Button, Typography} from '@material-ui/core';
 import FindInPage from '@material-ui/icons/SearchSharp';
-import SearchInput from '../../../../../../components/SearchInput';
+
+import { SearchInput } from '../../../../../../../components';
 import {withRouter} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
@@ -32,18 +33,28 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const PeopleToolbar = props => {
+const EvaluationToolbar = props => {
   const { className, onClickSearch, onChangeSearch, searchText, history, ...rest } = props;
 
   const classes = useStyles();
 
+  const onClickRequestUsers = () => {
+    history.push('/evaluations');
+  }
+
+  const onClickNewCourse = e => {
+    history.push('/course-details');
+  }
+
   return (
     <div
       {...rest}
-      className={clsx(classes.root, className)}
-    >
+      className={clsx(classes.root, className)}>
       <div className={classes.row}>
-        <Typography variant="h5" color="textSecondary" component="h2">Alguma descrição aqui</Typography>
+        <Typography variant="h3" className={classes.title}>{'Avaliações Arquivadas'}</Typography>
+        <span className={classes.spacer} />
+        <Button className={classes.exportButton}
+                onClick={onClickRequestUsers}>Avaliações</Button>
       </div>
       <div className={classes.row}>
         <SearchInput
@@ -61,7 +72,7 @@ const PeopleToolbar = props => {
   );
 };
 
-PeopleToolbar.propTypes = {
+EvaluationToolbar.propTypes = {
   className: PropTypes.string,
   onChangeSearch: PropTypes.func,
   onClickSearch: PropTypes.func,
@@ -69,4 +80,4 @@ PeopleToolbar.propTypes = {
   history: PropTypes.object
 };
 
-export default withRouter(PeopleToolbar);
+export default withRouter(EvaluationToolbar);

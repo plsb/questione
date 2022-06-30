@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import validate from "validate.js";
 
-import api from "../../../services/api";
+import api from "../../../../services/api";
 
 import {
     Card,
@@ -91,7 +91,7 @@ const StudentClassDetails = props => {
                 }
             } else {
                 toast.success('Turma ' + acao + '.');
-                history.push('/student-class');
+                history.push('/student-class/professor');
             }
         } catch (error) {
 

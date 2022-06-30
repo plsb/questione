@@ -51,10 +51,13 @@ import {
 } from '../pages';
 import QuestionTable from "../pages/Professor/Question/QuestionTable";
 import QuestionDetails from "../pages/Professor/Question/QuestionDetails";
-import StudentClass from '../pages/StudentClass';
-import StudentClassDetails from '../pages/StudentClass/StudentClassDetails';
-import StudentClassroom from '../pages/StudentClassroom/StudentClassroom';
-import StudentClassContent from '../pages/StudentClass/StudentClassContent';
+
+import StudentClassListProfessor from '../pages/StudentClass/Professor/StudentClass';
+import StudentClassDetailsProfessor from '../pages/StudentClass/Professor/StudentClassDetails';
+// import StudentClassContent from '../pages/StudentClass/StudentClassContent';
+// import StudentClassEvaluationDetails from '../pages/StudentClass/StudentClassContent/Evaluation/EvaluationDetails';
+
+import StudentClassListStudent from '../pages/StudentClass/Student/StudentClass';
 
 const Routes = () => (
     <BrowserRouter>
@@ -118,12 +121,12 @@ const Routes = () => (
                 layout={MainLayout}
                 path="/new-request" />
             <RouteWithLayout
-                component={StudentClassroom}
+                component={StudentClassListStudent}
                 exact
                 needToBeLogged={true}
                 typeUser={-1}
                 layout={MainLayout}
-                path="/student-classroom" />
+                path="/student-class/student" />
             {/* ROTAS DO ALUNO */}
             <RouteWithLayout
                 component={EvaluationPracticeTable}
@@ -355,33 +358,54 @@ const Routes = () => (
                 typeUser={2}
                 path="/question-details/:idQuestion?" />
             <RouteWithLayout
+                component={StudentClassDetailsProfessor}
+                exact
+                needToBeLogged={true}
+                typeUser={2}
+                layout={MainLayout}
+                path="/student-class-details/:studentClassId/professor" />
+            <RouteWithLayout
+                component={StudentClassDetailsProfessor}
+                exact
+                needToBeLogged={true}
+                typeUser={2}
+                layout={MainLayout}
+                path="/student-class-details/professor" />
+            {/* <RouteWithLayout
                 component={StudentClassDetails}
                 exact
                 needToBeLogged={true}
                 typeUser={-1}
                 layout={MainLayout}
-                path="/student-class-details/:studentClassId" />
-            <RouteWithLayout
-                component={StudentClassDetails}
-                exact
-                needToBeLogged={true}
-                typeUser={-1}
-                layout={MainLayout}
-                path="/student-class-details" />
-            <RouteWithLayout
+                path="/student-class-details" /> */}
+            {/* <RouteWithLayout
                 component={StudentClassContent}
                 exact
                 needToBeLogged={true}
                 typeUser={-1}
                 layout={MainLayout}
-                path="/student-class/:id" />
-            <RouteWithLayout
-                component={StudentClass}
+                path="/student-class/:id" /> */}
+            {/* <RouteWithLayout
+                component={StudentClassEvaluationDetails}
                 exact
                 needToBeLogged={true}
                 typeUser={-1}
                 layout={MainLayout}
-                path="/student-class" />
+                path="/student-class/:id/evaluation-details/:codigoEvaluation?" /> */}
+            {/* <RouteWithLayout
+                component={StudentClassContent}
+                exact
+                needToBeLogged={true}
+                typeUser={-1}
+                layout={MainLayout}
+                path="/student-class/:id/" /> */}
+            <RouteWithLayout
+                component={StudentClassListProfessor}
+                exact
+                needToBeLogged={true}
+                typeUser={-1}
+                layout={MainLayout}
+                path="/student-class/professor" />
 
             <RouteWithLayout
                 component={Unauthorized}

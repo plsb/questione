@@ -62,8 +62,6 @@ class AuthController extends Controller
             return response()->json(['message' => 'E-mail Inválido!'], 202);
         }
 
-
-
         $user = User::create([
             'name'    => strtoupper($request->name),
             'email'    => strtolower($request->email),

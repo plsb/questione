@@ -27,10 +27,13 @@ import {
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import People from './People';
+import EvaluationTable from './Evaluation/EvaluationTable';
 
 import useStyles from './styles';
 
-function StudentClassContent({ history, ...rest }) {    
+function StudentClassContent({ history, location, ...rest }) {
+    const studentClassId = location.pathname.replace('/student-class/', '');
+    
     const [refresh, setRefresh] = React.useState(1);
     const [tabValue, setTabValue] = useState(0);
 
@@ -94,7 +97,7 @@ function StudentClassContent({ history, ...rest }) {
                 onChange={handleChangeTab}
                 aria-label="nav tabs example"
             >
-                <LinkTab label="Menu 1" href="/drafts" {...a11yProps(0)} />
+                <LinkTab label="Avaliações" href="/student-class/evaluations" {...a11yProps(0)} />
                 <LinkTab label="Menu 2" href="#" {...a11yProps(1)} />
                 <LinkTab label="Pessoas" href="#" {...a11yProps(2)} />
             </Tabs>
@@ -105,7 +108,7 @@ function StudentClassContent({ history, ...rest }) {
                 >
                     <CardContent>
                         <div style={{ margin: '16px', marginLeft: '16px' }}>
-                            Tab 1
+                            <EvaluationTable studentClassId={studentClassId} />
                         </div>
                     </CardContent>
                 </Card>

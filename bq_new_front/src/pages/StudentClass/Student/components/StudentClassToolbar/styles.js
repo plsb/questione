@@ -3,10 +3,14 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
     root: {},
     row: {
-        height: '42px',
         display: 'flex',
         alignItems: 'flex-start',
         marginBottom: '32px'
+    },
+    filters: {
+        position: 'relative',
+        padding: '16px',
+        paddingLeft: '0px',
     },
     spacer: {
         flexGrow: 1
@@ -28,7 +32,11 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: '2px',
     },
     title: {
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        padding: '16px',
+    },
+    description: {
+        padding: '0px 16px',
     },
 }));
 

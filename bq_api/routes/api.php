@@ -100,7 +100,7 @@ Route::group(['prefix' => 'class'], function (){
     Route::post('/evaluation', 'Professor\ClassStudentsEvaluationController@store')->name('class.evaluation.store');
     Route::put('/evaluation/{class}', 'Professor\ClassStudentsEvaluationController@update')->name('class.evaluation.update');
     Route::get('/evaluation/show/{evaluation}', 'Professor\EvaluationController@show')->name('class.evaluation.show');
-    Route::get('/sevaluation/how/questions/{evaluation}', 'Professor\EvaluationController@showQuestions')->name('class.evaluation.showQuestions');
+    Route::get('/evaluation/show/questions/{evaluation}', 'Professor\EvaluationController@showQuestions')->name('class.evaluation.showQuestions');
 });
 
 Route::group(['prefix' => 'class/professor'], function (){

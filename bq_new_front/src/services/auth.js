@@ -3,6 +3,7 @@ export const ID_USER = '@Questione-id-user';
 export const NAME_USER = '@Questione-name-user';
 export const EMAIL_USER = '@Questione-email-user';
 export const LEVEL_USER = '@Questione-acess-level-user';
+export const CURRENT_LEVEL_USER = '@Questione-current-acess-level-user';
 export const SHOW_TOUR = '@Questione-acess-show-tour';
 export const EXTERNAL_QUESTION = '@Questione-external-question';
 
@@ -15,6 +16,7 @@ export const login = (token, name, email, level, id, showTour, externalQuestion)
     localStorage.setItem(NAME_USER, name);
     localStorage.setItem(EMAIL_USER, email);
     localStorage.setItem(LEVEL_USER, level);
+    localStorage.setItem(CURRENT_LEVEL_USER, level);
     localStorage.setItem(ID_USER, id);
     localStorage.setItem(SHOW_TOUR, showTour);
     localStorage.setItem(EXTERNAL_QUESTION, externalQuestion);

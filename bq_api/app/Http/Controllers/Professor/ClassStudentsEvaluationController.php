@@ -44,7 +44,7 @@ class ClassStudentsEvaluationController extends Controller
 
         if(!$request->fk_class_id){
             return response()->json([
-                'message' => 'Informme o código da turma.'
+                'message' => 'Informe o código da turma.'
             ], 202);
         }
 
