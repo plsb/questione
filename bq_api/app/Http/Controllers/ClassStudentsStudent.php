@@ -133,7 +133,7 @@ class ClassStudentsStudent extends Controller
 
         $user = auth('api')->user();
 
-        $class_students_student = ClassStudents::where('fk_user_id',$user->id)
+        /*$class_students_student = ClassStudents::where('fk_user_id',$user->id)
             ->where('fk_class_id', $class_verify->id)
             ->get();
 
@@ -141,7 +141,7 @@ class ClassStudentsStudent extends Controller
             return response()->json([
                 'message' => 'O usuário não está cadastrado na turma informada.'
             ], 202);
-        }
+        }*/
 
         $class_students = ClassStudents::where('fk_class_id', $class_verify->id)
             ->with('user')
