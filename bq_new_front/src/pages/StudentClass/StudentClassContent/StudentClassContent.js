@@ -86,7 +86,7 @@ function StudentClassContent({ history, location, ...rest }) {
     return (
         <div className={classes.root}>
             <div className={classes.contentHeader}>
-                <IconButton onClick={() => history.push('/student-class')}>
+                <IconButton onClick={() => history.goBack()}>
                     <ArrowBackIcon />
                 </IconButton>
             </div>

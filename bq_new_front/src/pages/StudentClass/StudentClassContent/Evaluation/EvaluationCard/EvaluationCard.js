@@ -14,10 +14,10 @@ import {
 } from '@material-ui/core';
 import { MoreVert, Edit } from '@material-ui/icons';
 import moment from 'moment';
-import api from "../../../../../../services/api";
+import api from "../../../../../services/api";
 import { toast } from 'react-toastify';
 import { withRouter } from "react-router-dom";
-import { DialogQuestione } from "../../../../../../components";
+import { DialogQuestione } from "../../../../../components";
 import CloseIcon from "@material-ui/icons/Close";
 
 const useStyles = makeStyles(() => ({

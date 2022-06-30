@@ -6,7 +6,7 @@ import {
   CardContent,
   Typography
 } from '@material-ui/core';
-import api from '../../../../../services/api';
+import api from '../../../../services/api';
 import PropTypes from "prop-types";
 
 const useStyles = makeStyles(theme => ({

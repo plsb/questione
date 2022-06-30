@@ -10,7 +10,7 @@ import {
   TablePagination, CardHeader, Grid, LinearProgress,
   Box, Typography,
 } from '@material-ui/core';
-import api from '../../../../../../services/api';
+import api from '../../../../../services/api';
 import UsersToolbar from "./components/EvaluationToolbar";
 import PropTypes from "prop-types";
 import EvaluationCard from "../EvaluationCard";
