@@ -91,19 +91,16 @@ const StudendClassCard = props => {
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
                 >
+                    <MenuItem onClick={() => history.push(`/student-class/${id}`)}>Acessar</MenuItem>
                     {status === 1 && isOwner && (
                         <>
-                            <MenuItem onClick={() => history.push(`/student-class-details/${id}`)}>Editar</MenuItem>
+                            <MenuItem onClick={() => history.push(`/student-class-details/${id}/professor`)}>Editar</MenuItem>
                             <MenuItem onClick={() => toFile(2)}>Arquivar</MenuItem>
                         </>
                     )}
 
                     {status === 2 && isOwner && (
                         <MenuItem onClick={() => toFile(1)}>Ativar</MenuItem>
-                    )}
-
-                    {!isOwner && (
-                        <MenuItem onClick={() => history.push(`/student-class/${id}`)}>Acessar</MenuItem>
                     )}
                 </Menu>
         </Card>

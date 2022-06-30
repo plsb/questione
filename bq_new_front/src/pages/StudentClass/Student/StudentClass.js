@@ -38,25 +38,25 @@ function StudentClass({ history }) {
     const [page, setPage] = useState(0);
     const [total, setTotal] = React.useState(0);
     const [searchText, setSearchText] = React.useState('');
-    const [status, setStatus] = React.useState(1);
 
     const [refresh, setRefresh] = React.useState(1);
+    const [showRegisterDialog, setShowRegisterDialog] = React.useState(false);
+    const [registerLoading, setRegisterLoading] = React.useState(false);
 
     const classes = useStyles();
 
-    const getStudentClasses = async (page, status, description = '') => {
+    const getStudentClasses = async (page, description = '') => {
         try {
-            const response = await api.get(`class/`, {
+            const response = await api.get(`class/student`, {
                 params: {
-                    status,
                     page,
                     description,
                 },
             });
 
             if (response.status == 200) {
-                setTotal(response.data[0].total);
-                setStudentClasses(response.data[0].data);
+                setTotal(response.data.total);
+                setStudentClasses(response.data.data);
             } else {
                 setStudentClasses([]);
             }
@@ -65,8 +65,31 @@ function StudentClass({ history }) {
         }
     };
 
+    const registerInStudentClasses = async (studentClassCode) => {
+        setRegisterLoading(true);
+
+        try {
+            const response = await api.post(`class/student/`, {
+                id_class: studentClassCode,
+            });
+
+            if (response.status === 202) {
+                if (response.data.message) {
+                    toast.error(response.data.message);
+                    setRegisterLoading(false);
+                }
+            } else {
+                toast.success("Inscrição realizada com sucesso!");
+                setRegisterLoading(false);
+                setShowRegisterDialog(false);
+            }
+        } catch (e) {
+
+        }
+    };
+
     const handlePageChange = (event, page) => {
-        getStudentClasses(page + 1, 1, searchText);
+        getStudentClasses(page + 1, searchText);
         setPage(page);
     };
 
@@ -79,11 +102,11 @@ function StudentClass({ history }) {
     };
 
     const onClickSearch = (e) => {
-        getStudentClasses(1, status, searchText);
+        getStudentClasses(1, searchText);
     };
 
     useEffect(() => {
-        getStudentClasses(page, status, searchText);
+        getStudentClasses(page, searchText);
     }, [refresh]);
 
     return (
@@ -93,7 +116,7 @@ function StudentClass({ history }) {
                 searchText={searchText}
                 onClickSearch={onClickSearch}
                 handleStatusCallback={getStudentClasses}
-                setStatus={setStatus}
+                setShowRegisterDialog={setShowRegisterDialog}
             />
 
             <div className={classes.content}>
@@ -139,9 +162,8 @@ function StudentClass({ history }) {
                                                         classId={studentClass.id_class}
                                                         title={studentClass.description}
                                                         user={studentClass.user}
-                                                        status={status}
                                                         showUser
-                                                        isOwner
+                                                        isOwner={false}
                                                         setRefresh={setRefresh}
                                                         refresh={refresh}
                                                         toFileCallback={() => {
@@ -168,6 +190,13 @@ function StudentClass({ history }) {
                         />
                     </CardActions>
                 </Card>
+
+                <DialogStudentClassRegister
+                    handleClose={() => setShowRegisterDialog(false)}
+                    open={showRegisterDialog}
+                    onClickRegister={registerInStudentClasses}
+                    registerLoading={registerLoading}
+                />
             </div>
         </div>
     );

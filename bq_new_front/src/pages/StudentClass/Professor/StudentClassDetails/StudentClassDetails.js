@@ -91,7 +91,7 @@ const StudentClassDetails = props => {
                 }
             } else {
                 toast.success('Turma ' + acao + '.');
-                history.push('/student-class');
+                history.push('/student-class/professor');
             }
         } catch (error) {
 

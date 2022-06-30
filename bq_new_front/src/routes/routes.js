@@ -52,12 +52,12 @@ import {
 import QuestionTable from "../pages/Professor/Question/QuestionTable";
 import QuestionDetails from "../pages/Professor/Question/QuestionDetails";
 
-import StudentClassProfessorList from '../pages/StudentClass/Professor/StudentClass';
-import StudentClassProfessorDetails from '../pages/StudentClass/Professor/StudentClassDetails';
+import StudentClassListProfessor from '../pages/StudentClass/Professor/StudentClass';
+import StudentClassDetailsProfessor from '../pages/StudentClass/Professor/StudentClassDetails';
 // import StudentClassContent from '../pages/StudentClass/StudentClassContent';
 // import StudentClassEvaluationDetails from '../pages/StudentClass/StudentClassContent/Evaluation/EvaluationDetails';
 
-import StudentClassroom from '../pages/StudentClassroom/StudentClassroom';
+import StudentClassListStudent from '../pages/StudentClass/Student/StudentClass';
 
 const Routes = () => (
     <BrowserRouter>
@@ -121,12 +121,12 @@ const Routes = () => (
                 layout={MainLayout}
                 path="/new-request" />
             <RouteWithLayout
-                component={StudentClassroom}
+                component={StudentClassListStudent}
                 exact
                 needToBeLogged={true}
                 typeUser={-1}
                 layout={MainLayout}
-                path="/student-classroom" />
+                path="/student-class/student" />
             {/* ROTAS DO ALUNO */}
             <RouteWithLayout
                 component={EvaluationPracticeTable}
@@ -358,12 +358,19 @@ const Routes = () => (
                 typeUser={2}
                 path="/question-details/:idQuestion?" />
             <RouteWithLayout
-                component={StudentClassProfessorDetails}
+                component={StudentClassDetailsProfessor}
                 exact
                 needToBeLogged={true}
-                typeUser={-1}
+                typeUser={2}
                 layout={MainLayout}
                 path="/student-class-details/:studentClassId/professor" />
+            <RouteWithLayout
+                component={StudentClassDetailsProfessor}
+                exact
+                needToBeLogged={true}
+                typeUser={2}
+                layout={MainLayout}
+                path="/student-class-details/professor" />
             {/* <RouteWithLayout
                 component={StudentClassDetails}
                 exact
@@ -393,7 +400,7 @@ const Routes = () => (
                 layout={MainLayout}
                 path="/student-class/:id/" /> */}
             <RouteWithLayout
-                component={StudentClassProfessorList}
+                component={StudentClassListProfessor}
                 exact
                 needToBeLogged={true}
                 typeUser={-1}

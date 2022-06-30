@@ -10,17 +10,9 @@ import { Button, MenuItem, TextField, Typography } from '@material-ui/core';
 import useStyles from './styles';
 
 const StudentClassToolbar = props => {
-  const { className, onClickSearch, onChangeSearch, searchText, handleStatusCallback, tabValue, history, setStatus, ...rest } = props;
-
-  const [value, setValue] = useState(1);
+  const { className, onClickSearch, onChangeSearch, searchText, handleStatusCallback, tabValue, history, setShowRegisterDialog, ...rest } = props;
 
   const classes = useStyles();
-
-  const handleChange = (event) => {
-    handleStatusCallback(1, event.target.value, searchText);
-    setValue(event.target.value);
-    setStatus(event.target.value);
-  };
 
   return (
     <div
@@ -29,7 +21,7 @@ const StudentClassToolbar = props => {
     >
       <div className={classes.row}>
         <div style={{ flex: 1 }}>
-          <Typography variant="h3" className={classes.title}>{'Turmas'}</Typography>
+          <Typography variant="h3" className={classes.title}>{'Minhas turmas'}</Typography>
           <Typography variant="p" className={classes.description}>{'Descrição sobre o modulo turmas...'}</Typography>
           <span className={classes.spacer} />
         </div>
@@ -39,30 +31,17 @@ const StudentClassToolbar = props => {
             aria-haspopup="true"
             color="primary"
             variant="contained"
-            onClick={() => history.push('/student-class-details/professor')}
+            onClick={() => {
+              setShowRegisterDialog(true);
+            }}
+            style={{ marginRight: '12px' }}
           >
-            Criar nova turma
+            Participar de uma turma
           </Button>
         </div>
       </div>
       <div className={classes.row}>
         <div className={classes.filters}>
-          <TextField
-            className={classes.root}
-            id="type-of-evaluation"
-            select
-            label="Status"
-            value={value}
-            onChange={handleChange}
-            helperText="Selecione um status para aplicar o filtro."
-            variant="outlined"
-            margin="dense"
-            style={{ width: '300px' }}
-          >
-            <MenuItem value={1}>Ativas</MenuItem>
-            <MenuItem value={2}>Arquivadas</MenuItem>
-          </TextField>
-
           <TextField
             label="Buscar"
             helperText="Buscar por descrição"
