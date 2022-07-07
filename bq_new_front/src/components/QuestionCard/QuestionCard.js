@@ -51,6 +51,11 @@ const useStyles = makeStyles(theme => ({
         color: '#ffffff',
         marginRight: 2
     },
+    chipblue: {
+        margin: 3,
+        backgroundColor: '#2196f3',
+        color: '#fff',
+    },
   spacer: {
     flexGrow: 1
   },
@@ -688,6 +693,7 @@ const QuestionCard = props => {
                             <ListItem button onClick={() => handleListItemClick(evaluation)} key={evaluation.id}>
                                 <ListItemText primary={"Descrição: "+evaluation.description}
                                               secondary={"Criada em: "+  moment(evaluation.created_at).format('DD/MM/YYYY')}/>
+                                <Chip label={evaluation.class.description} className={clsx(classes.chipblue, className)} size="small"/>
                             </ListItem>
                         ))}
                     </List>
