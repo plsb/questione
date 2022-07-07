@@ -310,6 +310,7 @@ class EvaluationController extends Controller
             ->where('evaluations.status', 1)
             ->whereNotIn('id', $arr)
             ->orderBy('created_at', 'desc')
+            ->with('class')
             ->get();
 
         return response()->json($evaluations, 200);
