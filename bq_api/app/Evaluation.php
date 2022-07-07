@@ -31,5 +31,9 @@ class Evaluation extends Model
         return $this->belongsTo(User::class, 'fk_user_id');
     }
 
+    public function class(){
+        return $this->belongsTo(ClassQuestione::class, 'fk_class_id');
+    }
+
 
 }
