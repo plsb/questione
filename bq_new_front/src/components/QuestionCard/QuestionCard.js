@@ -691,11 +691,14 @@ const QuestionCard = props => {
                     <List>
                         {evaluations.map((evaluation) => (
                             <ListItem button onClick={() => handleListItemClick(evaluation)} key={evaluation.id}>
-                                <ListItemText primary={"Descrição: "+evaluation.description}
-                                              secondary={"Criada em: "+  moment(evaluation.created_at).format('DD/MM/YYYY')}/>
-                                {evaluation.class && (
-                                    <Chip label={evaluation.class.description} className={clsx(classes.chipblue, className)} size="small"/>
-                                )}
+                                <ListItemText
+                                    primary={"Descrição: "+evaluation.description}
+                                    secondary={"Criada em: "+  moment(evaluation.created_at).format('DD/MM/YYYY')}
+                                >
+                                    {evaluation.class && (
+                                        <Chip label={evaluation.class.description} className={clsx(classes.chipblue, className)} size="small"/>
+                                    )}
+                                </ListItemText>
                             </ListItem>
                         ))}
                     </List>
