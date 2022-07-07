@@ -695,10 +695,10 @@ const QuestionCard = props => {
                                     primary={"Descrição: "+evaluation.description}
                                     secondary={(
                                         <div>
+                                            <p>{"Criada em: "+  moment(evaluation.created_at).format('DD/MM/YYYY')}</p>
                                             {evaluation.class && (
                                                 <Chip label={evaluation.class.description} className={clsx(classes.chipblue, className)} size="small"/>
                                             )}
-                                            <p>{"Criada em: "+  moment(evaluation.created_at).format('DD/MM/YYYY')}</p>
                                         </div>
                                     )}
                                 />
