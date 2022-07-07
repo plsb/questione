@@ -693,7 +693,9 @@ const QuestionCard = props => {
                             <ListItem button onClick={() => handleListItemClick(evaluation)} key={evaluation.id}>
                                 <ListItemText primary={"Descrição: "+evaluation.description}
                                               secondary={"Criada em: "+  moment(evaluation.created_at).format('DD/MM/YYYY')}/>
-                                <Chip label={evaluation.class.description} className={clsx(classes.chipblue, className)} size="small"/>
+                                {evaluation.class && (
+                                    <Chip label={evaluation.class.description} className={clsx(classes.chipblue, className)} size="small"/>
+                                )}
                             </ListItem>
                         ))}
                     </List>
