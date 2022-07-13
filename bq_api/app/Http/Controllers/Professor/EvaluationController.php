@@ -48,7 +48,7 @@ class EvaluationController extends Controller
             $evaluation = Evaluation::where('fk_user_id', '=', $user->id)
                 ->where('status', $request->status)
                 ->where('practice', 0)
-                ->whereIsNull('fk_class_id')
+                ->whereNull('fk_class_id')
                 ->where(
                 function ($query) use ($request) {
                     $query->where('description', 'like', $request->description ? '%'.$request->description.'%' : null);
@@ -60,7 +60,7 @@ class EvaluationController extends Controller
             $evaluation = Evaluation::where('fk_user_id', '=', $user->id)
                 ->where('status', $request->status)
                 ->where('practice', 0)
-                ->whereIsNull('fk_class_id')
+                ->whereNull('fk_class_id')
                 ->orderBy('created_at', 'desc')
                 ->with('user')
                 ->paginate(10);
