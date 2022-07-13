@@ -48,6 +48,7 @@ class EvaluationApplicationsController extends Controller
 
         $evaluations = Evaluation::where('fk_user_id', '=', $user->id)
             ->where('practice', 0)
+            ->whereIsNull('fk_class_id')
             ->get();
 
         $description = $request->description;
