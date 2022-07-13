@@ -28,6 +28,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import People from './People';
 import EvaluationTable from './Evaluation/EvaluationTable';
+import ApplicationTable from './Application/EvaluationApplicationTable';
 
 import useStyles from './styles';
 
@@ -98,7 +99,7 @@ function StudentClassContent({ history, location, ...rest }) {
                 aria-label="nav tabs example"
             >
                 <LinkTab label="Avaliações" href="/student-class/evaluations" {...a11yProps(0)} />
-                <LinkTab label="Menu 2" href="#" {...a11yProps(1)} />
+                <LinkTab label="Aplicações" href="/student-class/applications" {...a11yProps(1)} />
                 <LinkTab label="Pessoas" href="#" {...a11yProps(2)} />
             </Tabs>
 
@@ -118,7 +119,7 @@ function StudentClassContent({ history, location, ...rest }) {
                 <Card className={classes.header}>
                     <CardContent>
                         <div style={{ margin: '16px', marginLeft: '16px' }}>
-                            Tab 2
+                            <ApplicationTable studentClassId={studentClassId} />
                         </div>
                     </CardContent>
                 </Card>
