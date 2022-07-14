@@ -61,7 +61,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const EvaluationApplicationCard = props => {
-  const { className, history, application, ...rest } = props;
+  const { className, history, application, studentClassId, ...rest } = props;
   const [state, setState] = useState(0);
   const [evaluationApplication, setEvaluationApplication] = useState({});
 
@@ -77,15 +77,15 @@ const EvaluationApplicationCard = props => {
     }, []);
 
   const onEdit = (id) => {
-      history.push('/applications-evaluation/details/'+id);
+      history.push(`/student-class/${studentClassId}/applications-evaluation/details/${id}`);
   }
 
   const results = (id) => {
-      history.push('/applications-evaluation/results/'+id);
+      history.push(`/student-class/${studentClassId}/applications-evaluation/results/${id}`);
   }
 
     const copyLinkToClipboard = (id) => {
-        copyToClipboard(window.location.origin + '/applications-evaluation/results/' + id);
+        copyToClipboard(window.location.origin + `/student-class/${studentClassId}/applications-evaluation/results/${id}`);
         toast.success('Link de respostas da aplicação copiado para a área de transferência');
     }
 

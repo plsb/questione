@@ -60,6 +60,9 @@ import StudentClassListStudent from '../pages/StudentClass/Student/StudentClass'
 import StudentClassContent from '../pages/StudentClass/StudentClassContent';
 import StudentClassEvaluationDetails from '../pages/StudentClass/StudentClassContent/Evaluation/EvaluationDetails';
 
+import StudentClassEvaluationApplicationDetails from '../pages/StudentClass/StudentClassContent/Application/EvaluationApplicationDetails';
+import StudentClassEvaluationApplicationResults from '../pages/StudentClass/StudentClassContent/Application/EvaluationApplicationResults';
+
 const Routes = () => (
     <BrowserRouter>
         <Switch>
@@ -379,6 +382,26 @@ const Routes = () => (
                 typeUser={-1}
                 layout={MainLayout}
                 path="/student-class-details" /> */}
+
+
+
+            <RouteWithLayout
+                component={StudentClassEvaluationApplicationDetails}
+                exact
+                needToBeLogged={true}
+                typeUser={2}
+                layout={MainLayout}
+                path="/student-class/:studentClassId/applications-evaluation/details/:idApplication" />
+            <RouteWithLayout
+                component={StudentClassEvaluationApplicationResults}
+                exact
+                needToBeLogged={true}
+                typeUser={2}
+                layout={MainLayout}
+                path="/student-class/:studentClassId/applications-evaluation/results/:idApplication" />
+
+
+
             <RouteWithLayout
                 component={StudentClassListProfessor}
                 exact

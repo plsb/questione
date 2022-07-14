@@ -36,7 +36,7 @@ function StudentClassContent({ history, location, ...rest }) {
     const studentClassId = location.pathname.replace('/student-class/', '');
     
     const [refresh, setRefresh] = React.useState(1);
-    const [tabValue, setTabValue] = useState(0);
+    const [tabValue, setTabValue] = useState(parseInt(localStorage.getItem('@questione/student-class-tab')) || 0);
 
     const classes = useStyles();
 
@@ -79,6 +79,7 @@ function StudentClassContent({ history, location, ...rest }) {
     }
 
     const handleChangeTab = (event, newValue) => {
+        localStorage.setItem('@questione/student-class-tab', newValue);
         setTabValue(newValue);
     };
 

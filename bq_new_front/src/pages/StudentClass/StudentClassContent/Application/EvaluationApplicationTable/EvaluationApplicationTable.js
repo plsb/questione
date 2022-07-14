@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const EvaluationApplicationTable = props => {
-  const { className, history } = props;
+  const { className, history, studentClassId } = props;
 
   const [evaluationsApplications, setEvaluationsApplications] = useState(null);
 
@@ -71,7 +71,7 @@ const EvaluationApplicationTable = props => {
 
   async function loadEvaluationsApplications(page){
     try {
-      let url = 'evaluation/list-applications?page='+page;
+      let url = `class/list-applications/${studentClassId}?page=${page}`;
       if(searchText != ''){
         url += '&description='+searchText;
       }
@@ -151,7 +151,7 @@ const EvaluationApplicationTable = props => {
                         <Table>
                           <TableBody>
                             {evaluationsApplications.map(application => (
-                                <EvaluationApplicationCard application={application} key={application.id} />  
+                                <EvaluationApplicationCard application={application} key={application.id} studentClassId={studentClassId} />  
                             ))}
                           </TableBody>
                         </Table>
