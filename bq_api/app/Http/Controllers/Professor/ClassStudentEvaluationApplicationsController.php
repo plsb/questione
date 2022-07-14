@@ -42,11 +42,12 @@ class ClassStudentEvaluationApplicationsController extends Controller
 
     ];
 
-    public function index(Request $request)
+    public function index(Request $request, int $idclass)
     {
         $user = auth('api')->user();
 
         $evaluations = Evaluation::where('fk_user_id', '=', $user->id)
+            ->where('fk_class_id', '=', $idclass)
             ->where('practice', 0)
             ->whereNotNull('fk_class_id')
             ->get();

@@ -102,7 +102,7 @@ Route::group(['prefix' => 'class'], function (){
     Route::get('/evaluation/show/{evaluation}', 'Professor\EvaluationController@show')->name('class.evaluation.show');
     Route::get('/evaluation/show/questions/{evaluation}', 'Professor\EvaluationController@showQuestions')->name('class.evaluation.showQuestions');
     //aplications
-    Route::get('/list-applications/', 'Professor\ClassStudentEvaluationApplicationsController@index')->name('evaluationApplication.index');
+    Route::get('/list-applications/{idclass}', 'Professor\ClassStudentEvaluationApplicationsController@index')->name('evaluationApplication.index');
     Route::get('/applications/show/{idApplication}', 'Professor\EvaluationApplicationsController@show')->name('evaluationApplication.show');
     Route::put('/applications/{idApplication}', 'Professor\EvaluationApplicationsController@update')->name('evaluationApplication.update');
     Route::post('/add-application/', 'Professor\EvaluationApplicationsController@store')->name('evaluationApplication.store');
