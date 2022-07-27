@@ -85,7 +85,7 @@ Route::group(['prefix' => 'class/student'], function (){
     Route::post('/', 'ClassStudentsStudent@store')->name('class.store');
     Route::delete('/{id}', 'ClassStudentsStudent@destroy')->name('class.destroy');
 
-    Route::get('/evaluations', 'ClassEvaluationsStudentsStudent@index')->name('class.index');
+    Route::get('/evaluations/{idClass}', 'ClassEvaluationsStudentsStudent@index')->name('class.index');
 
 });
 

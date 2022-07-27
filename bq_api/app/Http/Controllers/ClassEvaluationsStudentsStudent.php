@@ -25,7 +25,7 @@ class ClassEvaluationsStudentsStudent extends Controller
         $this->middleware(['jwt.auth']);
     }
 
-    public function index(Request $request)
+    public function index(Request $request, $idClass)
     {
         $user = auth('api')->user();
 
@@ -38,20 +38,34 @@ class ClassEvaluationsStudentsStudent extends Controller
             ], 202);
         }
 
-        $arrClass = array();
+        $classStudentSelected = null;
         foreach ($class_students_student as $class_s){
             //dd($enaq);
-            $arrClass[] = $class_s->fk_class_id;
+            if($idClass == $class_s->fk_class_id){
+                $classStudentSelected = $class_s;
+            }
+        }
+
+        if(!$classStudentSelected){
+            return response()->json([
+                'message' => 'Turma não encontrada.'
+            ], 202);
         }
 
         $arrEvaluations = array();
-        $evaluations = Evaluation::whereIn("fk_class_id", $arrClass)->get();
+        $evaluations = Evaluation::where("fk_class_id", $classStudentSelected->fk_class_id)->get();
         foreach ($evaluations as $evaluation_application_student){
             //dd($enaq);
             $arrEvaluations[] = $evaluation_application_student->id;
         }
 
         $applications = EvaluationApplication::whereIn("fk_evaluation_id", $arrEvaluations)->get();
+
+        if(sizeof($applications)==0){
+            return response()->json([
+                'message' => 'Avaliações não encontradas.'
+            ], 202);
+        }
 
         return response()->json($applications, 200);
     }
