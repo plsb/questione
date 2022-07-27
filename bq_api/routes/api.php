@@ -84,6 +84,9 @@ Route::group(['prefix' => 'class/student'], function (){
     Route::get('/details/{id}', 'ClassStudentsStudent@details')->name('class.details');
     Route::post('/', 'ClassStudentsStudent@store')->name('class.store');
     Route::delete('/{id}', 'ClassStudentsStudent@destroy')->name('class.destroy');
+
+    Route::get('/evaluations', 'ClassEvaluationsStudentsStudent@index')->name('class.index');
+
 });
 
 //Rotas do usuário professor
