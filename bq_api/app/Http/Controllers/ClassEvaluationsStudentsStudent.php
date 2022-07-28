@@ -53,13 +53,17 @@ class ClassEvaluationsStudentsStudent extends Controller
         }
 
         $arrEvaluations = array();
-        $evaluations = Evaluation::where("fk_class_id", $classStudentSelected->fk_class_id)->get();
+        $evaluations = Evaluation::where("fk_class_id", $classStudentSelected->fk_class_id)
+            ->get();
+
         foreach ($evaluations as $evaluation_application_student){
             //dd($enaq);
             $arrEvaluations[] = $evaluation_application_student->id;
         }
 
-        $applications = EvaluationApplication::whereIn("fk_evaluation_id", $arrEvaluations)->get();
+        $applications = EvaluationApplication::whereIn("fk_evaluation_id", $arrEvaluations)
+            ->where('status', 1)
+            ->get();
 
         if(sizeof($applications)==0){
             return response()->json([
