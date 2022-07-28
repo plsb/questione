@@ -29,14 +29,27 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import People from './People';
 import EvaluationTable from './Evaluation/EvaluationTable';
 import ApplicationTable from './Application/EvaluationApplicationTable';
+import StudentEvaluationTable from './StudentEvaluation/EvaluationTable';
+import EvaluationsResults from './EvaluationsResult/EvaluationsResultTable';
 
 import useStyles from './styles';
 
 function StudentClassContent({ history, location, ...rest }) {
     const studentClassId = location.pathname.replace('/student-class/', '');
+    const level_user = localStorage.getItem("@Questione-acess-level-user");
+
+    let initialTabValue = 0;
+
+    if (localStorage.getItem('@questione/student-class-tab')) {
+        initialTabValue = localStorage.getItem('@questione/student-class-tab');
+    } else {
+        if (level_user === '0') {
+            initialTabValue = 3;
+        }
+    }
     
     const [refresh, setRefresh] = React.useState(1);
-    const [tabValue, setTabValue] = useState(parseInt(localStorage.getItem('@questione/student-class-tab')) || 0);
+    const [tabValue, setTabValue] = useState(parseInt(initialTabValue));
 
     const classes = useStyles();
 
@@ -99,9 +112,11 @@ function StudentClassContent({ history, location, ...rest }) {
                 onChange={handleChangeTab}
                 aria-label="nav tabs example"
             >
-                <LinkTab label="Avaliações" href="/student-class/evaluations" {...a11yProps(0)} />
-                <LinkTab label="Aplicações" href="/student-class/applications" {...a11yProps(1)} />
-                <LinkTab label="Pessoas" href="#" {...a11yProps(2)} />
+                <LinkTab label="Avaliações" style={{ display: level_user === '2' ? 'block' : 'none' }} href="/student-class/evaluations" {...a11yProps(0)} />
+                <LinkTab label="Aplicações" style={{ display: level_user === '2' ? 'block' : 'none' }} href="/student-class/applications" {...a11yProps(1)} />
+                <LinkTab label="Pessoas" style={{ display: level_user === '2' ? 'block' : 'none' }} href="/student-class/peoples" {...a11yProps(2)} />
+                <LinkTab label="Avaliações" style={{ display: level_user === '0' ? 'block' : 'none' }} href="/student-class/evaluations/student" {...a11yProps(3)} />
+                <LinkTab label="Avaliações respondidas" style={{ display: level_user === '0' ? 'block' : 'none' }} href="/student-class/answed-evaluations" {...a11yProps(4)} />
             </Tabs>
 
             <TabPanel value={tabValue} index={0}>
@@ -131,6 +146,26 @@ function StudentClassContent({ history, location, ...rest }) {
                     <CardContent>
                         <div style={{ margin: '16px', marginLeft: '16px' }}>
                             <People />
+                        </div>
+                    </CardContent>
+                </Card>
+            </TabPanel>
+
+            <TabPanel value={tabValue} index={3}>
+                <Card className={classes.header}>
+                    <CardContent>
+                        <div style={{ margin: '16px', marginLeft: '16px' }}>
+                            <StudentEvaluationTable studentClassId={studentClassId} />
+                        </div>
+                    </CardContent>
+                </Card>
+            </TabPanel>
+
+            <TabPanel value={tabValue} index={4}>
+                <Card className={classes.header}>
+                    <CardContent>
+                        <div style={{ margin: '16px', marginLeft: '16px' }}>
+                            <EvaluationsResults studentClassId={studentClassId} history={history} />
                         </div>
                     </CardContent>
                 </Card>
