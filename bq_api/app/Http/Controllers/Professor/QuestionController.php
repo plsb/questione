@@ -52,7 +52,6 @@ class QuestionController extends Controller
         $object = $request->fk_object_id;
         $skill = $request->fk_skill_id;
         $keyword = $request->keyword;
-        //dd($course);
         $questions = Question::when($opcao == "S", function ($query, $opcao) {
                 //pega todas as questões do usuário logado
                 $user = auth('api')->user();
