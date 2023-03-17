@@ -70,7 +70,7 @@ class Question extends Model
 
     public function rankAvg(){
         return $this->hasMany(RankQuestion::class, 'fk_question_id')
-            ->selectRaw('ROUND(avg(rank)) as rank_avg, fk_question_id')
+            ->selectRaw('ROUND(avg(rank_question.rank)) as rank_avg, fk_question_id')
             ->groupBy('fk_question_id');
     }
 
