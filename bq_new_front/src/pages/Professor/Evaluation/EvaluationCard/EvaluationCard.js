@@ -10,7 +10,7 @@ import {
     CardContent,
     MenuItem,
     Menu, Tooltip, Chip, Dialog, AppBar, Toolbar,
-    TextField, Button
+    TextField, Button, TableCell
 } from '@material-ui/core';
 import { MoreVert, Edit } from '@material-ui/icons';
 import moment from 'moment';
@@ -52,8 +52,29 @@ const useStyles = makeStyles(() => ({
 const EvaluationCard = props => {
   const { className, history, refresh, setRefresh, evaluation, setTabValue, ...rest } = props;
   const [anchorEl, setAnchorEl] = React.useState(null);
-    const [open, setOpen] = React.useState(false);
-    const [descriptionNewApplication, setDescriptionNewApplication] = React.useState('');
+  const [open, setOpen] = React.useState(false);
+  const [descriptionNewApplication, setDescriptionNewApplication] = React.useState('');
+
+    //Inserir o campo de turma no cadastro da nova aplicação
+  const [classProfessor, setClassProfessor] = useState([{'id': '0', 'id_class' : 0, 'description': 'Selecione a turma'}]);
+  const [classProfessorSelect, setClassProfessorSelect] = useState([]);
+  const [searchText, setSearchText] = useState([0]);
+
+  const onChangeClassProfessor = (e) =>{
+    setClassProfessorSelect(e.target.value);
+    setSearchText(e.target.value)
+  }
+
+  async function loadClassProfessor(){
+    try {
+      const response = await api.get('class/classes-professor?status=1');
+      console.log('load', response.data);
+      setClassProfessor([{'id': '0', 'description': 'Todas as turmas'}, ...response.data]);
+
+    } catch (error) {
+        console.log(error);
+    }
+  }
 
   const classes = useStyles();
 
@@ -143,10 +164,16 @@ const EvaluationCard = props => {
                 toast.error('Informe uma descrição com no mínimo 05 caracteres');
                 return ;
             }
+            if(classProfessorSelect == 0){
+                setOpenNewApplication(false);
+                toast.error('Informe a turma para a aplicação');
+                return ;
+            }
             const fk_evaluation_id = evaluation.id;
             const description = descriptionNewApplication;
+            const fk_class_id = classProfessorSelect;
             const data = {
-                description, fk_evaluation_id
+                description, fk_evaluation_id, fk_class_id
             }
             const response = await api.post('evaluation/add-application', data);
             if (response.status === 202) {
@@ -180,6 +207,13 @@ const EvaluationCard = props => {
     const handleChangeDescriptionNewApplication = (e) => {
         setDescriptionNewApplication(e.target.value);
     }
+
+    useEffect(() => {
+        loadClassProfessor();
+       
+      }, []);
+
+
 
   return (
     <Card
@@ -266,6 +300,24 @@ const EvaluationCard = props => {
                 value={descriptionNewApplication}
                 className={classes.fieldsDialog}
             />
+            <TextField className={classes.textField}
+                    id="filled-select-class"
+                    select
+                    label="Turma"
+                    value={searchText ? searchText : 0}
+                    onChange={onChangeClassProfessor}
+                    helperText="Selecione a turma."
+                    variant="outlined"
+                    margin="dense"
+                   style={{width: '300px'}}>
+                  {classProfessor.map((option) => (
+                   
+                        <MenuItem key={option.id} value={option.id}>               
+                            {option.id_class+' - '+option.description}
+                        </MenuItem>
+                      
+                  ))}
+                </TextField>
             <Button
                 color="primary"
                 variant="outlined"
