@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Evaluation extends Model
 {
     protected $table = 'evaluations';
-    protected $fillable = ['id', 'description', 'practice','fk_user_id', 'fk_class_id'];
+    protected $fillable = ['id', 'description', 'practice','fk_user_id'];
     protected $hidden = [];
 
     public function questions(){
@@ -29,10 +29,6 @@ class Evaluation extends Model
 
     public function user(){
         return $this->belongsTo(User::class, 'fk_user_id');
-    }
-
-    public function class(){
-        return $this->belongsTo(ClassQuestione::class, 'fk_class_id');
     }
 
 

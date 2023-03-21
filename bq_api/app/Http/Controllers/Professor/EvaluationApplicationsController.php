@@ -14,6 +14,7 @@ use App\QuestionHasKnowledgeObject;
 use App\QuestionItem;
 use App\Skill;
 use App\User;
+use App\ClassQuestione;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Validator;
@@ -31,10 +32,13 @@ class EvaluationApplicationsController extends Controller
     private $rules = [
         'fk_evaluation_id' => 'required',
         'description' => 'required|max:300|min:5',
+        'fk_class_id' => 'required',
     ];
 
     private $messages = [
         'fk_evaluation_id.required' => 'A AVALIAÇÃO é obrigatória.',
+
+        'fk_class_id.required' => 'A TURMA DA APLICAÇÃO é obrigatória.',
 
         'description.required' => 'A DESCRIÇÃO DA APLICAÇÃO é obrigatória.',
         'description.min' => 'A DESCRIÇÃO DA APLICAÇÃO tem que ter no mínimo 04 caracteres.',
@@ -48,7 +52,6 @@ class EvaluationApplicationsController extends Controller
 
         $evaluations = Evaluation::where('fk_user_id', '=', $user->id)
             ->where('practice', 0)
-            ->whereNull('fk_class_id')
             ->get();
 
         $description = $request->description;
@@ -65,6 +68,7 @@ class EvaluationApplicationsController extends Controller
             })
             ->where('id_application', '!=', '')
             ->with('evaluation')
+            ->with('class')
             ->orderBy('id', 'DESC')
             ->paginate(10);
 
@@ -97,6 +101,24 @@ class EvaluationApplicationsController extends Controller
                 'message' => 'A avaliação pertence a um outro usuário.'
             ], 202);
         }
+
+        $class = ClassQuestione::find($request->fk_class_id);
+        if(!$class){
+            return response()->json([
+                'message' => 'A turma não foi encontrada.'
+            ], 202);
+        }
+        if($user->id != $class->fk_user_id){
+            return response()->json([
+                'message' => 'A turma pertence a um outro usuário.'
+            ], 202);
+        }
+        if($class->status == 2){
+            return response()->json([
+                'message' => 'A turma está arquivada.'
+            ], 202);
+        }
+
 
         $evaluation_question = EvaluationHasQuestions::where('fk_evaluation_id', $evaluation->id)
                     ->get();
@@ -169,6 +191,7 @@ class EvaluationApplicationsController extends Controller
         $evaluation_application->time_to_finalize = $request->time_to_finalize;
         $evaluation_application->date_finish = $request->date_finish;
         $evaluation_application->time_finish = $request->time_finish;
+        $evaluation_application->fk_class_id = $request->fk_class_id;
         $evaluation_application->status = 0;
         $evaluation_application->save();
 

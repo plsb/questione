@@ -82,7 +82,7 @@ class Question extends Model
     }
 
     public function difficultyByUserActive(){
-        $user = auth('api')->user();
+       2 $user = auth('api')->user();
         $difficulty = $this->hasMany(DifficultyQuestion::class, 'fk_question_id')
             ->where('fk_user_id', [$user->id]);
         return $difficulty;

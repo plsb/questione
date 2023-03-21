@@ -74,7 +74,7 @@ class ClassEvaluationsStudentsStudent extends Controller
                 'message' => 'Turma não encontrada.'
             ], 202);
         }
-        
+
         $evaluations = Evaluation::where("fk_class_id", $idClass)
             ->select('id')
             ->get();

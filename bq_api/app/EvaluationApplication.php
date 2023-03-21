@@ -11,7 +11,7 @@ class EvaluationApplication extends Model
         'random_questions', 'show_results', 'date_start', 'time_start', 'time_to_finalize',
         'date_finish', 'time_finish', 'date_release_results', 'time_release_results',
         'public_results', 'can_see_students',
-        'release_preview_question','created_at'];
+        'release_preview_question','created_at', 'fk_class_id'];
     protected $hidden = [];
 
     protected $dates = [
@@ -53,5 +53,9 @@ class EvaluationApplication extends Model
     public function headAnswer(){
         return $this->hasOne(AnswersHeadEvaluation::class,
             'fk_application_evaluation_id');
+    }
+
+    public function class(){
+        return $this->belongsTo(ClassQuestione::class, 'fk_class_id');
     }
 }
