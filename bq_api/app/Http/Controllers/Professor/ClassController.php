@@ -275,5 +275,23 @@ class ClassController extends Controller
 
         return response()->json($arr, 200);
     }
+    public function classesProfessor(Request $request){
+
+        if(!$request->status){
+            return response()->json([
+                'message' => 'Informe o status: (1)Ativa ou (2)Arquivada.'
+            ], 202);
+        }
+
+        $user = auth('api')->user();
+
+        $classes = ClassQuestione::where('fk_user_id',$user->id)
+            ->where('status', $request->status)
+            ->orderBy('created_at','DESC')
+            ->with('user')
+            ->with('course')->get();
+
+        return response()->json($classes, 200);
+    }
 
 }

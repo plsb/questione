@@ -96,6 +96,7 @@ Route::group(['prefix' => 'class'], function (){
     Route::get('/', 'Professor\ClassController@index')->name('class.index');
     Route::post('/', 'Professor\ClassController@store')->name('class.store');
     Route::get('/show/{class}', 'Professor\ClassController@show')->name('class.show');
+    Route::get('/classes-professor', 'Professor\ClassController@classesProfessor')->name('class.classes-professor');
     Route::put('/{class}', 'Professor\ClassController@update')->name('class.update');
     //Route::delete('/{class}', 'Professor\ClassController@destroy')->name('class.destroy');
     Route::put('/change-status/{class}', 'Professor\ClassController@changeStatus')->name('class.changeStatus');
