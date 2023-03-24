@@ -228,6 +228,7 @@ class ClassController extends Controller
 
     public function changeStatus($id, Request $request)
     {
+        //ativa e inativa a turma
         $user = auth('api')->user();
         $class = ClassQuestione::find($id);
 
@@ -260,6 +261,7 @@ class ClassController extends Controller
 
     public function courses(Request $request)
     {
+        //traz os cursos que o professor tem permissão
         $user = auth('api')->user();
 
         $cp = CourseProfessor::where('fk_user_id',$user->id)
@@ -276,7 +278,7 @@ class ClassController extends Controller
         return response()->json($arr, 200);
     }
     public function classesProfessor(Request $request){
-
+        //traz as classe que o professor tem cadastradas
         if(!$request->status){
             return response()->json([
                 'message' => 'Informe o status: (1)Ativa ou (2)Arquivada.'

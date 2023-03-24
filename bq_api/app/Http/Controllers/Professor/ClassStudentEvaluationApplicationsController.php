@@ -46,20 +46,9 @@ class ClassStudentEvaluationApplicationsController extends Controller
     {
         $user = auth('api')->user();
 
-        $evaluations = Evaluation::where('fk_user_id', '=', $user->id)
-            ->where('fk_class_id', '=', $idclass)
-            ->where('practice', 0)
-            ->whereNotNull('fk_class_id')
-            ->get();
-
         $description = $request->description;
 
-        $arr = array();
-        foreach ($evaluations as $ev){
-            //dd($enaq);
-            $arr[] = $ev->id;
-        }
-        $evaliation_application = EvaluationApplication::whereIn('fk_evaluation_id',$arr)
+        $evaliation_application = EvaluationApplication::where('fk_class_id',$idclass)
             ->when($description, function ($query) use ($description) {
                 return $query->where('description', 'like','%'.$description.'%')
                             ->orWhere('id_application', $description);

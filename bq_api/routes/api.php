@@ -91,34 +91,35 @@ Route::group(['prefix' => 'class/student'], function (){
 });
 
 //Rotas do usuário professor
-Route::group(['prefix' => 'class'], function (){
+Route::group(['prefix' => 'class/professor'], function (){
     Route::get('/courses', 'Professor\ClassController@courses')->name('class.index');
     Route::get('/', 'Professor\ClassController@index')->name('class.index');
     Route::post('/', 'Professor\ClassController@store')->name('class.store');
     Route::get('/show/{class}', 'Professor\ClassController@show')->name('class.show');
     Route::get('/classes-professor', 'Professor\ClassController@classesProfessor')->name('class.classes-professor');
     Route::put('/{class}', 'Professor\ClassController@update')->name('class.update');
-    //Route::delete('/{class}', 'Professor\ClassController@destroy')->name('class.destroy');
     Route::put('/change-status/{class}', 'Professor\ClassController@changeStatus')->name('class.changeStatus');
+    //Route::delete('/{class}', 'Professor\ClassController@destroy')->name('class.destroy');
     //evaluations
-    Route::get('/evaluation', 'Professor\ClassStudentsEvaluationController@index')->name('class.evaluation.index');
+   /* Route::get('/evaluation', 'Professor\ClassStudentsEvaluationController@index')->name('class.evaluation.index');
     Route::post('/evaluation', 'Professor\ClassStudentsEvaluationController@store')->name('class.evaluation.store');
     Route::put('/evaluation/{class}', 'Professor\ClassStudentsEvaluationController@update')->name('class.evaluation.update');
     Route::get('/evaluation/show/{evaluation}', 'Professor\EvaluationController@show')->name('class.evaluation.show');
     Route::get('/evaluation/show/questions/{evaluation}', 'Professor\EvaluationController@showQuestions')->name('class.evaluation.showQuestions');
+   */
     //aplications
-    Route::get('/list-applications/{idclass}', 'Professor\ClassStudentEvaluationApplicationsController@index')->name('evaluationApplication.index');
-    Route::get('/applications/show/{idApplication}', 'Professor\EvaluationApplicationsController@show')->name('evaluationApplication.show');
+    Route::get('/list-applications/{idclass}', 'Professor\ClassStudentEvaluationApplicationsController@index')->name('classEvaluationApplication.index');
+    /*Route::get('/applications/show/{idApplication}', 'Professor\EvaluationApplicationsController@show')->name('evaluationApplication.show');
     Route::put('/applications/{idApplication}', 'Professor\EvaluationApplicationsController@update')->name('evaluationApplication.update');
     Route::post('/add-application/', 'Professor\EvaluationApplicationsController@store')->name('evaluationApplication.store');
     Route::put('/change-status-application/{idApplication}', 'Professor\EvaluationApplicationsController@changeStatus')->name('evaluationApplication.changeStatus');
-
+    */
 });
 
-Route::group(['prefix' => 'class/professor'], function (){
+/*Route::group(['prefix' => 'class/professor'], function (){
     Route::get('/', 'Professor\ClassStudentsProfessor@index')->name('class.index');
     //Route::post('/', 'ClassStudentsStudent@store')->name('class.store');
-});
+});*/
 
 Route::group(['prefix' => 'question'], function (){
     Route::get('/', 'Professor\QuestionController@index')->name('question.index');
