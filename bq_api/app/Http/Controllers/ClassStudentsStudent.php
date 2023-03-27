@@ -137,7 +137,7 @@ class ClassStudentsStudent extends Controller
             ->with('user')
             ->get();
 
-        $arr = array();
+        //$arr = array();
         $students = array();
         foreach ($class_students as $class_s){
             $student = (object)[
@@ -156,10 +156,13 @@ class ClassStudentsStudent extends Controller
             'id' => $this->iniciais($class_questione->user->name),
         ];
         sort($students);
-        $arr[0] = $professor;
-        $arr[1] = $students;
 
-        sort($arr);
+        $arr = (object)[
+            'professor' => $professor,
+            'students' => $students,
+        ];
+
+        //sort($arr);
 
         //$object = (object) $arr;
 
