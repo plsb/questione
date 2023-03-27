@@ -133,25 +133,30 @@ class ClassStudentsStudent extends Controller
 
         $user = auth('api')->user();
 
-        /*$class_students_student = ClassStudents::where('fk_user_id',$user->id)
-            ->where('fk_class_id', $class_verify->id)
-            ->get();
-
-        if(sizeof($class_students_student)==0){
-            return response()->json([
-                'message' => 'O usuário não está cadastrado na turma informada.'
-            ], 202);
-        }*/
-
         $class_students = ClassStudents::where('fk_class_id', $class_verify->id)
             ->with('user')
             ->get();
 
         $arr = array();
+        $students = array();
         foreach ($class_students as $class_s){
-            //dd($enaq);
-            $arr[] = $class_s->user->name;
+            $student = (object)[
+                'name' => $class_s->user->name,
+                'id' => $this->iniciais($class_s->user->name),
+            ];
+            $students[] = $student;
         }
+
+        $class_questione = ClassQuestione::where('id', $class_verify->id)
+            ->with('user')
+            ->first();
+
+        $professor = (object)[
+            'name' => $class_questione->user->name,
+            'id' => $this->iniciais($class_questione->user->name),
+        ];
+        $arr[0] = $professor;
+        $arr[1] = $students;
 
         sort($arr);
 
@@ -189,5 +194,17 @@ class ClassStudentsStudent extends Controller
         ], 200);
     }
 
+    public function iniciais($nome){
+        $nome = preg_split("/((de|da|do|dos|das)?)[\s,_-]+/", $nome);
+        $iniciais = "";
+        foreach($nome as $n)
+        {
+            if (strlen($n) > 0)
+            {
+                $iniciais .= $n[0];
+            }
+        }
+        return substr($iniciais, 0, 2);
+    }
 
 }

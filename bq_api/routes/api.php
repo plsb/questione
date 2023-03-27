@@ -80,13 +80,16 @@ Route::group(['prefix' => 'type-of-evaluation'], function (){
 });
 
 Route::group(['prefix' => 'class/student'], function (){
-    Route::get('/', 'ClassStudentsStudent@index')->name('class.index');
+    Route::get('/details/{id}', 'ClassStudentsStudent@details')->name('class.details');
+    //Route::get('/list-persons/{class}', 'ClassStudentsStudent@listPersons')->name('class.list-persons');
+    /*Route::get('/', 'ClassStudentsStudent@index')->name('class.index');
     Route::get('/details/{id}', 'ClassStudentsStudent@details')->name('class.details');
     Route::post('/', 'ClassStudentsStudent@store')->name('class.store');
     Route::delete('/{id}', 'ClassStudentsStudent@destroy')->name('class.destroy');
 
     Route::get('/evaluations/{idClass}', 'ClassEvaluationsStudentsStudent@index')->name('class.evaluations.student.index');
     Route::get('/evaluations/answered/{idClass}', 'ClassEvaluationsStudentsStudent@evaluations')->name('class.evaluations.answered.evaluations');
+    */
 
 });
 
