@@ -155,6 +155,7 @@ class ClassStudentsStudent extends Controller
             'name' => $class_questione->user->name,
             'id' => $this->iniciais($class_questione->user->name),
         ];
+        sort($students);
         $arr[0] = $professor;
         $arr[1] = $students;
 
