@@ -56,7 +56,7 @@ class ClassStudentEvaluationApplicationsController extends Controller
             ->where('id_application', '!=', '')
             ->with('evaluation')
             ->orderBy('id', 'DESC')
-            ->paginate(10);
+            ->get();
 
         return response()->json($evaliation_application, 200);
     }
