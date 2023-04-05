@@ -117,6 +117,8 @@ Route::group(['prefix' => 'class/professor'], function (){
     Route::post('/add-application/', 'Professor\EvaluationApplicationsController@store')->name('evaluationApplication.store');
     Route::put('/change-status-application/{idApplication}', 'Professor\EvaluationApplicationsController@changeStatus')->name('evaluationApplication.changeStatus');
     */
+    //visão geral
+    Route::get('/overview/{idclass}', 'Professor\ClassStudentEvaluationApplicationsController@overview')->name('classEvaluationApplication.overview');
 });
 
 /*Route::group(['prefix' => 'class/professor'], function (){

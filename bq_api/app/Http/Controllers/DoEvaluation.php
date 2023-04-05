@@ -65,6 +65,7 @@ class DoEvaluation extends Controller
     }
 
     public function startEvaluation($idApplication){
+
         $user = auth('api')->user();
 
         $application = EvaluationApplication::where('id_application', $idApplication)->first();
@@ -141,11 +142,14 @@ class DoEvaluation extends Controller
            }
 
         } else {
+
             //verifica se o professor pre detemrinou uma data e horário específico para iniciar a avaliação
             if($application->date_start){
+
                 //verifica se a data atual é igual a data de iniciar a avaliação
                 if($application->date_start == $dateNow){
                     //verifica se tem hora inicial
+
                     if($application->time_start){
                         //pega hora atual
                         $timeStartedEvaluationStarted = new \DateTime(date('H:i'));
@@ -174,7 +178,9 @@ class DoEvaluation extends Controller
                             ], 202);
                         }
                     }
+
                 } else {
+
                     $dateCanStart = new \DateTime($application->date_start);
                     return response()->json([
                         'message' => 'A avaliação não pode ser iniciada. '.
@@ -193,6 +199,7 @@ class DoEvaluation extends Controller
             $head_answer->save();
 
         }
+
         if($application->date_finish){ //verifica se existe date_finish
             //verifica se a data de finalizar é menor que a atual
             if($application->date_finish <= $dateNow){
@@ -239,14 +246,18 @@ class DoEvaluation extends Controller
 
         //verifica se a aplicação possui opção de questões aleatórias
         if($application->random_questions == 1) {
+
             $answers = AnswersEvaluation::where('fk_answers_head_id', $answerHead->id)
                 ->inRandomOrder()
                 ->with('evaluationQuestionWithoutCorrect')
                 ->get();
         } else {
+
             $answers = AnswersEvaluation::where('fk_answers_head_id', $answerHead->id)
                 ->with('evaluationQuestionWithoutCorrect')
                 ->get();
+            
+
         }
 
         $date_time_to_finalized = null;
