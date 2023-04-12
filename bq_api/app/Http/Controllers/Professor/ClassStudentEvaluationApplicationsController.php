@@ -127,7 +127,7 @@ class ClassStudentEvaluationApplicationsController extends Controller
                         'total_correct' => 0,
                         'total_questions_evaluation' => $totalQuestionEvaluation,
                         'porcentage_correct' => 0,
-                        'make_evaluation' => 'false',
+                        'created_at' => null,
                     ];
                     $resultsEvaluation[] = $evaluation_answer;
                     continue;
@@ -160,7 +160,7 @@ class ClassStudentEvaluationApplicationsController extends Controller
                         'total_correct' => $totalCorrect,
                         'total_questions_evaluation' => $totalQuestionEvaluation,
                         'porcentage_correct' => round(($totalCorrect/$totalQuestionEvaluation)*100, 2),
-                        'make_evaluation' => 'true',
+                        'created_at' => $answer_head->created_at,
                     ];
 
                 }
