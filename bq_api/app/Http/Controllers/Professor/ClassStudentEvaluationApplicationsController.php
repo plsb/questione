@@ -128,6 +128,7 @@ class ClassStudentEvaluationApplicationsController extends Controller
                         'total_questions_evaluation' => $totalQuestionEvaluation,
                         'porcentage_correct' => 0,
                         'created_at' => null,
+                        'finalized_at' => null
                     ];
                     $resultsEvaluation[] = $evaluation_answer;
                     continue;
