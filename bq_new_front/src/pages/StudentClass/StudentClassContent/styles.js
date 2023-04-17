@@ -7,7 +7,9 @@ const useStyles = makeStyles({
     contentHeader: {
         padding: '8px 0px',
         marginLeft: '16px'
-    }
+    },
+    
 });
+
 
 export default useStyles;

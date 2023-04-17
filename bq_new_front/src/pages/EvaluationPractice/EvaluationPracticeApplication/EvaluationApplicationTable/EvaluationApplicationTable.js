@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import {
   Card,
+  MenuItem,
   Dialog,
   AppBar,
   Toolbar,
@@ -90,6 +91,25 @@ const EvaluationApplicationTable = props => {
   const [open, setOpen] = React.useState(false);
   const [descriptionNewApplication, setDescriptionNewApplication] = React.useState('');
 
+  //Inserir o campo de turma no cadastro da nova aplicação
+  const [classProfessor, setClassProfessor] = useState([{'id': '0', 'description': 'Todos as turmas'}]);
+  const [classProfessorSelect, setClassProfessorSelect] = useState([]);
+
+  const onChangeClassProfessor = (e) =>{
+    setClassProfessorSelect(e.target.value);
+  //  searchText[2] = {"fk_class_id" : e.target.value};
+  }
+
+  async function loadClassProfessor(){
+    try {
+      const response = await api.get('classes-professor?status=1');
+      setClassProfessor([{'id': '0', 'description': 'Todos as turmas'}, ...response.data]);
+
+    } catch (error) {
+
+    }
+  }
+
   async function loadEvaluationsApplications(page){
     try {
       let url = `evaluation/practice/list-applications/${idApplication}?page=+${page}`;
@@ -110,6 +130,7 @@ const EvaluationApplicationTable = props => {
 
   useEffect(() => {
     loadEvaluationsApplications(1);
+    loadClassProfessor();
   }, []);
 
   const updateSearch = (e) => {
@@ -263,6 +284,24 @@ const EvaluationApplicationTable = props => {
                     value={descriptionNewApplication}
                     className={classes.fieldsDialog}
                 />
+
+                <TextField className={classes.textField}
+                    id="filled-select-class"
+                    select
+                    label="Turma"
+                    value={searchText[1] ? searchText[1].fk_course_id : 0}
+                    onChange={onChangeClassProfessor}
+                    helperText="Selecione a turma."
+                    variant="outlined"
+                    margin="dense"
+                   style={{width: '300px'}}>
+                  {classProfessor.map((option) => (
+                      <MenuItem key={option.id} value={option.id}>
+                        {option.description}
+                      </MenuItem>
+                  ))}
+                </TextField>
+
                 <Button
                     color="primary"
                     variant="outlined"

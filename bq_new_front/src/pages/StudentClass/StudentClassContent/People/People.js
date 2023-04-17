@@ -4,10 +4,19 @@ import { makeStyles } from '@material-ui/styles';
 import {
   Card,
   CardContent,
-  Typography
+  Typography,
+  Avatar, 
+  List, 
+  ListItem,
+  Divider,
+  ListItemAvatar, 
+  ListItemButton, 
+  ListItemText
 } from '@material-ui/core';
 import api from '../../../../services/api';
 import PropTypes from "prop-types";
+//import { deepOrange, deepPurple } from '@material-ui/styles';
+//import { SketchPicker } from 'react-color';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,8 +34,13 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center'
   },
-  avatar: {
-    marginRight: theme.spacing(2)
+  avatarStudent: {
+    marginRight: theme.spacing(2),
+    background: '#1769aa'
+  },
+  avatarProfessor: {
+    marginRight: theme.spacing(2),
+    background: '#2196f3'
   },
   headTable: {
     fontWeight: "bold"
@@ -54,7 +68,8 @@ const People = props => {
   const pathname = window.location.pathname;
   const studentClassId = pathname.substring(pathname.lastIndexOf('/') + 1);
 
-  const [people, setPeople] = useState([]);
+  const [professor, setProfessor] = useState([]);
+  const [students, setStudents] = useState([]);
 
   const classes = useStyles();
 
@@ -62,12 +77,14 @@ const People = props => {
 
   async function loadPeoples(page){
     try {
-      let url = `class/student/details/${studentClassId}?&page=${page}`;
+      let url = `class/student/details/${studentClassId}`;
       const response = await api.get(url);
       if(response.status == 200) {
-        setPeople(response.data);
+        setProfessor(response.data.professor);
+        setStudents(response.data.students);
       } else {
-        setPeople([]);
+        setProfessor([]);
+        setStudents([]);
       }
 
     } catch (error) {
@@ -79,19 +96,53 @@ const People = props => {
     loadPeoples(1);
   }, [refresh]);
 
+
+
   return (
       <div className={classes.root}>
-            <Typography variant="h5" color="textSecondary" component="h3" style={{ marginBottom: '32px' }}>Alguma descrição aqui</Typography>
+            <Typography variant="h4" color="textSecondary" component="h3" style={{ marginBottom: '10px' }}>Professores </Typography>
+            <Divider />
             <div className={classes.content}>
-                {people.map(item => (
-                    <Card className={clsx(classes.root, className)}>
-                        <CardContent>
-                            <Typography variant="h5" color="textSecondary" component="h3">{item}</Typography>
-                        </CardContent>
-                    </Card>
-                ))}
+              <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                       { professor ? 
+                            <ListItem>
+                              <ListItemAvatar>
+                                <Avatar className={clsx(classes.avatarProfessor, className)}>{professor.id}</Avatar>
+                              </ListItemAvatar>
+                              <ListItemText>{professor.name}</ListItemText>
+                            </ListItem> 
+                          : null }    
+              </List>
+          </div>
+
+
+          <div className={classes.content}>
+          <Typography variant="h4" color="textSecondary" component="h3" style={{ marginTop: '50px', marginBottom: '10px' }}>Alunos ({students.length}) </Typography>
+          <Divider />
+              <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                       { students ? 
+                        
+                          students.map(std => (
+                            <ListItem>
+                              <ListItemAvatar >
+                                <Avatar className={clsx(classes.avatarStudent, className)}>{std.id}</Avatar>
+                              </ListItemAvatar>
+                              <ListItemText>{std.name}</ListItemText>
+              
+                            </ListItem>
+                          )) 
+                        
+                        : null}
+                       
+                       
+                       
+                         
+              </List>
             </div>
+           
+
       </div>
+
   );
 };
 

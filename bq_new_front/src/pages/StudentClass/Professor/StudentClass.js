@@ -46,7 +46,7 @@ function StudentClass({ history }) {
 
     const getStudentClasses = async (page, status, description = '') => {
         try {
-            const response = await api.get(`class/`, {
+            const response = await api.get(`class/professor`, {
                 params: {
                     status,
                     page,
@@ -60,6 +60,7 @@ function StudentClass({ history }) {
             } else {
                 setStudentClasses([]);
             }
+            
         } catch (e) {
 
         }

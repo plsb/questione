@@ -161,15 +161,10 @@ const EvaluationTable = props => {
 
   return (
     <div className={classes.root}>
-      <Tabs
-        variant="fullWidth"
-        value={tabValue}
-        onChange={handleChangeTab}
-        aria-label="nav tabs example"
-      >
-        <LinkTab label="Avaliações" href="/drafts" {...a11yProps(0)} />
-        <LinkTab label="Aplicações" href="#" {...a11yProps(1)} />
-      </Tabs>
+      
+       {/* <LinkTab label="Avaliações" href="/drafts" {...a11yProps(0)} /> */}
+       {/* <LinkTab label="Aplicações" href="#" {...a11yProps(1)} /> */}
+
       <TabPanel value={tabValue} index={0}>
         <UsersToolbar
           onChangeSearch={updateSearch.bind(this)}

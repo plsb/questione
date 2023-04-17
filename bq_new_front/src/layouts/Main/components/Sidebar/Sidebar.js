@@ -8,7 +8,7 @@ import ClassIcon from '@material-ui/icons/Class';
 import ExtensionIcon from '@material-ui/icons/Extension';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 // import PeopleIcon from '@material-ui/icons/People';
-import { Note, Ballot, EmojiObjects, AccountBox, Assignment, Assessment } from '@material-ui/icons';
+import { Note, Ballot, EmojiObjects, AccountBox, Assessment, Group } from '@material-ui/icons';
 
 import { Profile, SidebarNavAdm } from './components';
 // import {logout} from "../../../../services/auth";
@@ -99,7 +99,7 @@ const Sidebar = props => {
     {
       title: 'Turmas',
       href: '/student-class/professor',
-      icon: <ExtensionIcon />,
+      icon: <Group />,
       className: 'practice',
     },
     {
@@ -126,7 +126,7 @@ const Sidebar = props => {
     {
       title: 'Turmas',
       href: '/student-class/student',
-      icon: <ExtensionIcon />,
+      icon: <Group />,
       className: 'practice',
     },
   ];

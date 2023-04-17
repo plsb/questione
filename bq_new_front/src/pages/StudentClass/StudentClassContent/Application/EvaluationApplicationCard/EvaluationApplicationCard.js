@@ -61,7 +61,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const EvaluationApplicationCard = props => {
-  const { className, history, application, studentClassId, ...rest } = props;
+  const { className, history, application, studentClassId, position, ...rest } = props;
   const [state, setState] = useState(0);
   const [evaluationApplication, setEvaluationApplication] = useState({});
 
@@ -131,7 +131,7 @@ const EvaluationApplicationCard = props => {
                               )}
 
                               {evaluationApplication.evaluation.status == 1 ?
-                              <Tooltip title="Habilite a questão para aplicações">
+                              <Tooltip title="Habilite o simulado">
                                   <Switch
                                       checked={evaluationApplication.status}
                                       onChange={onClickOpenDialogEnableApplication}
@@ -159,13 +159,13 @@ const EvaluationApplicationCard = props => {
 
                           </div>
                       }
-                      title={''}/>
+                      title={'Simulado: '+position}/>
 
                     <CardContent>
 
-                      <Typography variant="button" color="textSecondary" component="h2">
-                          {'Código: '+evaluationApplication.id_application }
-                      </Typography>
+                      {/*<Typography variant="button" color="textSecondary" component="h2">
+                          {'Simulado: '+position }
+                    </Typography>*/}
                       <Typography variant="h5" color="textSecondary" component="h2">
                           {'Descrição da aplicação: '+evaluationApplication.description }
                       </Typography>
@@ -218,7 +218,7 @@ const EvaluationApplicationCard = props => {
 };
 
 EvaluationApplicationCard.propTypes = {
-  className: PropTypes.string,
+    className: PropTypes.string,
     application: PropTypes.object,
     history: PropTypes.object
 };

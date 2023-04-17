@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 // import { toast } from 'react-toastify';
 
-// import api from "../../../services/api";
+import api from "../../../services/api";
 
 import {
     Card,
-    // CardHeader,
+    CardHeader,
+    Divider,
     // CardActions,
     // Button,
     // Menu,
@@ -21,10 +22,15 @@ import {
     Box,
     Typography,
     IconButton,
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+
     // TextField
 } from '@material-ui/core';
 
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import People from './People';
 import EvaluationTable from './Evaluation/EvaluationTable';
@@ -33,6 +39,9 @@ import StudentEvaluationTable from './StudentEvaluation/EvaluationTable';
 import EvaluationsResults from './EvaluationsResult/EvaluationsResultTable';
 
 import useStyles from './styles';
+import ResultsAplication from '../Professor/ResultsAplication/ResultsAplication';
+
+
 
 function StudentClassContent({ history, location, ...rest }) {
     const studentClassId = location.pathname.replace('/student-class/', '');
@@ -52,6 +61,25 @@ function StudentClassContent({ history, location, ...rest }) {
     const [tabValue, setTabValue] = useState(parseInt(initialTabValue));
 
     const classes = useStyles();
+
+    const [classProfessor, setClassProfessor] = useState(null);
+
+    async function loadClassProfessor(){
+        try {
+          let url = `class/professor/show/${studentClassId}`;
+          const response = await api.get(url);
+          
+          if(response.status == 200) {  
+            setClassProfessor(response.data[0]);
+          } else {
+            setClassProfessor([]);
+          }
+          
+        } catch (error) {
+          
+        }
+      }
+
 
     const a11yProps = (index) => {
         return {
@@ -96,7 +124,11 @@ function StudentClassContent({ history, location, ...rest }) {
         setTabValue(newValue);
     };
 
-    useEffect(() => {}, [refresh]);
+    useEffect(() => {
+        loadClassProfessor();
+        if(classProfessor)
+            console.log('class', classProfessor);
+    }, []);
 
     return (
         <div className={classes.root}>
@@ -105,6 +137,38 @@ function StudentClassContent({ history, location, ...rest }) {
                     <ArrowBackIcon />
                 </IconButton>
             </div>
+            
+
+            {/*<CardHeader
+                subheader=""
+                title="Turma: " />*/}
+            <Card className={classes.root}>
+                <CardHeader
+                avatar={
+                    <div>
+                        {
+                            classProfessor ?
+                                <div >
+                                    <Typography variant="button" color="textSecondary" component="p" className={classes.title}>{'Turma '}</Typography>
+                                    <Typography variant="button" color="textSecondary" component="p">
+                                        {'Responsável: '+classProfessor.user.name}
+                                    </Typography>
+                                    <Typography variant="button" color="textSecondary" component="p">
+                                        {'Código: '+classProfessor.id_class}
+                                    </Typography>
+                                    <Typography variant="button" color="textSecondary" component="p">
+                                        {'Descrição: '+classProfessor.description}
+                                    </Typography>
+                                </div>
+                                :
+                                null
+                        }
+                    
+                    </div>
+                }
+                />
+            </Card>
+            <Divider />
 
             <Tabs
                 variant="fullWidth"
@@ -112,14 +176,15 @@ function StudentClassContent({ history, location, ...rest }) {
                 onChange={handleChangeTab}
                 aria-label="nav tabs example"
             >
-                <LinkTab label="Avaliações" style={{ display: level_user === '2' ? 'block' : 'none' }} href="/student-class/evaluations" {...a11yProps(0)} />
-                <LinkTab label="Aplicações" style={{ display: level_user === '2' ? 'block' : 'none' }} href="/student-class/applications" {...a11yProps(1)} />
-                <LinkTab label="Pessoas" style={{ display: level_user === '2' ? 'block' : 'none' }} href="/student-class/peoples" {...a11yProps(2)} />
-                <LinkTab label="Avaliações" style={{ display: level_user === '0' ? 'block' : 'none' }} href="/student-class/evaluations/student" {...a11yProps(3)} />
-                <LinkTab label="Avaliações respondidas" style={{ display: level_user === '0' ? 'block' : 'none' }} href="/student-class/answed-evaluations" {...a11yProps(4)} />
+               {/* <LinkTab label="Avaliações" style={{ display: level_user === '2' ? 'block' : 'none' }} href="/student-class/evaluations" {...a11yProps(0)} /> */}
+                <LinkTab label="Simulados" style={{ display: level_user === '2' ? 'block' : 'none' }} href="/student-class/applications" {...a11yProps(0)} />
+                <LinkTab label="Pessoas" style={{ display: level_user === '2' ? 'block' : 'none' }} href="/student-class/peoples" {...a11yProps(1)} />
+                <LinkTab label="Avaliações" style={{ display: level_user === '0' ? 'block' : 'none' }} href="/student-class/evaluations/student" {...a11yProps(2)} />
+                <LinkTab label="Avaliações respondidas" style={{ display: level_user === '0' ? 'block' : 'none' }} href="/student-class/answed-evaluations" {...a11yProps(3)} />
+                <LinkTab label="Resultados" style={{ display: level_user === '2' ? 'block' : 'none' }} href="/student-class/applications" {...a11yProps(4)} />
             </Tabs>
 
-            <TabPanel value={tabValue} index={0}>
+            {/*<TabPanel value={tabValue} index={0}>
                 <Card
                     className={classes.table}
                 >
@@ -129,9 +194,9 @@ function StudentClassContent({ history, location, ...rest }) {
                         </div>
                     </CardContent>
                 </Card>
-            </TabPanel>
+    </TabPanel> */}
 
-            <TabPanel value={tabValue} index={1}>
+            <TabPanel value={tabValue} index={0}>
                 <Card className={classes.header}>
                     <CardContent>
                         <div style={{ margin: '16px', marginLeft: '16px' }}>
@@ -141,7 +206,7 @@ function StudentClassContent({ history, location, ...rest }) {
                 </Card>
             </TabPanel>
 
-            <TabPanel value={tabValue} index={2}>
+            <TabPanel value={tabValue} index={1}>
                 <Card className={classes.header}>
                     <CardContent>
                         <div style={{ margin: '16px', marginLeft: '16px' }}>
@@ -151,7 +216,7 @@ function StudentClassContent({ history, location, ...rest }) {
                 </Card>
             </TabPanel>
 
-            <TabPanel value={tabValue} index={3}>
+            <TabPanel value={tabValue} index={2}>
                 <Card className={classes.header}>
                     <CardContent>
                         <div style={{ margin: '16px', marginLeft: '16px' }}>
@@ -161,7 +226,7 @@ function StudentClassContent({ history, location, ...rest }) {
                 </Card>
             </TabPanel>
 
-            <TabPanel value={tabValue} index={4}>
+            <TabPanel value={tabValue} index={3}>
                 <Card className={classes.header}>
                     <CardContent>
                         <div style={{ margin: '16px', marginLeft: '16px' }}>
@@ -170,6 +235,17 @@ function StudentClassContent({ history, location, ...rest }) {
                     </CardContent>
                 </Card>
             </TabPanel>
+
+            <TabPanel value={tabValue} index={4}>
+                <Card className={classes.header}>
+                    <CardContent>
+                        <div style={{ margin: '16px', marginLeft: '16px' }}>
+                            <ResultsAplication studentClassId={studentClassId}/> 
+      
+                        </div>
+                    </CardContent>
+                </Card>
+            </TabPanel> 
         </div>
     );
 }

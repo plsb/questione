@@ -56,20 +56,20 @@ const EvaluationCard = props => {
   const [descriptionNewApplication, setDescriptionNewApplication] = React.useState('');
 
     //Inserir o campo de turma no cadastro da nova aplicação
-  const [classProfessor, setClassProfessor] = useState([{'id': '0', 'id_class' : 0, 'description': 'Selecione a turma'}]);
+  const [classProfessor, setClassProfessor] = useState([]);
   const [classProfessorSelect, setClassProfessorSelect] = useState([]);
   const [searchText, setSearchText] = useState([0]);
 
   const onChangeClassProfessor = (e) =>{
+    //setClassProfessor(e.target.value);
     setClassProfessorSelect(e.target.value);
     setSearchText(e.target.value)
   }
 
   async function loadClassProfessor(){
     try {
-      const response = await api.get('class/classes-professor?status=1');
-      console.log('load', response.data);
-      setClassProfessor([{'id': '0', 'description': 'Todas as turmas'}, ...response.data]);
+      const response = await api.get('class/professor/classes-professor?status=1');
+      setClassProfessor([{'id': '0','id_class' : '00', 'description': 'Selecione a turma'}, ...response.data]);
 
     } catch (error) {
         console.log(error);
@@ -265,7 +265,7 @@ const EvaluationCard = props => {
             keepMounted
             open={Boolean(anchorEl)}
             onClose={handleClose}>
-            { evaluation.status == 1 ? <MenuItem onClick={handleNewApplication}>Nova Aplicação</MenuItem> : null}
+            { evaluation.status == 1 ? <MenuItem onClick={handleNewApplication}>Novo Simulado</MenuItem> : null}
             <MenuItem onClick={() => history.push(`/evaluation-questions/${evaluation.id}`)}>Ver questões</MenuItem>
             <MenuItem onClick={duplicate}>Duplicar</MenuItem>
             { evaluation.status == 1 ? <MenuItem onClick={() => changeStatus(2) }>Arquivar</MenuItem> : null}
@@ -286,7 +286,7 @@ const EvaluationCard = props => {
                         <CloseIcon />
                     </IconButton>
                     <Typography variant="h5" className={classes.title}>
-                        Informe a descrição para a aplicação
+                        Informe a descrição e selecione a turma para o simulado
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -306,10 +306,11 @@ const EvaluationCard = props => {
                     label="Turma"
                     value={searchText ? searchText : 0}
                     onChange={onChangeClassProfessor}
-                    helperText="Selecione a turma."
+                    helperText=""
                     variant="outlined"
                     margin="dense"
-                   style={{width: '300px'}}>
+                   style={{width: '300px'}}
+                   >
                   {classProfessor.map((option) => (
                    
                         <MenuItem key={option.id} value={option.id}>               

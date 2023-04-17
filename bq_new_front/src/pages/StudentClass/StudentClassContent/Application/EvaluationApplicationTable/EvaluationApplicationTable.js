@@ -63,32 +63,30 @@ const EvaluationApplicationTable = props => {
 
   const classes = useStyles();
 
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [page, setPage] = useState(0);
-  const [total, setTotal] = useState(0);
+  
   const [searchText, setSearchText] = useState('');
-  const [open, setOpen] = React.useState(false);
 
-  async function loadEvaluationsApplications(page){
+  async function loadEvaluationsApplications(){
     try {
-      let url = `class/list-applications/${studentClassId}?page=${page}`;
+      let url = `class/professor/list-applications/${studentClassId}`;
       if(searchText != ''){
         url += '&description='+searchText;
       }
       const response = await api.get(url);
       if(response.status == 200) {  
-        setTotal(response.data.total);
-        setEvaluationsApplications(response.data.data);
+        //setTotal(response.data.total);
+        setEvaluationsApplications(response.data);
       } else {
         setEvaluationsApplications([]);
       }
+      
     } catch (error) {
-
+      
     }
   }
 
   useEffect(() => {
-    loadEvaluationsApplications(1);
+    loadEvaluationsApplications();
   }, []);
 
   const updateSearch = (e) => {
@@ -96,18 +94,13 @@ const EvaluationApplicationTable = props => {
   }
 
   const onClickSearch = (e) => {
-    setPage(0);
     loadEvaluationsApplications(1);
   }
 
   const handlePageChange = (event, page) => {
     loadEvaluationsApplications(page+1)
-    setPage(page);
   };
 
-  const handleRowsPerPageChange = event => {
-    setRowsPerPage(event.target.value);
-  };
 
   return (
       <div className={classes.root}>
@@ -125,18 +118,7 @@ const EvaluationApplicationTable = props => {
 
                   </div>
                 }
-                action={
-                  <TablePagination
-                      component="div"
-                      count={total}
-                      onChangePage={handlePageChange}
-                      onChangeRowsPerPage={handleRowsPerPageChange}
-                      page={page}
-                      rowsPerPage={rowsPerPage}
-                      rowsPerPageOptions={[10]}
-                  />
-
-                }/>
+                />
             <CardContent>
               {evaluationsApplications == null ?
                   <LinearProgress color="secondary"    />
@@ -150,25 +132,23 @@ const EvaluationApplicationTable = props => {
                           xs={12}>
                         <Table>
                           <TableBody>
-                            {evaluationsApplications.map(application => (
-                                <EvaluationApplicationCard application={application} key={application.id} studentClassId={studentClassId} />  
-                            ))}
+                            {
+                                
+                                evaluationsApplications.map((application, i) => (
+
+                                    <EvaluationApplicationCard 
+                                          application={application} 
+                                          key={application.id} 
+                                          studentClassId={studentClassId} 
+                                          position={(evaluationsApplications.length - i)}/>  
+                                ))
+                            
+                            }
                           </TableBody>
                         </Table>
                       </Grid>
                     </Grid> }
             </CardContent>
-            <CardActions className={classes.actions}>
-              <TablePagination
-                  component="div"
-                  count={total}
-                  onChangePage={handlePageChange}
-                  onChangeRowsPerPage={handleRowsPerPageChange}
-                  page={page}
-                  rowsPerPage={rowsPerPage}
-                  rowsPerPageOptions={[10]}
-              />
-            </CardActions>
           </Card>
         </div>
       </div>

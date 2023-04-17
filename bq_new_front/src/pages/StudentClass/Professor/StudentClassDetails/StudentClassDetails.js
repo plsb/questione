@@ -123,7 +123,7 @@ const StudentClassDetails = props => {
 
     async function getCourses() {
         try {
-          const response = await api.get(`/class/courses`);
+          const response = await api.get(`/class/professor/courses`);
           if (response) {
             setCourseList(response.data);
           }
