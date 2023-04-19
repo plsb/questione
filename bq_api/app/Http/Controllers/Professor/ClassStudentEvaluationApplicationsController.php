@@ -96,7 +96,7 @@ class ClassStudentEvaluationApplicationsController extends Controller
         }
 
         $evaliation_application = EvaluationApplication::where('fk_class_id',$idclass)
-            ->orderBy('id', 'DESC')
+            ->orderBy('id', 'ASC')
             ->get();
 
         $students_class = ClassStudents::where('fk_class_id', $class->id)
