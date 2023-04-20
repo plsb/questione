@@ -167,16 +167,18 @@ class ClassController extends Controller
 
     public function show(int $id)
     {
+        $user = auth('api')->user();
+
         $class = ClassQuestione::where('id', '=', $id)
             ->with('user')
             ->with('course')
-            ->get();
-        if(sizeof($class) == 0){
+            ->first();
+
+        if(!$class){
             return response()->json([
                 'message' => 'Turma não encontrada.'
             ], 202);
         }
-        return response()->json($class, 200);
 
         if($class->fk_user_id != $user->id){
             return response()->json([

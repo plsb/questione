@@ -115,58 +115,33 @@ class ClassStudentsStudent extends Controller
     }
 
     //trazer informações (nome de professores e alunos) da turma
-    public function details($id)
+    public function show($id)
     {
-        if (!$id) {
-            return response()->json([
-                'message' => 'Informe o código da turma.'
-            ], 202);
-        }
-
-        $class_verify = ClassQuestione::where('id', $id)->first();
-
-        if (!$class_verify) {
-            return response()->json([
-                'message' => 'A Turma não foi encontrada.'
-            ], 202);
-        }
-
         $user = auth('api')->user();
 
-        $class_students = ClassStudents::where('fk_class_id', $class_verify->id)
+        $class = ClassQuestione::where('id', '=', $id)
             ->with('user')
-            ->get();
-
-        //$arr = array();
-        $students = array();
-        foreach ($class_students as $class_s){
-            $student = (object)[
-                'name' => $class_s->user->name,
-                'id' => $this->iniciais($class_s->user->name),
-            ];
-            $students[] = $student;
+            ->with('course')
+            ->first();
+        if(!$class){
+            return response()->json([
+                'message' => 'Turma não encontrada.'
+            ], 202);
         }
 
-        $class_questione = ClassQuestione::where('id', $class_verify->id)
-            ->with('user')
-            ->first();
+        $classStudent = ClassStudents::where('fk_user_id', $user->id)
+            ->where('fk_class_id', $class->id)->first();
 
-        $professor = (object)[
-            'name' => $class_questione->user->name,
-            'id' => $this->iniciais($class_questione->user->name),
-        ];
-        sort($students);
+        if(!$classStudent){
+            return response()->json([
+                'message' => 'O usuário não pertence a turma.'
+            ], 202);
+        }
 
-        $arr = (object)[
-            'professor' => $professor,
-            'students' => $students,
-        ];
+        return response()->json( $class, 200);
 
-        //sort($arr);
 
-        //$object = (object) $arr;
 
-        return response()->json($arr, 200);
     }
 
     //deleta uma turma, caso o aluno não possua dados de questionários
