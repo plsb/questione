@@ -57,6 +57,7 @@ function StudentClass({ history }) {
             if (response.status == 200) {
                 setTotal(response.data.total);
                 setStudentClasses(response.data.data);
+                console.log("verifica", response.data);
             } else {
                 setStudentClasses([]);
             }
@@ -118,7 +119,6 @@ function StudentClass({ history }) {
                 handleStatusCallback={getStudentClasses}
                 setShowRegisterDialog={setShowRegisterDialog}
             />
-
             <div className={classes.content}>
                 <Card
                     className={clsx(classes.root)}>

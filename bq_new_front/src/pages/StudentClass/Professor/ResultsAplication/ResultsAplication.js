@@ -25,7 +25,7 @@ import ResultsGeneral from './ResultsGeneral/components/ResultsGeneral';
 
 const ResultsAplication = props =>{
 
-    const { className, history, studentClassId } = props;
+    const { className, history, studentClassId, fk_class_id } = props;
 
     return(
         <div>
@@ -45,7 +45,7 @@ const ResultsAplication = props =>{
                               item
                               md={12}
                               xs={12}>
-                                <ResultsGeneral/>
+                                <ResultsGeneral studentClassId={studentClassId}/>
 
                     </Grid>
                     </Grid>

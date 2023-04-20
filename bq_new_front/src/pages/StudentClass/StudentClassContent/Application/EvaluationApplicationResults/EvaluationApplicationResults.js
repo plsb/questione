@@ -274,7 +274,11 @@ const EvaluationApplicationResults = props => {
   const [ expanded, setExpanded] = React.useState(false);
   const [ value, setValueTab] = React.useState(0);
 
+  const [classProfessor, setClassProfessor] = useState(null);
+
   const classes = useStyles();
+
+  
 
   async function findResultsSkill(id){
     try {
@@ -381,13 +385,18 @@ const EvaluationApplicationResults = props => {
           <Card className={classes.root}>
             {overviewQuestionsHead.idApplication!= null ?
               <CardContent>
-                <Typography variant="h5" color="textPrimary" component="p">
+                {/*<Typography variant="h5" color="textPrimary" component="p">
                   {'Código da aplicação: '+overviewQuestionsHead.idApplication +'.'}
-                </Typography>
+            </Typography>*/}
                 <Typography variant="h5" color="textPrimary" component="p">
-                  {'Descrição da aplicação: '+overviewQuestionsHead.description_application + '.'}
+                 {overviewQuestionsHead.class.description != null ? 
+                  'Descrição da turma: '+overviewQuestionsHead.class.description +'.' : null}
                 </Typography>
+
                 <Typography variant="h5" color="textPrimary" component="p">
+                  {'Descrição do simulado: '+overviewQuestionsHead.description_application + '.'}
+                </Typography>
+                {/*<Typography variant="h5" color="textPrimary" component="p">
                   {overviewQuestionsHead.qtdQuestions > 1 ?
                       'Esta avaliação possui '+ overviewQuestionsHead.qtdQuestions + ' questões.' :
                       'Esta avaliação possui '+ overviewQuestionsHead.qtdQuestions + ' questão.'}
@@ -397,26 +406,26 @@ const EvaluationApplicationResults = props => {
                       'Esta avaliação foi respondida por '+ overviewQuestionsHead.qtdStudents +' estudantes.' :
                       'Esta avaliação foi respondida por '+ overviewQuestionsHead.qtdStudents +' estudante.'
                       }
-                </Typography>
+                    </Typography> 
                 <Typography variant="h5" color="textPrimary" component="p">
                   { avgCorrectQuestions != 0 ?
                     avgCorrectQuestions > 1 ?
                       'Esta avaliação possui uma média de acerto igual a '+ avgCorrectQuestions + ' questões por estudante.' :
                       'Esta avaliação possui uma média de acerto igual a '+ avgCorrectQuestions + ' questão por estudante.' :
                   null}
-                </Typography>
+                </Typography> */}
                 <Typography variant="h5" color="textPrimary" component="p">
                 { overviewQuestionsHead.percentagem_geral_correct_evaluation != 0 ?
                   'A porcentagem média de questões corretas é: '+ overviewQuestionsHead.percentagem_geral_correct_evaluation+'%.' :
                   null}
                 </Typography>
-                { overviewQuestionsHead.qtdStudents > 1 && totalVarianceStudents > 0 ?
+                {/*{ overviewQuestionsHead.qtdStudents > 1 && totalVarianceStudents > 0 ?
                 <Typography variant="h5" color="textPrimary" component="p">
                   {'Alfa de Cronbach: '+
                   (overviewQuestionsHead.qtdQuestions/(overviewQuestionsHead.qtdQuestions-1) *
                       (1-(totalVarianceQuestions/totalVarianceStudents))).toFixed(3)
                       + '.'}
-                </Typography> : null }
+                </Typography> : null } */}
                 { answerStudents == null ? null :
                   !answerStudents[0] ?
                     <span className={classes.percentageRed}>SEM RESULTADO</span>

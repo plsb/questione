@@ -14,7 +14,7 @@ import moment from 'moment';
 import { toast } from 'react-toastify';
 import {withRouter} from "react-router-dom";
 import api from "../../../../../../../services/api";
-import { Edit, FormatListBulleted } from "@material-ui/icons";
+import { Edit, FormatListBulleted, TrendingUp } from "@material-ui/icons";
 import ShareIcon from '@material-ui/icons/Share';
 
 const useStyles = makeStyles(() => ({
@@ -136,7 +136,7 @@ const EvaluationApplicationCard = props => {
                                 onClick={() => results(evaluationApplication.id)}>
                                 <FormatListBulleted />
                             </IconButton>
-                        </Tooltip>
+                        </Tooltip> 
                     
                     </div>
                 }

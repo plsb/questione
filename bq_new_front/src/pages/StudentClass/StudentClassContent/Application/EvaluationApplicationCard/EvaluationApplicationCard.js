@@ -140,13 +140,13 @@ const EvaluationApplicationCard = props => {
                                       inputProps={{ 'aria-label': 'primary checkbox' }}
                                   />
                               </Tooltip> : null }
-                              <Tooltip title="Visualizar resultados">
+                              {/*<Tooltip title="Visualizar resultados 2">
                                   <IconButton
                                       aria-label="copy"
                                       onClick={() => results(evaluationApplication.id)}>
                                       <FormatListBulleted />
                                   </IconButton>
-                              </Tooltip>
+                              </Tooltip>*/}
                               {evaluationApplication.evaluation.status == 1 ?
                                   <Tooltip title="Clique para editar">
                                       <IconButton
