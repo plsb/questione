@@ -451,7 +451,6 @@ class EvaluationApplicationsController extends Controller
             ], 202);
         }
 
-
         $evaluation = Evaluation::where('id', $application->fk_evaluation_id)->first();
 
         if(!$evaluation){
@@ -729,6 +728,10 @@ class EvaluationApplicationsController extends Controller
             ], 202);
         }
 
+        $class = null;
+        if($application->fk_class_id != null) {
+            $class = ClassQuestione::where('id', $application->fk_class_id)->first();
+        }
 
         $evaluation = Evaluation::where('id', $application->fk_evaluation_id)->first();
 
@@ -935,6 +938,7 @@ class EvaluationApplicationsController extends Controller
             'application' => $application->id,
             'idApplication' => $application->id_application,
             'variance_total' => number_format($variance_total,3),
+            'class' => $class,
             'description_application' => $application->description,
             'description_evaluation' => $evaluation->description,
             'percentagem_geral_correct_evaluation' => number_format($percentagemGeralEvaluationCorrect, 2),
