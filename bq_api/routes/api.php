@@ -80,6 +80,7 @@ Route::group(['prefix' => 'type-of-evaluation'], function (){
 });
 
 Route::group(['prefix' => 'class/student'], function (){
+    Route::get('/', 'ClassStudentsStudent@index')->name('class.index');
     Route::get('/details/{id}', 'ClassStudentsStudent@details')->name('class.details');
     //Route::get('/list-persons/{class}', 'ClassStudentsStudent@listPersons')->name('class.list-persons');
     /*Route::get('/', 'ClassStudentsStudent@index')->name('class.index');
