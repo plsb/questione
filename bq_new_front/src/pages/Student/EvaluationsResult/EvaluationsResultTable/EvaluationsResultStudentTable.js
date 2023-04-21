@@ -233,8 +233,7 @@ const EvaluationsResultStudentTable = props => {
                               <div key={application.id}>
                                 <Card
                                   {...rest}
-                                  className={classes.root}
-                                >
+                                  className={classes.root}>
                                   {/*application.evaluation_application.canShowResults == 0 && (
                                     <div className={classes.releaseResultsMessage}>
                                       Data de liberação dos resultados:

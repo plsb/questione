@@ -109,7 +109,7 @@ class ClassStudentsStudent extends Controller
         $class_students_student->save();
 
         return response()->json([
-            'message' => 'Turma adicionada.',
+            'message' => 'Inscrição realizada.',
             $class_students_student
         ], 200);
     }
@@ -171,6 +171,61 @@ class ClassStudentsStudent extends Controller
             'message' => 'A inscrição '.$class_students_student->id.' foi excluída.',
             $class_students_student
         ], 200);
+    }
+
+    //trazer informações (nome de professores e alunos) da turma
+    public function details($id)
+    {
+        if (!$id) {
+            return response()->json([
+                'message' => 'Informe o código da turma.'
+            ], 202);
+        }
+
+        $class_verify = ClassQuestione::where('id', $id)->first();
+
+        if (!$class_verify) {
+            return response()->json([
+                'message' => 'A Turma não foi encontrada.'
+            ], 202);
+        }
+
+        $user = auth('api')->user();
+
+        $class_students = ClassStudents::where('fk_class_id', $class_verify->id)
+            ->with('user')
+            ->get();
+
+        //$arr = array();
+        $students = array();
+        foreach ($class_students as $class_s){
+            $student = (object)[
+                'name' => $class_s->user->name,
+                'id' => $this->iniciais($class_s->user->name),
+            ];
+            $students[] = $student;
+        }
+
+        $class_questione = ClassQuestione::where('id', $class_verify->id)
+            ->with('user')
+            ->first();
+
+        $professor = (object)[
+            'name' => $class_questione->user->name,
+            'id' => $this->iniciais($class_questione->user->name),
+        ];
+        sort($students);
+
+        $arr = (object)[
+            'professor' => $professor,
+            'students' => $students,
+        ];
+
+        //sort($arr);
+
+        //$object = (object) $arr;
+
+        return response()->json($arr, 200);
     }
 
     public function iniciais($nome){

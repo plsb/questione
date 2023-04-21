@@ -32,7 +32,7 @@ const Dashboard = () => {
         <Grid
             item
             xs={12}>
-          <StartEvaluationCard colorBox="#03a9f4" className="start-evaluation-card"/>
+          {/*<StartEvaluationCard colorBox="#03a9f4" className="start-evaluation-card"/>*/}
         </Grid>
       </Grid>
       <Grid

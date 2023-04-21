@@ -79,6 +79,7 @@ const People = props => {
     try {
       let url = `class/student/details/${studentClassId}`;
       const response = await api.get(url);
+      console.log('people', response);
       if(response.status == 200) {
         setProfessor(response.data.professor);
         setStudents(response.data.students);
@@ -100,7 +101,7 @@ const People = props => {
 
   return (
       <div className={classes.root}>
-            <Typography variant="h4" color="textSecondary" component="h3" style={{ marginBottom: '10px' }}>Professores </Typography>
+            <Typography variant="h4" color="textSecondary" component="h3" style={{ marginBottom: '10px' }}>Professor </Typography>
             <Divider />
             <div className={classes.content}>
               <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>

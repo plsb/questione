@@ -104,10 +104,10 @@ const EvaluationApplicationTable = props => {
 
   return (
       <div className={classes.root}>
-        <UsersToolbar
+        {/*<UsersToolbar
             onChangeSearch={updateSearch.bind(this)}
             searchText={searchText}
-            onClickSearch={onClickSearch}/>
+            onClickSearch={onClickSearch}/>*/}
         <div className={classes.content}>
           <Card
               className={clsx(classes.root, className)}>

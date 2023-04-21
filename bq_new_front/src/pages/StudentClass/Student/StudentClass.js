@@ -83,6 +83,7 @@ function StudentClass({ history }) {
                 toast.success("Inscrição realizada com sucesso!");
                 setRegisterLoading(false);
                 setShowRegisterDialog(false);
+                window.location.reload(true);
             }
         } catch (e) {
 

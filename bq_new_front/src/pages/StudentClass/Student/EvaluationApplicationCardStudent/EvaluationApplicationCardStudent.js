@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { copyToClipboard } from '../../../../../helpers/utils';
+import { copyToClipboard } from '../../../../helpers/utils';
 import { makeStyles } from '@material-ui/styles';
 import {
     Card,
@@ -13,8 +13,8 @@ import {
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import {withRouter} from "react-router-dom";
-import api from "../../../../../services/api";
-import { Edit, FormatListBulleted } from "@material-ui/icons";
+import api from "../../../../services/api";
+import { Edit, FormatListBulleted, PlayArrow } from "@material-ui/icons";
 import ShareIcon from '@material-ui/icons/Share';
 
 const useStyles = makeStyles(() => ({
@@ -60,8 +60,8 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const EvaluationApplicationCard = props => {
-  const { className, history, application, studentClassId, position, ...rest } = props;
+const EvaluationApplicationCardStudent = props => {
+  const { className, history, application, answer_head, studentClassId, position, ...rest } = props;
   const [state, setState] = useState(0);
   const [evaluationApplication, setEvaluationApplication] = useState({});
 
@@ -120,26 +120,7 @@ const EvaluationApplicationCard = props => {
                       className={classes.head}
                       action={
                           <div>
-                              {evaluationApplication.public_results === 1 && (
-                                <Tooltip title="Copiar link da avaliação">
-                                    <IconButton
-                                        aria-label="share"
-                                        onClick={() => copyLinkToClipboard(evaluationApplication.id)}>
-                                        <ShareIcon />
-                                    </IconButton>
-                                </Tooltip>
-                              )}
 
-                              {evaluationApplication.evaluation.status == 1 ?
-                              <Tooltip title="Habilite o simulado">
-                                  <Switch
-                                      checked={evaluationApplication.status}
-                                      onChange={onClickOpenDialogEnableApplication}
-                                      color="primary"
-                                      name="checkedB"
-                                      inputProps={{ 'aria-label': 'primary checkbox' }}
-                                  />
-                              </Tooltip> : null }
                               {/*<Tooltip title="Visualizar resultados 2">
                                   <IconButton
                                       aria-label="copy"
@@ -147,16 +128,15 @@ const EvaluationApplicationCard = props => {
                                       <FormatListBulleted />
                                   </IconButton>
                               </Tooltip>*/}
-                              {evaluationApplication.evaluation.status == 1 ?
-                                  <Tooltip title="Clique para editar">
+                              {(answer_head == null || answer_head.finalized_at == null) && evaluationApplication.status == 1  && (
+                                  <Tooltip title="Realizar avaliação">
                                       <IconButton
-                                          aria-label="copy"
-                                          onClick={() => onEdit(evaluationApplication.id)}>
-                                          <Edit />
+                                          aria-label="settings"
+                                          onClick={() => history.push(`/code/${application.id_application}`)}>
+                                          <PlayArrow />
                                       </IconButton>
-                                  </Tooltip> : null }
-
-
+                                  </Tooltip>
+                              )}
                           </div>
                       }
                       title={'Simulado: '+position}/>
@@ -179,7 +159,7 @@ const EvaluationApplicationCard = props => {
 
 
                       <Typography color="body2" variant="h6">
-                          {'Data de criação: '+ moment(evaluationApplication.created_at).format('DD/MM/YYYY')}
+                          {evaluationApplication.created_at && ('Data de criação: '+ moment(evaluationApplication.created_at).format('DD/MM/YYYY'))}
                       </Typography>
                       { evaluationApplication.evaluation.status == 2 ?
                           <Chip label="Avaliação Arquivada" className={clsx(classes.chipred, className)} size="small"/> :
@@ -188,8 +168,12 @@ const EvaluationApplicationCard = props => {
                                 <Chip label="Desativado" className={clsx(classes.chipred, className)} size="small"/>
 
                       }
-                      { evaluationApplication.random_questions == 1 &&
-                          <Chip label="Questões Aleatórias" className={clsx(classes.chipyellow, className)} size="small"/> }
+
+                      {answer_head ?
+                          (!answer_head.finalized_at ?
+                              <Chip label="Iniciado" className={clsx(classes.chipblue, className)} size="small"/> :
+                              <Chip label="Finalizado" className={clsx(classes.chipgreen, className)} size="small"/>) :
+                          <Chip label="Não iniciado" className={clsx(classes.chipred, className)} size="small"/>}
 
                        { evaluationApplication.date_start  &&
                         <Chip label="Tempo para iniciar definido" className={clsx(classes.chip_amber, className)} size="small"/> }
@@ -204,7 +188,6 @@ const EvaluationApplicationCard = props => {
                         <Chip label="Permite vizualizar questões" className={clsx(classes.chipblue, className)} size="small"/> }
 
 
-
                   </CardContent>
               </Card>
               </div>
@@ -217,10 +200,11 @@ const EvaluationApplicationCard = props => {
   );
 };
 
-EvaluationApplicationCard.propTypes = {
+EvaluationApplicationCardStudent.propTypes = {
     className: PropTypes.string,
     application: PropTypes.object,
+    answer_head: PropTypes.object,
     history: PropTypes.object
 };
 
-export default withRouter(EvaluationApplicationCard);
+export default withRouter(EvaluationApplicationCardStudent);

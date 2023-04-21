@@ -7,9 +7,11 @@ import {
   CardContent,
   Table,
   TableBody,
-  TablePagination, CardHeader, Grid, LinearProgress
+  TablePagination, CardHeader, Grid, LinearProgress, Chip, Typography, IconButton, Tooltip
 } from '@material-ui/core';
 import api from '../../../../services/api';
+import EvaluationApplicationCardStudent from '../EvaluationApplicationCardStudent';
+import {PlayArrow} from "@material-ui/icons";
 
 import { toast } from 'react-toastify';
 import PropTypes from "prop-types";
@@ -131,17 +133,15 @@ const AplicationListStudent = props => {
                           xs={12}>
                         <Table>
                           <TableBody>
-                            {
-                                
-                              /* evaluationsApplications.map((application, i) => (
+                            {evaluationsApplications.map((application, i) => (
+                                <EvaluationApplicationCardStudent
+                                    answer_head={application.answer_head}
+                                    application={application.application}
+                                    key={application.application.id}
+                                    studentClassId={studentClassId}
+                                    position={(evaluationsApplications.length - i)}/>
 
-                                    <EvaluationApplicationCard 
-                                          application={application} 
-                                          key={application.id} 
-                                          studentClassId={studentClassId} 
-                                          position={(evaluationsApplications.length - i)}/>  
-                                ))*/
-                            
+                            ))
                             }
                           </TableBody>
                         </Table>

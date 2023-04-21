@@ -36,15 +36,26 @@ class ClassEvaluationApplicationsStudentsStudent extends Controller
         $description = $request->description;
 
         $evaliation_application = EvaluationApplication::where('fk_class_id',$idclass)
-            ->when($description, function ($query) use ($description) {
-                return $query->where('description', 'like','%'.$description.'%')
-                    ->orWhere('id_application', $description);
-            })
             ->with('evaluation')
             ->orderBy('id', 'DESC')
             ->get();
 
-        return response()->json($evaliation_application, 200);
+        $applications_result = array();
+        foreach ($evaliation_application as $application) {
+            $result = new \ArrayObject();
+
+            $answer_head = AnswersHeadEvaluation::where('fk_application_evaluation_id', $application->id)
+                ->where('fk_user_id', $user->id)
+                ->first();
+
+            $result = (object)[
+                'application' => $application,
+                'answer_head' => $answer_head,
+            ];
+            $applications_result[] = $result;
+        }
+
+        return response()->json($applications_result, 200);
     }
 
 }

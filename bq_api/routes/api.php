@@ -84,9 +84,9 @@ Route::group(['prefix' => 'class/student'], function (){
     Route::get('/details/{id}', 'ClassStudentsStudent@details')->name('class.students.details');
     Route::get('/list-applications/{idclass}', 'ClassEvaluationApplicationsStudentsStudent@index')->name('class.students.evaluation.index');
     Route::get('/show/{id}', 'ClassStudentsStudent@show')->name('class.students.details');
+    Route::post('/', 'ClassStudentsStudent@store')->name('class.store');
     //Route::get('/list-persons/{class}', 'ClassStudentsStudent@listPersons')->name('class.list-persons');
     /*Route::get('/', 'ClassStudentsStudent@index')->name('class.index');
-    Route::post('/', 'ClassStudentsStudent@store')->name('class.store');
     Route::delete('/{id}', 'ClassStudentsStudent@destroy')->name('class.destroy');
 
     Route::get('/evaluations/{idClass}', 'ClassEvaluationsStudentsStudent@index')->name('class.evaluations.student.index');

@@ -222,7 +222,7 @@ function StudentClassContent({ history, location, ...rest }) {
                             </div>
                             :
                             <div style={{ margin: '16px', marginLeft: '16px' }}>
-                                
+                                <People />
                             </div>}
                     </CardContent>
                 </Card>
