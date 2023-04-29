@@ -188,8 +188,10 @@ const ResultsGeneral = props =>{
     async function loadClassProfessorOverview(){
         try {
 
-          let url = `class/professor/overview/${studentClassId}`;
+          let url = `class/student/overview/${studentClassId}`;
           const response = await api.get(url);
+
+          console.log('general', response.data);
 
           if(response.status == 200) {
             if(response.data.length === 0){
@@ -199,10 +201,11 @@ const ResultsGeneral = props =>{
             }
           } else {
             setClassProfessorOverview(null);
+            console.log('general');
           }
           
         } catch (error) {
-
+          console.log('general', error);
         }
 
       }

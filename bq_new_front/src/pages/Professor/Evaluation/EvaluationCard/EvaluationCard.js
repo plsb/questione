@@ -184,8 +184,9 @@ const EvaluationCard = props => {
             } else {
                 toast.success('Nova aplicação cadastrada.');
                 setDescriptionNewApplication('');
-                // history.push('/applications-evaluation');
-                setTabValue(1);
+                //window.redirect = history.push("/evaluations");
+                //setTabValue(1);
+                setOpenNewApplication(false);
             }
 
         } catch (error) {
@@ -251,10 +252,10 @@ const EvaluationCard = props => {
               }/>
       <CardContent>
         <Typography variant="h4" color="textSecondary" component="h2">
-            {'Descrição: '+evaluation.description}
+            {'Avaliação: '+evaluation.description}
         </Typography>
           <Typography color="textSecondary" variant="h6">
-              {'Data de criação da avaliação: '+ moment(evaluation.created_at).format('DD/MM/YYYY')}
+              {'Data de criação: '+ moment(evaluation.created_at).format('DD/MM/YYYY')}
           </Typography>
           { evaluation.status == 2 ?
               <Chip label="Arquivada" className={clsx(classes.chip, className)} size="small"/> : null}

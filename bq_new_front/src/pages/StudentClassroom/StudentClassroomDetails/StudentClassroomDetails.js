@@ -149,7 +149,7 @@ const StudentClassroomDetails = props => {
                 </div>
 
                 <CardHeader
-                    subheader="Descrição da página de cadastro/edição da turma"
+                    subheader="Cadastro/edição da turma"
                     title="Turma"
                 />
                 <Divider />

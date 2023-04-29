@@ -39,7 +39,8 @@ import StudentEvaluationTable from './StudentEvaluation/EvaluationTable';
 import EvaluationsResults from './EvaluationsResult/EvaluationsResultTable';
 
 import useStyles from './styles';
-import ResultsAplication from '../Professor/ResultsAplication/ResultsAplication';
+import ResultsAplicationProfessor from '../Professor/ResultsAplication/ResultsAplication';
+import ResultsAplicationStudent from '../Student/ResultsAplication/ResultsAplication';
 import ApplicationListStudent from '../Student/ApplicationListStudent/ApplicationListStudent';
 
 
@@ -127,8 +128,6 @@ function StudentClassContent({ history, location, ...rest }) {
 
     useEffect(() => {
         loadClassProfessor();
-        if(classProfessor)
-            console.log('class', classProfessor);
     }, []);
 
     return (
@@ -253,16 +252,16 @@ function StudentClassContent({ history, location, ...rest }) {
                     <CardContent>
                         {level_user === '2' ?
                             <div style={{ margin: '16px', marginLeft: '16px' }}>
-                                <ResultsAplication studentClassId={studentClassId}/> 
+                                <ResultsAplicationProfessor studentClassId={studentClassId}/>
                             </div>
                             :
                             <div style={{ margin: '16px', marginLeft: '16px' }}>
-                                
+                                <ResultsAplicationStudent studentClassId={studentClassId}/>
                             </div>
                         }
                     </CardContent>
                 </Card>
-            </TabPanel> 
+            </TabPanel>
         </div>
     );
 }

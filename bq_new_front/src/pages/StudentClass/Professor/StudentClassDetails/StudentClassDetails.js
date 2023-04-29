@@ -76,10 +76,10 @@ const StudentClassDetails = props => {
             let acao = "";
 
             if (!studentClassId) {
-                response = await api.post('class/', data);
+                response = await api.post('class/professor/', data);
                 acao = "cadastrada";
             } else {
-                response = await api.put('class/' + studentClassId, data);
+                response = await api.put('class/professor/' + studentClassId, data);
                 acao = "atualizada";
             }
 
@@ -179,20 +179,18 @@ const StudentClassDetails = props => {
                 </div>
 
                 <CardHeader
-                    subheader="Descrição da página de cadastro/edição da turma"
+                    subheader="Cadastro/edição da turma"
                     title="Turma"
                 />
                 <Divider />
                 <CardContent>
                     <Grid
                         container
-                        spacing={1}
-                    >
+                        spacing={1}>
                         <Grid
                             item
                             md={12}
-                            xs={12}
-                        >
+                            xs={12}>
                             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
                                 <p className="item1" style={{ marginRight: '16px' }}>Curso</p>
                                 {/* GET  */}
@@ -211,8 +209,7 @@ const StudentClassDetails = props => {
                                     error={hasError('course')}
                                     helperText={
                                         hasError('course') ? formState.errors.course[0] : null
-                                    }
-                                >
+                                    }>
                                     <MenuItem value="select">Selecione</MenuItem>
                                     {courseList.map((course) => (
                                         <MenuItem key={course.id} value={course.id}>{course.description}</MenuItem>
@@ -231,8 +228,7 @@ const StudentClassDetails = props => {
                                 name="description"
                                 onChange={handleChange}
                                 value={formState.values.description || ''}
-                                variant="outlined"
-                            />
+                                variant="outlined"/>
                             <Button
                                 color="primary"
                                 variant="outlined"

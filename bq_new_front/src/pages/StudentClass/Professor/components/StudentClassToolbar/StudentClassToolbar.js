@@ -30,7 +30,7 @@ const StudentClassToolbar = props => {
       <div className={classes.row}>
         <div style={{ flex: 1 }}>
           <Typography variant="h3" className={classes.title}>{'Turmas'}</Typography>
-          <Typography variant="p" className={classes.description}>{'Descrição sobre o modulo turmas...'}</Typography>
+          
           <span className={classes.spacer} />
         </div>
         <div style={{ padding: '16px' }}>

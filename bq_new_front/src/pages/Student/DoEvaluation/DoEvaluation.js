@@ -178,7 +178,7 @@ const DoEvaluation = props => {
         }
       } else if(response.status == 200){
         toast.error('Tempo para responder a avaliação esgotado!');
-        history.push('/student/result-evaluations');
+        history.push('/student-class/student');
       }
     } catch (error) {
 
@@ -196,7 +196,7 @@ const DoEvaluation = props => {
         }
       } else if(response.status == 200){
         toast.success('Avaliação respondida com sucesso!');
-        history.push('/student/result-evaluations');
+        history.push('/student-class/student');
       }
     } catch (error) {
 
@@ -302,10 +302,10 @@ const DoEvaluation = props => {
                     {'Aluno(a): '+localStorage.getItem("@Questione-name-user") }
                     </Typography>
                     <Typography variant="button" color="textSecondary" component="p">
-                      {'Avaliação: '+application.evaluation.description}
+                      {'Avaliação: '+ application.evaluation.id+ ' - ' +application.evaluation.description}
                     </Typography>
                     <Typography variant="button" color="textSecondary" component="p">
-                      {'Código da aplicação: '+application.id_application}
+                      {'Simulado: '+application.description}
                     </Typography>
                     {application && application.evaluation.practice !== 1 && (
                       <Typography variant="button" color="textSecondary" component="p">
