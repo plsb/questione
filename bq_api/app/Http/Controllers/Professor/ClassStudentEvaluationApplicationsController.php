@@ -22,13 +22,14 @@ use PhpParser\Builder\Class_;
 use Validator;
 use App\Http\Controllers\Controller;
 use function Sodium\add;
+use App\Http\Controllers\Util\FileCSV;
 
 class ClassStudentEvaluationApplicationsController extends Controller
 {
 
     public function __construct()
     {
-        $this->middleware(['jwt.auth', 'checkProfessor']);
+        //$this->middleware(['jwt.auth', 'checkProfessor']);
     }
 
     private $rules = [
@@ -183,6 +184,76 @@ class ClassStudentEvaluationApplicationsController extends Controller
         }
 
         return response()->json($students, 200);
+    }
+
+    public function getCSVClass(int $application){
+
+        $evaliation_application = EvaluationApplication::where('id',$application)
+            ->first();
+
+        if(!$evaliation_application){
+            return response()->json([
+                'message' => 'O simulado não foi encontrado.'
+            ], 202);
+        }
+
+        $evaluation  = Evaluation::where('id', $evaliation_application->fk_evaluation_id)->first();
+
+        if(!$evaluation){
+            return response()->json([
+                'message' => 'Avaliação não encontrada.'
+            ], 202);
+        }
+
+        $user = auth('api')->user();
+
+        if($evaluation->fk_user_id != $user->id){
+            return response()->json([
+                'message' => 'A avaliação não peternce ao usuário.'
+            ], 202);
+        }
+
+        $answers_head = AnswersHeadEvaluation::where('fk_application_evaluation_id', $evaliation_application->id)
+            ->with('user')
+            ->get();
+
+        if(!$answers_head){
+            return response()->json([
+                'message' => 'Não há respostas para o simulado.'
+            ], 202);
+        }
+
+
+        //return response()->json($answers_head, 200);
+
+        // => Data preparation
+        $array_header = array();
+        $array_header[] = 'aluno';
+        $array_header[] = 'email';
+        $array_header[] = 'created_at';
+        $array_header[] = 'finalized_at';
+
+        $array_content = array();
+
+
+        foreach ($answers_head as $ans){
+            $resultStudent = array();
+
+            $resultStudent[] = $ans->user->name;
+            $resultStudent[] = $ans->user->email;
+            $resultStudent[] = $ans->created_at;
+            $resultStudent[] = $ans->finalized_at;
+
+            //imprimir questões no CSV
+
+
+            $array_content[] = $resultStudent;
+
+        }
+        $generate = new FileCSV();
+        $generate->setHeader($array_header);
+        $generate->setContent($array_content);
+        $generate->generateAndDownloadFileCSV();
     }
 
 }

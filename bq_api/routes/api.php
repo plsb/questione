@@ -105,6 +105,7 @@ Route::group(['prefix' => 'class/professor'], function (){
     Route::get('/classes-professor', 'Professor\ClassController@classesProfessor')->name('class.classes-professor');
     Route::put('/{class}', 'Professor\ClassController@update')->name('class.update');
     Route::put('/change-status/{class}', 'Professor\ClassController@changeStatus')->name('class.changeStatus');
+    Route::get('/get-csv/{application}', 'Professor\ClassStudentEvaluationApplicationsController@getCSVClass')->name('class.getCSV');
     //Route::delete('/{class}', 'Professor\ClassController@destroy')->name('class.destroy');
     //evaluations
    /* Route::get('/evaluation', 'Professor\ClassStudentsEvaluationController@index')->name('class.evaluation.index');
