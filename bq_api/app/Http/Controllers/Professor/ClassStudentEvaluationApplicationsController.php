@@ -213,6 +213,10 @@ class ClassStudentEvaluationApplicationsController extends Controller
             ], 202);
         }
 
+        $evaluation_has_question  = EvaluationHasQuestions::where('fk_evaluation_id', $evaluation->id)
+            ->orderBy('id', 'ASC')
+            ->get();
+
         $answers_head = AnswersHeadEvaluation::where('fk_application_evaluation_id', $evaliation_application->id)
             ->with('user')
             ->get();
@@ -223,19 +227,20 @@ class ClassStudentEvaluationApplicationsController extends Controller
             ], 202);
         }
 
-
-        //return response()->json($answers_head, 200);
-
-        // => Data preparation
+        // preenche o cabeçalho do arquivo csv
         $array_header = array();
         $array_header[] = 'aluno';
         $array_header[] = 'email';
         $array_header[] = 'created_at';
         $array_header[] = 'finalized_at';
 
+        foreach ($evaluation_has_question as $ehq){
+            $array_header[] = $ehq->fk_question_id;
+        }
+
         $array_content = array();
 
-
+        //percorre cada cabeçalho de resposta
         foreach ($answers_head as $ans){
             $resultStudent = array();
 
@@ -244,8 +249,24 @@ class ClassStudentEvaluationApplicationsController extends Controller
             $resultStudent[] = $ans->created_at;
             $resultStudent[] = $ans->finalized_at;
 
-            //imprimir questões no CSV
+            foreach ($evaluation_has_question as $ehq){
+                //faz a busca da resposta do estudante
+                $answer_student = AnswersEvaluation::where('fk_answers_head_id', $ans->id)
+                    ->where('fk_evaluation_question_id', $ehq->id)
+                    ->first();
 
+                if(!$answer_student->answer){
+                    $resultStudent[] = null;
+                } else {
+                    $ans_question = QuestionItem::where('id', $answer_student->answer)->first();
+                    if($ans_question->correct_item == 1){
+                        $resultStudent[] = 1;
+                    } else {
+                        $resultStudent[] = 0;
+                    }
+
+                }
+            }
 
             $array_content[] = $resultStudent;
 

@@ -45,10 +45,10 @@ const ResultsByTest = props =>{
           if(response.status == 200) {  
             setEvaluationsApplications(response.data);
             setTeste(response.data);
-            console.log('data', response.data[0]);
+
           } else {
             setEvaluationsApplications([]);
-            console.log('esle data');
+
           }
           
         } catch (error) {

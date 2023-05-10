@@ -8,14 +8,15 @@ import {
     CardHeader,
     IconButton,
     Typography,
-    CardContent, Chip, Switch, Tooltip
+    CardContent, Chip, Tooltip
 } from '@material-ui/core';
-import moment from 'moment';
 import { toast } from 'react-toastify';
 import {withRouter} from "react-router-dom";
-import api from "../../../../../../../services/api";
-import { Edit, FormatListBulleted, TrendingUp } from "@material-ui/icons";
+import { FormatListBulleted } from "@material-ui/icons";
 import ShareIcon from '@material-ui/icons/Share';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import api from "../../../../../../../services/api";
+
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -67,6 +68,8 @@ const EvaluationApplicationCard = props => {
 
   const classes = useStyles();
 
+    const csvLink = React.createRef();
+
     useEffect(() => {
         
     }, [evaluationApplication]);
@@ -83,6 +86,42 @@ const EvaluationApplicationCard = props => {
   const results = (id) => {
       history.push(`/student-class/${studentClassId}/applications-evaluation/results/${id}`);
   }
+
+    async function downloadCSV(id){
+        try {
+            let url = `class/professor/get-csv/${id}`;
+
+
+            const response = api.get(url,
+                {
+                    responseType: 'arraybuffer',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/csv'
+                    }
+                })
+                .then((response) => {
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', 'cvs_'+id+'.csv'); //or any other extension
+                    document.body.appendChild(link);
+                    link.click();
+                })
+                .catch((error) => console.log(error));
+
+            if (response.status === 202) {
+                if(response.data.message){
+                    toast.error(response.data.message);
+                }
+            } else {
+                toast.success('Dados exportados.');
+            }
+
+        } catch (error) {
+
+        }
+    }
 
     const copyLinkToClipboard = (id) => {
         copyToClipboard(window.location.origin + `/student-class/${studentClassId}/applications-evaluation/results/${id}`);
@@ -129,6 +168,15 @@ const EvaluationApplicationCard = props => {
                               </IconButton>
                           </Tooltip>
                         )}
+
+                        <Tooltip title="Downlaod csv">
+                            <IconButton
+                                aria-label="copy"
+                                onClick={() => downloadCSV(evaluationApplication.id)}>
+                                <GetAppIcon />
+
+                            </IconButton>
+                        </Tooltip>
 
                         <Tooltip title="Visualizar resultados">
                             <IconButton
