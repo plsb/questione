@@ -20,9 +20,7 @@ const Footer = props => {
       {...rest}
       className={clsx(classes.root, className)}>
         <div className={classes.logoImage}>
-            <img
-                alt="Logo"
-                src="/images/leds.png" className="leds"/>
+
             <img
                 alt="Logo"
                 src="/images/gipea.png" style={{marginLeft: '15px'}} className="gipea"/>
@@ -42,7 +40,7 @@ const Footer = props => {
                 target="_blank">
                 <img
                     alt="Logo"
-                    src="/images/great.png" style={{marginLeft: '15px', maxHeight: '35px' }}/>
+                    src="/images/great.png" style={{marginLeft: '15px', maxHeight: '40px' }}/>
             </Link>
         </div>
       <Typography variant="body1">

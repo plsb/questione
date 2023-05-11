@@ -10,11 +10,10 @@ import {
     Typography,
     CardContent, Chip, Switch, Tooltip
 } from '@material-ui/core';
-import moment from 'moment';
 import { toast } from 'react-toastify';
 import {withRouter} from "react-router-dom";
 import api from "../../../../../../../services/api";
-import { Edit, FormatListBulleted, TrendingUp } from "@material-ui/icons";
+import { FormatListBulleted } from "@material-ui/icons";
 import ShareIcon from '@material-ui/icons/Share';
 
 const useStyles = makeStyles(() => ({

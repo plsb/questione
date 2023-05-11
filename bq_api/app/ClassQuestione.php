@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class ClassQuestione extends Model
 {
     protected $table = 'class';
-    protected $fillable = ['id', 'id_class', 'description', 'status', 'fk_user_id', 'fk_course_id'];
+    protected $fillable = ['id', 'id_class', 'description', 'status', 'fk_user_id',
+        'fk_course_id', 'gamified_class'];
     protected $hidden = [];
 
     public function user(){

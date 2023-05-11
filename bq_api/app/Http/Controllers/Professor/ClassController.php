@@ -148,6 +148,10 @@ class ClassController extends Controller
         $class = new ClassQuestione();
         $class->description = $request->description;
         $class->fk_course_id = $request->fk_course_id;
+        $class->gamified_class = 0;
+        if($request->gamified_class){
+            $class->gamified_class = $request->gamified_class;
+        }
 
         $class->status = 1;
         $class->fk_user_id = $user->id;
@@ -219,6 +223,10 @@ class ClassController extends Controller
 
         $class->description = $request->description;
         $class->fk_course_id = $request->fk_course_id;
+        $class->gamified_class = 0;
+        if($request->gamified_class){
+            $class->gamified_class = $request->gamified_class;
+        }
         $class->save();
 
         return response()->json([

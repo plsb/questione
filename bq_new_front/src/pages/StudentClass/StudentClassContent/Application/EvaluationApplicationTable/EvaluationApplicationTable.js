@@ -109,17 +109,7 @@ const EvaluationApplicationTable = props => {
             searchText={searchText}
             onClickSearch={onClickSearch}/>*/}
         <div className={classes.content}>
-          <Card
-              className={clsx(classes.root, className)}>
-            <CardHeader
-                avatar={
-                  <div>
 
-
-                  </div>
-                }
-                />
-            <CardContent>
               {evaluationsApplications == null ?
                   <LinearProgress color="secondary"    />
                   :
@@ -133,23 +123,21 @@ const EvaluationApplicationTable = props => {
                         <Table>
                           <TableBody>
                             {
-                                
-                                evaluationsApplications.map((application, i) => (
 
-                                    <EvaluationApplicationCard 
-                                          application={application} 
-                                          key={application.id} 
-                                          studentClassId={studentClassId} 
-                                          position={(evaluationsApplications.length - i)}/>  
-                                ))
+                              evaluationsApplications.map((application, i) => (
+
+                                  <EvaluationApplicationCard
+                                      application={application}
+                                      key={application.id}
+                                      studentClassId={studentClassId}
+                                      position={(evaluationsApplications.length - i)}/>
+                              ))
                             
                             }
                           </TableBody>
                         </Table>
                       </Grid>
                     </Grid> }
-            </CardContent>
-          </Card>
         </div>
       </div>
   );

@@ -14,14 +14,28 @@ import {
     CardContent,
     MenuItem,
     Menu,
-    Tooltip,
+    Tooltip, Chip,
 } from '@material-ui/core';
 import { MoreVert } from '@material-ui/icons';
+import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import { makeStyles } from '@material-ui/styles';
+import clsx from "clsx";
 
-import useStyles from './styles';
+const useStyles = makeStyles(() => ({
+    root: {
+        marginBottom: 8,
+    },
+    chipgreen:{
+        margin: 3,
+        backgroundColor: '#009688',
+        color: '#ffebee',
+    },
+
+}));
 
 const StudendClassCard = props => {
-    const { id, title, classId, user, status, showUser, toFileCallback, isOwner, history, ...rest } = props;
+    const { className, id, title, classId, user, status, showUser, toFileCallback, isOwner, history, gamified_class, ...rest } = props;
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const classes = useStyles();
@@ -29,6 +43,10 @@ const StudendClassCard = props => {
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
+
+    const handleClickGamification = (event) => {
+
+    }
 
     const handleClose = () => {
         setAnchorEl(null);
@@ -63,6 +81,16 @@ const StudendClassCard = props => {
                     className={classes.head}
                     action={
                         <div>
+                            {gamified_class === 1 && (
+                                <Tooltip title="Configurações da turma gamificada">
+                                    <IconButton
+                                        aria-label="settings"
+                                        onClick={handleClickGamification}>
+                                        <SportsEsportsIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            )}
+
                             <Tooltip title="Opções da turma">
                                 <IconButton
                                     aria-label="settings"
@@ -82,6 +110,10 @@ const StudendClassCard = props => {
                     <Typography color="textSecondary" variant="h6">
                         {showUser && user.name}
                     </Typography>
+
+                    {gamified_class === 1 && (
+                        <Chip label="Gamificada" className={clsx(classes.chipgreen, className)} size="small"/>
+                    )}
                 </CardContent>
 
                 <Menu
@@ -110,6 +142,7 @@ const StudendClassCard = props => {
 StudendClassCard.propTypes = {
     className: PropTypes.string,
     evaluation: PropTypes.object,
+    gamified_class: PropTypes.object,
     history: PropTypes.object,
     setRefresh: PropTypes.func,
     refresh: PropTypes.number

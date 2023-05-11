@@ -16,11 +16,12 @@ import {
     TextField,
     IconButton,
     Select,
-    MenuItem
+    MenuItem, Typography, FormControlLabel, Switch, Tooltip
 } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import useStyles from './styles';
+import {withStyles} from "@material-ui/core/styles";
 
 const schema = {
     description: {
@@ -35,6 +36,16 @@ const schema = {
         presence: { allowEmpty: false, message: 'Você deve selecionar o curso' },
     }
 };
+
+const TooltipCustomized = withStyles((theme) => ({
+    tooltip: {
+        backgroundColor: '#f5f5f9',
+        color: 'rgba(0, 0, 0, 0.87)',
+        maxWidth: 220,
+        fontSize: theme.typography.pxToRem(12),
+        border: '1px solid #dadde9',
+    },
+}))(Tooltip);
 
 const StudentClassDetails = props => {
     const { className, history, ...rest } = props;
@@ -51,6 +62,11 @@ const StudentClassDetails = props => {
 
     const [courseList, setCourseList] = useState([]);
     const [courseSelectIsOpen, setCourseSelectIsOpen] = useState(false);
+    const [checkedGamified, setCheckedGamified] = React.useState(false);
+
+    const handleChangeGamified = event => {
+        setCheckedGamified(event.target.checked);
+    }
     
     const handleCourseSelectClose = () => {
         setCourseSelectIsOpen(false);
@@ -66,10 +82,12 @@ const StudentClassDetails = props => {
 
     async function saveStudentClass() {
         try {
+            console.log('formsatate',formState );
             const { description, course } = formState.values;
             const data = {
                 description,
                 fk_course_id: course,
+                gamified_class: checkedGamified,
             }
 
             let response = {};
@@ -100,7 +118,8 @@ const StudentClassDetails = props => {
 
     async function showStudentClass() {
         try {
-            const response = await api.get('class/show/' + studentClassId);
+            const response = await api.get('class/professor/show/' + studentClassId);
+            console.log('response', response);
             if (response.status === 202) {
                 if (response.data.message) {
                     toast.error(response.data.message);
@@ -108,13 +127,14 @@ const StudentClassDetails = props => {
             } else {
                 setFormState(formState => ({
                     values: {
-                        'description': response.data[0].description,
-                        'course': response.data[0].course.id,
+                        'description': response.data.description,
+                        'course': response.data.course.id,
                     },
                     touched: {
                         ...formState.touched,
                     }
                 }));
+                setCheckedGamified(response.data.gamified_class);
             }
         } catch (error) {
 
@@ -133,11 +153,13 @@ const StudentClassDetails = props => {
     }
 
     const handleChange = event => {
+        let valores = {};
+
         setFormState({
             ...formState,
             values: {
                 ...formState.values,
-                [event.target.name]: event.target.value
+                [event.target.name]: event.target.value,
             },
             touched: {
                 ...formState.touched,
@@ -229,6 +251,30 @@ const StudentClassDetails = props => {
                                 onChange={handleChange}
                                 value={formState.values.description || ''}
                                 variant="outlined"/>
+                            <TooltipCustomized
+                                title={
+                                    <React.Fragment>
+                                        <p>
+                                            <Typography color="textPrimary" variant="body2">
+                                                {'Caso esta opção esteja habilitada, será habilitado o módulo de ' +
+                                                    ' gamificação para esta turma.'}
+                                            </Typography>
+                                        </p>
+                                    </React.Fragment>
+                                }>
+                                <FormControlLabel
+                                    control={
+                                        <Switch
+                                            checked={checkedGamified}
+                                            onChange={handleChangeGamified}
+                                            name="gamified_class"
+                                            color="primary"
+                                        />
+                                    }
+                                    label="Turma gamificada?"
+                                />
+                            </TooltipCustomized>
+                            <Divider /><br />
                             <Button
                                 color="primary"
                                 variant="outlined"
