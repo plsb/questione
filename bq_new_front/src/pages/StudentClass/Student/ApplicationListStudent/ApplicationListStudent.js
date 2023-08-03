@@ -110,17 +110,6 @@ const AplicationListStudent = props => {
             searchText={searchText}
   onClickSearch={onClickSearch}/>*/}
         <div className={classes.content}>
-          <Card
-              className={clsx(classes.root, className)}>
-            <CardHeader
-                avatar={
-                  <div>
-
-
-                  </div>
-                }
-                />
-            <CardContent>
               {evaluationsApplications == null ?
                   <LinearProgress color="secondary"    />
                   :
@@ -147,8 +136,7 @@ const AplicationListStudent = props => {
                         </Table>
                       </Grid>
                     </Grid> }
-            </CardContent>
-          </Card>
+
         </div>
       </div>
   );
