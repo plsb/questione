@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\AnswersEvaluation;
+use App\ClassQuestione;
 use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
 use App\AnswersHeadEvaluation;
 use App\Notifications\StudentFinishEvaluationToProfessorNotification;
+use App\Question;
+use App\QuestionItem;
 use App\User;
 use Illuminate\Http\Request;
 use Validator;
@@ -256,7 +259,7 @@ class DoEvaluation extends Controller
             $answers = AnswersEvaluation::where('fk_answers_head_id', $answerHead->id)
                 ->with('evaluationQuestionWithoutCorrect')
                 ->get();
-            
+
 
         }
 
@@ -452,6 +455,56 @@ class DoEvaluation extends Controller
         $userStudent = User::where('id', $answer_head->fk_user_id)->first();
         if($evaluation->practice == 0) { //só envia o e-mail caso a avaliação não for prática
             $userOwner->notify(new StudentFinishEvaluationToProfessorNotification($userOwner, $userStudent, $evaluation));
+        }
+
+        //pega a aplicação
+        $aplication = EvaluationApplication::where('id', $application->id)->first();
+        //pega a turma
+        $class = ClassQuestione::where('id', $aplication->fk_class_id)->first();
+
+        //verifica se a turma é gamificada
+        if($class->gamified_class){
+            //pontuação XP ao finalizar um simulado
+            $pointSystem = new PointSystem();
+            $pointSystem->XPpoint('complete_a_test', $class->id, $answer_head->id, null);
+
+            //pontuação PR ao finalizar um simulado
+            $pointSystem = new PointSystem();
+            $pointSystem->RPpointCredit('complete_a_test', $class->id, $answer_head->id, null);
+
+            //pega todas as respostas
+            $allAnswer = AnswersEvaluation::where('fk_answers_head_id', $answer_head->id)
+                ->get();
+
+            $totalAnswerCorrect = 0;
+            foreach($allAnswer as $item){
+                //busca a questão
+                $evaluation_question = EvaluationHasQuestions::where('id', $item->fk_evaluation_question_id)->first();
+
+                //$question = Question::where('id', $evaluation_question->fk_question_id)->first();
+                //pega item correto
+                $correct_item = QuestionItem::where('fk_question_id', $evaluation_question->fk_question_id)
+                    ->where('correct_item', 1)->first();
+                //error_log($item);
+                //se acertou marca pontuação
+                if($correct_item->id == $item->answer){
+                    //pontuação XP ao acertar uma questão
+                    $pointSystem = new PointSystem();
+                    $pointSystem->XPpoint('mark_correct_question', $class->id, $answer_head->id, $item->id);
+
+                    $totalAnswerCorrect++;
+                }
+            }
+
+            if(sizeof($allAnswer) == $totalAnswerCorrect){
+                //pontuação XP ao acertar todas as questões de um simulado
+                $pointSystem = new PointSystem();
+                $pointSystem->XPpoint('correctly_mark_all_questions', $class->id, $answer_head->id, null);
+
+                //pontuação PR ao acertar todas as questões de um simulado
+                $pointSystem = new PointSystem();
+                $pointSystem->RPpointCredit('correctly_mark_all_questions', $class->id, $answer_head->id, null);
+            }
         }
 
         return response()->json([

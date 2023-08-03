@@ -66,6 +66,7 @@ class ClassStudentsStudent extends Controller
     //adicionar uma nova turma
     public function store(Request $request)
     {
+
         $validation = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validation->fails()) {
@@ -108,6 +109,10 @@ class ClassStudentsStudent extends Controller
         $class_students_student->active = 1;
         $class_students_student->save();
 
+        //pontuação XP ao entrar em uma sala de aula
+        $pointSystem = new PointSystem();
+        $pointSystem->RPpointCredit('enter_class', $class_verify->id, null, null);
+
         return response()->json([
             'message' => 'Inscrição realizada.',
             $class_students_student
@@ -129,14 +134,8 @@ class ClassStudentsStudent extends Controller
             ], 202);
         }
 
-        /*$classStudent = ClassStudents::where('fk_user_id', $user->id)
+        $classStudent = ClassStudents::where('fk_user_id', $user->id)
             ->where('fk_class_id', $class->id)->first();
-
-        if(!$classStudent){
-            return response()->json([
-                'message' => 'O usuário não pertence a turma.'
-            ], 202);
-        }*/
 
         return response()->json( $class, 200);
 

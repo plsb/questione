@@ -18,4 +18,8 @@ class ClassQuestione extends Model
     public function course(){
         return $this->belongsTo(Course::class, 'fk_course_id');
     }
+
+    public function gamification(){
+        return $this->hasMany(ClassGamificationSettings::class, 'fk_class_id');
+    }
 }

@@ -78,7 +78,7 @@ function StudentClassContent({ history, location, ...rest }) {
           }
           
         } catch (error) {
-          
+          console.log('error', error);
         }
       }
 

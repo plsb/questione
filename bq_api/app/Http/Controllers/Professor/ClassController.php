@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Professor;
 
+use App\ClassGamificationScoreSettings;
+use App\ClassGamificationSettings;
 use App\ClassQuestione;
 use App\ClassStudents;
 use App\Course;
@@ -163,6 +165,10 @@ class ClassController extends Controller
 
         $class->save();
 
+        if($class->gamified_class == 1){
+            $this->storeGamificationSettings($class->id);
+        }
+
         return response()->json([
             'message' => 'Turma cadastrada.',
             $class
@@ -223,9 +229,20 @@ class ClassController extends Controller
 
         $class->description = $request->description;
         $class->fk_course_id = $request->fk_course_id;
+        if($request->gamified_class){
+            $class->gamified_class = $request->gamified_class;
+        }
         $class->gamified_class = 0;
         if($request->gamified_class){
             $class->gamified_class = $request->gamified_class;
+        }
+        //verifica se já existe itens nas configurações da classe, caso não adiciona
+        if($class->gamified_class == 1){
+            $classGamificationSettings = ClassGamificationSettings::where('fk_class_id', '=', $class->id)->get();
+            if(sizeof($classGamificationSettings)==0){
+                $this->storeGamificationSettings($class->id);
+            }
+
         }
         $class->save();
 
@@ -304,6 +321,49 @@ class ClassController extends Controller
             ->with('course')->get();
 
         return response()->json($classes, 200);
+    }
+
+    private function storeGamificationSettings($class_id){
+        $classGamificationSettings = new ClassGamificationSettings();
+        $classGamificationSettings->description_id = 'enter_class';
+        $classGamificationSettings->description = 'Quando entrar na turma';
+        $classGamificationSettings->fk_class_id = $class_id;
+        $classGamificationSettings->XP = 0;
+        $classGamificationSettings->PR = 50;
+        $classGamificationSettings->save();
+
+        $classGamificationSettings = new ClassGamificationSettings();
+        $classGamificationSettings->description_id = 'mark_correct_question';
+        $classGamificationSettings->description = 'Acertar uma questão';
+        $classGamificationSettings->fk_class_id = $class_id;
+        $classGamificationSettings->XP = 10;
+        $classGamificationSettings->PR = 0;
+        $classGamificationSettings->save();
+
+        $classGamificationSettings = new ClassGamificationSettings();
+        $classGamificationSettings->description_id = 'complete_a_test';
+        $classGamificationSettings->description = 'Finalizar um simulado';
+        $classGamificationSettings->fk_class_id = $class_id;
+        $classGamificationSettings->XP = 10;
+        $classGamificationSettings->PR = 10;
+        $classGamificationSettings->save();
+
+
+        $classGamificationSettings = new ClassGamificationSettings();
+        $classGamificationSettings->description_id = 'correctly_mark_all_questions';
+        $classGamificationSettings->description = 'Acertar todas as questões de um simulado';
+        $classGamificationSettings->fk_class_id = $class_id;
+        $classGamificationSettings->XP = 20;
+        $classGamificationSettings->PR = 20;
+        $classGamificationSettings->save();
+
+        $classGamificationSettings = new ClassGamificationSettings();
+        $classGamificationSettings->description_id = 'get_badge';
+        $classGamificationSettings->description = 'Conquistar emblema';
+        $classGamificationSettings->fk_class_id = $class_id;
+        $classGamificationSettings->XP = 0;
+        $classGamificationSettings->PR = 0;
+        $classGamificationSettings->save();
     }
 
 }

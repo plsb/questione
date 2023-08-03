@@ -90,12 +90,12 @@ const Sidebar = props => {
     //   icon: <Assignment />,
     //   className: 'applications-professor',
     // },
-    {
+    /*{
       title: 'Pratique',
       href: '/evaluation-practice',
       icon: <ExtensionIcon />,
       className: 'practice',
-    },
+    },*/
     {
       title: 'Turmas',
       href: '/student-class/professor',
@@ -111,12 +111,12 @@ const Sidebar = props => {
   ];
 
   const pagesUser = [
-    {
+    /*{
       title: 'Pratique',
       href: '/evaluation-practice',
       icon: <ExtensionIcon />,
       className: 'practice',
-    },
+    },*/
     {
       title: 'Avaliações respondidas',
       href: '/student/result-evaluations',
