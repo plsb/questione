@@ -329,7 +329,7 @@ class ClassController extends Controller
         $classGamificationSettings->description = 'Quando entrar na turma';
         $classGamificationSettings->fk_class_id = $class_id;
         $classGamificationSettings->XP = 0;
-        $classGamificationSettings->PR = 50;
+        $classGamificationSettings->RP = 50;
         $classGamificationSettings->save();
 
         $classGamificationSettings = new ClassGamificationSettings();
@@ -337,7 +337,7 @@ class ClassController extends Controller
         $classGamificationSettings->description = 'Acertar uma questão';
         $classGamificationSettings->fk_class_id = $class_id;
         $classGamificationSettings->XP = 10;
-        $classGamificationSettings->PR = 0;
+        $classGamificationSettings->RP = 0;
         $classGamificationSettings->save();
 
         $classGamificationSettings = new ClassGamificationSettings();
@@ -345,7 +345,7 @@ class ClassController extends Controller
         $classGamificationSettings->description = 'Finalizar um simulado';
         $classGamificationSettings->fk_class_id = $class_id;
         $classGamificationSettings->XP = 10;
-        $classGamificationSettings->PR = 10;
+        $classGamificationSettings->RP = 10;
         $classGamificationSettings->save();
 
 
@@ -354,7 +354,7 @@ class ClassController extends Controller
         $classGamificationSettings->description = 'Acertar todas as questões de um simulado';
         $classGamificationSettings->fk_class_id = $class_id;
         $classGamificationSettings->XP = 20;
-        $classGamificationSettings->PR = 20;
+        $classGamificationSettings->RP = 20;
         $classGamificationSettings->save();
 
         $classGamificationSettings = new ClassGamificationSettings();
@@ -362,7 +362,7 @@ class ClassController extends Controller
         $classGamificationSettings->description = 'Conquistar emblema';
         $classGamificationSettings->fk_class_id = $class_id;
         $classGamificationSettings->XP = 0;
-        $classGamificationSettings->PR = 0;
+        $classGamificationSettings->RP = 0;
         $classGamificationSettings->save();
     }
 
