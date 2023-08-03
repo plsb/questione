@@ -96,6 +96,14 @@ Route::group(['prefix' => 'class/student'], function (){
 
 });
 
+Route::group(['prefix' => 'class/student/gamification'], function (){
+    Route::get('/totalxp/{idclass}', 'Gamification\ClassGamificationStudent@totalXP')->name('class.gamification.totalxp');
+    Route::get('/totalrp/{idclass}', 'Gamification\ClassGamificationStudent@totalRP')->name('class.gamification.totalrp');
+    Route::get('/historyxp/{idclass}', 'Gamification\ClassGamificationStudent@historyXP')->name('class.gamification.historyXP');
+    Route::get('/historyrp/{idclass}', 'Gamification\ClassGamificationStudent@historyRP')->name('class.gamification.historyRP');
+    Route::get('/rankPosition/{idclass}', 'Gamification\ClassGamificationStudent@rankPosition')->name('class.gamification.rankPosition');
+});
+
 //Rotas do usuário professor
 Route::group(['prefix' => 'class/professor'], function (){
     Route::get('/courses', 'Professor\ClassController@courses')->name('class.index');
