@@ -109,7 +109,7 @@ class BadgesController extends Controller
             $badge_param->description_id = $id_badge;
             $badge_param->parameter = 1;
             $badge_param->save();
-        } else if($verify->parameter < 2){
+        } else if($verify->parameter < 10){
             $badge_param = $verify;
             $badge_param->fk_user_id = $user->id;
             $badge_param->fk_class_id = $id_class;
@@ -117,7 +117,7 @@ class BadgesController extends Controller
             $badge_param->parameter = $badge_param->parameter + 1;
             $badge_param->save();
 
-            if($badge_param->parameter == 2){
+            if($badge_param->parameter == 10){
                 $badge_student = new ClassBadgesStudent();
                 $badge_student->description_id = $id_badge;
                 $badge_student->fk_class_id = $id_class;

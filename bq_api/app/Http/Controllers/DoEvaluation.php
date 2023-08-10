@@ -493,16 +493,9 @@ class DoEvaluation extends Controller
                     $pointSystem = new PointSystemController();
                     $pointSystem->XPpoint('mark_correct_question', $class->id, $answer_head->id, $item->id);
 
-                    try{
-                        $badge = new BadgesController();
-                        $badge->fiveCorrectQuestions($class->id);
-                        $badge->tenCorrectQuestions($class->id);
-                    } catch (Exception $e){
-                        return response()->json([
-                            'message' => $e
-                        ], 200);
-                    }
-
+                    $badge = new BadgesController();
+                    $badge->fiveCorrectQuestions($class->id);
+                    $badge->tenCorrectQuestions($class->id);
 
                     $totalAnswerCorrect++;
                 }
