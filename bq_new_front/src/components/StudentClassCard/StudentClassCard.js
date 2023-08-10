@@ -60,7 +60,8 @@ const useStyles = makeStyles(() => ({
 }));
 
 const StudendClassCard = props => {
-    const { className, id, title, classId, user, status, showUser, toFileCallback, isOwner, history, gamified_class, ...rest } = props;
+    const { className, id, title, classId, user, status, showUser, toFileCallback, isOwner,
+        history, gamified_class, ...rest } = props;
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const classes = useStyles();

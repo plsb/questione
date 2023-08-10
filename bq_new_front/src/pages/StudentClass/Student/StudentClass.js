@@ -167,6 +167,7 @@ function StudentClass({ history }) {
                                                         isOwner={false}
                                                         setRefresh={setRefresh}
                                                         refresh={refresh}
+                                                        gamified_class={studentClass.gamified_class}
                                                         toFileCallback={() => {
                                                             setRefresh(refresh + 1);
                                                         }}

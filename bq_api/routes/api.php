@@ -86,6 +86,7 @@ Route::group(['prefix' => 'class/student'], function (){
     Route::get('/show/{id}', 'ClassStudentsStudent@show')->name('class.students.details');
     Route::post('/', 'ClassStudentsStudent@store')->name('class.store');
     Route::get('/overview/{idclass}', 'ClassEvaluationApplicationsStudentsStudent@overview')->name('classEvaluationApplicationStudents.overview');
+    Route::get('/next-evaluations', 'ClassEvaluationApplicationsStudentsStudent@nextEvaluations')->name('classEvaluationApplicationStudents.nextEvaluations');
     //Route::get('/list-persons/{class}', 'ClassStudentsStudent@listPersons')->name('class.list-persons');
     /*Route::get('/', 'ClassStudentsStudent@index')->name('class.index');
     Route::delete('/{id}', 'ClassStudentsStudent@destroy')->name('class.destroy');
@@ -97,11 +98,14 @@ Route::group(['prefix' => 'class/student'], function (){
 });
 
 Route::group(['prefix' => 'class/student/gamification'], function (){
-    Route::get('/totalxp/{idclass}', 'Gamification\ClassGamificationStudent@totalXP')->name('class.gamification.totalxp');
-    Route::get('/totalrp/{idclass}', 'Gamification\ClassGamificationStudent@totalRP')->name('class.gamification.totalrp');
-    Route::get('/historyxp/{idclass}', 'Gamification\ClassGamificationStudent@historyXP')->name('class.gamification.historyXP');
-    Route::get('/historyrp/{idclass}', 'Gamification\ClassGamificationStudent@historyRP')->name('class.gamification.historyRP');
-    Route::get('/rankPosition/{idclass}', 'Gamification\ClassGamificationStudent@rankPosition')->name('class.gamification.rankPosition');
+    Route::get('/totalxp/{idclass}', 'Gamification\ClassGamificationStudentController@totalXP')->name('class.gamification.totalxp');
+    Route::get('/totalrp/{idclass}', 'Gamification\ClassGamificationStudentController@totalRP')->name('class.gamification.totalrp');
+    Route::get('/historyxp/{idclass}', 'Gamification\ClassGamificationStudentController@historyXP')->name('class.gamification.historyXP');
+    Route::get('/historyrp/{idclass}', 'Gamification\ClassGamificationStudentController@historyRP')->name('class.gamification.historyRP');
+    Route::get('/rankPosition/{idclass}', 'Gamification\ClassGamificationStudentController@rankPosition')->name('class.gamification.rankPosition');
+    //badges
+    Route::get('/badge/{idclass}', 'Gamification\BadgesController@get100XP')->name('class.gamification.get100XP');
+
 });
 
 //Rotas do usuário professor

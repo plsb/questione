@@ -10,6 +10,7 @@ import {
 } from './components';
 
 import { StartEvaluationCard } from './../../components';
+import NextEvaluations from "./components/NextEvaluations";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -37,7 +38,7 @@ const Dashboard = () => {
       </Grid>
       <Grid
         container
-        spacing={4}>
+        spacing={2}>
         <Grid
           item
           lg={3}
@@ -69,6 +70,14 @@ const Dashboard = () => {
           xl={3}
           xs={12}>
           <TotalEvaluation className="total-evaluation"/>
+        </Grid>
+        <Grid
+            item
+            lg={9}
+            sm={6}
+            xl={6}
+            xs={12}>
+          <NextEvaluations className="total-question"/>
         </Grid>
         {/*<Grid
           item

@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\AnswersEvaluation;
+use App\AnswersHeadEvaluation;
 use App\ClassQuestione;
 use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
-use App\AnswersHeadEvaluation;
+use App\Http\Controllers\Gamification\BadgesController;
+use App\Http\Controllers\Gamification\PointSystemController;
 use App\Notifications\StudentFinishEvaluationToProfessorNotification;
-use App\Question;
 use App\QuestionItem;
 use App\User;
 use Illuminate\Http\Request;
@@ -465,11 +466,11 @@ class DoEvaluation extends Controller
         //verifica se a turma é gamificada
         if($class->gamified_class){
             //pontuação XP ao finalizar um simulado
-            $pointSystem = new PointSystem();
+            $pointSystem = new PointSystemController();
             $pointSystem->XPpoint('complete_a_test', $class->id, $answer_head->id, null);
 
             //pontuação PR ao finalizar um simulado
-            $pointSystem = new PointSystem();
+            $pointSystem = new PointSystemController();
             $pointSystem->RPpointCredit('complete_a_test', $class->id, $answer_head->id, null);
 
             //pega todas as respostas
@@ -489,8 +490,19 @@ class DoEvaluation extends Controller
                 //se acertou marca pontuação
                 if($correct_item->id == $item->answer){
                     //pontuação XP ao acertar uma questão
-                    $pointSystem = new PointSystem();
+                    $pointSystem = new PointSystemController();
                     $pointSystem->XPpoint('mark_correct_question', $class->id, $answer_head->id, $item->id);
+
+                    try{
+                        $badge = new BadgesController();
+                        $badge->fiveCorrectQuestions($class->id);
+                        $badge->tenCorrectQuestions($class->id);
+                    } catch (Exception $e){
+                        return response()->json([
+                            'message' => $e
+                        ], 200);
+                    }
+
 
                     $totalAnswerCorrect++;
                 }
@@ -498,12 +510,16 @@ class DoEvaluation extends Controller
 
             if(sizeof($allAnswer) == $totalAnswerCorrect){
                 //pontuação XP ao acertar todas as questões de um simulado
-                $pointSystem = new PointSystem();
+                $pointSystem = new PointSystemController();
                 $pointSystem->XPpoint('correctly_mark_all_questions', $class->id, $answer_head->id, null);
 
                 //pontuação PR ao acertar todas as questões de um simulado
-                $pointSystem = new PointSystem();
+                $pointSystem = new PointSystemController();
                 $pointSystem->RPpointCredit('correctly_mark_all_questions', $class->id, $answer_head->id, null);
+
+                //badge ao acertar dois simulados corretamente
+                $badge = new BadgesController();
+                $badge->correctlyAnswerTwoSimulations($class->id);
             }
         }
 

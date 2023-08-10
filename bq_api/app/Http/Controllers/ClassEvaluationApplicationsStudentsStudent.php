@@ -65,7 +65,6 @@ class ClassEvaluationApplicationsStudentsStudent extends Controller
     public function overview(int $idclass){
         $user = auth('api')->user();
 
-
         $class = ClassQuestione::where('id', $idclass)->first();
 
         if(!$class){
@@ -168,6 +167,40 @@ class ClassEvaluationApplicationsStudentsStudent extends Controller
         $students[] = $resultStudent;
 
         return response()->json($students, 200);
+    }
+
+    public function nextEvaluations(){
+        $user = auth('api')->user();
+
+        $id_classes = ClassStudents::select('fk_class_id')->where('fk_user_id', $user->id)
+            ->get();
+
+        $classes = ClassQuestione::whereIn('id', $id_classes)->get();
+
+        $arr = [];
+        foreach ($classes as $class){
+            $evaluations = EvaluationApplication::where('fk_class_id', $class->id)
+                ->with('evaluation')
+                ->with('class.user')
+                ->with('headAnswer')
+                ->orderby('id', 'desc')
+                ->get();
+
+            foreach ($evaluations as $item){
+                $anwswer_head = AnswersHeadEvaluation::where('fk_application_evaluation_id', $item->id)
+                    ->where('fk_user_id', $user->id)->first();
+                if($anwswer_head){
+                    if(!$anwswer_head->finalized_at){
+                        $arr[] = $item;
+                    }
+                } else {
+                    $arr[] = $item;
+                }
+            }
+
+        }
+
+        return response()->json($arr, 200);
     }
 
 }

@@ -24,28 +24,32 @@ import {
     IconButton,
     Accordion,
     AccordionDetails,
-    AccordionSummary,
+    AccordionSummary, Chip,
 
     // TextField
 } from '@material-ui/core';
 
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-
 import People from './People';
-import EvaluationTable from './Evaluation/EvaluationTable';
 import ApplicationTable from './Application/EvaluationApplicationTable';
-import StudentEvaluationTable from './StudentEvaluation/EvaluationTable';
-import EvaluationsResults from './EvaluationsResult/EvaluationsResultTable';
-
-import useStyles from './styles';
 import ResultsAplicationProfessor from '../Professor/ResultsAplication/ResultsAplication';
 import ResultsAplicationStudent from '../Student/ResultsAplication/ResultsAplication';
 import ApplicationListStudent from '../Student/ApplicationListStudent/ApplicationListStudent';
+import clsx from "clsx";
+import {makeStyles} from "@material-ui/styles";
 
+const useStyles = makeStyles(() => ({
+    chipgreen:{
+        margin: 3,
+        backgroundColor: '#009688',
+        color: '#ffebee',
+    },
+}));
 
+const StudentClassContent = props => {
 
-function StudentClassContent({ history, location, ...rest }) {
+    const { className, history, location, ...rest } = props;
+
     const studentClassId = location.pathname.replace('/student-class/', '');
     const level_user = localStorage.getItem("@Questione-acess-level-user");
 
@@ -159,6 +163,9 @@ function StudentClassContent({ history, location, ...rest }) {
                                     <Typography variant="button" color="textSecondary" component="p">
                                         {'Código da turma: '+classProfessor.id_class}
                                     </Typography>
+                                    {classProfessor.gamified_class === 1 && (
+                                        <Chip label="Gamificada" className={clsx(classes.chipgreen, className)} size="small"/>
+                                    )}
                                     
                                 </div>
                                 :

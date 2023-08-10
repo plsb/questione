@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\ClassQuestione;
 use App\ClassStudents;
+use App\Http\Controllers\Gamification\PointSystemController;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -110,7 +111,7 @@ class ClassStudentsStudent extends Controller
         $class_students_student->save();
 
         //pontuação XP ao entrar em uma sala de aula
-        $pointSystem = new PointSystem();
+        $pointSystem = new PointSystemController();
         $pointSystem->RPpointCredit('enter_class', $class_verify->id, null, null);
 
         return response()->json([

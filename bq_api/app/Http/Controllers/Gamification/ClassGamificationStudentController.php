@@ -9,7 +9,7 @@ use App\RPPoints;
 use App\XPPoints;
 use Validator;
 
-class ClassGamificationStudent extends Controller
+class ClassGamificationStudentController extends Controller
 {
     public function totalXP(int $idclass){
         $user = auth('api')->user();

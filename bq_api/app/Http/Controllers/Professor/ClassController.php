@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Professor;
 
+use App\ClassBadgesSettings;
 use App\ClassGamificationScoreSettings;
 use App\ClassGamificationSettings;
 use App\ClassQuestione;
@@ -11,6 +12,7 @@ use App\CourseProfessor;
 use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
+use App\Http\Controllers\Gamification\ClassGamificationBadgesController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Validator;
@@ -166,7 +168,22 @@ class ClassController extends Controller
         $class->save();
 
         if($class->gamified_class == 1){
-            $this->storeGamificationSettings($class->id);
+            $this->storeGamificationSettings($class->id, 'enter_class', 'Quando entrar na turma', 0, 50);
+            $this->storeGamificationSettings($class->id, 'mark_correct_question', 'Acertar uma questão', 10, 0);
+            $this->storeGamificationSettings($class->id, 'complete_a_test', 'Finalizar um simulado', 10, 10);
+            $this->storeGamificationSettings($class->id, 'correctly_mark_all_questions', 'Acertar todas as questões de um simulado', 20, 20);
+            $this->storeGamificationSettings($class->id, 'get_badge', 'Conquistar emblema', 0, 0);
+
+            $this->storeGamificationBadges($class->id, 'five_correct_questions', '5 é D+!', 50);
+            $this->storeGamificationBadges($class->id, 'ten_correct_questions', '10 é D+!!', 50);
+            $this->storeGamificationBadges($class->id, 'achieve_first_placement_gold', 'Medalha de ouro', 60);
+            $this->storeGamificationBadges($class->id, 'achieve_second_placement_silver', 'Medalha de prata', 50);
+            $this->storeGamificationBadges($class->id, 'achieve_third_placement_bronze', 'Medalha de bronze ', 40);
+            $this->storeGamificationBadges($class->id, 'two_gold_medals', 'Gênio da turma ', 70);
+            $this->storeGamificationBadges($class->id, 'correctly_answer_two_simulations', 'Oráculo', 80);
+            $this->storeGamificationBadges($class->id, 'answer_a_test_same_day_was_posted', 'Pontual', 50);
+            $this->storeGamificationBadges($class->id, 'get_100_xp', 'Estudioso!', 90);
+
         }
 
         return response()->json([
@@ -229,19 +246,28 @@ class ClassController extends Controller
 
         $class->description = $request->description;
         $class->fk_course_id = $request->fk_course_id;
-        if($request->gamified_class){
-            $class->gamified_class = $request->gamified_class;
-        }
+
         $class->gamified_class = 0;
         if($request->gamified_class){
             $class->gamified_class = $request->gamified_class;
         }
         //verifica se já existe itens nas configurações da classe, caso não adiciona
         if($class->gamified_class == 1){
-            $classGamificationSettings = ClassGamificationSettings::where('fk_class_id', '=', $class->id)->get();
-            if(sizeof($classGamificationSettings)==0){
-                $this->storeGamificationSettings($class->id);
-            }
+            $this->storeGamificationSettings($class->id, 'enter_class', 'Quando entrar na turma', 0, 50);
+            $this->storeGamificationSettings($class->id, 'mark_correct_question', 'Acertar uma questão', 10, 0);
+            $this->storeGamificationSettings($class->id, 'complete_a_test', 'Finalizar um simulado', 10, 10);
+            $this->storeGamificationSettings($class->id, 'correctly_mark_all_questions', 'Acertar todas as questões de um simulado', 20, 20);
+            $this->storeGamificationSettings($class->id, 'get_badge', 'Conquistar emblema', 0, 0);
+
+            $this->storeGamificationBadges($class->id, 'five_correct_questions', '5 é D+!', 50);
+            $this->storeGamificationBadges($class->id, 'ten_correct_questions', '10 é D+!!', 50);
+            $this->storeGamificationBadges($class->id, 'achieve_first_placement_gold', 'Medalha de ouro', 60);
+            $this->storeGamificationBadges($class->id, 'achieve_second_placement_silver', 'Medalha de prata', 50);
+            $this->storeGamificationBadges($class->id, 'achieve_third_placement_bronze', 'Medalha de bronze ', 40);
+            $this->storeGamificationBadges($class->id, 'two_gold_medals', 'Gênio da turma ', 70);
+            $this->storeGamificationBadges($class->id, 'correctly_answer_two_simulations', 'Oráculo', 80);
+            $this->storeGamificationBadges($class->id, 'answer_a_test_same_day_was_posted', 'Pontual', 50);
+            $this->storeGamificationBadges($class->id, 'get_100_xp', 'Estudioso!', 90);
 
         }
         $class->save();
@@ -323,47 +349,36 @@ class ClassController extends Controller
         return response()->json($classes, 200);
     }
 
-    private function storeGamificationSettings($class_id){
-        $classGamificationSettings = new ClassGamificationSettings();
-        $classGamificationSettings->description_id = 'enter_class';
-        $classGamificationSettings->description = 'Quando entrar na turma';
-        $classGamificationSettings->fk_class_id = $class_id;
-        $classGamificationSettings->XP = 0;
-        $classGamificationSettings->RP = 50;
-        $classGamificationSettings->save();
+    private function storeGamificationSettings($class_id, $description_id, $description, $XP, $RP){
+        $verify = ClassGamificationSettings::where('description_id', $description_id)
+            ->where('fk_class_id', $description)->first();
 
-        $classGamificationSettings = new ClassGamificationSettings();
-        $classGamificationSettings->description_id = 'mark_correct_question';
-        $classGamificationSettings->description = 'Acertar uma questão';
-        $classGamificationSettings->fk_class_id = $class_id;
-        $classGamificationSettings->XP = 10;
-        $classGamificationSettings->RP = 0;
-        $classGamificationSettings->save();
+        if(!$verify) {
+            $classGamificationSettings = new ClassGamificationSettings();
+            $classGamificationSettings->description_id = $description_id;
+            $classGamificationSettings->description = $description;
+            $classGamificationSettings->fk_class_id = $class_id;
+            $classGamificationSettings->XP = $XP;
+            $classGamificationSettings->RP = $RP;
+            $classGamificationSettings->save();
+        }
 
-        $classGamificationSettings = new ClassGamificationSettings();
-        $classGamificationSettings->description_id = 'complete_a_test';
-        $classGamificationSettings->description = 'Finalizar um simulado';
-        $classGamificationSettings->fk_class_id = $class_id;
-        $classGamificationSettings->XP = 10;
-        $classGamificationSettings->RP = 10;
-        $classGamificationSettings->save();
+    }
 
+    private function storeGamificationBadges($class_id, $description_id, $description, $RP){
+        //verifica se já tem o elemento
+        $verify = ClassBadgesSettings::where('description_id', $description_id)
+            ->where('fk_class_id', $description)->first();
 
-        $classGamificationSettings = new ClassGamificationSettings();
-        $classGamificationSettings->description_id = 'correctly_mark_all_questions';
-        $classGamificationSettings->description = 'Acertar todas as questões de um simulado';
-        $classGamificationSettings->fk_class_id = $class_id;
-        $classGamificationSettings->XP = 20;
-        $classGamificationSettings->RP = 20;
-        $classGamificationSettings->save();
+        if(!$verify){
+            $classGamificationBadges = new ClassBadgesSettings();
+            $classGamificationBadges->description_id = $description_id;
+            $classGamificationBadges->description = $description;
+            $classGamificationBadges->fk_class_id = $class_id;
+            $classGamificationBadges->RP = $RP;
+            $classGamificationBadges->save();
+        }
 
-        $classGamificationSettings = new ClassGamificationSettings();
-        $classGamificationSettings->description_id = 'get_badge';
-        $classGamificationSettings->description = 'Conquistar emblema';
-        $classGamificationSettings->fk_class_id = $class_id;
-        $classGamificationSettings->XP = 0;
-        $classGamificationSettings->RP = 0;
-        $classGamificationSettings->save();
     }
 
 }

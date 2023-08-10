@@ -28,29 +28,23 @@ class ResultEvaluationStudent extends Controller
 
         $type = $request->type;
         $situation = $request->situation;
+        $fk_class_id = $request->fk_class_id;
+
+        $applications = [];
+        if($fk_class_id){
+            $result = EvaluationApplication::select('id')->where('fk_class_id', $fk_class_id)->get();
+            foreach ($result as $item) {
+                $applications[] = $item->id;
+            }
+        }
 
         $head_answer = AnswersHeadEvaluation::where('fk_user_id',$user->id)
-            ->when($type == "P" || $type == "R" , function ($query) {
-                $user = auth('api')->user();
-
-                /*if($query == "P") {
-                    $listApplications = EvaluationController::where('fk_user_id', $user->id)
-                        ->where('practice', 1)->get();
-                } else {
-                    $listApplications = EvaluationController::where('fk_user_id', $user->id)
-                        ->where('practice', 0)->get();
-                }
-                $arr = array();
-                foreach ($listApplications as $key){
-                    //dd($enaq);
-                    $arr[] = $key->fk_question_id;
-                }
-                return $query->whereIn('id', $arr);*/
-                return $query->where('fk_application_evaluation_id.fk_evaluation_id.practice', '=', 1);
+            ->when($fk_class_id , function ($query) use ($applications) {
+                return $query->whereIn('fk_application_evaluation_id', $applications);
             })
             ->with('evaluationApplication')
             ->orderBy('created_at', 'DESC')
-            ->paginate(10);
+            ->get();
 
         if(sizeof($head_answer)==0){
             return response()->json([
