@@ -402,7 +402,6 @@ class DoEvaluation extends Controller
 
         $application = EvaluationApplication::where('id_application', $idApplication)->first();
 
-
         if(!$application){
             return response()->json([
                 'message' => 'A Aplicação não foi encontrada.'
@@ -500,6 +499,10 @@ class DoEvaluation extends Controller
                     $totalAnswerCorrect++;
                 }
             }
+            //badge ao responder um simulado no mesmo dia que foi publicado
+            $badge = new BadgesController();
+            return response()->json($badge->answerATestSameDayWasPosted($class->id, $answer_head->id), 200);
+
 
             if(sizeof($allAnswer) == $totalAnswerCorrect){
                 //pontuação XP ao acertar todas as questões de um simulado

@@ -13,6 +13,7 @@ import IconButton from '@material-ui/core/IconButton';
 import PlayArrow from '@material-ui/icons/PlayArrow';
 import InfoIcon from '@material-ui/icons/Info';
 import api from "../../../../services/api";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -50,6 +51,7 @@ const useStyles = makeStyles(theme => ({
 
 const NextEvaluations = props => {
   const { className, ...rest } = props;
+  let history = useHistory();
   const [nextEvaluations, setNextEvaluations] = useState(null);
 
   const classes = useStyles();
@@ -118,7 +120,9 @@ const NextEvaluations = props => {
                                       {" (Professor: "+evaluations.class.user.name+")"}
                                     </React.Fragment>}/>
                     <ListItemSecondaryAction>
-                      <IconButton edge="end" aria-label="comments">
+                      <IconButton
+                          aria-label="comments"
+                          onClick={() => history.push(`/code/${evaluations.id_application}`)}>
                         <PlayArrow />
                       </IconButton>
                     </ListItemSecondaryAction>
@@ -136,11 +140,7 @@ const NextEvaluations = props => {
           </Grid>
         </Grid>
         <div className={classes.difference}>
-          <Typography
-            className={classes.differenceValue}
-            variant="body2">
-            Total de questões validadas.
-          </Typography>
+
         </div>
       </CardContent>
     </Card>

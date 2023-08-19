@@ -11,6 +11,7 @@ import {
 
 import { StartEvaluationCard } from './../../components';
 import NextEvaluations from "./components/NextEvaluations";
+import totalQuestion from "./components/TotalQuestion";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -23,6 +24,7 @@ const useStyles = makeStyles(theme => ({
 
 const Dashboard = () => {
   const classes = useStyles();
+  const level_user = localStorage.getItem("@Questione-acess-level-user");
 
   return (
     <div className={classes.root}>
@@ -71,14 +73,18 @@ const Dashboard = () => {
           xs={12}>
           <TotalEvaluation className="total-evaluation"/>
         </Grid>
-        <Grid
-            item
-            lg={9}
-            sm={6}
-            xl={6}
-            xs={12}>
-          <NextEvaluations className="total-question"/>
-        </Grid>
+        { level_user == 0 ?
+            <Grid
+                item
+                lg={9}
+                sm={6}
+                xl={6}
+                xs={12}>
+              <NextEvaluations className="next-evaluations"/>
+            </Grid>
+            : null
+        }
+
         {/*<Grid
           item
           lg={8}

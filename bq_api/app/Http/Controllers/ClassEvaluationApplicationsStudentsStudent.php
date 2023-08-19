@@ -180,6 +180,7 @@ class ClassEvaluationApplicationsStudentsStudent extends Controller
         $arr = [];
         foreach ($classes as $class){
             $evaluations = EvaluationApplication::where('fk_class_id', $class->id)
+                ->where('status', 1)
                 ->with('evaluation')
                 ->with('class.user')
                 ->with('headAnswer')
