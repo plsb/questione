@@ -125,22 +125,6 @@ const useStyles = makeStyles(theme => ({
     color: '#fff',
     borderRadius: 4
   },
-  bodyPercentage: {
-    width: '20%',
-    height: '82px',
-    textAlign: 'center',
-    backgroundColor: '#FFF',
-    color: '#393A68',
-    boxSizing: 'border-box',
-    fontWeight: 'bold',
-    border: '1px solid #f2f2f2',
-    lineHeight: '15px',
-    fontSize: '12px',
-    whiteSpace: 'nowrap',
-    overflow: 'auto',
-    textOverflow: 'ellipsis',
-    fontFamily: 'Open Sans, sans-serif, Helvetica, Arial'
-  },
   headQuestion: {
     width: '90px',
     backgroundColor: '#FFF',
@@ -191,8 +175,6 @@ const ResultsGeneral = props =>{
           let url = `class/student/overview/${studentClassId}`;
           const response = await api.get(url);
 
-          console.log('general', response.data);
-
           if(response.status == 200) {
             if(response.data.length === 0){
               setClassProfessorOverview(null);
@@ -201,11 +183,11 @@ const ResultsGeneral = props =>{
             }
           } else {
             setClassProfessorOverview(null);
-            console.log('general');
+
           }
           
         } catch (error) {
-          console.log('general', error);
+
         }
 
       }

@@ -414,7 +414,7 @@ const EvaluationsResultDetails = props => {
                           label={(i + 1) <10 ? ('Questão 00' + (i + 1)) :
                                     (i + 1) <100 ? ('Questão 0' + (i + 1)) : (i + 1)}
                         /> */}
-                        {console.log(data)}
+
                         <p className={classes.tituloCard}>
                           Questão {i + 1} {difficulty(data.question.difficulty.porc_correct,
                             data.question.difficulty.total_answers)}

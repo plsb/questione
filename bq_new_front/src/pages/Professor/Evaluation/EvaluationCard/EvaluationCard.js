@@ -72,7 +72,7 @@ const EvaluationCard = props => {
       setClassProfessor([{'id': '0','id_class' : '00', 'description': 'Selecione a turma'}, ...response.data]);
 
     } catch (error) {
-        console.log(error);
+
     }
   }
 

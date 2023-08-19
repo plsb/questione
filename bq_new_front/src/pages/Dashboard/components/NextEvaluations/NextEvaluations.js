@@ -61,7 +61,7 @@ const NextEvaluations = props => {
       let url = 'class/student/next-evaluations';
 
       const response = await api.get(url);
-      console.log('aplicacao student', response.data);
+
       if(response.status == 200) {
         setNextEvaluations(response.data);
 

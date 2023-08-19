@@ -286,7 +286,7 @@ const QuestionCard = props => {
                 <br />
                 {question.question.question_items.map(item => (
                     <div>
-                        {console.log(item)}
+
                         <Paper className={clsx(classes.paper, item.correct_item == 1 ?  classes.correct : null)} variant="outlined"> {ReactHtmlParser(item.description)} </Paper>
                     </div>
                 ))}

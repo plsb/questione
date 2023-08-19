@@ -57,7 +57,7 @@ function StudentClass({ history }) {
             if (response.status == 200) {
                 setTotal(response.data.total);
                 setStudentClasses(response.data.data);
-                console.log("verifica", response.data);
+
             } else {
                 setStudentClasses([]);
             }

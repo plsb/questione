@@ -301,13 +301,13 @@ class EvaluationApplicationsController extends Controller
                     return response()->json([
                         'message' => 'A data para liberar os resultados da avaliação deve ser maior ou igual a data atual.'
                     ], 202);
-                } else if($request->date_release_results == date('Y-m-d')){
+                } /*else if($request->date_release_results == date('Y-m-d')){
                     if($request->time_release_results <= date('H:i')){
                         return response()->json([
                             'message' => 'A hora para liberar os resultados da avaliação deve ser maior que a hora atual.'
                         ], 202);
                     }
-                }
+                }*/
                 //verifica a data e hora inicial da avaliação. A liberação dos resultados deve acontecer após essa data e hora
                 if($request->date_start){
                     if($request->date_start > $request->date_release_results){

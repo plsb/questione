@@ -61,7 +61,7 @@ const ResultsByTest = props =>{
       }, []);
 
       useEffect(() => {
-        console.log('eva', evaluationsApplications);
+
       }, [evaluationsApplications]);
     
     return(

@@ -250,7 +250,7 @@ const EvaluationsResultDetails = props => {
         setQuestions([]);
       }
     } catch (error) {
-      console.log(error);
+
     }
   }
 

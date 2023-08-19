@@ -79,7 +79,7 @@ const People = props => {
     try {
       let url = `class/student/details/${studentClassId}`;
       const response = await api.get(url);
-      console.log('people', response);
+
       if(response.status == 200) {
         setProfessor(response.data.professor);
         setStudents(response.data.students);

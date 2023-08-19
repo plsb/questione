@@ -91,13 +91,14 @@ const ResultsByTest = props =>{
 
     async function loadHeadEvaluations(){
         try {
-          let url = `/evaluation/student/result/evaluations?fk_class_id=${studentClassId}`;
-          
+          //let url = `/evaluation/student/result/evaluations?fk_class_id=${studentClassId}`;
+          let url = `class/student/list-applications/${studentClassId}`;
+
           const response = await api.get(url);
           
           if(response.status == 200) {
               setHeadEvaluations(response.data);
-              console.log('head', response.data);
+
           } else {
               setHeadEvaluations([]);
           }
@@ -133,8 +134,8 @@ const ResultsByTest = props =>{
                             xs={12}>
                             <Table>
                                 <TableBody>
-                                    {headEvaluations.map((application, i) => (
-                                        <div key={application.id}>
+                                    {headEvaluations.map((list, i) => (
+                                        <div key={list.id}>
                                             <Card
                                                 {...rest}
                                                 className={classes.root}>
@@ -145,52 +146,52 @@ const ResultsByTest = props =>{
                                                 <CardContent>
                                                     <div>
                                                         <Typography variant="h5" color="textSecondary" component="h2">
-                                                            {application.evaluation_application.description }
+                                                            {list.application.evaluation.description }
                                                         </Typography>
                                                         <Typography variant="body1" color="textSecondary" component="h2">
-                                                            {'Avaliação: '+application.evaluation_application.evaluation.description}
+                                                            {'Avaliação: '+list.application.evaluation.description}
                                                         </Typography>
 
-                                                        {application.finalized_at && (
+                                                        {list.answer_head ? list.answer_head.finalized_at && (
                                                             <Typography variant="body1" color="textSecondary" component="h2">
-                                                                {'Finalizado em: '+moment(application.finalized_at).format('DD/MM/YYYY H:mm') }
+                                                                {'Finalizado em: '+moment(list.answer_head.finalized_at).format('DD/MM/YYYY H:mm') }
                                                             </Typography>
-                                                        )}
+                                                        ) : null}
 
-                                                        {application.evaluation_application.evaluation.practice === 1 && (
+                                                        {list.application.evaluation.practice === 1 && (
                                                             <Chip label="Pratique" className={clsx(classes.chippurple, className)} size="small"/>
                                                         )}
 
-                                                        {application.finalized_at && application.finished_automatically === 0 && (
+                                                        {list.answer_head ? list.answer_head.finalized_at && list.answer_head.finished_automatically === 0 && (
                                                             <Chip label="Finalizado" className={clsx(classes.chipred, className)} size="small"/>
-                                                        )}
+                                                        ) : null}
 
-                                                        {application.finalized_at && application.finished_automatically === 1 && (
+                                                        {list.answer_head ? list.answer_head.finalized_at && list.answer_head.finished_automatically === 1 && (
                                                             <Chip label="Finalizado automaticamente" className={clsx(classes.chipred, className)} size="small"/>
-                                                        )}
+                                                        ) : null}
 
-                                                        {!application.finalized_at && application.finished_automatically === 0 && (
+                                                        {list.answer_head ? !list.answer_head.finalized_at && list.answer_head.finished_automatically === 0 && (
                                                             <Chip label="Iniciado" className={clsx(classes.chipgreen, className)} size="small"/>
-                                                        )}
+                                                        ) : null}
 
-                                                        { application.evaluation_application.show_results == 1 &&
-                                                            application.evaluation_application.canShowResults == 1 && application.finalized_at ?
+                                                        { list.answer_head && (list.application.show_results == 1 &&
+                                                            list.application.canShowResults == 1 && list.answer_head.finalized_at ?
                                                            <Link
                                                                 component="button"
                                                                 variant="body2"
                                                                 onClick={() => {
-                                                                    results(application.id)
+                                                                    results(list.answer_head.id)
                                                                 }}
                                                                 className={clsx(classes.link, className)}>
                                                                 Visualizar Resultado
                                                             </Link>
                                                             :
-                                                            application.evaluation_application.canShowResults == 0 && application.evaluation_application.show_results == 1
+                                                            list.application.canShowResults == 0 && list.application.show_results == 1
                                                                 ?
-                                                                <Chip label={'Resultado em: '+moment(`${application.evaluation_application.date_release_results} ${application.evaluation_application.time_release_results}`).format('DD/MM/YYYY H:mm')} className={clsx(classes.chipred, className)} size="small"/>
+                                                                <Chip label={'Resultado em: '+moment(`${list.application.date_release_results} ${list.application.time_release_results}`).format('DD/MM/YYYY H:mm')} className={clsx(classes.chipred, className)} size="small"/>
                                                                 :
-                                                                application.evaluation_application.show_results == 0 && application.finalized_at && <Chip label="Resultado indisponível." className={clsx(classes.chipred, className)} size="small"/>
-                                                        }
+                                                                list.application.show_results == 0 && list.answer_head.finalized_at && <Chip label="Resultado indisponível." className={clsx(classes.chipred, className)} size="small"/>
+                                                        )}
 
                                                     </div>
                                                 </CardContent>

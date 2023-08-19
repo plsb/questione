@@ -82,7 +82,7 @@ const StudentClassContent = props => {
           }
           
         } catch (error) {
-          console.log('error', error);
+
         }
       }
 

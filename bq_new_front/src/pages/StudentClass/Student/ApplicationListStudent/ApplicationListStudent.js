@@ -72,11 +72,11 @@ const AplicationListStudent = props => {
       let url = `class/student/list-applications/${studentClassId}`;
       
       const response = await api.get(url);
-      console.log('aplicacao student', response.data);
+
       if(response.status == 200) {  
         //setTotal(response.data.total);
         setEvaluationsApplications(response.data);
-        console.log('aplicacao student', response.data);
+
       } else {
         setEvaluationsApplications([]);
       }

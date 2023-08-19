@@ -82,7 +82,7 @@ const StudentClassDetails = props => {
 
     async function saveStudentClass() {
         try {
-            console.log('formsatate',formState );
+
             const { description, course } = formState.values;
             const data = {
                 description,
@@ -119,7 +119,7 @@ const StudentClassDetails = props => {
     async function showStudentClass() {
         try {
             const response = await api.get('class/professor/show/' + studentClassId);
-            console.log('response', response);
+
             if (response.status === 202) {
                 if (response.data.message) {
                     toast.error(response.data.message);
