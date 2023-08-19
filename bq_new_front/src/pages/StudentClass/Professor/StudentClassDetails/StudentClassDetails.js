@@ -251,7 +251,7 @@ const StudentClassDetails = props => {
                                 onChange={handleChange}
                                 value={formState.values.description || ''}
                                 variant="outlined"/>
-                            <TooltipCustomized
+                            {/*<TooltipCustomized
                                 title={
                                     <React.Fragment>
                                         <p>
@@ -262,7 +262,7 @@ const StudentClassDetails = props => {
                                         </p>
                                     </React.Fragment>
                                 }>
-                                <FormControlLabel
+                                 <FormControlLabel
                                     control={
                                         <Switch
                                             checked={checkedGamified}
@@ -273,7 +273,7 @@ const StudentClassDetails = props => {
                                     }
                                     label="Turma gamificada?"
                                 />
-                            </TooltipCustomized>
+                            </TooltipCustomized>*/}
                             <Divider /><br />
                             <Button
                                 color="primary"

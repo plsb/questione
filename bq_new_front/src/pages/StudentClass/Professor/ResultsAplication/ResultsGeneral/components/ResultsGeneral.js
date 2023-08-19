@@ -82,22 +82,6 @@ const useStyles = makeStyles(theme => ({
     textOverflow: 'ellipsis',
     fontFamily: 'Open Sans, sans-serif, Helvetica, Arial',
   },
-  bodyPercentage: {
-    width: '20%',
-    height: '82px',
-    textAlign: 'center',
-    backgroundColor: '#FFF',
-    color: '#393A68',
-    boxSizing: 'border-box',
-    fontWeight: 'bold',
-    border: '1px solid #f2f2f2',
-    lineHeight: '15px',
-    fontSize: '12px',
-    whiteSpace: 'nowrap',
-    overflow: 'auto',
-    textOverflow: 'ellipsis',
-    fontFamily: 'Open Sans, sans-serif, Helvetica, Arial'
-  },
   percentageRed: {
     backgroundColor: '#EC0B43',
     display: 'block',

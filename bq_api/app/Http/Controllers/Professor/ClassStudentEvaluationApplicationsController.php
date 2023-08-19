@@ -104,6 +104,8 @@ class ClassStudentEvaluationApplicationsController extends Controller
             ->with('user')
             ->get();
 
+        $teste_teste[] = $students_class;
+
         $students = array();
         foreach ($students_class as $student) {
 
@@ -182,6 +184,18 @@ class ClassStudentEvaluationApplicationsController extends Controller
 
             $students[] = $resultStudent;
         }
+
+        usort(
+
+            $students,
+
+            function( $a, $b ) {
+
+                if( $a->student == $b->student ) return 0;
+
+                return ( ( $a->student < $b->student ) ? -1 : 1 );
+            }
+        );
 
         return response()->json($students, 200);
     }

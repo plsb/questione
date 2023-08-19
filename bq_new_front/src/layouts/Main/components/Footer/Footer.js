@@ -44,15 +44,36 @@ const Footer = props => {
             </Link>
         </div>
       <Typography variant="body1">
-        Desenvolvido com recursos do Instituto Federal de Educação, Ciência e Tecnologia do Ceará.
-          &copy;{' '}
+        Desenvolvido com recursos do
+          {' '}
           <Link
               component="a"
               href="https://www.ifce.edu.br/"
               target="_blank">
               IFCE
           </Link>
-          . 2021
+          {' '}e da{' '}
+          <Link
+              component="a"
+              href="https://www.funcap.ce.gov.br/"
+              target="_blank">
+              FUNCAP
+          </Link>
+          . Participantes deste projeto são membros do
+          {' '}
+          <Link
+              component="a"
+              href="https://ifce.edu.br/cedro/campus_cedro/grupos-de-pesquisa/gipea"
+              target="_blank">
+              GIPEA
+          </Link>
+          {' '}e do{' '}
+          <Link
+              component="a"
+              href="https://www.great.ufc.br/"
+              target="_blank">
+              GREat
+          </Link>. 2023
       </Typography>
         <Typography variant="body1">
             Para saber mais informações sobre o Questione

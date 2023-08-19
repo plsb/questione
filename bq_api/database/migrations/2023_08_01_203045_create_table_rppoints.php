@@ -13,7 +13,7 @@ class CreateTableRppoints extends Migration
      */
     public function up()
     {
-        Schema::create('table_rppoints', function (Blueprint $table) {
+        Schema::create('gamification_rppoints', function (Blueprint $table) {
             $table->increments('id');
             $table->string('description_id', 50);
             $table->char('type', 1);

@@ -74,7 +74,7 @@ const ResultsAplication = props =>{
                 </AccordionDetails>
             </Accordion>
 
-            <Accordion>
+            {/*<Accordion>
                 <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel3a-content"
@@ -94,7 +94,7 @@ const ResultsAplication = props =>{
                         </Grid>
                     </Grid>
                 </AccordionDetails>
-            </Accordion> 
+            </Accordion> */}
         </div>
     );
 }

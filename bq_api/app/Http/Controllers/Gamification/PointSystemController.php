@@ -6,6 +6,7 @@ use App\AnswersEvaluation;
 use App\AnswersHeadEvaluation;
 use App\ClassBadgesSettings;
 use App\ClassGamificationSettings;
+use App\ClassQuestione;
 use App\Http\Controllers\Controller;
 use App\RPPoints;
 use App\XPPoints;
@@ -56,6 +57,11 @@ class PointSystemController extends Controller
     public function RPpointCredit($descriptionID, $id_class, $id_answersHead, $id_answer)
     {
         $user = auth('api')->user();
+
+        $class = ClassQuestione::where('id', $id_class)->first();
+        if($class->gamified_class == 0){
+            return ;
+        }
 
         $settings = ClassGamificationSettings::where('description_id', $descriptionID)
             ->where('fk_class_id', $id_class)->first();

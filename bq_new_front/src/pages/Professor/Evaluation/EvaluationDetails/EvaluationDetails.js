@@ -94,7 +94,7 @@ const EvaluationDetails = props => {
           toast.error(response.data.errors[0].description);
         }
       } else {
-        toast.success('Avaluação '+acao+'.');
+        toast.success('Avaliação '+acao+'.');
         history.push('/evaluations');
       }
 

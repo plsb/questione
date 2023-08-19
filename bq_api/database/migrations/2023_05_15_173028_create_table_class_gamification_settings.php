@@ -13,7 +13,7 @@ class CreateTableClassGamificationSettings extends Migration
      */
     public function up()
     {
-        Schema::create('class_gamification_settings', function (Blueprint $table) {
+        Schema::create('gamification_class_settings', function (Blueprint $table) {
             $table->increments('id');
             $table->string('description_id', 50);
             $table->string('description', 50);

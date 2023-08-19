@@ -198,7 +198,7 @@ const StudendClassCard = props => {
                     {status === 1 && isOwner && (
                         <>
                             <MenuItem onClick={() => history.push(`/student-class-details/${id}/professor`)}>Editar</MenuItem>
-                            <MenuItem onClick={() => toFile(2)}>Arquivar</MenuItem>
+                            {/*<MenuItem onClick={() => toFile(2)}>Arquivar</MenuItem>*/}
                         </>
                     )}
 

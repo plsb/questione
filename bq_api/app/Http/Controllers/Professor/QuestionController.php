@@ -470,7 +470,7 @@ class QuestionController extends Controller
         $keywords = KeywordQuestion::where('fk_question_id', $question->id)->get();
 
         $new_question = new Question();
-        $new_question->base_text = '(QUESTÃO DUPLICADA - Aapagar este texto) '.$question->base_text;
+        $new_question->base_text = '(QUESTÃO DUPLICADA - Apagar este texto) '.$question->base_text;
         $new_question->stem = $question->stem;
         $new_question->validated = 0;
         $new_question->reference = $question->reference;

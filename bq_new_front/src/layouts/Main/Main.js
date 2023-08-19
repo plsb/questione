@@ -102,7 +102,7 @@ const Main = props => {
 };
 
 const stepsGeneral = [
-    {
+    /*{
         selector: '.practice',
         content: 'O módulo Pratique permite que o usuário gere avaliações por área e competência para testar seus conhecimentos.',
     },
@@ -154,7 +154,7 @@ const stepsGeneral = [
     {
         selector: '.exit',
         content: 'Clique aqui para sair do sistema.',
-    }
+    }*/
 ];
 
 
@@ -171,14 +171,9 @@ const stepsProfessor = [
         selector: '.evaluation-professor',
         content: 'Na opção Avaliações, você poderá criar, arquivar ou excluir avaliações. Uma avaliação só poderá ser excluída caso não tenha' +
             ' nenhuma aplicação cadastrada. As questões só poderão ser adicionadas à avaliação pelo menu Questões. Mas as questões da avaliação podem' +
-            ' ser visualizadas na opção editar avaliação. Aqui também é possível cadastrar novas aplicações para avaliações. Uma mesma' +
+            ' ser visualizadas na opção Ver questões. Aqui também é possível cadastrar novas aplicações para avaliações no menu Novo Simulado. Uma mesma' +
             ' avaliação poderá ser aplicada várias vezes.'+
-            ' Na opção Aplicações, você poderá editar e ativar aplicações de uma avaliação. Uma aplicação só poderá ser respondida pelos' +
-            ' estudantes caso esteja Ativa. Você também poderá escolher opções para sua aplicação, como: se as questões da prova serão distribuída de forma' +
-            ' randômica; se permite mostrar o gabarito para os estudantes após a finalização; configurar uma data e hora para iniciar a avaliação; ' +
-            'e configurar a quantidade de horas de duração da avaliação.' +
-            ' Aqui também é possível visualizar os resultados da aplicação por aluno, por questão,' +
-            ' por competência e objeto de conhecimento.',
+            ' Por meio do menu também é possível duplicar uma avalição e arquivar uma avaliação.',
     },
     /*{
         selector: '.applications-professor',
@@ -190,18 +185,19 @@ const stepsProfessor = [
             ' por competência e objeto de conhecimento.',
     },*/
     {
-        selector: '.result-evaluations',
-        content: 'Na opção Avaliações respondidas, você poderá visualizar o gabarito das avaliações que você respondeu. O conteúdo da questão' +
-            ' não é apresentado.',
+        selector: '.class-professor',
+        content: 'Na opção Turmas, você poderá cadastrar novas turmas. Por meio do menu Acessar, o professor poderá visualizar os simulados, as pessoas' +
+            ' inseridas na turma e os resultados dos simulados.',
     },
     ...stepsGeneral,
 ];
 
 const stepsStudent = [
     {
-        selector: '.result-evaluations',
-        content: 'Na opção Avaliações respondidas, você poderá visualizar o gabarito das avaliações que você respondeu. O conteúdo da questão' +
-            ' não é apresentado.',
+        selector: '.class-student',
+        content: 'Na opção Turmas, você poderá participar de uma turma e acessar as turmas as quais faz parte.' +
+            ' Após acessar uma turma, você terá acesso aos simulados da turma, as pessoas inseridas na turma'+
+        ' e resultados sobre os simulados presentes na turma.',
     },
     ...stepsGeneral,
 ];

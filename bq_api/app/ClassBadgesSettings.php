@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ClassBadgesSettings extends Model
 {
-    protected $table = 'badges_settings';
+    protected $table = 'gamification_badges_settings';
     protected $fillable = ['id', 'description_id', 'description', 'PR', 'fk_class_id'];
     protected $hidden = [];
 

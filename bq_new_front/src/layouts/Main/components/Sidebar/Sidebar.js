@@ -100,7 +100,7 @@ const Sidebar = props => {
       title: 'Turmas',
       href: '/student-class/professor',
       icon: <Group />,
-      className: 'practice',
+      className: 'class-professor',
     },
     /*{
       title: 'Avaliações respondidas',
@@ -127,7 +127,7 @@ const Sidebar = props => {
       title: 'Turmas',
       href: '/student-class/student',
       icon: <Group />,
-      className: 'practice',
+      className: 'class-student',
     },
   ];
 

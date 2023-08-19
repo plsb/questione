@@ -13,7 +13,7 @@ class CreateTableXPpoints extends Migration
      */
     public function up()
     {
-        Schema::create('table_xppoints', function (Blueprint $table) {
+        Schema::create('gamification_xppoints', function (Blueprint $table) {
             $table->increments('id');
             $table->string('description_id', 50);
             $table->integer('point');

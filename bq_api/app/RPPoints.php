@@ -9,7 +9,7 @@ class RPPoints extends Model
     /*
      * Type: C - credit | D - debit
      */
-    protected $table = 'table_rppoints';
+    protected $table = 'gamification_rppoints';
     protected $fillable = ['id', 'description_id', 'point', 'type', 'fk_class_id',
         'fk_answers_head_id', 'fk_answers_id', 'fk_user_id'];
     protected $hidden = [];

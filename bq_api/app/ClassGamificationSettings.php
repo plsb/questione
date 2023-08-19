@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ClassGamificationSettings extends Model
 {
-    protected $table = 'class_gamification_settings';
+    protected $table = 'gamification_class_settings';
     protected $fillable = ['id', 'description_id', 'description', 'XP', 'PR', 'fk_class_id'];
     protected $hidden = [];
 

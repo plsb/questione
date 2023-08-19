@@ -13,7 +13,7 @@ class CreateTableBadgesStudents extends Migration
      */
     public function up()
     {
-        Schema::create('badges_students', function (Blueprint $table) {
+        Schema::create('gamification_badges_students', function (Blueprint $table) {
             $table->increments('id');
             $table->string('description_id', 50);
             $table->integer('fk_class_id')->unsigned();

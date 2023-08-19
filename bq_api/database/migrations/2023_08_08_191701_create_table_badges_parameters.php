@@ -13,7 +13,7 @@ class CreateTableBadgesParameters extends Migration
      */
     public function up()
     {
-        Schema::create('badges_parameters', function (Blueprint $table) {
+        Schema::create('gamification_badges_parameters', function (Blueprint $table) {
             $table->increments('id');
             $table->string('description_id', 50);
             $table->integer('parameter')->unsigned();
