@@ -25,13 +25,21 @@ const StudentClassToolbar = props => {
   return (
     <div
       {...rest}
-      className={clsx(classes.root, className)}
-    >
+      className={clsx(classes.root, className)}>
       <div className={classes.row}>
         <div style={{ flex: 1 }}>
           <Typography variant="h3" className={classes.title}>{'Turmas'}</Typography>
           
           <span className={classes.spacer} />
+
+          <div className={classes.subtitle}>
+            Para mais informações sobre o módulo turmas,&nbsp;
+            <a href="https://docs.google.com/document/d/10u_l5bjyYjy-Pii18ya4OzWptxOnAJFfn_lUYmYQ4y4/edit?usp=sharing"
+               target="_blank"
+               rel="noopener noreferrer">
+              clique aqui.
+            </a>
+          </div>
         </div>
         <div style={{ padding: '16px' }}>
           <Button
@@ -41,7 +49,7 @@ const StudentClassToolbar = props => {
             variant="contained"
             onClick={() => history.push('/student-class-details/professor')}
           >
-            Criar nova turma
+            Nova turma
           </Button>
         </div>
       </div>
@@ -57,8 +65,7 @@ const StudentClassToolbar = props => {
             helperText="Selecione um status para aplicar o filtro."
             variant="outlined"
             margin="dense"
-            style={{ width: '300px' }}
-          >
+            style={{ width: '300px' }}>
             <MenuItem value={1}>Ativas</MenuItem>
             <MenuItem value={2}>Arquivadas</MenuItem>
           </TextField>
@@ -75,8 +82,7 @@ const StudentClassToolbar = props => {
 
           <Button
             onClick={onClickSearch}
-            className={classes.searchButton}
-          >
+            className={classes.searchButton}>
             <FindInPage fontSize="large" />
           </Button>
         </div>

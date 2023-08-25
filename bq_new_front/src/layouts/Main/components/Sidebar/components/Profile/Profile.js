@@ -94,7 +94,7 @@ const Profile = props => {
         </Typography>
       </Tooltip>
 
-      {currentAccessLevel == 2 && (
+      {/*currentAccessLevel == 2 && (
         <Typography
           variant="body2">
           Visualizar como {' '}
@@ -117,7 +117,7 @@ const Profile = props => {
             )
           }
         </Typography>
-      )}
+      )*/}
 
       {accessLevel != 1 ?
         <Chip

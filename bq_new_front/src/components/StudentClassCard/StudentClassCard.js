@@ -60,7 +60,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const StudendClassCard = props => {
-    const { className, id, title, classId, user, status, showUser, toFileCallback, isOwner,
+    const { className, id, title, classId, course, user, status, showUser, toFileCallback, isOwner,
         history, gamified_class, ...rest } = props;
     const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -177,6 +177,9 @@ const StudendClassCard = props => {
                 <CardContent>
                     <Typography color="textSecondary" variant="h6">
                         <span>Código da turma:</span> {classId}
+                    </Typography>
+                    <Typography color="textSecondary" variant="h6">
+                        <span>Curso:</span> {course}
                     </Typography>
                     <Typography color="textSecondary" variant="h6">
                         {showUser && user.name}

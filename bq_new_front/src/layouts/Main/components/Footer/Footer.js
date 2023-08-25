@@ -73,7 +73,7 @@ const Footer = props => {
               href="https://www.great.ufc.br/"
               target="_blank">
               GREat
-          </Link>. 2023
+          </Link>. 2023.
       </Typography>
         <Typography variant="body1">
             Para saber mais informações sobre o Questione

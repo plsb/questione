@@ -112,9 +112,9 @@ Route::group(['prefix' => 'class/student/gamification'], function (){
 Route::group(['prefix' => 'class/professor'], function (){
     Route::get('/courses', 'Professor\ClassController@courses')->name('class.index');
     Route::get('/', 'Professor\ClassController@index')->name('class.index');
-    Route::post('/', 'Professor\ClassController@store')->name('class.store');
     Route::get('/show/{class}', 'Professor\ClassController@show')->name('class.show');
     Route::get('/classes-professor', 'Professor\ClassController@classesProfessor')->name('class.classes-professor');
+    Route::post('/', 'Professor\ClassController@store')->name('class.store');
     Route::put('/{class}', 'Professor\ClassController@update')->name('class.update');
     Route::put('/change-status/{class}', 'Professor\ClassController@changeStatus')->name('class.changeStatus');
     Route::get('/get-csv/{application}', 'Professor\ClassStudentEvaluationApplicationsController@getCSVClass')->name('class.getCSV');

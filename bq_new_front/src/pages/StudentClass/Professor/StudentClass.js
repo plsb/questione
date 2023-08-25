@@ -140,6 +140,7 @@ function StudentClass({ history }) {
                                                         classId={studentClass.id_class}
                                                         title={studentClass.description}
                                                         user={studentClass.user}
+                                                        course={studentClass.course ? studentClass.course.description : null }
                                                         status={status}
                                                         showUser
                                                         isOwner

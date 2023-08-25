@@ -1,12 +1,14 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Util\MailController;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Notifications\PasswordResetRequestNotifications;
 use App\Notifications\PasswordResetSuccessNotifications;
 use App\User;
 use App\PasswordReset;
+use PHPMailer\PHPMailer\PHPMailer;
 use Validator;
 use Illuminate\Support\Str;
 
@@ -50,10 +52,12 @@ class PasswordResetController extends Controller
                 'token' => Str::random(60)
              ]
         );
-        if ($user && $passwordReset)
+
+        if ($user && $passwordReset) {
             $user->notify(
                 new PasswordResetRequestNotifications($passwordReset->token, $user)
             );
+        }
         return response()->json([
             'message' => 'O link de redefinição de senha será enviado para o e-mail '
                                     .$user->email.'.'

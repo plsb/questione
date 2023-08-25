@@ -163,6 +163,9 @@ const StudentClassContent = props => {
                                     <Typography variant="button" color="textSecondary" component="p">
                                         {'Código da turma: '+classProfessor.id_class}
                                     </Typography>
+                                    <Typography variant="button" color="textSecondary" component="p">
+                                        {'Curso: '+classProfessor.course.description}
+                                    </Typography>
                                     {classProfessor.gamified_class === 1 && (
                                         <Chip label="Gamificada" className={clsx(classes.chipgreen, className)} size="small"/>
                                     )}

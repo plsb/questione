@@ -5,7 +5,7 @@ const useStyles = makeStyles((theme) => ({
     row: {
         display: 'flex',
         alignItems: 'flex-start',
-        marginBottom: '32px'
+        marginBottom: '20px'
     },
     filters: {
         position: 'relative',
@@ -33,6 +33,10 @@ const useStyles = makeStyles((theme) => ({
     title: {
         fontWeight: 'bold',
         padding: '16px',
+    },
+    subtitle: {
+        padding: '16px',
+        fontSize: '15px',
     },
     description: {
         padding: '0px 16px',

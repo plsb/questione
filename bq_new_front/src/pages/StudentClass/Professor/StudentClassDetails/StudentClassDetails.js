@@ -94,7 +94,7 @@ const StudentClassDetails = props => {
             let acao = "";
 
             if (!studentClassId) {
-                response = await api.post('class/professor/', data);
+                response = await api.post('class/professor', data);
                 acao = "cadastrada";
             } else {
                 response = await api.put('class/professor/' + studentClassId, data);
@@ -251,7 +251,7 @@ const StudentClassDetails = props => {
                                 onChange={handleChange}
                                 value={formState.values.description || ''}
                                 variant="outlined"/>
-                            {/*<TooltipCustomized
+                            <TooltipCustomized
                                 title={
                                     <React.Fragment>
                                         <p>
@@ -273,7 +273,7 @@ const StudentClassDetails = props => {
                                     }
                                     label="Turma gamificada?"
                                 />
-                            </TooltipCustomized>*/}
+                            </TooltipCustomized>
                             <Divider /><br />
                             <Button
                                 color="primary"

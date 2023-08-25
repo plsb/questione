@@ -21,12 +21,9 @@ import { FcClearFilters, FcSearch } from 'react-icons/fc';
 const useStyles = makeStyles(theme => ({
   root: {},
   row: {
-    height: '42px',
     display: 'flex',
-    alignItems: 'center',
-    marginBottom: theme.spacing(4),
-    marginTop: theme.spacing(1),
-    marginRight: theme.spacing(1),
+    alignItems: 'flex-start',
+    marginBottom: '20px'
   },
   spacer: {
     flexGrow: 1
@@ -41,10 +38,15 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1)
   },
   title: {
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    padding: '16px',
   },
   textField: {
     marginLeft: theme.spacing(1),
+  },
+  subtitle: {
+    padding: '16px',
+    fontSize: '15px',
   }
 }));
 
@@ -197,28 +199,31 @@ const QuestionToolbar = props => {
           {...rest}
           className={clsx(classes.root, className)}>
         <div className={classes.row}>
-          <Typography variant="h3" className={classes.title}>{'Questões'}</Typography>
-          <span className={classes.spacer} />
-        </div>
-        <div className={classes.row}>
-          <Button
-              color="primary"
-              variant="contained"
-              onClick={onClickNewCourse}>
-            Nova Questão
-          </Button>
+          <div style={{ flex: 1 }}>
+            <Typography variant="h3" className={classes.title}>{'Questões'}</Typography>
+            <span className={classes.spacer} />
+
+            <div className={classes.subtitle}>
+              Para mais informações sobre o módulo questões,&nbsp;
+              <a
+                  href="https://docs.google.com/document/d/1JzpLbCMDaOQbGubzB6l1KDBaPjGro10-x2OHxdFLtqU/edit?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+              >
+                clique aqui
+              </a>
+            </div>
+          </div>
+          <div style={{ padding: '16px' }}>
+            <Button
+                color="primary"
+                variant="contained"
+                onClick={onClickNewCourse}>
+              Nova Questão
+            </Button>
+          </div>
         </div>
         <Card className={classes.root}>
-          <div style={{ margin: '16px' }}>
-            Para mais informações sobre o módulo questões,&nbsp;
-            <a
-              href="https://docs.google.com/document/d/1JzpLbCMDaOQbGubzB6l1KDBaPjGro10-x2OHxdFLtqU/edit?usp=sharing"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              clique aqui
-            </a>
-          </div>
           <CardContent>
               <FormControl component="fieldset">
                 <RadioGroup aria-label="gender" name="gender1" value={searchText[0] ? searchText[0].value : 'S'} onChange={handleChangeSelect}>

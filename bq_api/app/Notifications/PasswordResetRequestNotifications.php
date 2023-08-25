@@ -1,9 +1,11 @@
 <?php
 namespace App\Notifications;
+use App\Http\Controllers\Util\MailController;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use PHPMailer\PHPMailer\PHPMailer;
 
 class PasswordResetRequestNotifications extends Notification implements ShouldQueue
 {
@@ -39,6 +41,7 @@ class PasswordResetRequestNotifications extends Notification implements ShouldQu
      public function toMail($notifiable)
      {
         $url_questione = "https://questione.ifce.edu.br/reset-password/".$this->token;
+
         return (new MailMessage)
             ->subject('[QUESTIONE] Recuperação de senha')
             ->greeting('Olá, '.$this->user->name.'.')
