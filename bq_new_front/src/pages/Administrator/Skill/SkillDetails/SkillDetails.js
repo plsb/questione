@@ -26,14 +26,14 @@ const schema = {
       message: 'A descrição deve conter no mínimo 10 e no máximo 300 caracteres.'
     }
   },
-  course: {
-    presence: { allowEmpty: false, message: 'O curso é obrigatório.' },
+  fk_regulation_id: {
+    presence: { allowEmpty: false, message: 'A portaria é obrigatória.' },
     numericality: {
       onlyInteger: true,
       greaterThan: 0,
-      message: 'Escolha um curso.',
+      message: 'Escolha uma portaria.',
     }
-  }
+  },
 };
 
 const useStyles = makeStyles(() => ({
@@ -42,7 +42,7 @@ const useStyles = makeStyles(() => ({
 
 const SkillDetails = props => {
   const { className, history, ...rest } = props;
-  const [courses, setCourses] = useState([{'id': '0', 'description': '- Escolha um curso -'}]);
+  const [regulations, setRegulations] = useState([{'id': '0', 'description': '- Escolha uma portaria -'}]);
   const { codigoSkill } = props.match.params;
 
   const classes = useStyles();
@@ -54,11 +54,11 @@ const SkillDetails = props => {
     errors: {}
   });
 
-  async function loadCourses(){
+  async function loadRegulations(){
     try {
-      const response = await api.get('all/courses');
+      const response = await api.get('regulation/all');
       if(response.status == 200) {
-        setCourses([...courses, ...response.data]);
+        setRegulations([...regulations, ...response.data]);
       }
     } catch (error) {
 
@@ -67,11 +67,11 @@ const SkillDetails = props => {
 
   async function saveSkillDetails(){
     try {
-      const fk_course_id = formState.values.course;
+      const fk_regulation_id = formState.values.fk_regulation_id;
       const description = formState.values.description;
       const id = formState.values.id;
       const data = {
-        description, fk_course_id
+        description, fk_regulation_id
       }
       let response= {};
       let acao = "";
@@ -87,8 +87,8 @@ const SkillDetails = props => {
           toast.error(response.data.message);
         } else if(response.data.errors[0].description){
           toast.error(response.data.errors[0].description);
-        } if(response.data.errors[0].fk_course_id){
-          toast.error(response.data.errors[0].fk_course_id);
+        } if(response.data.errors[0].fk_regulation_id){
+          toast.error(response.data.errors[0].fk_regulation_id);
         }
       } else {
         toast.success('Competência '+acao+'.');
@@ -111,7 +111,7 @@ const SkillDetails = props => {
         setFormState(formState => ({
           values: {
             'description': response.data[0].description,
-            'course' : response.data[0].fk_course_id,
+            'fk_regulation_id' : response.data[0].fk_regulation_id,
             'id': response.data[0].id
           },
           touched: {
@@ -126,7 +126,17 @@ const SkillDetails = props => {
 
 
   useEffect(() => {
-    loadCourses();
+    loadRegulations();
+
+    let regulationSelected = localStorage.getItem('@Questione-regulation-selected');
+    if(regulationSelected != null){
+      setFormState({
+        isValid: false,
+        values: {'fk_regulation_id': regulationSelected},
+        touched: {},
+        errors: {}
+      });
+    }
 
     if(codigoSkill){
       findASkill(codigoSkill);
@@ -139,9 +149,10 @@ const SkillDetails = props => {
 
     setFormState(formState => ({
       ...formState,
-      isValid: (errors || formState.values.course==0) ? false : true,
+      isValid: (errors || formState.values.fk_regulation_id==0) ? false : true,
       errors: errors || {}
     }));
+
   }, [formState.values]);
 
   const handleChange = event => {
@@ -209,24 +220,25 @@ const SkillDetails = props => {
               xs={12}>
               <TextField
                 fullWidth
-                error={hasError('course')}
+                error={hasError('fk_regulation_id')}
                 helperText={
-                  hasError('course') ? formState.errors.course[0] : null
+                  hasError('fk_regulation_id') ? formState.errors.fk_regulation_id[0] : null
                 }
                 label=""
                 margin="dense"
-                name="course"
+                name="fk_regulation_id"
                 onChange={handleChange}
                 select
                 // eslint-disable-next-line react/jsx-sort-props
                 SelectProps={{ native: true }}
-                value={formState.values.course}
+                value={formState.values.fk_regulation_id}
                 variant="outlined">
-                {courses.map(course => (
+                {regulations.map(regulation => (
                   <option
-                    key={course.id}
-                    value={course.id}>
-                    {course.description}
+                    key={regulation.id}
+                    value={regulation.id}>
+                    {regulation.course ? regulation.description+" de "+regulation.year+" | "+ regulation.course
+                     : regulation.description }
                   </option>
                 ))}
               </TextField>

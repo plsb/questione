@@ -62,6 +62,8 @@ import StudentClassEvaluationDetails from '../pages/StudentClass/StudentClassCon
 
 import StudentClassEvaluationApplicationDetails from '../pages/StudentClass/StudentClassContent/Application/EvaluationApplicationDetails';
 import StudentClassEvaluationApplicationResults from '../pages/StudentClass/StudentClassContent/Application/EvaluationApplicationResults';
+import RegulationTable from "../pages/Administrator/Regulation/RegulationTable";
+import RegulationDetails from "../pages/Administrator/Regulation/RegulationDetails";
 
 const Routes = () => (
     <BrowserRouter>
@@ -247,6 +249,27 @@ const Routes = () => (
                 typeUser={1}
                 needToBeLogged={true}
                 path="/type-of-evaluation-details/:typeOfEvaluationCode?" />
+            <RouteWithLayout
+                component={RegulationTable}
+                exact
+                layout={MainLayout}
+                needToBeLogged={true}
+                typeUser={1}
+                path="/regulations" />
+            <RouteWithLayout
+                component={RegulationDetails}
+                exact
+                layout={MainLayout}
+                needToBeLogged={true}
+                typeUser={1}
+                path="/regulation-details" />
+            <RouteWithLayout
+                component={RegulationDetails}
+                exact
+                layout={MainLayout}
+                needToBeLogged={true}
+                typeUser={1}
+                path="/regulation-details/:codigoRegulation?" />
             <RouteWithLayout
                 component={SkillTable}
                 exact

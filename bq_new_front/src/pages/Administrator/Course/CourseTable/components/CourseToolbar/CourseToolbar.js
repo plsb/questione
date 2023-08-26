@@ -51,7 +51,7 @@ const CourseToolbar = props => {
       {...rest}
       className={clsx(classes.root, className)}>
       <div className={classes.row}>
-        <Typography variant="h3" className={classes.title}>{'Lista de Cursos'}</Typography>
+        <Typography variant="h3" className={classes.title}>{'Cursos'}</Typography>
         <span className={classes.spacer} />
         <Button
             color="primary"

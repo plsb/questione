@@ -16,7 +16,7 @@ import {
 } from '@material-ui/core';
 import api from '../../../../services/api';
 import { toast } from 'react-toastify';
-import ObjectToolbar from "./components/ObjectToolbar";
+import SkillToolbar from "./components/RegulationToolbar";
 import PropTypes from "prop-types";
 import {DialogQuestione} from "../../../../components";
 import Delete from "@material-ui/icons/Delete";
@@ -34,9 +34,6 @@ const useStyles = makeStyles(theme => ({
   inner: {
     minWidth: 1050
   },
-  headTable: {
-    fontWeight: "bold"
-  },
   nameContainer: {
     display: 'flex',
     alignItems: 'center'
@@ -46,6 +43,9 @@ const useStyles = makeStyles(theme => ({
   },
   actions: {
     justifyContent: 'flex-end'
+  },
+  headTable: {
+    fontWeight: "bold"
   },
   row: {
     display: 'flex',
@@ -63,77 +63,75 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const ObjectTable = props => {
+const RegulationTable = props => {
   const { className, history } = props;
 
-  const [objects, setObjects] = useState([]);
+  const [regulations, setRegulations] = useState([]);
 
   const classes = useStyles();
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
-  const [searchTextCourse, setSearchTextCourse] = useState('');
-  const [searchTextRegulation, setSearchTextRegulation] = useState('');
+  const [searchText, setSearchText] = useState('');
+  const [IdRegulationDelete, setIdRegulationDelete] = React.useState(0);
   const [open, setOpen] = React.useState(false);
-  const [idObjectDelete, setIdObjectDelete] = React.useState(0);
 
-  const COURSE_SELECTED = '@Questione-course-selected';
-  const REGULATION_SELECTED = '@Questione-regulation-selected';
-
-  async function loadObject(page, course, regulation){
+  async function loadRegulations(page, course){
     try {
-      let url = 'object?page='+page;
-      if(course!=null){
-        if(course > 0)
-          url += '&fk_course_id='+course;
-      }
-      if(regulation!=null){
-        if(regulation > 0)
-          url += '&fk_regulation_id='+regulation;
-      }
+      let url = 'regulation?page='+page;
+      if (course != null)
+        url += '&fk_course_id='+course;
+      /*if(searchText!=0){
+        url += '&fk_course_id='+searchText;
+      }*/
       const response = await api.get(url);
-      setTotal(response.data.total);
-      setObjects(response.data.data);
+      if(response.status == 200) {
+        setTotal(response.data.total);
+        setRegulations(response.data.data);
+      }
     } catch (error) {
 
     }
   }
 
   useEffect(() => {
-    let courseSelected = localStorage.getItem(COURSE_SELECTED);
-    if (courseSelected != null) setSearchTextCourse(courseSelected);
+    let courseSelected = localStorage.getItem('@Questione-course-selected');
+    if(courseSelected != null) setSearchText(courseSelected);
 
-    let regulationSelected = localStorage.getItem(REGULATION_SELECTED);
-
-    if (regulationSelected != null)
-      setSearchTextRegulation(regulationSelected);
-    else setSearchTextRegulation(0);
-
-    loadObject(1, courseSelected, regulationSelected);
+    loadRegulations(1, courseSelected);
   }, []);
 
+  /*useEffect(() => {
+    loadRegulations(1);
+  }, [searchText]);*/
+
+  const updateSearch = (e) => {
+    setSearchText(e.target.value);
+    localStorage.setItem('@Questione-course-selected', e.target.value);
+  }
+
   const onClickOpenDialog = (id) => {
-    setIdObjectDelete(id);
+    setIdRegulationDelete(id);
     setOpen(true);
   }
 
   const onClickCloseDialog = () => {
     setOpen(false);
-    setIdObjectDelete(0);
+    setIdRegulationDelete(0);
   }
 
-  async function onDeleteObject(){
+  async function onDeleteRegulation(){
     try {
-      let url = 'object/'+idObjectDelete;
+      let url = 'regulation/' + IdRegulationDelete;
       const response = await api.delete(url);
       if (response.status === 202) {
         if(response.data.message){
           toast.error(response.data.message);
         }
       } else {
-        toast.success('Conteúdo.');
-        loadObject(page+1);
+        toast.success('Portaria excluída.');
+        loadRegulations(page+1, searchText);
       }
     } catch (error) {
 
@@ -142,26 +140,16 @@ const ObjectTable = props => {
   }
 
   const onClickEdit = (id) => {
-    history.push('/object-details/'+id);
-  }
-
-  const updateSearchCourse = (e) => {
-    setSearchTextCourse(e.target.value);
-    localStorage.setItem(COURSE_SELECTED, e.target.value);
-  }
-
-  const updateSearchRegulation = (e) => {
-    setSearchTextRegulation(e.target.value);
-    localStorage.setItem(REGULATION_SELECTED, e.target.value);
+    history.push('/regulation-details/'+id);
   }
 
   const onClickSearch = (e) => {
     setPage(0);
-    loadObject(1, searchTextCourse, searchTextRegulation);
+    loadRegulations(1, searchText);
   }
 
   const handlePageChange = (event, page) => {
-    loadObject(page+1, searchTextCourse, searchTextRegulation)
+    loadRegulations(page+1, searchText)
     setPage(page);
   };
 
@@ -171,11 +159,9 @@ const ObjectTable = props => {
 
   return (
     <div className={classes.root}>
-      <ObjectToolbar
-          onChangeSearchCourse={updateSearchCourse.bind(this)}
-          onChangeSearchRegulation={updateSearchRegulation.bind(this)}
-          searchTextCourse={searchTextCourse}
-          searchTextRegulation={searchTextRegulation}
+      <SkillToolbar
+          onChangeSearch={updateSearch.bind(this)}
+          searchText={searchText}
           onClickSearch={onClickSearch}/>
       <div className={classes.content}>
         <Card
@@ -187,36 +173,36 @@ const ObjectTable = props => {
                   <TableHead>
                     <TableRow>
                       <TableCell className={classes.headTable}>Descrição</TableCell>
-                      <TableCell className={classes.headTable}>Portaria</TableCell>
+                      <TableCell className={classes.headTable}>Ano</TableCell>
+                      <TableCell className={classes.headTable}>Curso</TableCell>
                       <TableCell></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {objects.map(object => (
+                    {regulations.map(regulation => (
                         <TableRow
                             className={classes.tableRow}
                             hover
-                            key={object.id}>
+                            key={regulation.id}>
                           <TableCell>
                             <div className={classes.nameContainer}>
-                              <Typography variant="body1">{object.description}</Typography>
+                              <Typography variant="body1">{regulation.description}</Typography>
                             </div>
                           </TableCell>
-                          <TableCell>{object.regulation ?
-                              object.regulation.description+" de "+object.regulation.year+" | "+object.course.description
-                              : object.course.description}</TableCell>
+                          <TableCell>{regulation.year}</TableCell>
+                          <TableCell>{regulation.course.description}</TableCell>
                           <TableCell className={classes.row}>
                             <Tooltip title="Deletar">
                               <Button
                                   className={classes.buttonDelete}
-                                  onClick={() => onClickOpenDialog(object.id)}>
+                                  onClick={() => onClickOpenDialog(regulation.id)}>
                                 <Delete fontSize="medium"/>
                               </Button>
                             </Tooltip>
                             <Tooltip title="Editar">
                               <Button
                                   className={classes.buttonEdit}
-                                  onClick={() => onClickEdit(object.id)}>
+                                  onClick={() => onClickEdit(regulation.id)}>
                                 <Edit fontSize="medium"/>
                               </Button>
                             </Tooltip>
@@ -243,16 +229,16 @@ const ObjectTable = props => {
       </div>
       <DialogQuestione handleClose={onClickCloseDialog}
                        open={open}
-                       onClickAgree={onDeleteObject}
+                       onClickAgree={onDeleteRegulation}
                        onClickDisagree={onClickCloseDialog}
-                       mesage={'Deseja excluir o conteúdo selecionado?'}
-                       title={'Excluir conteúdo'}/>
+                       mesage={'Deseja excluir a portaria selecionada?'}
+                       title={'Excluir Portaria'}/>
     </div>
   );
 };
 
-ObjectTable.propTypes = {
+RegulationTable.propTypes = {
   history: PropTypes.object
 };
 
-export default ObjectTable;
+export default RegulationTable;

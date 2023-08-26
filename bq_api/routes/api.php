@@ -79,6 +79,17 @@ Route::group(['prefix' => 'type-of-evaluation'], function (){
     Route::delete('/{typeEvaluation}', 'Adm\TypeOfEvaluationController@destroy')->name('typeOfEvaluation.destroy');
 });
 
+Route::group(['prefix' => 'regulation'], function (){
+    Route::get('/', 'Adm\RegulationController@index')->name('regulation.index');
+    Route::get('/by-course/{fk_course_id}', 'Adm\RegulationController@byCourse')->name('regulation.byCourse');
+    Route::get('/all', 'Adm\RegulationController@allRegulation')->name('regulation.all');
+    Route::post('/', 'Adm\RegulationController@store')->name('regulation.store');
+    Route::get('/show/{regulation}', 'Adm\RegulationController@show')->name('regulation.show');
+    Route::put('/{regulation}', 'Adm\RegulationController@update')->name('regulation.update');
+    Route::delete('/{regulation}', 'Adm\RegulationController@destroy')->name('regulation.destroy');
+});
+
+//Rotas do estudante
 Route::group(['prefix' => 'class/student'], function (){
     Route::get('/', 'ClassStudentsStudent@index')->name('class.students.index');
     Route::get('/details/{id}', 'ClassStudentsStudent@details')->name('class.students.details');

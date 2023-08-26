@@ -73,15 +73,24 @@ const SkillTable = props => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
-  const [searchText, setSearchText] = useState('');
+  const [searchTextCourse, setSearchTextCourse] = useState(0);
+  const [searchTextRegulation, setSearchTextRegulation] = useState(0);
   const [idSkillDelete, setIdSkillDelete] = React.useState(0);
   const [open, setOpen] = React.useState(false);
 
-  async function loadSkill(page){
+  const COURSE_SELECTED = '@Questione-course-selected';
+  const REGULATION_SELECTED = '@Questione-regulation-selected';
+
+  async function loadSkill(page, course, regulation){
     try {
       let url = 'skill?page='+page;
-      if(searchText!=0){
-        url += '&fk_course_id='+searchText;
+      if(course!=null){
+        if(course > 0)
+          url += '&fk_course_id='+course;
+      }
+      if(regulation!=null){
+        if(regulation > 0)
+          url += '&fk_regulation_id='+regulation;
       }
       const response = await api.get(url);
       if(response.status == 200) {
@@ -94,11 +103,26 @@ const SkillTable = props => {
   }
 
   useEffect(() => {
-    loadSkill(1);
+    let courseSelected = localStorage.getItem(COURSE_SELECTED);
+    if (courseSelected != null) setSearchTextCourse(courseSelected);
+
+    let regulationSelected = localStorage.getItem(REGULATION_SELECTED);
+
+    if (regulationSelected != null)
+      setSearchTextRegulation(regulationSelected);
+    else setSearchTextRegulation(0);
+
+    loadSkill(1, courseSelected, regulationSelected);
   }, []);
 
-  const updateSearch = (e) => {
-    setSearchText(e.target.value);
+  const updateSearchCourse = (e) => {
+    setSearchTextCourse(e.target.value);
+    localStorage.setItem(COURSE_SELECTED, e.target.value);
+  }
+
+  const updateSearchRegulation = (e) => {
+    setSearchTextRegulation(e.target.value);
+    localStorage.setItem(REGULATION_SELECTED, e.target.value);
   }
 
   const onClickOpenDialog = (id) => {
@@ -121,7 +145,7 @@ const SkillTable = props => {
         }
       } else {
         toast.success('Competência excluída.');
-        loadSkill(page+1);
+        loadSkill(page+1, searchTextCourse, searchTextRegulation);
       }
     } catch (error) {
 
@@ -135,11 +159,11 @@ const SkillTable = props => {
 
   const onClickSearch = (e) => {
     setPage(0);
-    loadSkill(1);
+    loadSkill(1, searchTextCourse, searchTextRegulation);
   }
 
   const handlePageChange = (event, page) => {
-    loadSkill(page+1)
+    loadSkill(page+1, searchTextCourse, searchTextRegulation)
     setPage(page);
   };
 
@@ -150,8 +174,10 @@ const SkillTable = props => {
   return (
     <div className={classes.root}>
       <SkillToolbar
-          onChangeSearch={updateSearch.bind(this)}
-          searchText={searchText}
+          onChangeSearchCourse={updateSearchCourse.bind(this)}
+          onChangeSearchRegulation={updateSearchRegulation.bind(this)}
+          searchTextCourse={searchTextCourse}
+          searchTextRegulation={searchTextRegulation}
           onClickSearch={onClickSearch}/>
       <div className={classes.content}>
         <Card
@@ -163,7 +189,7 @@ const SkillTable = props => {
                   <TableHead>
                     <TableRow>
                       <TableCell className={classes.headTable}>Descrição</TableCell>
-                      <TableCell className={classes.headTable}>Curso</TableCell>
+                      <TableCell className={classes.headTable}>Portaria</TableCell>
                       <TableCell></TableCell>
                     </TableRow>
                   </TableHead>
@@ -178,7 +204,9 @@ const SkillTable = props => {
                               <Typography variant="body1">{skill.description}</Typography>
                             </div>
                           </TableCell>
-                          <TableCell>{skill.course.description}</TableCell>
+                          <TableCell>{skill.regulation ?
+                              skill.regulation.description+" de "+skill.regulation.year+" | "+skill.course.description
+                                : skill.course.description}</TableCell>
                           <TableCell className={classes.row}>
                             <Tooltip title="Deletar">
                               <Button

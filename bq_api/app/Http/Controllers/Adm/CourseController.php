@@ -72,7 +72,11 @@ class CourseController extends Controller
     {
         $course = Course::find($id);
 
-        $this->verifyRecord($course);
+        if(!$this->verifyRecord($course)){
+            return response()->json([
+                'message' => 'Registro não encontrado.'
+            ], 202);
+        }
 
         return response()->json($course, 200);
     }
@@ -91,7 +95,11 @@ class CourseController extends Controller
 
         $course = Course::find($id);
 
-        $this->verifyRecord($course);
+        if(!$this->verifyRecord($course)){
+            return response()->json([
+                'message' => 'Registro não encontrado.'
+            ], 202);
+        }
 
         $course->initials = $request->initials;
         $course->description = $request->description;
@@ -107,7 +115,11 @@ class CourseController extends Controller
     {
         $course = Course::find($id);
 
-        $this->verifyRecord($course);
+        if(!$this->verifyRecord($course)){
+            return response()->json([
+                'message' => 'Registro não encontrado.'
+            ], 202);
+        }
 
         $questions = Question::where('fk_course_id', '=', $id)->get();
         if(sizeof($questions)>0) {

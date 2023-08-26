@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Adm;
 
 use App\KnowledgeObject;
 use App\QuestionHasKnowledgeObject;
+use App\Regulation;
 use Illuminate\Http\Request;
 use Validator;
 use App\Course;
@@ -18,7 +19,7 @@ class KnowledgeObjectsController extends Controller
 
     private $rules = [
         'description' => 'required|max:300|min:5',
-        'fk_course_id' => 'required',
+        'fk_regulation_id' => 'required',
 
     ];
 
@@ -27,7 +28,7 @@ class KnowledgeObjectsController extends Controller
         'description.max' => 'O máximo de caracteres aceitáveis para a DESCRIÇÃO é 300.',
         'description.min' => 'O minímo de caracteres aceitáveis para a DESCRIÇÃO é 5.',
 
-        'fk_course_id.required' => 'O CURSO é obrigatório.',
+        'fk_regulation_id.required' => 'A PORTARIA é obrigatória.',
 
     ];
 
@@ -35,12 +36,21 @@ class KnowledgeObjectsController extends Controller
     {
         if($request->fk_course_id)
         {
+            $id_regulation = $request->fk_regulation_id;
             $knowledge_objects = KnowledgeObject::where('fk_course_id', '=', $request->fk_course_id)
+                ->when($id_regulation, function ($query, $id_regulation) {
+                    //pega questões validadas de todos os usuário
+                    return $query->where('fk_regulation_id', '=', $id_regulation);
+                })
                 ->orderBy('description')
                 ->with('course')
+                ->with('regulation')
                 ->paginate(10);
         } else {
-            $knowledge_objects = KnowledgeObject::orderBy('fk_course_id')->with('course')->paginate(10);
+            $knowledge_objects = KnowledgeObject::orderBy('fk_course_id')
+                ->with('course')
+                ->with('regulation')
+                ->paginate(10);
         }
 
         return response()->json($knowledge_objects, 200);
@@ -54,15 +64,18 @@ class KnowledgeObjectsController extends Controller
             return $validation->errors()->toJson();
         }
 
-        if(!$this->verifyCourse($request->fk_course_id)){
+        $regulation = $this->verifyRegulation($request->fk_regulation_id);
+        if(!$regulation){
             return response()->json([
-                'message' => 'Objeto d e Conhecimento não encontrado.'
+                'message' => 'Portaria não encontrada.'
             ], 202);
         }
 
         $knowledge_object = new KnowledgeObject();
         $knowledge_object->description = $request->description;
-        $knowledge_object->fk_course_id = $request->fk_course_id;
+        $knowledge_object->fk_regulation_id = $request->fk_regulation_id;
+
+        $knowledge_object->fk_course_id = $regulation->fk_course_id;
         $knowledge_object->save();
 
         return response()->json([
@@ -73,9 +86,10 @@ class KnowledgeObjectsController extends Controller
 
     public function show(int $id)
     {
-        $knowledge_object = KnowledgeObject::where('id', '=', $id)->with('course')->get();
-
-        $this->verifyRecord($knowledge_object);
+        $knowledge_object = KnowledgeObject::where('id', '=', $id)
+            ->with('course')
+            ->with('regulation')
+            ->get();
 
         return response()->json($knowledge_object, 200);
     }
@@ -88,9 +102,10 @@ class KnowledgeObjectsController extends Controller
             return $validation->errors()->toJson();
         }
 
-        if(!$this->verifyCourse($request->fk_course_id)){
+        $regulation = $this->verifyRegulation($request->fk_regulation_id);
+        if(!$regulation){
             return response()->json([
-                'message' => 'Objeto de Conhecimento não encontrado.'
+                'message' => 'Portaria não encontrada.'
             ], 202);
         }
 
@@ -99,7 +114,9 @@ class KnowledgeObjectsController extends Controller
         $this->verifyRecord($knowledge_object);
 
         $knowledge_object->description = $request->description;
-        $knowledge_object->fk_course_id = $request->fk_course_id;
+        $knowledge_object->fk_regulation_id = $request->fk_regulation_id;
+
+        $knowledge_object->fk_course_id = $regulation->fk_course_id;
         $knowledge_object->save();
 
 
@@ -136,11 +153,9 @@ class KnowledgeObjectsController extends Controller
         }
     }
 
-    private function verifyCourse($id){
-        $course = Course::find($id);
-        if(!$course){
-            return false;
-        }
-        return true;
+    private function verifyRegulation($id){
+        $regulation = Regulation::find($id);
+
+        return $regulation;
     }
 }

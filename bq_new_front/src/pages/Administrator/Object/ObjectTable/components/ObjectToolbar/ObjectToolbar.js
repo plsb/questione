@@ -34,9 +34,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ObjectToolbar = props => {
-  const { className, onChangeSearch, onClickSearch, history,
-                                searchText, ...rest } = props;
+  const { className, onChangeSearchCourse, onClickSearch,  history,
+           searchTextCourse, searchTextRegulation, onChangeSearchRegulation, ...rest } = props;
   const [courses, setCourses] = useState([{'id': '0', 'description': 'Todos os cursos'}]);
+  const [regulations, setRegulations] = useState([{'id': '0', 'description': 'Todas as portarias'}]);
 
   const classes = useStyles();
 
@@ -54,22 +55,51 @@ const ObjectToolbar = props => {
     }
   }
 
+  async function loadRegulations(){
+    try {
+      let courseSelect = localStorage.getItem('@Questione-course-selected');
+
+      if(courseSelect == null){
+        setRegulations([{'id': '0', 'description': 'Nenhuma portaria'}]);
+      } else if(courseSelect == 0){
+        setRegulations([{'id': '0', 'description': 'Nenhuma portaria'}]);
+      } else {
+        const response = await api.get('regulation/by-course/'+courseSelect);
+        if (response.status == 200) {
+          if(response.data.length > 0) {
+            setRegulations([{'id': '0', 'description': 'Todas as portarias'}]);
+            setRegulations([{'id': '0', 'description': 'Todas as portarias'}, ...response.data]);
+          } else {
+            setRegulations([{'id': '0', 'description': 'Nenhuma portaria'}]);
+          }
+        }
+      }
+    } catch (error) {
+
+    }
+  }
+
   useEffect(() => {
     loadCourses();
+    loadRegulations();
   }, []);
+
+  useEffect(() => {
+    loadRegulations();
+  }, [searchTextCourse]);
 
   return (
     <div
       {...rest}
       className={clsx(classes.root, className)}>
       <div className={classes.row}>
-        <Typography variant="h3" className={classes.title}>{'Lista de Objetos de Conhecimento'}</Typography>
+        <Typography variant="h3" className={classes.title}>{'Conteúdos'}</Typography>
         <span className={classes.spacer} />
         <Button
             color="primary"
             variant="contained"
             onClick={onClickNewObject}>
-          Novo Objeto
+          Novo Conteúdo
         </Button>
       </div>
       <div className={classes.row}>
@@ -77,14 +107,30 @@ const ObjectToolbar = props => {
             id="filled-select-currency"
             select
             label="Selecione o curso"
-            value={searchText}
-            onChange={onChangeSearch}
+            value={searchTextCourse}
+            onChange={onChangeSearchCourse}
             helperText="Selecione o curso que deseja pesquisar."
             variant="outlined"
             margin="dense">
           {courses.map((option) => (
               <MenuItem key={option.id} value={option.id}>
                 {option.description}
+              </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+            id="filled-select-currency"
+            className={classes.buttonSeacrh}
+            select
+            label="Selecione a portaria"
+            value={searchTextRegulation}
+            onChange={onChangeSearchRegulation}
+            helperText="Selecione a portaria que deseja pesquisar."
+            variant="outlined"
+            margin="dense">
+          {regulations.map((option) => (
+              <MenuItem key={option.id} value={option.id}>
+                {option.id == 0 ? option.description : option.description+" de "+option.year}
               </MenuItem>
           ))}
         </TextField>

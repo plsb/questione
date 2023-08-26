@@ -21,29 +21,42 @@ const schema = {
   description: {
     presence: { allowEmpty: false,  message: 'A descrição é obrigatória.'},
     length: {
-      minimum: 5,
+      minimum: 10,
       maximum: 300,
-      message: 'A descrição deve conter no mínimo 5 e no máximo 300 caracteres.'
+      message: 'A descrição deve conter no mínimo 10 e no máximo 300 caracteres.'
     }
   },
-  fk_regulation_id: {
-    presence: { allowEmpty: false, message: 'A portaria é obrigatória.' },
+  year: {
+    presence: { allowEmpty: false,  message: 'O ano é obrigatório.'},
+    length: {
+      minimum: 4,
+      maximum: 4,
+      message: 'O ano deve conter no máximo 4 caracteres.'
+    },
+    numericality: {
+      onlyInteger: true,
+      greaterThan: 2004,
+      message: 'O ano deve ser maior que 2004.',
+    }
+  },
+  course: {
+    presence: { allowEmpty: false, message: 'O curso é obrigatório.' },
     numericality: {
       onlyInteger: true,
       greaterThan: 0,
-      message: 'Escolha uma portaria.',
+      message: 'Escolha um curso.',
     }
-  },
+  }
 };
 
 const useStyles = makeStyles(() => ({
   root: {}
 }));
 
-const ObjectDetails = props => {
+const RegulationDetails = props => {
   const { className, history, ...rest } = props;
-  const [regulations, setRegulations] = useState([{'id': '0', 'description': '- Escolha uma portaria -'}]);
-  const { codigoObject } = props.match.params;
+  const [courses, setCourses] = useState([{'id': '0', 'description': '- Escolha um curso -'}]);
+  const { codigoRegulation } = props.match.params;
 
   const classes = useStyles();
 
@@ -54,45 +67,48 @@ const ObjectDetails = props => {
     errors: {}
   });
 
-  async function loadRegulations(){
+  async function loadCourses(){
     try {
-      const response = await api.get('regulation/all');
+      const response = await api.get('all/courses');
       if(response.status == 200) {
-        setRegulations([...regulations, ...response.data]);
+        setCourses([...courses, ...response.data]);
       }
     } catch (error) {
 
     }
   }
 
-  async function saveObjectDetails(){
+  async function saveRegulationDetails(){
     try {
-      const fk_regulation_id = formState.values.fk_regulation_id;
+      const fk_course_id = formState.values.course;
       const description = formState.values.description;
+      const year = formState.values.year;
       const id = formState.values.id;
       const data = {
-        description, fk_regulation_id
+        description, fk_course_id, year
       }
       let response= {};
       let acao = "";
       if(!id) {
-         response = await api.post('object', data);
-         acao = "cadastrado";
+         response = await api.post('regulation', data);
+        acao = "cadastrada";
       } else {
-         response = await api.put('object/'+id, data);
-        acao = "atualizado";
+         response = await api.put('regulation/'+id, data);
+        acao = "atualizada";
       }
       if (response.status === 202) {
         if(response.data.message){
           toast.error(response.data.message);
         } else if(response.data.errors[0].description){
           toast.error(response.data.errors[0].description);
-        } if(response.data.errors[0].fk_regulation_id){
-          toast.error(response.data.errors[0].fk_regulation_id);
+        } else if(response.data.errors[0].year){
+          toast.error(response.data.errors[0].year);
+        } if(response.data.errors[0].fk_course_id){
+          toast.error(response.data.errors[0].fk_course_id);
         }
       } else {
-        toast.success('Conteúdo '+acao+'.');
-        history.push('/objects');
+        toast.success('Portaria '+acao+'.');
+        history.push('/regulations');
       }
 
     } catch (error) {
@@ -100,10 +116,9 @@ const ObjectDetails = props => {
     }
   }
 
-  async function findAObject(id){
+  async function findARegulation(id){
     try {
-      const response = await api.get('object/show/'+id);
-
+      const response = await api.get('regulation/show/'+id);
       if (response.status === 202) {
         if(response.data.message){
           toast.error(response.data.message);
@@ -111,9 +126,10 @@ const ObjectDetails = props => {
       } else {
         setFormState(formState => ({
           values: {
-            'description': response.data[0].description,
-            'fk_regulation_id' : response.data[0].fk_regulation_id,
-            'id': response.data[0].id
+            'description': response.data.description,
+            'course' : response.data.fk_course_id,
+            'year' : response.data.year,
+            'id': response.data.id
           },
           touched: {
             ...formState.touched,
@@ -125,21 +141,22 @@ const ObjectDetails = props => {
     }
   }
 
-  useEffect(() => {
-    loadRegulations();
 
-    let regulationSelected = localStorage.getItem('@Questione-regulation-selected');
-    if(regulationSelected != null){
+  useEffect(() => {
+    loadCourses();
+
+    let courseSelected = localStorage.getItem('@Questione-course-selected');
+    if(courseSelected != null){
       setFormState({
         isValid: false,
-        values: {'fk_regulation_id': regulationSelected},
+        values: {'course': courseSelected},
         touched: {},
         errors: {}
       });
     }
 
-    if(codigoObject){
-      findAObject(codigoObject);
+    if(codigoRegulation){
+      findARegulation(codigoRegulation);
     }
 
   }, []);
@@ -149,7 +166,7 @@ const ObjectDetails = props => {
 
     setFormState(formState => ({
       ...formState,
-      isValid: (errors || formState.values.fk_regulation_id==0) ? false : true,
+      isValid: (errors || formState.values.course==0) ? false : true,
       errors: errors || {}
     }));
   }, [formState.values]);
@@ -166,7 +183,6 @@ const ObjectDetails = props => {
         [event.target.name]: true
       }
     });
-    console.log('erros', formState.errors);
   };
 
   const hasError = field =>
@@ -182,7 +198,7 @@ const ObjectDetails = props => {
       className={clsx(classes.root, className)}>
       <form
         autoComplete="off"
-        onSubmit={saveObjectDetails}>
+        onSubmit={saveRegulationDetails}>
         <div className={classes.contentHeader}>
           <IconButton onClick={handleBack}>
             <ArrowBackIcon />
@@ -190,7 +206,7 @@ const ObjectDetails = props => {
         </div>
         <CardHeader
           subheader=""
-          title="Conteúdo"/>
+          title="Portaria"/>
         <Divider />
         <CardContent>
           <Grid
@@ -215,30 +231,47 @@ const ObjectDetails = props => {
               />
             </Grid>
             <Grid
+                item
+                md={6}
+                xs={12}>
+              <TextField
+                  fullWidth
+                  error={hasError('year')}
+                  helperText={
+                    hasError('year') ? formState.errors.year[0] : null
+                  }
+                  label="Ano"
+                  margin="dense"
+                  name="year"
+                  onChange={handleChange}
+                  value={formState.values.year || ''}
+                  variant="outlined"
+              />
+            </Grid>
+            <Grid
               item
               md={6}
               xs={12}>
               <TextField
                 fullWidth
-                error={hasError('fk_regulation_id')}
+                error={hasError('course')}
                 helperText={
-                  hasError('fk_regulation_id') ? formState.errors.fk_regulation_id[0] : null
+                  hasError('course') ? formState.errors.course[0] : null
                 }
                 label=""
                 margin="dense"
-                name="fk_regulation_id"
+                name="course"
                 onChange={handleChange}
                 select
                 // eslint-disable-next-line react/jsx-sort-props
                 SelectProps={{ native: true }}
-                value={formState.values.fk_regulation_id}
+                value={formState.values.course}
                 variant="outlined">
-                {regulations.map(regulation => (
+                {courses.map(course => (
                   <option
-                    key={regulation.id}
-                    value={regulation.id}>
-                    {regulation.course ? regulation.description+" de "+regulation.year+" | "+ regulation.course
-                        : regulation.description}
+                    key={course.id}
+                    value={course.id}>
+                    {course.description}
                   </option>
                 ))}
               </TextField>
@@ -250,7 +283,7 @@ const ObjectDetails = props => {
           <Button
             color="primary"
             variant="outlined"
-            onClick={saveObjectDetails}
+            onClick={saveRegulationDetails}
             disabled={!formState.isValid}>
             Salvar
           </Button>
@@ -260,8 +293,8 @@ const ObjectDetails = props => {
   );
 };
 
-ObjectDetails.propTypes = {
+RegulationDetails.propTypes = {
   className: PropTypes.string,
 };
 
-export default ObjectDetails;
+export default RegulationDetails;

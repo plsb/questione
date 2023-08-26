@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Adm;
 
 use App\Question;
+use App\Regulation;
 use App\Skill;
 use Illuminate\Http\Request;
 use Validator;
@@ -18,7 +19,7 @@ class SkillController extends Controller
 
     private $rules = [
         'description' => 'required|max:300|min:10',
-        'fk_course_id' => 'required',
+        'fk_regulation_id' => 'required',
 
     ];
 
@@ -27,7 +28,7 @@ class SkillController extends Controller
         'description.max' => 'O máximo de caracteres aceitáveis para a DESCRIÇÃO é 300.',
         'description.min' => 'O minímo de caracteres aceitáveis para a DESCRIÇÃO é 10.',
 
-        'fk_course_id.required' => 'O CURSO é obrigatório.',
+        'fk_regulation_id.required' => 'A PORTARIA é obrigatória.',
 
     ];
 
@@ -35,12 +36,21 @@ class SkillController extends Controller
     {
         if($request->fk_course_id)
         {
+            $id_regulation = $request->fk_regulation_id;
             $skills = Skill::where('fk_course_id', '=', $request->fk_course_id)
+                ->when($id_regulation, function ($query, $id_regulation) {
+                    //pega questões validadas de todos os usuário
+                    return $query->where('fk_regulation_id', '=', $id_regulation);
+                })
                 ->orderBy('description')
                 ->with('course')
+                ->with('regulation')
                 ->paginate(10);
         } else {
-            $skills = Skill::orderBy('fk_course_id')->with('course')->paginate(10);
+            $skills = Skill::orderBy('fk_course_id')
+                ->with('course')
+                ->with('regulation')
+                ->paginate(10);
         }
 
         return response()->json($skills, 200);
@@ -54,15 +64,18 @@ class SkillController extends Controller
             return $validation->errors()->toJson();
         }
 
-        if(!$this->verifyCourse($request->fk_course_id)){
+        $regulation = $this->verifyRegulation($request->fk_regulation_id);
+        if(!$regulation){
             return response()->json([
-                'message' => 'Competência não encontrada.'
+                'message' => 'Portaria não encontrada.'
             ], 202);
         }
 
         $skill = new Skill();
         $skill->description = $request->description;
-        $skill->fk_course_id = $request->fk_course_id;
+        $skill->fk_regulation_id = $request->fk_regulation_id;
+
+        $skill->fk_course_id = $regulation->fk_course_id;
         $skill->save();
 
         return response()->json([
@@ -73,9 +86,10 @@ class SkillController extends Controller
 
     public function show(int $id)
     {
-        $skill = Skill::where('id', '=', $id)->with('course')->get();
-
-        $this->verifyRecord($skill);
+        $skill = Skill::where('id', '=', $id)
+            ->with('course')
+            ->with('regulation')
+            ->get();
 
         return response()->json($skill, 200);
     }
@@ -88,9 +102,10 @@ class SkillController extends Controller
             return $validation->errors()->toJson();
         }
 
-        if(!$this->verifyCourse($request->fk_course_id)){
+        $regulation = $this->verifyRegulation($request->fk_regulation_id);
+        if(!$regulation){
             return response()->json([
-                'message' => 'Comepetência não encontrada.'
+                'message' => 'Portaria não encontrada.'
             ], 202);
         }
 
@@ -99,7 +114,9 @@ class SkillController extends Controller
         $this->verifyRecord($skill);
 
         $skill->description = $request->description;
-        $skill->fk_course_id = $request->fk_course_id;
+        $skill->fk_regulation_id = $request->fk_regulation_id;
+
+        $skill->fk_course_id = $regulation->fk_course_id;
         $skill->save();
 
 
@@ -136,12 +153,9 @@ class SkillController extends Controller
         }
     }
 
-    private function verifyCourse($id){
-        $course = Course::find($id);
+    private function verifyRegulation($id){
+        $regulation = Regulation::find($id);
 
-        if(!$course){
-            return false;
-        }
-        return true;
+        return $regulation;
     }
 }

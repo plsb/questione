@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Divider, Drawer } from '@material-ui/core';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ClassIcon from '@material-ui/icons/Class';
-import ExtensionIcon from '@material-ui/icons/Extension';
+import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 // import PeopleIcon from '@material-ui/icons/People';
 import { Note, Ballot, EmojiObjects, AccountBox, Assessment, Group } from '@material-ui/icons';
@@ -54,13 +54,19 @@ const Sidebar = props => {
       href: '/type-of-evaluation',
       icon: <ClassIcon />
     },
+    ,
+    {
+      title: 'Portarias',
+      href: '/regulations',
+      icon: <BookmarkBorderIcon />
+    },
     {
       title: 'Competências',
       href: '/skills',
       icon: <Note />
     },
     {
-      title: 'Obj. Conhecimento',
+      title: 'Conteúdos',
       href: '/objects',
       icon: <EmojiObjects />
     },
