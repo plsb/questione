@@ -6,10 +6,13 @@ use App\Course;
 use App\CourseProfessor;
 use App\KeywordQuestion;
 use App\KnowledgeObject;
+use App\Providers\KnowledgeObjectRelated;
 use App\Question;
+use App\Regulation;
 use App\Skill;
 use App\TypeOfEvaluation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Validator;
 
 class AllUsers extends Controller
@@ -112,16 +115,67 @@ class AllUsers extends Controller
 
     public function knowledgeObjects(Request $request)
     {
-        if(!$request->fk_course_id){
+        $course_id = $request->fk_course_id;
+        if(!$course_id){
             return response()->json([
                 'message' => 'Informe o curso.'
             ], 202);
         }
-        $objects = KnowledgeObject::where('fk_course_id', $request->fk_course_id)
+
+        //seleciona todos os objetos pertecentes a questões do curso pesquisado
+        $objects_questions = DB::table('questions')
+            ->select('knowledge_objects.id',
+                'knowledge_objects.description'
+            )
+            ->join('question_knowledge_objects', 'question_knowledge_objects.fk_question_id', '=', 'questions.id')
+            ->join('knowledge_objects', 'question_knowledge_objects.fk_knowledge_object', '=', 'knowledge_objects.id')
+            ->where('questions.fk_course_id', $course_id)
+            ->orderBy('knowledge_objects.description')
+            ->groupBy('knowledge_objects.id')
+            ->get();
+
+        $array = array();
+        foreach ($objects_questions as $item){ //percorre cada objeto
+            $obj = $this->verifyObjectsRelated($item); //verifica se o objeto tem relação com outro objeto
+
+            if($obj != null){ // se o objeto tiver relação apresenta o objeto mais atual na lista
+                $max_d = max($obj->fk_obj1_id, $obj->fk_obj2_id);
+                $obj_max = KnowledgeObject::where('id', $max_d)
+                        ->where('fk_course_id', $course_id)->first();
+                if($obj_max){
+                    $array[] = $obj_max->id;
+                } else {
+                    $array[] = $item->id;;
+                }
+
+            } else {
+                $array[] = $item->id;;
+            }
+        }
+
+        $return = KnowledgeObject::whereIn('id', $array)
             ->orderBy('description')
             ->get();
 
-        return response()->json($objects, 200);
+
+        /*$objects = KnowledgeObject::where('fk_course_id', $course_id)
+            ->where('fk_regulation_id', $regulation->id)
+            ->orderBy('description')
+            ->get();*/
+
+        return response()->json($return, 200);
+    }
+
+    private function verifyObjectsRelated($item){
+        $obj1 = KnowledgeObjectRelated::where('fk_obj1_id', $item->id)->first();
+        if($obj1 != null){
+            return $obj1;
+        }
+        $obj2 = KnowledgeObjectRelated::where('fk_obj2_id', $item->id)->first();
+        if($obj2 != null){
+            return $obj2;
+        }
+        return null;
     }
 
     private $rulesUser = [

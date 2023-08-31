@@ -14,5 +14,12 @@ class Regulation extends Model
         return $this->belongsTo(Course::class, 'fk_course_id');
     }
 
+    public function knowledgeObject(){
+        return $this->hasMany(KnowledgeObject::class, 'fk_regulation_id')
+            ->with('related1')
+            ->with('related2')
+            ->orderBy('description');
+    }
+
 
 }

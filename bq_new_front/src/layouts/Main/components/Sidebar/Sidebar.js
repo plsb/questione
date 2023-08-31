@@ -8,6 +8,7 @@ import ClassIcon from '@material-ui/icons/Class';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 // import PeopleIcon from '@material-ui/icons/People';
+import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
 import { Note, Ballot, EmojiObjects, AccountBox, Assessment, Group } from '@material-ui/icons';
 
 import { Profile, SidebarNavAdm } from './components';
@@ -69,6 +70,11 @@ const Sidebar = props => {
       title: 'Conteúdos',
       href: '/objects',
       icon: <EmojiObjects />
+    },
+    {
+      title: 'Mapeamento',
+      href: '/mapping',
+      icon: <ZoomOutMapIcon />
     },
     {
       title: 'Usuários',

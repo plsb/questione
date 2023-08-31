@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Adm;
 
 use App\KnowledgeObject;
+use App\Providers\KnowledgeObjectRelated;
 use App\Regulation;
 use App\Skill;
 use Illuminate\Http\Request;
@@ -77,7 +78,10 @@ class RegulationController extends Controller
 
     public function show(int $id)
     {
-        $regulation = Regulation::find($id);
+        /*$regulation = Regulation::where('id', $id)
+            ->with('course')
+            ->with('knowledgeObject')
+            ->first();
 
         if(!$this->verifyRecord($regulation)){
             return response()->json([
@@ -85,7 +89,55 @@ class RegulationController extends Controller
             ], 202);
         }
 
-        return response()->json($regulation, 200);
+        return response()->json($regulation, 200);*/
+        $regulation = Regulation::where('id', $id)
+            ->with('course')
+            ->first();
+
+        $knowledge_object = KnowledgeObject::where('fk_regulation_id', $regulation->id)
+            ->orderBy('description')
+            ->get();
+
+        $array_ko = array();
+        foreach ($knowledge_object as $ko){
+
+            $ko_related1 = KnowledgeObjectRelated::where('fk_obj2_id', $ko->id)->select('fk_obj1_id')->get();
+            $ko_related2 = KnowledgeObjectRelated::where('fk_obj1_id', $ko->id)->select('fk_obj2_id')->get();
+            $ids_ko = array();
+            foreach ($ko_related1 as $ko1){
+                $ids_ko[] = $ko1->fk_obj1_id;
+            }
+            foreach ($ko_related2 as $ko2){
+                $ids_ko[] = $ko2->fk_obj2_id;
+            }
+
+            $ko_related_select = KnowledgeObject::whereIn('id', $ids_ko)
+                ->with('regulation')
+                ->with('course')
+                ->get();
+
+            $object_ko = (object)[
+                'id' => $ko->id,
+                'description' => $ko->description,
+                'fk_course_id' => $ko->fk_course_id,
+                'fk_regulation_id' => $ko->fk_regulation_id,
+                'id_related' => $ko_related_select,
+                'related' => $ko_related_select,
+            ];
+            $array_ko[] = $object_ko;
+
+        }
+
+        $object_regulation = (object)[
+            'id' => $regulation->id,
+            'description' => $regulation->description,
+            'year' => $regulation->year,
+            'fk_course_id' => $regulation->fk_course_id,
+            'course' => $regulation->course,
+            'knowledge_object' => $array_ko,
+        ];
+
+        return response()->json($object_regulation, 200);
     }
 
     public function update(Request $request, $id)

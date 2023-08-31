@@ -2,28 +2,24 @@ import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
-import {Button,
+import {
+  Button,
   MenuItem,
   TextField,
   Typography,
   FormControl,
-  FormLabel,
   RadioGroup,
   FormControlLabel,
-  Radio, Tooltip, Card, CardActions, CardContent, Collapse,
-  IconButton, Hidden, Grid} from '@material-ui/core';
+  Radio, Card, CardContent, Box
+} from '@material-ui/core';
 import {withRouter} from "react-router-dom";
 import api from "../../../../../../services/api";
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import { FcClearFilters, FcSearch } from 'react-icons/fc';
 
 const useStyles = makeStyles(theme => ({
   root: {},
   row: {
     display: 'flex',
     alignItems: 'flex-start',
-    marginBottom: '20px'
   },
   spacer: {
     flexGrow: 1
@@ -39,14 +35,15 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     fontWeight: 'bold',
-    padding: '16px',
+    paddingTop: '16px',
   },
   textField: {
     marginLeft: theme.spacing(1),
   },
   subtitle: {
-    padding: '16px',
-    fontSize: '15px',
+    paddingTop: '16px',
+    paddingBottom: '16px',
+    fontSize: '13px',
   }
 }));
 
@@ -113,7 +110,7 @@ const QuestionToolbar = props => {
       }
       const response = await api.get('all/objects?fk_course_id='+courseSelect);
 
-      setObjects([{'id': '0', 'description': 'Todos os objetos'}, ...response.data]);
+      setObjects([{'id': '0', 'description': 'Todos os conteúdos'}, ...response.data]);
 
     } catch (error) {
 
@@ -158,12 +155,14 @@ const QuestionToolbar = props => {
     searchText[3] = {"fk_skill_id" : 0};
     searchText[4] = {"keyword" : ''};
     searchText[5] = {"id" : ''};
+    loadObjects();
   }, []);
 
   useEffect(() => {
     if(localStorage.getItem('@Questione-search-course') != null){
       setCourseSelect(localStorage.getItem('@Questione-search-course'));
     }
+    loadObjects();
   }, [courses]);
 
   useEffect(() => {
@@ -172,10 +171,12 @@ const QuestionToolbar = props => {
       loadObjects();
       loadSkills();
     } else {
-      setObjects([{'id': '0', 'description': 'Todos os objetos'}]);
+      setObjects([{'id': '0', 'description': 'Todos os conteúdos'}]);
       setSkills([{'id': '0', 'description': 'Todas as competências'}]);
     }
+
   }, [courseSelect]);
+
 
   const [expanded, setExpanded] = React.useState(false);
 
@@ -191,9 +192,6 @@ const QuestionToolbar = props => {
     }
   }
 
-  const [value, setValue] = React.useState('');
-  const [inputValue, setInputValue] = React.useState('');
-
   return (
       <div
           {...rest}
@@ -205,16 +203,14 @@ const QuestionToolbar = props => {
 
             <div className={classes.subtitle}>
               Para mais informações sobre o módulo questões,&nbsp;
-              <a
-                  href="https://docs.google.com/document/d/1JzpLbCMDaOQbGubzB6l1KDBaPjGro10-x2OHxdFLtqU/edit?usp=sharing"
+              <a href="https://docs.google.com/document/d/1JzpLbCMDaOQbGubzB6l1KDBaPjGro10-x2OHxdFLtqU/edit?usp=sharing"
                   target="_blank"
-                  rel="noopener noreferrer"
-              >
+                  rel="noopener noreferrer">
                 clique aqui
-              </a>
+              </a>.
             </div>
           </div>
-          <div style={{ padding: '16px' }}>
+          <div style={{ paddingTop: '16px' }}>
             <Button
                 color="primary"
                 variant="contained"
@@ -224,13 +220,7 @@ const QuestionToolbar = props => {
           </div>
         </div>
         <Card className={classes.root}>
-          <CardContent>
-              <FormControl component="fieldset">
-                <RadioGroup aria-label="gender" name="gender1" value={searchText[0] ? searchText[0].value : 'S'} onChange={handleChangeSelect}>
-                  <FormControlLabel value="S" control={<Radio />} label="Listar apenas suas questões." />
-                  <FormControlLabel value="T" control={<Radio />} label="Listar questões de todos os usuários." />
-                </RadioGroup>
-              </FormControl>
+          {/*<CardContent>
               <Tooltip title="Clique para buscar">
                 <Button
                     onClick={onClickSearch}>
@@ -243,106 +233,117 @@ const QuestionToolbar = props => {
                 <FcClearFilters size="30"/>
               </Button>
             </Tooltip>
+          </CardContent>*/}
+
+          <CardContent>
+            <Box display="flex" justifyContent="flex-start">
+              {/* <TextField
+                  label="Código"
+                  helperText="Código da Questão"
+                  margin="dense"
+                  onChange={onChangeId}
+                  value={searchText[5] != null  ? searchText[5].id : ""}
+                  style={{width: '140px'}}
+                  variant="outlined"
+              />*/}
+              <TextField
+                  id="filled-select-currency"
+                  select
+                  label="Área"
+                  value={searchText[1] ? searchText[1].fk_course_id : 0}
+                  onChange={onChangeCourse}
+                  helperText="Selecione a àrea."
+                  variant="outlined"
+                  margin="dense"
+                 style={{width: '300px'}}>
+                {courses.map((option) => (
+                    <MenuItem key={option.id} value={option.id}>
+                      {option.description}
+                    </MenuItem>
+                ))}
+              </TextField>
+              {/*<TextField
+                  className={classes.textField}
+                  id="filled-select-currency"
+                  select
+                  label="Competência"
+                  value={searchText[3] ? searchText[3].fk_skill_id : 0}
+                  onChange={onChangeSkill}
+                  helperText="Selecione a competência."
+                  variant="outlined"
+                  margin="dense"
+                  style={{width: '300px'}}>
+                {skills.map((option) => (
+                    <MenuItem key={option.id} value={option.id}>
+                      {option.description}
+                    </MenuItem>
+                ))}
+              </TextField>*/}
+              <TextField
+                  className={classes.textField}
+                  id="filled-select-currency"
+                  select
+                  label="Conteúdo"
+                  value={searchText[2] ? searchText[2].fk_object_id : 0}
+                  onChange={onChangeObject}
+                  helperText="Selecione o conteúdo."
+                  variant="outlined"
+                  margin="dense"
+                  style={{width: '300px'}}>
+                {objects.map((option) => (
+                    <MenuItem key={option.id} value={option.id}>
+                      {option.description}
+                    </MenuItem>
+                ))}
+              </TextField>
+            </Box>
+
+
+            {/*<div className={classes.row}>
+
+              <Autocomplete
+                  id="keywords"
+                  value={value}
+                  onChange={(event, newValue) => {
+                    setValue(newValue);
+                  }}
+                  inputValue={searchText[4] ? searchText[4].keyword : inputValue}
+                  onInputChange={(event, newInputValue) => {
+                    searchText[4].keyword = newInputValue;
+                    setInputValue(newInputValue);
+                  }}
+                  id="controllable-states-demo"
+                  options={keywordsAll}
+                  getOptionLabel={(option) => option.keyword}
+                  style={{ marginLeft: '10px', width: '200px' }}
+                  renderInput={(params) => <TextField {...params} label="Palavra-chave" variant="outlined" />}
+              />
+            </div>*/}
+            <div >
+
+              <Box display="flex" justifyContent="flex-start">
+                  <FormControl component="fieldset">
+                    <RadioGroup row={true} aria-label="gender" name="gender1" value={searchText[0] ? searchText[0].value : 'S'} onChange={handleChangeSelect}>
+                      <FormControlLabel value="S" control={<Radio />} label="Suas questões" />
+                      <FormControlLabel value="T" control={<Radio />} label="Todas as questões" />
+                    </RadioGroup>
+                  </FormControl>
+              </Box>
+
+              <Box display="flex" justifyContent="flex-start">
+
+                  <Button variant="contained" color="primary" onClick={onClickSearch}>
+                    Pesquisar
+                  </Button>
+                <div style={{marginLeft: '10px'}}>
+                  <Button variant="contained" onClick={onClickCleanSearch}>
+                    Limpar Filtro
+                  </Button>
+                </div>
+              </Box>
+            </div>
 
           </CardContent>
-          <CardActions disableSpacing>
-            <Tooltip title="Clique para mais opções de pesquisa">
-              <IconButton
-                  className={clsx(classes.expand, {
-                    [classes.expandOpen]: expanded,
-                  })}
-                  onClick={handleExpandClick}
-                  aria-expanded={expanded}
-                  aria-label="show more">
-                <ExpandMoreIcon />
-              </IconButton>
-              </Tooltip>
-          </CardActions>
-          <Collapse in={expanded} timeout="auto" unmountOnExit>
-            <CardContent>
-              <div className={classes.row}>
-                <TextField
-                    label="Código"
-                    helperText="Código da Questão"
-                    margin="dense"
-                    onChange={onChangeId}
-                    value={searchText[5] != null  ? searchText[5].id : ""}
-                    style={{width: '140px'}}
-                    variant="outlined"
-                />
-                <TextField className={classes.textField}
-                    id="filled-select-currency"
-                    select
-                    label="Área"
-                    value={searchText[1] ? searchText[1].fk_course_id : 0}
-                    onChange={onChangeCourse}
-                    helperText="Selecione a àrea."
-                    variant="outlined"
-                    margin="dense"
-                   style={{width: '300px'}}>
-                  {courses.map((option) => (
-                      <MenuItem key={option.id} value={option.id}>
-                        {option.description}
-                      </MenuItem>
-                  ))}
-                </TextField>
-                <TextField
-                    className={classes.textField}
-                    id="filled-select-currency"
-                    select
-                    label="Competência"
-                    value={searchText[3] ? searchText[3].fk_skill_id : 0}
-                    onChange={onChangeSkill}
-                    helperText="Selecione a competência."
-                    variant="outlined"
-                    margin="dense"
-                    style={{width: '300px'}}>
-                  {skills.map((option) => (
-                      <MenuItem key={option.id} value={option.id}>
-                        {option.description}
-                      </MenuItem>
-                  ))}
-                </TextField>
-
-              </div>
-              <div className={classes.row}>
-                <TextField
-                    id="filled-select-currency"
-                    select
-                    label="Objeto de conhecimento"
-                    value={searchText[2] ? searchText[2].fk_object_id : 0}
-                    onChange={onChangeObject}
-                    helperText="Selecione o objeto de conhecimento."
-                    variant="outlined"
-                    margin="dense"
-                    style={{width: '300px'}}>
-                  {objects.map((option) => (
-                      <MenuItem key={option.id} value={option.id}>
-                        {option.description}
-                      </MenuItem>
-                  ))}
-                </TextField>
-                <Autocomplete
-                    id="keywords"
-                    value={value}
-                    onChange={(event, newValue) => {
-                      setValue(newValue);
-                    }}
-                    inputValue={searchText[4] ? searchText[4].keyword : inputValue}
-                    onInputChange={(event, newInputValue) => {
-                      searchText[4].keyword = newInputValue;
-                      setInputValue(newInputValue);
-                    }}
-                    id="controllable-states-demo"
-                    options={keywordsAll}
-                    getOptionLabel={(option) => option.keyword}
-                    style={{ marginLeft: '10px', width: '200px' }}
-                    renderInput={(params) => <TextField {...params} label="Palavra-chave" variant="outlined" />}
-                />
-              </div>
-
-            </CardContent>
-          </Collapse>
         </Card>
 
     </div>

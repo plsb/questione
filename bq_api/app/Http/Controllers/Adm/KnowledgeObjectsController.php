@@ -79,7 +79,7 @@ class KnowledgeObjectsController extends Controller
         $knowledge_object->save();
 
         return response()->json([
-            'message' => 'Objeto de Conhecimento '.$knowledge_object->description.' cadastrado.',
+            'message' => 'Conteúdo '.$knowledge_object->description.' cadastrado.',
             $knowledge_object
         ], 200);
     }
@@ -121,7 +121,7 @@ class KnowledgeObjectsController extends Controller
 
 
         return response()->json([
-            'message' => 'Objeto de Conhecimento '.$knowledge_object->description.' atualizado.',
+            'message' => 'Conteúdo '.$knowledge_object->description.' atualizado.',
             $knowledge_object
         ], 200);
 
@@ -141,7 +141,7 @@ class KnowledgeObjectsController extends Controller
         $knowledge_object->delete();
 
         return response()->json([
-            'message' => 'Objeto de Conhecimento '.$knowledge_object->description.' excluído!'
+            'message' => 'Conteúdo '.$knowledge_object->description.' excluído!'
         ], 200);
     }
 

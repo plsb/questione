@@ -26,7 +26,7 @@ const useStyles = makeStyles({
 const QuestionSkill = props => {
     const { className, idQuestion, history, ...rest } = props;
     const [courses, setCourses] = useState([{ 'id': '0', 'description': 'Todas as áreas' }]);
-    const [objects, setObjects] = useState([{ 'id': '0', 'description': 'Todos os objetos' }]);
+    const [objects, setObjects] = useState([{ 'id': '0', 'description': 'Todos os conteúdos' }]);
     const [skills, setSkills] = useState([{ 'id': '0', 'description': 'Todas as competências' }]);
     const [courseSelect, setCourseSelect] = useState(0);
     const [objectSelect, setObjectSelect] = useState([]);
@@ -370,7 +370,7 @@ const QuestionSkill = props => {
                     <TextField
                         id={"obj" + index}
                         select
-                        label="Selecione o objeto de conhecimento"
+                        label="Selecione o conteúdo"
                         value={inputObjects[index].objectSelected}
                         onChange={(event) => handleInputChangeObject(event, index)}
                         variant="outlined"

@@ -166,7 +166,6 @@ const ObjectDetails = props => {
         [event.target.name]: true
       }
     });
-    console.log('erros', formState.errors);
   };
 
   const hasError = field =>

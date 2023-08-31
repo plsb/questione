@@ -1,10 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import {
-  Card,
-  CardActions,
-  CardContent,
   Table,
   TableBody,
   LinearProgress,
@@ -19,7 +15,8 @@ import {QUESTION_SEARCH_SKILL, searchQuestions, searchQuestionsPage} from "../..
 const useStyles = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1)
+    paddingRight: theme.spacing(2),
+
   },
   content: {
     padding: 0,
@@ -192,60 +189,47 @@ const QuestionTable = props => {
               onClickSearch={onClickSearch}
               onClickCleanSearch={onClickCleanSearch}/>
         <div className={classes.content}>
-          <Card
-              className={clsx(classes.root, className)}>
-            <CardHeader
-                avatar={
-                  <div>
+          <TablePagination
+              component="div"
+              count={total}
+              onChangePage={handlePageChange}
+              onChangeRowsPerPage={handleRowsPerPageChange}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              rowsPerPageOptions={[8]}/>
 
-                  </div>
-                }
-                action={
-                  <TablePagination
-                      component="div"
-                      count={total}
-                      onChangePage={handlePageChange}
-                      onChangeRowsPerPage={handleRowsPerPageChange}
-                      page={page}
-                      rowsPerPage={rowsPerPage}
-                      rowsPerPageOptions={[8]}/>
-
-                }/>
-              <CardContent>
-                {questions == null ?
-                    <LinearProgress color="secondary"    />
-                    :
-                    <Grid
-                        container
-                        spacing={1}>
-                      <Grid
-                          item
-                          md={12}
-                          xs={12}>
-                        <Table>
-                          <TableBody>
-                            {questions.map(question => (
-                                <QuestionCard
-                                    question={question}
-                                    setRefresh={setRefresh}
-                                    refresh={refresh}/>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </Grid>
-                    </Grid> }
-              </CardContent>
-            <CardActions className={classes.actions}>
-              <TablePagination
-                  component="div"
-                  count={total}
-                  onChangePage={handlePageChange}
-                  onChangeRowsPerPage={handleRowsPerPageChange}
-                  page={page}
-                  rowsPerPage={rowsPerPage}
-                  rowsPerPageOptions={[8]}/>
-            </CardActions>
-          </Card>
+          {questions == null ?
+              <LinearProgress color="secondary"    />
+              :
+              <Grid
+                  container
+                  spacing={1}>
+                <Grid
+                    item
+                    md={12}
+                    xs={12}>
+                  <Table>
+                    <TableBody>
+                      {questions.map(question => (
+                          <div style={{marginBottom: '20px'}}>
+                            <QuestionCard
+                                question={question}
+                                setRefresh={setRefresh}
+                                refresh={refresh}/>
+                          </div>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Grid>
+              </Grid> }
+          <TablePagination
+              component="div"
+              count={total}
+              onChangePage={handlePageChange}
+              onChangeRowsPerPage={handleRowsPerPageChange}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              rowsPerPageOptions={[8]}/>
         </div>
       </div>
   );

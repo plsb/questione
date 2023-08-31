@@ -16,7 +16,7 @@ import {
     Chip,
     Switch, ListItem, ListItemText,
     List,
-    Dialog, AppBar, Toolbar, Box
+    Dialog, AppBar, Toolbar, Box, Divider
 } from '@material-ui/core';
 import Rating from '@material-ui/lab/Rating';
 import {MoreVert, PlaylistAdd, ExpandMoreRounded, Edit} from '@material-ui/icons';
@@ -30,13 +30,9 @@ import CloseIcon from '@material-ui/icons/Close';
 import { toast } from 'react-toastify';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    marginTop: 5,
-    marginBottom: 10,
-      marginRigth: 0,
-      marginLeft: 5,
-      width: '100%'
-  },
+    root: {
+
+    },
     head: {
         paddingBottom: 0,
         paddingTop: 10
@@ -56,9 +52,9 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: '#2196f3',
         color: '#fff',
     },
-  spacer: {
+    spacer: {
     flexGrow: 1
-  },
+    },
     expand: {
         transform: 'rotate(0deg)',
         marginLeft: 'auto',
@@ -96,9 +92,6 @@ const useStyles = makeStyles(theme => ({
     },
     labelRank: {
       textAlign: 'right'
-    },
-    lineQuestion: {
-        marginLeft: 20,
     },
     colorLabelDifficulty: {
         color: '#3f51b5',
@@ -412,42 +405,31 @@ const QuestionCard = props => {
                 <CardHeader
                     avatar={
                         <div>
-                            <Typography variant="h5" color="textSecondary" component="h2">
-                                {
-                                    question.id < 10 ? 'Questão - 00000' + question.id :
-                                        question.id < 100 ? 'Questão - 0000' + question.id :
-                                            question.id < 1000 ? 'Questão - 000' + question.id :
-                                                question.id < 10000 ? 'Questão - 00' + question.id :
-                                                    question.id < 100000 ? 'Questão - 0' + question.id :
-                                                        question.id
-                                }
-                                { question.skill !== null && question.knowledge_objects[0] &&
-                                question.question_items.length >= 2 && question.course  !== null
-                                    ?
-                                    <Tooltip title="Esta questão é completa. Possui texto-base, enunciado,
-                                            pelo menos duas alternativas,
-                                            um curso associado, uma competência associada e pelo menos um
-                                            objeto de conhecimento associado.">
-                                        <AssignmentTurnedIn
-                                            color="secondary"
-                                            fontSize="small"/>
-
-                                    </Tooltip>
-                                    :
-                                    null }
-                            </Typography>
+                            { question.validated != 1 &&
+                                <Chip label="Não finalizada" className={clsx(classes.chipRed, className)} size="small"/>}
                             { question.course  !== null ?
-                            <Typography variant="button" color="textSecondary" component="h2">
-                                {'Área de origem: '+question.course.description}
-                            </Typography> : null }
-                            <div>
-                                { question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
-                                    <Chip label="Inserida por você" className={clsx(classes.chipGreen, className)} size="small"/> : null}
-                                { question.validated == 1 ?
-                                    <Chip label="Ativa" className={clsx(classes.chipGreen, className)} size="small"/> :
-                                    <Chip label="Inativa" className={clsx(classes.chipRed, className)} size="small"/>}
-                            </div>
-                            <div>
+                                <Typography variant="subtitle1" color="#000000" component="p">
+                                    {'Área: '+question.course.description}
+                                    { question.year !== '' && question.year !== null &&
+                                        " (" +question.year + ")"}
+                                    { question.fk_type_of_evaluation_id !== '' && question.fk_type_of_evaluation_id !== null &&
+                                        ' - '+question.type_of_evaluation.description }
+
+                                </Typography> : null }
+                            { question.skill  !== null ?
+                                    <Typography variant="subtitle1" color="#000000" component="p">
+                                        Competência: {" " + question.skill.description }
+                                    </Typography>
+                                : null}
+                            { question.knowledge_objects[0] ?
+                                    <Typography variant="subtitle1" color="#000000" component="p">
+                                        Conteúdo(s):{" "}
+                                        {question.knowledge_objects.map(item => (
+                                            ReactHtmlParser (item.description)+'; '
+                                        ))}
+                                    </Typography>
+                                : null}
+                            {/*<div>
                                 { question.difficulty.total_answers == 0 ?
                                     <p className={clsx(classes.colorLabelDifficultyWithoutAnswer)}>
                                         {"Esta questão ainda não foi respondida em uma avaliação."}
@@ -476,7 +458,7 @@ const QuestionCard = props => {
                                 }
 
 
-                            </div>
+                            </div>*/}
 
 
                         </div>
@@ -520,7 +502,7 @@ const QuestionCard = props => {
                                     </Box>
                                 </Tooltip>
                             </Box>
-                            <Box display="flex" flexDirection="flex-end" p={1} m={1}>
+                            {/*<Box display="flex" flexDirection="flex-end" p={1} m={1}>
                                 <Tooltip title="Avaliação da questão">
                                     {parseInt(question.fk_user_id) != parseInt(localStorage.getItem("@Questione-id-user")) && parseInt(rank) == 0 ?
                                         <div>
@@ -549,101 +531,43 @@ const QuestionCard = props => {
                                         </div> }
 
                                 </Tooltip>
-                            </Box>
+                            </Box>*/}
                         </div>
                     }/>
-                <CardContent>
-                    <div className={classes.lineQuestion}>
+                <CardContent >
+                    <div> { ReactHtmlParser (question.base_text) } </div>
+                    <div> { ReactHtmlParser (question.stem) } </div>
 
-                         { question.year !== '' && question.year !== null ?
-                            <div>
-                                <Typography variant="button" color="textSecondary" component="p">
-                                    Ano:
-                                </Typography>
-                                <div> { question.year }
-                                    { question.fk_type_of_evaluation_id !== '' && question.fk_type_of_evaluation_id !== null ?
-                                              ' - '+question.type_of_evaluation.description
-                                        : null}
-                                </div>
+                    {question.question_items.map(item => (
+                        item.correct_item == 1 ?
+                            <Paper className={clsx(classes.paper, classes.paperRight)} elevation={3} variant="outlined"> { ReactHtmlParser (item.description)  }</Paper>
+                            : <Paper className={clsx(classes.paper, classes.paperWrong)} variant="outlined"> { ReactHtmlParser (item.description) } </Paper>
+                    ))}
 
-                                <br />
-                            </div>
-                            : null}
-                        { question.skill  !== null ?
-                            <div>
-                                <Typography variant="button" color="textSecondary" component="p">
-                                    Competência:
-                                </Typography>
-                                <div> { question.skill.description } </div>
-                                <br />
-                            </div>
-                            : null}
-                        { question.knowledge_objects[0] ?
-                            <div>
-                                <Typography variant="button" color="textSecondary" component="p">
-                                    Objeto(s) de conhecimento:
-                                </Typography>
-                                {question.knowledge_objects.map(item => (
-                                    <div> { ReactHtmlParser (item.description) } </div>
-                                ))}
-                                <br />
-                            </div>
-                            : null}
+                    <Divider style={{padding: '3px', marginTop: '20px', marginBottom: '15px'}}/>
 
-                        { question.keywords[0] ?
-                            <div>
-                                <Typography variant="button" color="textSecondary" component="p">
-                                    Palavra(s)-chave:
-                                </Typography>
-                                {question.keywords.map(item => (
-                                      ReactHtmlParser (item.keyword) + '; '
-                                ))}
-                                <br /> <br />
-                            </div>
-                            : null}
+                    <Typography variant="body1" color="#000000" component="p">
+                        {
+                            question.id < 10 ? 'Questão - 00000' + question.id :
+                                question.id < 100 ? 'Questão - 0000' + question.id :
+                                    question.id < 1000 ? 'Questão - 000' + question.id :
+                                        question.id < 10000 ? 'Questão - 00' + question.id :
+                                            question.id < 100000 ? 'Questão - 0' + question.id :
+                                                question.id
+                        }
+                        { question.fk_user_id == localStorage.getItem("@Questione-id-user") &&
+                            " (Esta questão foi cadastrada por você)"}
+                    </Typography>
+                    { question.keywords[0] ?
+                        <Typography variant="body1" color="#000000" component="p">
+                            Palavra(s)-chave:
+                            {" " + question.keywords.map(item => (
+                                ReactHtmlParser (item.keyword) + '; '
+                            ))}
+                        </Typography> : null}
 
-
-
-                        <Typography variant="button" color="textSecondary" component="p">
-                        Texto base:
-                        </Typography>
-                        <br />
-                        <div> { ReactHtmlParser (question.base_text) } </div>
-                    </div>
                 </CardContent>
-                <CardActions disableSpacing>
-                    <Tooltip title="Expandir a questão">
-                        <IconButton
-                            className={clsx(classes.expand, {
-                                [classes.expandOpen]: expanded,
-                            })}
-                            onClick={handleExpandClick}
-                            aria-expanded={expanded}
-                            aria-label="show more">
-                            <ExpandMoreRounded />
-                        </IconButton>
-                    </Tooltip>
-                </CardActions>
-                <Collapse in={expanded} timeout="auto" unmountOnExit>
-                    <CardContent className={classes.lineQuestion}>
-                        <Typography variant="button" color="textSecondary" component="p">
-                            Enunciado:
-                        </Typography>
-                        <br />
-                        <div> { ReactHtmlParser (question.stem) } </div>
-                        <br />
-                        <Typography variant="button" color="textSecondary" component="p">
-                            Alternativas:
-                        </Typography>
-                        <br />
-                        {question.question_items.map(item => (
-                            item.correct_item == 1 ?
-                                <Paper className={clsx(classes.paper, classes.paperRight)} elevation={3} variant="outlined"> { ReactHtmlParser (item.description)  }</Paper>
-                                : <Paper className={clsx(classes.paper, classes.paperWrong)} variant="outlined"> { ReactHtmlParser (item.description) } </Paper>
-                        ))}
 
-                    </CardContent>
-                </Collapse>
                 <Menu
                     id="simple-menu"
                     anchorEl={anchorEl}

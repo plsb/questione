@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Professor;
 use App\Course;
 use App\CourseProfessor;
 use App\KeywordQuestion;
+use App\KnowledgeObject;
+use App\Providers\KnowledgeObjectRelated;
 use App\Question;
 use App\QuestionHasKnowledgeObject;
 use App\QuestionItem;
@@ -15,6 +17,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use Validator;
+use function MongoDB\BSON\toJSON;
 
 class QuestionController extends Controller
 {
@@ -65,12 +68,12 @@ class QuestionController extends Controller
                 //pega questões validadas de todos os usuário
                 return $query->where('validated', '=', 1);
             })
-            ->when($course > 0, function ($query) use ($course){
+            /*->when($course > 0, function ($query) use ($course){
                 //pega questão de um curso específicp
                 //dd($course);
                 return $query->where('fk_course_id', '=', $course);
 
-            })
+            })*/
             ->when($skill > 0, function ($query) use ($skill){
                 //pega questão de um curso específicp
                 //dd($course);
@@ -104,8 +107,39 @@ class QuestionController extends Controller
             })
             ->when($object > 0, function ($query) use ($object) {
                 //pega questões de todos os cursos
-                $user = auth('api')->user();
-                $questions_objects = QuestionHasKnowledgeObject::where('fk_knowledge_object', $object)
+
+                $objects_array = array();
+                $objects_array[] = $object;
+                $objects_array_previous = array();
+                $continue = 0;
+
+                for(;$continue == 0;){
+                    $obj_relate = KnowledgeObjectRelated::where('fk_obj1_id', $object)
+                        ->orWhere('fk_obj2_id', $object)
+                        ->whereNotIn('fk_obj1_id', $objects_array_previous)
+                        ->whereNotIn('fk_obj2_id', $objects_array_previous)->get();
+
+                    foreach ($obj_relate as $item){
+
+                        if(in_array($item->fk_obj1_id, $objects_array) && in_array($item->fk_obj2_id, $objects_array) ){
+
+                            $continue = 1;
+                            continue ;
+                        }
+
+                        $id_item_search = $item->fk_obj1_id == $object ? $item->fk_obj2_id : $item->fk_obj1_id;
+                        $obj_item = KnowledgeObject::where('id', $id_item_search)->first();
+                        $objects_array[] = $obj_item->id;
+                        //$objects_array[] = $item;
+
+                        $objects_array_previous[] = $object;
+                        $object = $id_item_search;
+
+                    }
+
+                }
+
+                $questions_objects = QuestionHasKnowledgeObject::whereIn('fk_knowledge_object', $objects_array)
                     ->get();
                 $arr = array();
                 foreach ($questions_objects as $object){

@@ -64,6 +64,7 @@ import StudentClassEvaluationApplicationDetails from '../pages/StudentClass/Stud
 import StudentClassEvaluationApplicationResults from '../pages/StudentClass/StudentClassContent/Application/EvaluationApplicationResults';
 import RegulationTable from "../pages/Administrator/Regulation/RegulationTable";
 import RegulationDetails from "../pages/Administrator/Regulation/RegulationDetails";
+import Mapping from "../pages/Administrator/Mapping/MappingTable";
 
 const Routes = () => (
     <BrowserRouter>
@@ -298,6 +299,13 @@ const Routes = () => (
                 needToBeLogged={true}
                 typeUser={1}
                 path="/object-details/:codigoObject?" />
+            <RouteWithLayout
+                component={Mapping}
+                exact
+                layout={MainLayout}
+                needToBeLogged={true}
+                typeUser={1}
+                path="/mapping" />
             <RouteWithLayout
                 component={UserTable}
                 exact

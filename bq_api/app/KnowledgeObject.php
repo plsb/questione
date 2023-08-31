@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Providers\KnowledgeObjectRelated;
 use Illuminate\Database\Eloquent\Model;
 
 class KnowledgeObject extends Model
@@ -16,5 +17,17 @@ class KnowledgeObject extends Model
 
     public function regulation(){
         return $this->belongsTo(Regulation::class, 'fk_regulation_id');
+    }
+
+    public function related1(){
+        return $this->hasMany(KnowledgeObjectRelated::class, 'fk_obj1_id')
+            ->with('object1')
+            ->with('object2');
+    }
+
+    public function related2(){
+        return $this->hasMany(KnowledgeObjectRelated::class, 'fk_obj2_id')
+            ->with('object1')
+            ->with('object2');
     }
 }

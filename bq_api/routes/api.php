@@ -69,6 +69,10 @@ Route::group(['prefix' => 'object'], function (){
     Route::get('/show/{skill}', 'Adm\KnowledgeObjectsController@show')->name('object.show');
     Route::put('/{skill}', 'Adm\KnowledgeObjectsController@update')->name('object.update');
     Route::delete('/{skill}', 'Adm\KnowledgeObjectsController@destroy')->name('object.destroy');
+
+    Route::post('/relate', 'Adm\KnowledgeObjectsRelatedController@store')->name('objectRelated.store');
+    Route::delete('/relate/{id}', 'Adm\KnowledgeObjectsRelatedController@destroy')->name('objectRelated.destroy');
+
 });
 
 Route::group(['prefix' => 'type-of-evaluation'], function (){
