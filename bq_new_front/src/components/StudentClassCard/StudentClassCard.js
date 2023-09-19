@@ -21,22 +21,42 @@ import {
     TextField,
     Button,
     Dialog,
-    Grid
+    Grid, Box, Paper, CardActionArea, Link
 } from '@material-ui/core';
-import { MoreVert } from '@material-ui/icons';
-import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
-import VisibilityIcon from '@material-ui/icons/Visibility';
+import {Edit, MoreVert} from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
-import clsx from "clsx";
 import CloseIcon from "@material-ui/icons/Close";
+import useStyles from "../../style/style";
+import moment from "moment/moment";
 
-const useStyles = makeStyles(() => ({
+export function EntypoEye(props) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 20 20" {...props}><path fill="currentColor" d="M10 4.4C3.439 4.4 0 9.232 0 10c0 .766 3.439 5.6 10 5.6c6.56 0 10-4.834 10-5.6c0-.768-3.44-5.6-10-5.6zm0 9.907c-2.455 0-4.445-1.928-4.445-4.307c0-2.379 1.99-4.309 4.445-4.309s4.444 1.93 4.444 4.309c0 2.379-1.989 4.307-4.444 4.307zM10 10c-.407-.447.663-2.154 0-2.154c-1.228 0-2.223.965-2.223 2.154s.995 2.154 2.223 2.154c1.227 0 2.223-.965 2.223-2.154c0-.547-1.877.379-2.223 0z"></path></svg>
+    )
+}
+
+
+export function EntypoEyeWithLine(props) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 20 20" {...props}><path fill="currentColor" d="M18.521 1.478a1 1 0 0 0-1.414 0L1.48 17.107a1 1 0 1 0 1.414 1.414L18.52 2.892a1 1 0 0 0 0-1.414zM3.108 13.498l2.56-2.56A4.18 4.18 0 0 1 5.555 10c0-2.379 1.99-4.309 4.445-4.309c.286 0 .564.032.835.082l1.203-1.202A12.645 12.645 0 0 0 10 4.401C3.44 4.4 0 9.231 0 10c0 .423 1.057 2.09 3.108 3.497zm13.787-6.993l-2.562 2.56c.069.302.111.613.111.935c0 2.379-1.989 4.307-4.444 4.307c-.284 0-.56-.032-.829-.081l-1.204 1.203c.642.104 1.316.17 2.033.17c6.56 0 10-4.833 10-5.599c0-.424-1.056-2.09-3.105-3.495z"></path></svg>
+    )
+}
+
+const useStylesLocal = makeStyles(() => ({
     root: {
         marginBottom: 8,
     },
     chipgreen:{
         margin: 3,
         backgroundColor: '#009688',
+        color: '#ffebee',
+    },
+    chipblue:{
+        backgroundColor: 'primary',
+        color: '#ffebee',
+    },
+    chipred:{
+        backgroundColor: '#e57373',
         color: '#ffebee',
     },
     title: {
@@ -50,6 +70,7 @@ const useStyles = makeStyles(() => ({
     },
     appBar: {
         position: 'relative',
+        background: '#2196f3'
     },
     textDialog: {
         fontWeight: 'bold',
@@ -60,11 +81,12 @@ const useStyles = makeStyles(() => ({
 }));
 
 const StudendClassCard = props => {
-    const { className, id, title, classId, course, user, status, showUser, toFileCallback, isOwner,
-        history, gamified_class, ...rest } = props;
+    const { className, id, status, showUser, toFileCallback, isOwner,
+        history, class_student, class_student_student, ...rest } = props;
     const [anchorEl, setAnchorEl] = React.useState(null);
 
-    const classes = useStyles();
+    const classes = useStylesLocal();
+    const classesGeneral = useStyles();
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -76,7 +98,7 @@ const StudendClassCard = props => {
 
     const toFile = async (newStatus) => {
         try {
-            const response = await api.put(`class/change-status/${id}`, {
+            const response = await api.put(`class/professor/change-status/${id}`, {
                 status: newStatus,
             });
 
@@ -148,67 +170,114 @@ const StudendClassCard = props => {
         <Card
             {...rest}
             className={classes.root}>
-                <CardHeader
-                    className={classes.head}
-                    action={
-                        <div>
-                            {/*gamified_class === 1 && (
-                                <Tooltip title="Configurações da turma gamificada">
-                                    <IconButton
-                                        aria-label="settings"
-                                        onClick={handleGamification}>
-                                        <SportsEsportsIcon />
-                                    </IconButton>
-                                </Tooltip>
-                            )*/}
+            <div>
+                    <Paper className={classesGeneral.paperTitle} style={{background: class_student_student && class_student_student.active == 0 && '#ffcdd2'}}>
+                        <Box display="flex">
+                            <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-start">
+                                <div className={classesGeneral.paperTitleText}>
+                                    {class_student.id_class}
+                                </div>
+                                { status == 2 &&
+                                    <div className={classesGeneral.textRedInfo} style={{marginLeft: '15px', marginTop: '4px'}}>
+                                        {'Arquivada'}
+                                    </div>}
+                                <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '15px'}}>
+                                    {class_student.description}
+                                </div>
+                                {class_student.gamified_class === 1 && (
+                                    <div className={classesGeneral.textGreeInfo} style={{marginLeft: '15px'}}>
+                                        {'(Gamificada)'}
+                                    </div>
+                                )}
+                            </Box>
+                            <Box display="flex" justifyContent="flex-end">
+                                <Box display="flex">
+                                    {/*gamified_class === 1 && (
+                                        <Tooltip title="Configurações da turma gamificada">
+                                            <IconButton
+                                                aria-label="settings"
+                                                onClick={handleGamification}>
+                                                <SportsEsportsIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    )*/}
+                                    <div className={classesGeneral.paperTitleText}>
+                                        {class_student.class_student_all && class_student.class_student_all.length + ' estudante(s)'}
+                                    </div>
 
-                            <Tooltip title="Opções da turma">
-                                <IconButton
-                                    aria-label="settings"
-                                    onClick={handleClick}>
-                                    <MoreVert />
-                                </IconButton>
-                            </Tooltip>
+                                    {
+                                        <IconButton
+                                            aria-label="settings"
+                                            onClick={() => history.push(`/student-class/${id}`)}
+                                            size="small"
+                                            style={{marginLeft: '20px'}}
+                                            disabled={class_student_student && class_student_student.active == 0}>
+                                            {class_student_student && class_student_student.active == 0 ? <EntypoEyeWithLine /> : <EntypoEye /> }
+                                        </IconButton>
+
+                                    }
+
+                                    { isOwner && <Tooltip title="Opções da turma">
+                                        <IconButton
+                                            aria-label="settings"
+                                            onClick={handleClick}
+                                            size="small"
+                                            style={{marginLeft: '20px'}}>
+                                            <MoreVert />
+                                        </IconButton>
+                                    </Tooltip> }
+
+                                </Box>
+                            </Box>
+                        </Box>
+                    </Paper>
+                    <Paper className={classesGeneral.paperSubtitle}>
+                        <Box display="flex">
+                            {class_student.course &&
+                                <div className={classesGeneral.paperTitleText}>
+                                    {'Curso: '+class_student.course.description}
+                                </div> }
+
+                        </Box>
+                    </Paper>
+
+                    <CardContent>
+
+                        {class_student.user &&
+                            <div className={classesGeneral.paperTitleText} style={{fontWeight: 'bold'}}>
+                                {'Professor: '+ class_student.user.name}
+                            </div> }
+                        <div className={classesGeneral.paperTitleText}>
+                            {'Esta turma foi criada em: '+ moment(class_student.created_at).format('DD/MM/YYYY')+'.'}
                         </div>
-                    }
-                    title={title}
-                />
 
-                <CardContent>
-                    <Typography color="textSecondary" variant="h6">
-                        <span>Código da turma:</span> {classId}
-                    </Typography>
-                    <Typography color="textSecondary" variant="h6">
-                        <span>Curso:</span> {course}
-                    </Typography>
-                    <Typography color="textSecondary" variant="h6">
-                        {showUser && user.name}
-                    </Typography>
+                        {class_student_student && class_student_student.active == 0 &&
+                            <div className={classesGeneral.textRedInfo} style={{marginTop: '10px'}}>
+                                {'Você está desabailitado nesta turma. Entre em contato com o seu professor.'}
+                            </div>}
 
-                    {gamified_class === 1 && (
-                        <Chip label="Gamificada" className={clsx(classes.chipgreen, className)} size="small"/>
-                    )}
-                </CardContent>
+                    </CardContent>
+            </div>
 
+
+            { isOwner &&
                 <Menu
                     id="simple-menu"
                     anchorEl={anchorEl}
                     keepMounted
                     open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                >
-                    <MenuItem onClick={() => history.push(`/student-class/${id}`)}>Acessar</MenuItem>
+                    onClose={handleClose}>
                     {status === 1 && isOwner && (
                         <>
                             <MenuItem onClick={() => history.push(`/student-class-details/${id}/professor`)}>Editar</MenuItem>
-                            {/*<MenuItem onClick={() => toFile(2)}>Arquivar</MenuItem>*/}
+                            <MenuItem onClick={() => toFile(2)}>Arquivar</MenuItem>
                         </>
                     )}
 
                     {status === 2 && isOwner && (
                         <MenuItem onClick={() => toFile(1)}>Ativar</MenuItem>
                     )}
-                </Menu>
+                </Menu> }
             <Dialog fullScreen onClose={handleGamificationExit} aria-labelledby="simple-dialog-title" open={openGamification}>
                 <AppBar className={classes.appBar}>
                     <Toolbar>
@@ -364,7 +433,7 @@ const StudendClassCard = props => {
 StudendClassCard.propTypes = {
     className: PropTypes.string,
     evaluation: PropTypes.object,
-    gamified_class: PropTypes.object,
+    class_student: PropTypes.object,
     history: PropTypes.object,
     setRefresh: PropTypes.func,
     refresh: PropTypes.number

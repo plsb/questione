@@ -16,12 +16,13 @@ import {
     TextField,
     IconButton,
     Select,
-    MenuItem, Typography, FormControlLabel, Switch, Tooltip
+    MenuItem, Typography, FormControlLabel, Switch, Tooltip, Box
 } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
-import useStyles from './styles';
 import {withStyles} from "@material-ui/core/styles";
+import useStylesLocal from "./styles";
+import useStyles from "../../../../style/style";
 
 const schema = {
     description: {
@@ -51,7 +52,8 @@ const StudentClassDetails = props => {
     const { className, history, ...rest } = props;
     const { studentClassId } = props.match.params;
 
-    const classes = useStyles();
+    const classes = useStylesLocal();
+    const classesGeneral = useStyles();
 
     const [formState, setFormState] = useState({
         isValid: false,
@@ -192,17 +194,11 @@ const StudentClassDetails = props => {
             {...rest}
             className={clsx(classes.root, className)}>
             <form
-                autoComplete="off"
-            >
-                <div className={classes.contentHeader}>
-                    <IconButton onClick={handleBack}>
-                        <ArrowBackIcon />
-                    </IconButton>
-                </div>
+                autoComplete="off">
 
                 <CardHeader
-                    subheader="Cadastro/edição da turma"
-                    title="Turma"
+                    subheader={<div className={classesGeneral.subtitleList}>{'Cadastro/edição da turma'}</div>}
+                    title={<div className={classesGeneral.titleList}>{'Turma'}</div>}
                 />
                 <Divider />
                 <CardContent>
@@ -214,12 +210,31 @@ const StudentClassDetails = props => {
                             md={12}
                             xs={12}>
                             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-                                <p className="item1" style={{ marginRight: '16px' }}>Curso</p>
                                 {/* GET  */}
                                 {/* No body do request o attr vai ser  */}
 
-                                <Select
-                                    labelId="course-label"
+                                <TextField
+                                    fullWidth
+                                    error={hasError('course')}
+                                    helperText={
+                                        hasError('course') ? formState.errors.course[0] : null
+                                    }
+                                    label="Curso"
+                                    margin="dense"
+                                    name="course"
+                                    onChange={handleChange}
+                                    select
+                                    // eslint-disable-next-line react/jsx-sort-props
+                                    value={formState.values.course || 'select'}
+                                    variant="outlined">
+                                    <MenuItem value="select">Selecione o curso</MenuItem>
+                                    {courseList.map((course) => (
+                                        <MenuItem key={course.id} value={course.id}>{course.description}</MenuItem>
+                                    ))}
+                                </TextField>
+
+                                {/*<Select
+                                    label="course-label"
                                     id="course"
                                     name="course"
                                     open={courseSelectIsOpen}
@@ -228,6 +243,9 @@ const StudentClassDetails = props => {
                                     value={formState.values.course || 'select'}
                                     onChange={handleChange}
                                     className={classes.root}
+                                    variant="outlined"
+                                    margin="dense"
+                                    style={{ width: '400px' }}
                                     error={hasError('course')}
                                     helperText={
                                         hasError('course') ? formState.errors.course[0] : null
@@ -236,52 +254,58 @@ const StudentClassDetails = props => {
                                     {courseList.map((course) => (
                                         <MenuItem key={course.id} value={course.id}>{course.description}</MenuItem>
                                     ))}
-                                </Select>
+                                </Select>*/}
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                                <TextField
+                                    fullWidth
+                                    error={hasError('description')}
+                                    helperText={
+                                        hasError('description') ? formState.errors.description[0] : null
+                                    }
+                                    label="Descrição"
+                                    margin="dense"
+                                    name="description"
+                                    onChange={handleChange}
+                                    value={formState.values.description || ''}
+                                    variant="outlined"/>
                             </div>
 
-                            <TextField
-                                fullWidth
-                                error={hasError('description')}
-                                helperText={
-                                    hasError('description') ? formState.errors.description[0] : null
-                                }
-                                label="Descrição"
-                                margin="dense"
-                                name="description"
-                                onChange={handleChange}
-                                value={formState.values.description || ''}
-                                variant="outlined"/>
-                            <TooltipCustomized
-                                title={
-                                    <React.Fragment>
-                                        <p>
-                                            <Typography color="textPrimary" variant="body2">
-                                                {'Caso esta opção esteja habilitada, será habilitado o módulo de ' +
-                                                    ' gamificação para esta turma.'}
-                                            </Typography>
-                                        </p>
-                                    </React.Fragment>
-                                }>
-                                 <FormControlLabel
-                                    control={
-                                        <Switch
-                                            checked={checkedGamified}
-                                            onChange={handleChangeGamified}
-                                            name="gamified_class"
-                                            color="primary"
-                                        />
-                                    }
-                                    label="Turma gamificada?"
-                                />
-                            </TooltipCustomized>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                                <TooltipCustomized
+                                    title={
+                                        <React.Fragment>
+                                            <p>
+                                                <Typography color="textPrimary" variant="body2">
+                                                    {'Caso esta opção esteja habilitada, será habilitado o módulo de ' +
+                                                        ' gamificação para esta turma.'}
+                                                </Typography>
+                                            </p>
+                                        </React.Fragment>
+                                    }>
+                                     <FormControlLabel
+                                        control={
+                                            <Switch
+                                                checked={checkedGamified}
+                                                onChange={handleChangeGamified}
+                                                name="gamified_class"
+                                                color="primary"
+                                            />
+                                        }
+                                        label="Turma gamificada"
+                                    />
+                                </TooltipCustomized>
+                            </div>
                             <Divider /><br />
-                            <Button
-                                color="primary"
-                                variant="outlined"
-                                disabled={!formState.isValid}
-                                onClick={saveStudentClass}>
-                                Salvar
-                            </Button>
+                            <Box display="flex" justifyContent="center">
+                                <Button
+                                    color="primary"
+                                    variant="outlined"
+                                    disabled={!formState.isValid}
+                                    onClick={saveStudentClass}>
+                                    Salvar
+                                </Button>
+                            </Box>
                         </Grid>
                         <Divider />
                     </Grid>

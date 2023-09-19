@@ -7,7 +7,16 @@ import {
   CardContent,
   Table,
   TableBody,
-  TablePagination, CardHeader, Grid, LinearProgress, Chip, Typography, IconButton, Tooltip
+  TablePagination,
+  CardHeader,
+  Grid,
+  LinearProgress,
+  Chip,
+  Typography,
+  IconButton,
+  Tooltip,
+  AccordionSummary,
+  AccordionDetails, Accordion, Box
 } from '@material-ui/core';
 import api from '../../../../services/api';
 import EvaluationApplicationCardStudent from '../EvaluationApplicationCardStudent';
@@ -15,9 +24,12 @@ import {PlayArrow} from "@material-ui/icons";
 
 import { toast } from 'react-toastify';
 import PropTypes from "prop-types";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ResultsGeneral from "../ResultsAplication/ResultsGeneral/components/ResultsGeneral";
+import useStyles from "../../../../style/style";
 
 
-const useStyles = makeStyles(theme => ({
+const useStylesLocal = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2)
@@ -62,10 +74,11 @@ const AplicationListStudent = props => {
 
   const [evaluationsApplications, setEvaluationsApplications] = useState(null);
 
-  const classes = useStyles();
+  const classes = useStylesLocal();
+  const classesGeneral = useStyles();
 
-  
   const [searchText, setSearchText] = useState('');
+  const [totals, setTotals] = useState({unavailable: 0, finalized: 0, started: 0});
 
   async function loadEvaluationsApplications(){
     try {
@@ -76,6 +89,24 @@ const AplicationListStudent = props => {
       if(response.status == 200) {  
         //setTotal(response.data.total);
         setEvaluationsApplications(response.data);
+
+        let unavailable = 0, finalized = 0, started = 0;
+        response.data.forEach(function logArrayElements(element, index, array) {
+          if(element.application.status == 0){
+            unavailable += 1;
+          } else if(element.answer_head){
+            if(element.answer_head.finalized_at){
+              finalized += 1;
+            } else {
+              started += 1;
+            }
+          } else {
+            started += 1;
+          }
+        });
+        setTotals({
+          unavailable, finalized, started
+        });
 
       } else {
         setEvaluationsApplications([]);
@@ -105,10 +136,6 @@ const AplicationListStudent = props => {
 
   return (
       <div className={classes.root}>
-        {/*<UsersToolbar
-            onChangeSearch={updateSearch.bind(this)}
-            searchText={searchText}
-  onClickSearch={onClickSearch}/>*/}
         <div className={classes.content}>
               {evaluationsApplications == null ?
                   <LinearProgress color="secondary"    />
@@ -118,8 +145,43 @@ const AplicationListStudent = props => {
                         spacing={1}>
                       <Grid
                           item
-                          md={12}
-                          xs={12}>
+                          xs={12} sm={12}>
+                        <Accordion style={{margin: '10px'}}>
+                          <AccordionSummary
+                              expandIcon={<ExpandMoreIcon />}
+                              aria-controls="panel1a-content"
+                              id="panel1a-header">
+                            <div className={classesGeneral.paperTitleTextBold}>Visão Geral</div>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            <Grid
+                                container
+                                spacing={1}>
+                              <Grid
+                                  item
+                                  md={12}
+                                  xs={12}>
+                                <ResultsGeneral studentClassId={studentClassId}/>
+
+                              </Grid>
+                            </Grid>
+
+                          </AccordionDetails>
+                        </Accordion>
+                        <Box display="flex" justifyContent="left" style={{marginRight: '10px'}}>
+                          <div className={classesGeneral.paperTitleGreen} style={{marginLeft: '10px', marginTop: '15px', marginBottom: '15px', borderRadius: '15px'}}>
+                            {totals.finalized == 1 ? totals.finalized + ' finalizado.' : totals.finalized + ' finalizados.'}
+                          </div>
+
+                          <div className={classesGeneral.paperTitle} style={{marginLeft: '10px', fontWeight: 'bold', marginTop: '15px', marginBottom: '15px', borderRadius: '15px'}}>
+                            {totals.started == 1 ? totals.started + ' não finalizado.' : totals.started + ' não finalizados.'}
+                          </div>
+
+                          <div className={classesGeneral.paperTitleGray} style={{marginLeft: '10px', marginTop: '15px', marginBottom: '15px', borderRadius: '15px'}}>
+                            {totals.unavailable == 1 ? totals.unavailable + ' indisponível.' : totals.unavailable + ' indisponíveis.'}
+                          </div>
+
+                        </Box>
                         <Table>
                           <TableBody>
                             {evaluationsApplications.map((application, i) => (

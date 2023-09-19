@@ -1,1 +1,1 @@
-export { default as PeopleToolbar } from './PeopleToolbar';
+export { default as PeopleToolbar } from './PeopleListStudents';

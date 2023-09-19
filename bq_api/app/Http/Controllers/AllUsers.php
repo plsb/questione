@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Course;
 use App\CourseProfessor;
 use App\KeywordQuestion;
+use App\KnowledgeArea;
 use App\KnowledgeObject;
 use App\Providers\KnowledgeObjectRelated;
 use App\Question;
@@ -34,6 +35,13 @@ class AllUsers extends Controller
         $courses = Course::orderBy('description')->get();
 
         return response()->json($courses, 200);
+    }
+
+    public function areas()
+    {
+        $areas = KnowledgeArea::orderBy('description')->get();
+
+        return response()->json($areas, 200);
     }
 
     public function coursesWithQuestionsByTypoOfEvaluation($id_type_of_evaluation)
@@ -78,14 +86,15 @@ class AllUsers extends Controller
         return response()->json($skills, 200);
     }
 
-    public function skills(Request $request)
+    public function allSkillsByRegulation(Request $request)
     {
-        if(!$request->fk_course_id){
+        $regulation_id = $request->fk_regulation_id;
+        if(!$regulation_id){
             return response()->json([
                 'message' => 'Informe o curso.'
             ], 202);
         }
-        $skill = Skill::where('fk_course_id', $request->fk_course_id)
+        $skill = Skill::where('fk_regulation_id', $regulation_id)
             ->orderBy('description')
             ->get();
 
@@ -111,6 +120,23 @@ class AllUsers extends Controller
             ->get();
 
         return response()->json($keywords, 200);
+    }
+
+    public function allObjectsByRegulation(Request $request)
+    {
+        $regulation_id = $request->fk_regulation_id;
+        if(!$regulation_id){
+            return response()->json([
+                'message' => 'Informe o curso.'
+            ], 202);
+        }
+
+        $objects = KnowledgeObject::where('fk_regulation_id', $regulation_id)
+            ->orderBy('description')
+            ->get();
+
+        return response()->json($objects, 200);
+
     }
 
     public function knowledgeObjects(Request $request)
@@ -210,17 +236,20 @@ class AllUsers extends Controller
         ], 200);
     }
 
-    public function coursesUser(){
+    public function coursesUser(Request $request){
         $user = auth('api')->user();
+
         $courses_user = CourseProfessor::where('fk_user_id', $user->id)
             ->where('valid', 1)->get();
         $arr = array();
         foreach ($courses_user as $courses_u){
-            //dd($enaq);
             $arr[] = $courses_u->fk_course_id;
         }
-        //dd($courses_user);
-        $courses = Course::whereIn('id', $arr)->get();
+
+        $courses = Course::whereIn('id', $arr)
+            ->with('regulations')
+            ->get();
+
         return response()->json($courses, 202);
     }
 

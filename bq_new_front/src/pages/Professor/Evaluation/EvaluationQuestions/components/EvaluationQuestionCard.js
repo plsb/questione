@@ -7,16 +7,18 @@ import {
     MenuItem, Menu,
     Typography,
     Tooltip,
-    Paper, Box, Grid, Button
+    Paper, Box, Grid, Button, Chip, Switch, CardHeader, Card, CardContent, Divider
 } from '@material-ui/core';
-import { MoreVert, Delete as DeleteIcon } from '@material-ui/icons';
+import {MoreVert, Delete as DeleteIcon, PlaylistAdd, Edit} from '@material-ui/icons';
 import { withRouter } from "react-router-dom";
 import ReactHtmlParser from 'react-html-parser';
 import api from '../../../../../services/api';
 import DialogQuestione from '../../../../../components/DialogQuestione';
 import { toast } from 'react-toastify';
+import QuestionText from "../../../../../components/QuestionText";
+import useStyles from "../../../../../style/style";
 
-const useStyles = makeStyles(theme => ({
+const useStylesLocal = makeStyles(theme => ({
     root: {
         marginTop: 5,
         marginBottom: 10,
@@ -99,6 +101,10 @@ const useStyles = makeStyles(theme => ({
     correct: {
         backgroundColor: '#80cbc4',
     },
+    btRemove: {
+        color: '#f44336',
+        marginRight: 2,
+    },
 }));
 
 const QuestionCard = props => {
@@ -118,33 +124,14 @@ const QuestionCard = props => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [openDeleteQuestionEvaluation, setOpenDeleteQuestionEvaluation] = React.useState(false);
     const [openDeleteQuestion, setOpenDeleteQuestion] = React.useState(false);
+    const [difficultyList] = React.useState(['Muito fácil', 'Fácil', 'Médio', 'Difícil', 'Muito difícil']);
 
-    const classes = useStyles();
-
-    /* function loadRank(){
-
-         if(question.rank_avg.length !== 0){
-             setRank(question.rank_avg[0].rank_avg);
-         }
-         if(question.rank_by_user_active.length == 0 &&
-             question.fk_user_id !== localStorage.getItem("@Questione-id-user")) {
-             setRank(0)
-         }
-         setQtRank(question.rank_count);
-     }*/
-
-    // useEffect(() => {
-    //     loadRank();
-    // }, [question, rank]);
+    const classes = useStylesLocal();
+    const classesGeneral = useStyles();
 
     useEffect(() => {
 
     }, [openDeleteQuestionEvaluation]);
-
-    // useEffect(() => {
-    //     loadRank();
-    //     loadEvaluations();
-    // }, []);
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -165,25 +152,6 @@ const QuestionCard = props => {
     const onClickOpenDialogQuestion = () => {
         setOpenDeleteQuestion(true);
     }
-
-    // async function deleteQuestion() {
-    //     setOpenDeleteQuestion(false);
-    //     try {
-    //         let url = 'question/' + question.id;
-
-    //         const response = await api.delete(url);
-    //         if (response.status === 202) {
-    //             if (response.data.message) {
-    //                 toast.error(response.data.message);
-    //             }
-    //         } else {
-    //             toast.success('Questão excluída.');
-    //             setRefresh(refresh + 1);
-    //         }
-    //     } catch (error) {
-
-    //     }
-    // }
 
     async function deleteQuestionEvaluation() {
         setOpenDeleteQuestionEvaluation(false);
@@ -211,87 +179,108 @@ const QuestionCard = props => {
 
     return (
         <div className={classes.content}>
-            <div className={classes.lineQuestion}>
-                <div className={classes.questionActions}>
-                    {hasApplication == '0' && (
-                        <Tooltip title="Excluir questão da avaliação">
-                            <Button onClick={onClickOpenDialogQEvaluation} className={classes.deleteButton}>
-                                <DeleteIcon />
-                            </Button>
-                        </Tooltip>
-                    )}
+            <Card>
+                <Paper className={classesGeneral.paperTitle}>
+                    <Box display="flex">
+                        <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-start">
+                            <div className={classesGeneral.paperTitleText}>
+                                {
+                                    question.question.id < 10 ? 'Q00000' + question.id :
+                                        question.question.id < 100 ? 'Q0000' + question.id :
+                                            question.question.id < 1000 ? 'Q000' + question.id :
+                                                question.question.id < 10000 ? 'Q00' + question.id :
+                                                    question.question.id < 100000 ? 'Q0' + question.id :
+                                                        question.question.id
+                                }
+                            </div>
+                            { question.question.validated != 1 &&
+                                <div className={classesGeneral.textRedInfo} style={{marginTop: '4px', marginLeft: '5px'}}>
+                                    {"(Questão não finalizada)"}
+                                </div>}
+                            { question.question.course &&
+                                <Box display="flex">
+                                    <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
+                                        { 'Área: '}
+                                    </div>
+                                    <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '5px'}}>
+                                        {question.question.course.description}
+                                    </div>
+                                </Box>
+                            }
 
-                    {/* <Box display="flex" justifyContent="flex-end" p={1} m={1} bgcolor="background.paper">
-                        <Tooltip title="Opções">
-                            <Box flexDirection="row" alignSelf="flex-end">
-                                <IconButton className={classes.labelRank} aria-label="settings"
-                                    onClick={handleClick}>
-                                    <MoreVert />
-                                </IconButton>
-                            </Box>
-                        </Tooltip>
+                        </Box>
+                        <Box display="flex" justifyContent="flex-end">
+                            {hasApplication == '0' && (
+                                <Tooltip title="Excluir questão da avaliação">
+                                    <Button variant="text" style={{ marginLeft: "10px" }}
+                                            className={clsx(classes.btRemove, className)}
+                                            size="small" onClick={onClickOpenDialogQEvaluation}>Remover Questão</Button>
+                                </Tooltip>
+                            )}
+                        </Box>
                     </Box>
 
-                    <Menu
-                        id="simple-menu"
-                        anchorEl={anchorEl}
-                        keepMounted
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                    >
-                        <MenuItem onClick={onClickOpenDialogQEvaluation}>Excluir da Avaliação</MenuItem>
-                    </Menu> */}
-                    <DialogQuestione
-                        handleClose={onClickCloseDialogQEvaluation}
-                        open={openDeleteQuestionEvaluation}
-                        onClickAgree={deleteQuestionEvaluation}
-                        onClickDisagree={onClickCloseDialogQEvaluation}
-                        mesage={'Deseja excluir a questão selecionada da avaliação?'}
-                        title={'Excluir Questão da Avaliação'}
-                    />
-                </div>
+                </Paper>
+                <Paper className={classesGeneral.paperSubtitle}>
+                    <Box display="flex">
+                        {question.question.year !== '' && question.question.year !== null &&
+                            <div className={classesGeneral.paperTitleText}>
+                                {"Ano: " +question.question.year}
+                            </div>
+                        }
+                        { question.question.fk_type_of_evaluation_id !== '' && question.question.fk_type_of_evaluation_id !== null &&
+                            <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
+                                {'Prova: '+question.question.type_of_evaluation.description}
+                            </div>
+                        }
+                        { question.question.initial_difficulty !== null &&
+                            <Box display="flex">
+                                <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
+                                    {'Dificuldade: '}
+                                </div>
+                                <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '5px'}}>
+                                    {difficultyList[question.question.initial_difficulty-1]}
+                                </div>
+                            </Box>
+                        }
+                        { question.question.knowledge_objects[0] &&
+                            <Box display="flex">
+                                <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
+                                    {'Conteúdo(s):'}
+                                </div>
+                                <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '5px'}}>
+                                    {question.question.knowledge_objects.map(item => (
+                                        ReactHtmlParser (item.description)+'. '
+                                    ))}
+                                </div>
+                            </Box>
 
-                {question.question.skill ?
-                    <div>
-                        <Typography variant="button" color="textSecondary" component="p">
-                            Competência:
-                        </Typography>
-                        {ReactHtmlParser(question.question.skill.description)}
-                    </div>
-                    : null}
-                {question.question.knowledge_objects ?
-                    <div>
-                        <Typography variant="button" color="textSecondary" component="p">
-                            Objeto(s) de Conhecimento:
-                        </Typography>
-                        {question.question.knowledge_objects.map(item => (
-                            ReactHtmlParser(item.description) + '; '
-                        ))}
-                    </div>
-                    : null}
-                    <br />
-                <Typography variant="button" color="textSecondary" component="p">
-                    Texto base:
-                </Typography>
-                <div> {ReactHtmlParser(question.question.base_text)} </div>
-                <br />
-                <Typography variant="button" color="textSecondary" component="p">
-                    Enunciado:
-                </Typography>
-                <div> {ReactHtmlParser(question.question.stem)} </div>
-                <br />
-                <Typography variant="button" color="textSecondary" component="p">
-                    Alternativas:
-                </Typography>
-                <br />
-                {question.question.question_items.map(item => (
-                    <div>
+                        }
 
-                        <Paper className={clsx(classes.paper, item.correct_item == 1 ?  classes.correct : null)} variant="outlined"> {ReactHtmlParser(item.description)} </Paper>
-                    </div>
-                ))}
-            </div>
+                    </Box>
+
+                </Paper>
+                <CardContent>
+                    <QuestionText question={question.question}/>
+                </CardContent>
+
+                <DialogQuestione
+                    handleClose={onClickCloseDialogQEvaluation}
+                    open={openDeleteQuestionEvaluation}
+                    onClickAgree={deleteQuestionEvaluation}
+                    onClickDisagree={onClickCloseDialogQEvaluation}
+                    mesage={
+                        <div className={classesGeneral.messageDialog}>
+                            {'Deseja excluir a questão Q'+question.id+' da avaliação?'}
+                        </div>}
+                    title={
+                        <div className={classesGeneral.titleDialog}>
+                            {'Excluir Questão da Avaliação'}
+                        </div>}
+                />
+            </Card>
         </div>
+
     );
 };
 

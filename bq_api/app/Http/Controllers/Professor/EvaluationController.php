@@ -55,6 +55,7 @@ class EvaluationController extends Controller
                      })
                 ->orderBy('created_at', 'desc')
                 ->with('user')
+                ->with('questions')
                 ->paginate(10);
         } else {
             $evaluation = Evaluation::where('fk_user_id', '=', $user->id)
@@ -63,6 +64,7 @@ class EvaluationController extends Controller
                 //->whereNull('fk_class_id')
                 ->orderBy('created_at', 'desc')
                 ->with('user')
+                ->with('questions')
                 ->paginate(10);
         }
 

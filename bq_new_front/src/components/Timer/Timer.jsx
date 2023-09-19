@@ -11,8 +11,6 @@ function Timer({ expiryTimestamp, onExpire, setShowTimeDialog }) {
         days,
     } = useTimer({ expiryTimestamp, autoStart: true, onExpire, format: '12-hour' });
 
-    console.log('========> ', days);
-
     const addZeroToLeft = (value) => {
         if (`${value}`.length === 1) {
             return `0${value}`;

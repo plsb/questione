@@ -7,11 +7,14 @@ import TextField from "@material-ui/core/TextField";
 import {Button} from "@material-ui/core";
 import PropTypes from "prop-types";
 import Dialog from "@material-ui/core/Dialog";
+import useStyles from "../../style/style";
 
 const DialogStudentClassRegister = props => {
     const { open, handleClose, onClickRegister, registerLoading } = props;
 
     const [studentClassCode, setStudentClassCode] = React.useState('');
+
+    const classesGeneral = useStyles();
 
     return (
         <div>
@@ -20,10 +23,15 @@ const DialogStudentClassRegister = props => {
                 onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description">
-                <DialogTitle id="alert-dialog-title">Participar de uma turma</DialogTitle>
+                <DialogTitle id="alert-dialog-title">
+                    <div className={classesGeneral.titleDialog}>
+                        {'Participar de uma turma'}
+                    </div></DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        Digite o código da turma para inscrever-se
+                        <div className={classesGeneral.messageDialog}>
+                            {'Informe o código da turma para inscrever-se:'}
+                        </div>
                     </DialogContentText>
                     <TextField
                         label="Código da turma"

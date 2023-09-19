@@ -22,4 +22,16 @@ class ClassQuestione extends Model
     public function gamification(){
         return $this->hasMany(ClassGamificationSettings::class, 'fk_class_id');
     }
+
+    public function class_student(){
+        $user = auth('api')->user();
+        return $this->hasMany(ClassStudents::class, 'fk_class_id')
+            ->where('fk_user_id', $user->id);
+    }
+
+    public function class_student_all(){
+        return $this->hasMany(ClassStudents::class, 'fk_class_id');
+    }
+
+
 }

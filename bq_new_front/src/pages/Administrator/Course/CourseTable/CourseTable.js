@@ -83,6 +83,7 @@ const CourseTable = props => {
         url += '&description='+searchText;
       }
       const response = await api.get(url);
+      console.log('course', response);
       setTotal(response.data.total);
       setCourses(response.data.data);
     } catch (error) {
@@ -162,6 +163,7 @@ const CourseTable = props => {
                     <TableRow>
                       <TableCell className={classes.headTable}>Sigla</TableCell>
                       <TableCell className={classes.headTable}>Descrição</TableCell>
+                      <TableCell className={classes.headTable}>Área</TableCell>
                       <TableCell className={classes.headTable}></TableCell>
                     </TableRow>
                   </TableHead>
@@ -173,6 +175,7 @@ const CourseTable = props => {
                             key={course.id}>
                           <TableCell>{course.initials}</TableCell>
                           <TableCell>{course.description}</TableCell>
+                          <TableCell>{course.knowledge_area ? course.knowledge_area.description : ''}</TableCell>
                           <TableCell className={classes.row}>
                             <Tooltip title="Deletar">
                               <Button

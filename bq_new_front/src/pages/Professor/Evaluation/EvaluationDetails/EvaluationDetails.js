@@ -11,13 +11,14 @@ import {
   Button,
   TextField, IconButton,
   TableBody, Table, TableCell,
-  TableRow, TableHead, TablePagination, LinearProgress
+  TableRow, TableHead, TablePagination, LinearProgress, Box
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import { toast } from 'react-toastify';
 import validate from "validate.js";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import QuestionCard from "../../../../components/QuestionCard";
+import useStyles from "../../../../style/style";
 
 const schema = {
   description: {
@@ -30,7 +31,7 @@ const schema = {
   }
 };
 
-const useStyles = makeStyles(() => ({
+const useStylesLocal = makeStyles(() => ({
   root: {},
   headTable: {
     fontWeight: "bold"
@@ -54,7 +55,8 @@ const EvaluationDetails = props => {
   const { className, history, ...rest } = props;
   const { codigoEvaluation } = props.match.params;
 
-  const classes = useStyles();
+  const classes = useStylesLocal();
+  const classesGeneral = useStyles();
 
   const [questions, setQuestions] = useState(null);
   const [refresh, setRefresh] = React.useState(0);
@@ -200,14 +202,9 @@ const EvaluationDetails = props => {
       className={clsx(classes.root, className)}>
       <form
         autoComplete="off">
-        <div className={classes.contentHeader}>
-          <IconButton onClick={handleBack}>
-            <ArrowBackIcon />
-          </IconButton>
-        </div>
         <CardHeader
-          subheader=""
-          title="Avaliação"/>
+            subheader={<div className={classesGeneral.subtitleList}>{'Cadastro/edição da avaliação'}</div>}
+          title={<div className={classesGeneral.titleList}>{'Avaliação'}</div>}/>
         <Divider />
         <CardContent>
           <Grid
@@ -217,26 +214,31 @@ const EvaluationDetails = props => {
               item
               md={12}
               xs={12}>
-              <TextField
-                fullWidth
-                error={hasError('description')}
-                helperText={
-                  hasError('description') ? formState.errors.description[0] : null
-                }
-                label="Descrição"
-                margin="dense"
-                name="description"
-                onChange={handleChange}
-                value={formState.values.description || ''}
-                variant="outlined"
-              />
-              <Button
-                  color="primary"
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                <TextField
+                  fullWidth
+                  error={hasError('description')}
+                  helperText={
+                    hasError('description') ? formState.errors.description[0] : null
+                  }
+                  label="Descrição"
+                  margin="dense"
+                  name="description"
+                  onChange={handleChange}
+                  value={formState.values.description || ''}
                   variant="outlined"
-                  disabled={!formState.isValid}
-                  onClick={saveEvaluationDetails}>
-                Salvar
-              </Button>
+                />
+              </div>
+              <Divider /><br />
+              <Box display="flex" justifyContent="center">
+                <Button
+                    color="primary"
+                    variant="outlined"
+                    disabled={!formState.isValid}
+                    onClick={saveEvaluationDetails}>
+                  Salvar
+                </Button>
+              </Box>
             </Grid>
             <Divider />
           </Grid>

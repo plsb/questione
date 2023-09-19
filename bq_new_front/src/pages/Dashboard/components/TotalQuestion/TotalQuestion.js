@@ -69,7 +69,7 @@ const TotalQuestion = props => {
       <CardContent>
         <Grid
           container
-          justify="space-between">
+          justifyContent="space-between">
           <Grid item>
             <Typography
               className={classes.title}
@@ -78,7 +78,7 @@ const TotalQuestion = props => {
               variant="body2">
               QUESTÕES
             </Typography>
-            <Typography variant="h3">{total}</Typography>
+            <Typography variant="h3" style={{margin: '8px'}}>{total}</Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>

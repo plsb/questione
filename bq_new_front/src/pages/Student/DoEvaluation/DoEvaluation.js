@@ -5,7 +5,7 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import {
   Typography,
   Card,
@@ -13,7 +13,7 @@ import {
   Avatar,
   CardContent,
   CardActions, List, ListItem, Button, CircularProgress,
-    Backdrop, Grid, Tooltip
+  Backdrop, Grid, Tooltip, Box, Paper, Chip, IconButton, Divider, Link, Hidden
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import api from "../../../services/api";
@@ -25,8 +25,11 @@ import {DialogQuestione} from "../../../components";
 import Timer from "../../../components/Timer";
 
 import './styles.css';
+import useStyles from "../../../style/style";
+import Pagination from '@material-ui/lab/Pagination';
+import GamificationPanel from "../../../components/GamificationPanel/GamificationPanel";
 
-const useStyles = makeStyles({
+const useStylesLocal = makeStyles((theme) => ({
   root: {
     width: '100%',
   },
@@ -49,14 +52,18 @@ const useStyles = makeStyles({
   },
   hide: {
     opacity: 0,
+  },
+  selected: { /* Aumenta a especificidade */
+    color: '#e57373'
   }
-});
+}));
 
 const DoEvaluation = props => {
   const { className, history, ...rest } = props;
   const { codeAplication } = props.match.params;
   const [application, setApplication] = useState([]);
   const [answers, setAnswers] = useState([]);
+  const [questionsNotAnswers, setQuestionsNotAnswers] = useState([]);
   const [totalAnswers, setTotalAnswers] = useState(0);
   const [dateTimeToFinalized, setDateTimeToFinalized] = useState(null);
   const [dateServer, setDateServer] = useState(new Date());
@@ -70,8 +77,15 @@ const DoEvaluation = props => {
     message: '',
   });
   const timer = React.useRef();
+  const [alternativeLetters] = React.useState(['a', 'b', 'c', 'd', 'e']);
 
-  const classes = useStyles();
+  const classes = useStylesLocal();
+  const classesGeneral = useStyles();
+
+  const [page, setPage] = React.useState(1);
+  const handleChangePage = (event, value) => {
+    setPage(value);
+  };
 
   function getExpiryTimestamp(timestampTime) {
     // const { date } = dateServer;
@@ -119,7 +133,7 @@ const DoEvaluation = props => {
     setOpenBackdrop(true);
     timer.current = setTimeout(() => {
       updateEvaluation();
-    }, 1300);
+    }, 100);
     setDialogStart(false);
     event.preventDefault();
 
@@ -146,12 +160,16 @@ const DoEvaluation = props => {
         setAnswers(response.data[0]);
 
         let totalAlreadyAnswer = 0;
-        response.data[0].forEach((item) => {
+        let arrayQuestionNotAnswers = [];
+        response.data[0].forEach((item, i) => {
           if (item.answer) {
             totalAlreadyAnswer = totalAlreadyAnswer +  1;
+          } else {
+            arrayQuestionNotAnswers.push(i+1);
           }
         });
         setTotalAnswers(totalAlreadyAnswer);
+        setQuestionsNotAnswers(arrayQuestionNotAnswers);
 
         setDateTimeToFinalized(response.data.date_time_to_finalized);
         setDateServer(response.data.date_time_to_finalized);
@@ -196,7 +214,8 @@ const DoEvaluation = props => {
         }
       } else if(response.status == 200){
         toast.success('Avaliação respondida com sucesso!');
-        history.push('/student-class/student');
+        //history.push('/student-class/student');
+        history.goBack();
       }
     } catch (error) {
 
@@ -207,7 +226,7 @@ const DoEvaluation = props => {
 
   useEffect(() => {
 
-  }, [refresh]);
+  }, [refresh, page, questionsNotAnswers]);
 
   useEffect(() => {
     listApplication();
@@ -233,6 +252,7 @@ const DoEvaluation = props => {
       }  else if(response.status == 200){
         const values = answers;
         let totalAlreadyAnswer = 0;
+        let arrayQuestionNotAnswers = [];
         values.forEach(function logArrayElements(element, index, array) {
           if(element.id == answerId){
             element.answer = itemQuestionSelected;
@@ -240,9 +260,11 @@ const DoEvaluation = props => {
 
           if (element.answer) {
             totalAlreadyAnswer = totalAlreadyAnswer + 1;
+          } else {
+            arrayQuestionNotAnswers.push(index+1);
           }
         });
-
+        setQuestionsNotAnswers(arrayQuestionNotAnswers);
         setTotalAnswers(totalAlreadyAnswer);
         setAnswers(values);
         setRefresh(refresh+1);
@@ -293,75 +315,90 @@ const DoEvaluation = props => {
         <div className={classes.root}>
           <Card className={classes.root}>
             <CardHeader
-                avatar={
-                  <div>
-                    <Avatar aria-label="recipe" className={classes.avatar}>
-                      {getInitials(localStorage.getItem("@Questione-name-user"))}
-                    </Avatar>
-                    <Typography variant="button" color="textSecondary" component="p">
-                    {'Aluno(a): '+localStorage.getItem("@Questione-name-user") }
-                    </Typography>
-                    <Typography variant="button" color="textSecondary" component="p">
-                      {'Avaliação: '+ application.evaluation.id+ ' - ' +application.evaluation.description}
-                    </Typography>
-                    <Typography variant="button" color="textSecondary" component="p">
-                      {'Simulado: '+application.description}
-                    </Typography>
-                    {application && application.evaluation.practice !== 1 && (
-                      <Typography variant="button" color="textSecondary" component="p">
-                        {'Professor(a): '+application.evaluation.user.name}
-                      </Typography>
-                    )}
-                    <Typography variant="button" color="textSecondary" component="p">
-                        Para mais informações sobre como responder a avaliação,&nbsp;
-                        <a
-                          href="https://docs.google.com/document/d/1o_rd-CN_Or0X9gk1c9aB6oB69jWMi-zOGJ7gs8LNEvc/edit?usp=sharing"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          clique aqui
-                        </a>
-                    </Typography>
-                    {!enableButtonStart && dateTimeToFinalized && (
-                      <Typography variant="button" color="textSecondary" component="p">
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          Tempo restante:
-                          <Timer
-                            expiryTimestamp={
-                              getExpiryTimestamp(
-                                ((new Date(dateTimeToFinalized.date.replace(' ', 'T'))).getTime() - (new Date()).getTime())
-                              )
-                            }
-                            onExpire={autoFinishEvaluation}
-                            setShowTimeDialog={() => {}}
-                          />
-                        </div>
-                      </Typography>
-                    )}
-                    {answers.length !== 0 && (
-                      <Typography variant="button" color="textSecondary" component="p">
-                        Questões respondidas:
-                        <b> {totalAnswers+'/'+answers.length}</b>
-                      </Typography>
-                    )}
-                  </div>
+                title={
+                  <Grid container direction="row" xs={12}>
+                    <Grid item xs={12} sm={12} md={7}>
+                      {/*<Avatar aria-label="recipe" className={classes.avatar}>
+                        {getInitials(localStorage.getItem("@Questione-name-user"))}
+                      </Avatar>*/}
+                      <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '15px'}}>
+                        {'Simulado: '+application.description}
+                      </div>
+                      {application && application.evaluation.practice !== 1 && (
+                          <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '15px'}}>
+                            {'Professor(a): '+application.evaluation.user.name}
+                          </div>
+                      )}
+                      <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
+                      {'Aluno(a): '+localStorage.getItem("@Questione-name-user") }
+                      </div>
+                      {application && application.class && (
+                          <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
+                            {'Turma: '+application.class.id_class + ' - '+ application.class.description}
+                          </div>
+                      )}
+                      {!enableButtonStart && dateTimeToFinalized && (
+                          <Typography variant="button" color="textSecondary" component="p">
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                              Tempo restante:
+                              <Timer
+                                  expiryTimestamp={
+                                    getExpiryTimestamp(
+                                        ((new Date(dateTimeToFinalized.date.replace(' ', 'T'))).getTime() - (new Date()).getTime())
+                                    )
+                                  }
+                                  onExpire={autoFinishEvaluation}
+                                  setShowTimeDialog={() => {}}
+                              />
+                            </div>
+                          </Typography>
+                      )}
+                      {answers.length !== 0 && (
+                          <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
+                            Questões respondidas:
+                            <b> {totalAnswers+'/'+answers.length}</b>
+                          </div>
+                      )}
+                      {questionsNotAnswers.length !== 0 &&
+                          <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
+                            Questões não respondidas:
+                            {questionsNotAnswers.map((item, i) => (
+                                <Link
+                                    style={{color: '#f44336', fontFamily: 'Verdana', fontSize: '14px', marginLeft: '5px'}}
+                                    onClick={() => handleChangePage(null, item)}>
+                                  {item}
+                                </Link>
+                            ))}
+                          </div>
+                      }
+                      { enableButtonStart &&
+                          <Tooltip title="Você poderá iniciar/continuar sua avaliação clicando neste botão." placement="top">
+                            <Button
+                                className={classes.buttons}
+                                variant="outlined"
+                                color="primary"
+                                style={{width: '50%', marginTop: '20px', marginLeft: '10px', marginBottom: '10px'}}
+                                onClick={startEvaluation}
+
+                                disabled={!enableButtonStart}>
+                              {application && application.student_started === 1 ? 'Continuar' : 'Iniciar' }
+                            </Button>
+                          </Tooltip>}
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={5}>
+                      {application.class &&
+                          <GamificationPanel gamified_class={application.class.gamified_class} classId={application.class.id}/>}
+                    </Grid>
+                  </Grid>
                 }
             />
 
-            <CardActions disableSpacing>
-              <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <Tooltip title="Você poderá iniciar/continuar sua avaliação clicando neste botão." placement="top">
-                    <Button
-                      className={classes.buttons}
-                      variant="contained"
-                      color="primary"
-                      onClick={startEvaluation}
-                      disabled={!enableButtonStart}>
-                      {application && application.student_started === 1 ? 'Continuar' : 'Iniciar' }
-                    </Button>
-                  </Tooltip>
-                  <Tooltip title="Você poderá finalizar sua avaliação clicando neste botão." placement="top">
+            <CardContent>
+
+                <Box display="flex" justifyContent="center">
+
+
+                  {/*<Tooltip title="Você poderá finalizar sua avaliação clicando neste botão." placement="top">
                     <Button
                       className={clsx(classes.chipRed, className)}
                       variant="contained"
@@ -370,14 +407,135 @@ const DoEvaluation = props => {
                       disabled={enableButtonStart}>
                       Finalizar
                     </Button>
-                  </Tooltip>
-                </div>
-              </div>
+                  </Tooltip>*/}
+                </Box>
+            </CardContent>
 
-            </CardActions>
           </Card>
 
-          {answers.map((data, i) => (
+          {!enableButtonStart &&
+              <div>
+                  {!enableButtonStart && (
+                      <Box display='flex' marginRight='20px' marginTop='5px' justifyContent='right'>
+                        <Link
+                            component="button"
+                            className={classesGeneral.textRedInfo}
+                            onClick={onClickOpenDialogFinsh} disabled={enableButtonStart}>
+                          <Box display="flex" alignItems="row">
+                            <div style={{marginRight: '3px', marginTop: '5px', fontSize: '15px'}}>
+                              {'Entregar simulado'}
+                            </div>
+                            <div>
+                              <ArrowForwardIcon />
+                            </div>
+                          </Box>
+
+                        </Link>
+                      </Box>
+                  )}
+                  <Box display='flex' margin='10px' justifyContent='center'>
+                    <Pagination count={answers.length} variant="outlined" page={page} color="primary" onChange={handleChangePage}/>
+                  </Box>
+                  <Box>
+                    { answers.length > 0  &&
+                        <div style={{margin: '10px'}}>
+                          <Box display="flex">
+                            <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-start">
+                              <div style={{color: '#757575', fontFamily: 'Verdana', fontSize: '14px', marginTop: '7px'}}>
+                                {'Questão    '}
+                              </div>
+                              &nbsp;
+                              <div style={{color: '#000000', fontWeight: 'bold', fontFamily: 'Verdana', fontSize: '20px', marginTop: '0px', textDecoration: 'underline'}}>
+                                {page}
+                              </div>
+                              &nbsp;
+                              <div style={{color: '#757575', fontFamily: 'Verdana', fontSize: '14px', marginTop: '7px'}}>
+                                {'   de '+answers.length}
+                              </div>
+                            </Box>
+                          </Box>
+                          <Divider style={{padding: '3px', marginTop: '10px', marginBottom: '15px'}} className={classesGeneral.paperTitle}/>
+                          <div style={{margin: '10px'}}>
+                            <div style={{marginLeft: '15px'}}>
+                              { ReactHtmlParser (answers[page-1].evaluation_question_without_correct.question_without_correct.base_text) }
+                            </div>
+                            <div style={{marginLeft: '10px', marginTop: '10px'}}>
+                              { ReactHtmlParser (answers[page-1].evaluation_question_without_correct.question_without_correct.stem) }
+                            </div>
+                            <div style={{marginTop: '15px'}}>
+                              {answers[page-1].evaluation_question_without_correct.question_without_correct.question_items_without_correct.map((item, i) => (
+                                  <div>
+                                    <Box display="flex" flexDirection="row"  style={{ width: '100%' }}>
+                                      {/*<Box style={{marginTop: '12px', marginRight: '2px'}} sx={{ flexShrink: 1 }}>
+                                          <Tooltip title={'Clique para eliminar a alternativa '+alternativeLetters[i]+'.'} placement="top-start">
+                                            <IconButton color="primary" aria-label="upload picture" component="span" size="small" style={{marginRight: '10px'}}>
+                                              <img
+                                                  alt="Logo"
+                                                  src="/images/tesouras.png"
+                                              />
+                                            </IconButton>
+                                          </Tooltip>
+                                      </Box>*/}
+                                      <Box sx={{ width: '100%' }}>
+                                        <Tooltip title={'Clique para escolher a alternativa '+alternativeLetters[i]+'.'} placement="top-start">
+                                              <List className={classes.lineItemQuestion}
+                                                    key={item.id}
+                                                    onClick={handleToggle(item.id)}
+                                                    component="nav" aria-label="secondary mailbox folder">
+                                                <ListItem key={item.id}
+                                                          selected={answers[page-1].answer == item.id}
+                                                          button onClick={(event) => handleListItemClick(event, answers[page-1].id, item.id)}
+                                                          style={{background: '#f5f5f5'}}>
+                                                  <div style={{marginRight: '10px', fontSize: '14px', fontWeight: 'bold'}}>
+                                                    {alternativeLetters[i]+')'}
+                                                  </div>
+                                                  {ReactHtmlParser (item.description)}
+                                                </ListItem>
+                                              </List>
+                                        </Tooltip>
+                                      </Box>
+                                    </Box>
+
+                                  </div>
+                              ))}
+                              {/*<Button
+                                  disabled={answers[page-1].answer == null}
+                                  color="primary"
+                                  variant="outlined"
+                                  style={{width: '100%', marginTop: '10px'}}
+                                  onClick={null}>
+                                Entregar questão
+                              </Button>*/}
+                            </div>
+                          </div>
+                    </div> }
+                  </Box>
+
+                  <Box display='flex' margin='10px' marginTop='30px' justifyContent='center'>
+                    <Pagination count={answers.length} variant="outlined" page={page} color="primary" onChange={handleChangePage}/>
+                  </Box>
+                {!enableButtonStart && (
+                  <Box display='flex' marginRight='20px' marginTop='10px' marginBottom='50px' justifyContent='right'>
+                    <Link
+                        component="button"
+                        className={classesGeneral.textRedInfo}
+                        onClick={onClickOpenDialogFinsh} disabled={enableButtonStart}>
+                      <Box display="flex" alignItems="row">
+                        <div style={{marginRight: '3px', marginTop: '2px', fontSize: '15px'}}>
+                          {'Entregar simulado'}
+                        </div>
+                        <div>
+                          <ArrowForwardIcon />
+                        </div>
+                      </Box>
+
+                    </Link>
+                  </Box>
+                )}
+              </div>}
+
+
+          {/*answers.map((data, i) => (
               <ExpansionPanel expanded={expanded === i} key={data.id} onChange={handleChange(i)}>
                 <ExpansionPanelSummary
                     expandIcon={<ExpandMoreIcon />}
@@ -401,41 +559,63 @@ const DoEvaluation = props => {
                   />
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails key={data.id}>
-                  <div className={classes.lineQuestion}>
-                    <Typography variant="button" color="textSecondary" component="p">
-                      Texto base:
-                    </Typography>
-                    <div> { ReactHtmlParser (data.evaluation_question_without_correct.question_without_correct.base_text) } </div>
-                    <br/>
-                    <Typography variant="button" color="textSecondary" component="p">
-                      Enunciado:
-                    </Typography>
-                    <div> { ReactHtmlParser (data.evaluation_question_without_correct.question_without_correct.stem) } </div>
-                    <br />
-                    <Typography variant="button" color="textSecondary" component="p">
-                      Alternativas:
-                    </Typography>
-                    <br />
-                    {data.evaluation_question_without_correct.question_without_correct.question_items_without_correct.map(item => (
-                        <Tooltip title="Clique para escolher esta alternativa." placement="top-start">
-                          <List className={classes.lineItemQuestion}
-                                key={item.id}
-                                onClick={handleToggle(item.id)}
-                                component="nav" aria-label="secondary mailbox folder">
-                            <ListItem key={item.id}
-                                      selected={data.answer == item.id}
-                                button onClick={(event) => handleListItemClick(event, data.id, item.id)}>
-                              { ReactHtmlParser (item.description)  }
-                            </ListItem>
-                          </List>
-                        </Tooltip>
-                    ))}
-                  </div>
+                  <Card
+                      {...rest}
+                      className={classes.root}>
+                      <Paper className={classesGeneral.paperTitle}>
+                        <Box display="flex">
+                          <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-start">
+                            <div className={classesGeneral.paperTitleTextBold}>
+                              {(i + 1) <10 ? ('Questão 00' + (i + 1)) :
+                                  (i + 1) <100 ? ('Questão 0' + (i + 1)) : (i + 1)}
+                            </div>
+                          </Box>
+                        </Box>
+                      </Paper>
+                    <CardContent>
+                      <div className={classesGeneral.subtitles}>
+                        {"Texto base:"}
+                      </div>
+                      <div style={{marginLeft: '10px'}}>
+                        { ReactHtmlParser (data.evaluation_question_without_correct.question_without_correct.base_text) }
+                      </div>
+                      <div className={classesGeneral.subtitles}>
+                        {"Enunciado:"}
+                      </div>
+                      <div style={{marginLeft: '10px'}}> { ReactHtmlParser (data.evaluation_question_without_correct.question_without_correct.stem) } </div>
+                      <div className={classesGeneral.subtitles}>
+                        {"Alternativas:"}
+                      </div>
+                      {data.evaluation_question_without_correct.question_without_correct.question_items_without_correct.map((item, i) => (
+                          <Tooltip title="Clique para escolher esta alternativa." placement="top-start">
+                            <Box display="flex" flexDirection="row"  style={{ width: '100%' }}>
+                              <Box style={{marginTop: '15px', marginRight: '5px'}} sx={{ flexShrink: 1 }}>
+                                <Chip label={alternativeLetters[i]} style={{fontSize: '14px', fontWeight: 'bold', background: data.answer == item.id ? '#e1f5fe' : '#f5f5f5'}} size="small"/>
+                              </Box>
+                              <Box sx={{ width: '100%' }}>
+                                <List className={classes.lineItemQuestion}
+                                      key={item.id}
+                                      onClick={handleToggle(item.id)}
+                                      component="nav" aria-label="secondary mailbox folder">
+                                    <ListItem key={item.id}
+                                              selected={data.answer == item.id}
+                                              button onClick={(event) => handleListItemClick(event, data.id, item.id)}
+                                              style={{background: '#f5f5f5'}}>
+                                        {ReactHtmlParser (item.description)}
+                                    </ListItem>
+                                </List>
+                              </Box>
+                            </Box>
 
+                          </Tooltip>
+                      ))}
+
+                    </CardContent>
+                  </Card>
 
                 </ExpansionPanelDetails>
               </ExpansionPanel>
-          ))}
+          ))
           {!enableButtonStart && (
             <Button
               className={clsx(classes.chipRed, className)}
@@ -447,21 +627,34 @@ const DoEvaluation = props => {
             >
               Finalizar
             </Button>
-          )}
+          )}*/}
         </div>
               : null}
         <DialogQuestione handleClose={onClickCloseDialogStart}
                          open={dialogStart}
                          onClickAgree={startEvaluation}
                          onClickDisagree={onClickCloseDialogStart}
-                         mesage={`${application && application.student_started === 1 ? 'Deseja continuar a avaliação?' : 'Deseja iniciar a avaliação?'}`}
-                         title={'Responder Avaliação'}/>
+                         mesage={
+                             <div className={classesGeneral.messageDialog}>
+                               {`${application && application.student_started === 1 ? 'Deseja continuar a avaliação?' : 'Deseja iniciar a avaliação?'}`}
+                            </div>}
+                         title=
+                             {<div className={classesGeneral.titleDialog}>
+                                {'Responder Avaliação'}
+                            </div>}/>
         <DialogQuestione handleClose={onClickCloseDialogFinish}
                          open={dialogFinish}
                          onClickAgree={finshEvaluation}
                          onClickDisagree={onClickCloseDialogFinish}
-                         mesage={'Deseja finalizar a avaliação?'}
-                         title={'Finalizar Avaliação'}/>
+                         mesage={
+                           <div className={classesGeneral.messageDialog}>
+                             {'Deseja finalizar a avaliação?'}
+                           </div>
+                         }
+                         title=
+                             {<div className={classesGeneral.titleDialog}>
+                                {'Finalizar Avaliação'}
+                               </div>}/>
 
         {/* <Dialog
               open={showTimeDialog.show}

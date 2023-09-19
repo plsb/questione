@@ -190,6 +190,20 @@ class ClassEvaluationApplicationsStudentsStudent extends Controller
             foreach ($evaluations as $item){
                 $anwswer_head = AnswersHeadEvaluation::where('fk_application_evaluation_id', $item->id)
                     ->where('fk_user_id', $user->id)->first();
+                //verifica se a aplicação tá habilitada
+                if($item->status == 2){
+                    continue ;
+                }
+                //verifica se o estudante não está desabilitado na turma
+                $class_students = ClassStudents::where('fk_user_id', $user->id)
+                    ->where('fk_class_id', $item->fk_class_id)
+                    ->first();
+                if($class_students){
+                    if($class_students->active == 0){
+                        contine ;
+                    }
+                }
+
                 if($anwswer_head){
                     if(!$anwswer_head->finalized_at){
                         $arr[] = $item;

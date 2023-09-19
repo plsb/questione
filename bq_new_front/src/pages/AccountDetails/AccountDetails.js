@@ -98,7 +98,7 @@ const AccountDetails = props => {
 
     setFormState(formState => ({
       ...formState,
-      isValid: (errors || formState.values.course==0) ? false : true,
+      isValid: (errors || formState.values.course===0) ? false : true,
       errors: errors || {}
     }));
   }, [formState.values]);
@@ -188,7 +188,7 @@ const AccountDetails = props => {
         <CardActions>
           <Grid
               container
-              justify="space-between">
+              justifyContent="space-between">
             <Grid
                 className={classes.statsItem}
                 item>

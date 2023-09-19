@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
-import { Typography, Link } from '@material-ui/core';
+import {Typography, Link, Divider} from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -20,6 +20,7 @@ const Footer = props => {
       {...rest}
       className={clsx(classes.root, className)}>
         <div className={classes.logoImage}>
+            <Divider style={{marginTop: '10px', marginBottom: '20px'}}/>
 
             <img
                 alt="Logo"

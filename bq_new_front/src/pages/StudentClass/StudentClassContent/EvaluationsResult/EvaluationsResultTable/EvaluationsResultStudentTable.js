@@ -7,7 +7,6 @@ import {
   Card,
   CardHeader,
   CardContent,
-  Divider,
   IconButton,
   Typography, Table, TableBody, CardActions, TablePagination, Tooltip, Switch, Chip, Grid, LinearProgress,
   Select,
@@ -16,8 +15,8 @@ import {
 import api from "../../../../../services/api";
 import ToolbarEvaluation
   from "./EvaluationResultToolbar/EvaluationResultStudentToolbar";
-import {Close, FormatListBulleted, PlayArrow} from "@material-ui/icons";
-import { toast, ToastContainer } from 'react-toastify';
+import { FormatListBulleted, PlayArrow} from "@material-ui/icons";
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 const useStyles = makeStyles(() => ({
@@ -247,8 +246,8 @@ const EvaluationsResultStudentTable = props => {
                                       action={
                                         <div>
                                           <div className={classes.dFlex}>
-                                            { application.evaluation_application.show_results == 1 &&
-                                                application.evaluation_application.canShowResults == 1 && application.finalized_at ?
+                                            { application.evaluation_application.show_results === 1 &&
+                                                application.evaluation_application.canShowResults === 1 && application.finalized_at ?
                                             <Tooltip title="Visualizar resultados">
                                               <IconButton
                                                   aria-label="copy"
@@ -257,10 +256,10 @@ const EvaluationsResultStudentTable = props => {
                                               </IconButton>
                                             </Tooltip>
                                               :
-                                                application.evaluation_application.canShowResults == 0 && application.evaluation_application.show_results == 1
+                                                application.evaluation_application.canShowResults == 0 && application.evaluation_application.show_results === 1
                                                     ? <span className={classes.labelRed}>{'Resultado em: '+moment(`${application.evaluation_application.date_release_results} ${application.evaluation_application.time_release_results}`).format('DD/MM/YYYY H:mm')}</span>
                                                         :
-                                                          application.evaluation_application.show_results == 0 && application.finalized_at && <span className={classes.labelRed}>{'Resultado indisponível.'}</span>
+                                                          application.evaluation_application.show_results === 0 && application.finalized_at && <span className={classes.labelRed}>{'Resultado indisponível.'}</span>
                                             }
 
                                             {!application.finalized_at && application.finished_automatically === 0 && (

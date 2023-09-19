@@ -117,6 +117,7 @@ const Mapping = props => {
       const response = await api.get('regulation/show/'+id);
 
       if (response.status == 200) {
+        console.log('year', response.data);
         setRegulationsObjectSelected1(response.data);
       }
 
@@ -130,7 +131,6 @@ const Mapping = props => {
 
       const response = await api.get('regulation/show/'+id);
 
-      console.log('regulations2', response.data);
 
       if (response.status == 200) {
         setRegulationsObjectSelected2(response.data);
@@ -180,6 +180,10 @@ const Mapping = props => {
   const actionRegulationsSelected2 = (event, nodeId, key) => {
     setKnowledgeObjectSelected2(nodeId);
   };
+
+  function suggestionsObjects(){
+    history.push('/object-suggestion');
+  }
 
   async function saveObjects(){
 
@@ -364,7 +368,8 @@ const Mapping = props => {
                                                       <Typography
                                                           variant="body2"
                                                           sx={{ marginLeft: '5px'}}>
-                                                        {related.description+' ('+related.course.description+' de '+related.regulation.year+')'}
+                                                        {related.regulation ? related.description+' ('+related.course.description+' de '+related.regulation.year+')'
+                                                            : related.description+' ('+related.course.description+')'}
                                                       </Typography>
                                                       <Button className={clsx(classes.buttonRemove, className)}
                                                               onClick={() => onClickOpenDialog(knowledge_object.id, related.id)}>
@@ -399,6 +404,13 @@ const Mapping = props => {
                 onClick={saveObjects}
                 disabled={false} >
               Salvar
+            </Button>
+            <Button
+                color="primary"
+                variant="text"
+                onClick={suggestionsObjects}
+                disabled={false} >
+              Lista de sugestões
             </Button>
           </CardActions>
 

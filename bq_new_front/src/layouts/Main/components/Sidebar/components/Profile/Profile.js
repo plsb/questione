@@ -8,8 +8,9 @@ import { Link as RouterLink } from "react-router-dom";
 import Chip from '@material-ui/core/Chip';
 import PlayCircleOutline from '@material-ui/icons/PlayCircleOutline';
 import {withRouter} from "react-router-dom";
+import useStyles from "../../../../../../style/style";
 
-const useStyles = makeStyles(theme => ({
+const useStylesLocal = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -41,7 +42,8 @@ const Profile = props => {
   const accessLevel = localStorage.getItem("@Questione-acess-level-user");
   const currentAccessLevel = localStorage.getItem("@Questione-current-acess-level-user");
 
-  const classes = useStyles();
+  const classes = useStylesLocal();
+  const classesGeneral = useStyles();
 
   const user = {
     name: localStorage.getItem("@Questione-name-user"),
@@ -49,7 +51,7 @@ const Profile = props => {
     email: localStorage.getItem('@Questione-email-user'),
     level: localStorage.getItem('@Questione-acess-level-user') === "1"
       ? "Administrador" : localStorage.getItem('@Questione-acess-level-user') === "2"
-        ? "Professor(a)" : "Usuário"
+        ? "Professor(a)" : "Estudante"
   };
 
   const handleChangeAcessLevel = () => {
@@ -70,16 +72,14 @@ const Profile = props => {
       <Grid
         container
         direction="row"
-        justify="center"
+        justifyContent="center"
         alignItems="center">
-        <Typography
-          className={classes.name}
-          variant="body2">
+        <div className={classesGeneral.paperTitleTextBold} style={{fontSize: '13px'}}>
           {user.name}
-        </Typography>
+        </div>
       </Grid>
-      <Typography variant="body2">{user.email}</Typography>
-      <Typography variant="body2">{user.level}</Typography>
+      <div className={classesGeneral.paperTitleText} style={{fontSize: '10px'}}>{user.email}</div>
+      <div className={classesGeneral.paperTitleTextBold} style={{fontSize: '12px'}}>{user.level}</div>
       <Tooltip TransitionComponent={Zoom} placement="top"
         title="Você pode modificar o seu nome ou solicitar acesso para contribuir com alguma área, clicando aqui.">
         <Typography

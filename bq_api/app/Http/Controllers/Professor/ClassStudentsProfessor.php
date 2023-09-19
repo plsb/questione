@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Professor;
 
+use App\AnswersHeadEvaluation;
 use App\ClassQuestione;
 use App\ClassStudents;
 use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Validator;
@@ -63,6 +65,163 @@ class ClassStudentsProfessor extends Controller
             ->get();
 
         return response()->json($class_students_student, 200);
+    }
+
+    public function addStudentClass(Request $request){
+
+        $email = $request->email;
+        $fk_class_id = $request->fk_class_id;
+
+        $verifyRules = $this->verifyRules($email, $fk_class_id);
+        if($verifyRules){
+            return response()->json([
+                'message' => $verifyRules
+            ], 202);
+        }
+
+        $user = User::where('email', $email)->first();
+
+        $verify = ClassStudents::where('fk_class_id', $fk_class_id)
+            ->where('fk_user_id', $user->id)->first();
+
+        if($verify){
+            return response()->json([
+                'message' => 'O estudante já foi cadastrado para esta turma.'
+            ], 202);
+        }
+
+        $class_students_student = new ClassStudents();
+        $class_students_student->fk_class_id = $fk_class_id;
+        $class_students_student->fk_user_id = $user->id;
+        $class_students_student->active = 1;
+        $class_students_student->save();
+
+        return response()->json([
+            'message' => 'Estudante '.$user->name.', cadastrado na turma.'
+        ], 200);
+
+    }
+
+    public function changeStatusActiveStudent(Request $request){
+
+        $email = $request->email;
+        $fk_class_id = $request->fk_class_id;
+
+        $verifyRules = $this->verifyRules($email, $fk_class_id);
+        if($verifyRules){
+            return response()->json([
+                'message' => $verifyRules
+            ], 202);
+        }
+
+        $user = User::where('email', $email)->first();
+
+        $classStudents = ClassStudents::where('fk_class_id', $fk_class_id)
+            ->where('fk_user_id', $user->id)->first();
+
+
+        $string = '';
+        if($classStudents->active == 1){
+            $classStudents->active = 0;
+            $string = 'desabilitado';
+        } else {
+            $classStudents->active = 1;
+            $string = 'habilitado';
+        }
+
+
+        $classStudents->save();
+
+        return response()->json([
+            'message' => 'Estudante '.$user->name.', '.$string.' com sucesso.',
+            $classStudents
+        ], 200);
+
+    }
+
+    public function destroy(Request $request){
+
+        $email = $request->email;
+        $fk_class_id = $request->fk_class_id;
+
+        $verifyRules = $this->verifyRules($email, $fk_class_id);
+        if($verifyRules){
+            return response()->json([
+                'message' => $verifyRules
+            ], 202);
+        }
+
+        $user = User::where('email', $email)->first();
+
+        $answer_head = AnswersHeadEvaluation::where('fk_user_id', $user->id)
+            ->with('evaluationApplication')
+            ->get();
+        $can_delete = true;
+        foreach ($answer_head as $head){
+            if($head->evaluationApplication->fk_class_id == $fk_class_id){
+                $can_delete = false;
+                break ;
+            }
+        }
+
+        if($can_delete == false){
+            return response()->json([
+                'message' => 'O estudante '.$user->name.', não pode ser excluído. O estudante possui simulados respondidos nesta turma.'
+            ], 202);
+        }
+
+        $classStudents = ClassStudents::where('fk_class_id', $fk_class_id)
+            ->where('fk_user_id', $user->id)->first();
+
+        if(!$classStudents){
+            return response()->json([
+                'message' => 'Registro não encontrado.'
+            ], 202);
+        }
+
+        $classStudents->delete();
+
+        return response()->json([
+            'message' => 'Estudante '.$user->name.', excluído da turma com sucesso.',
+            $classStudents
+        ], 200);
+
+
+    }
+
+    private function verifyRules($email, $fk_class_id){
+
+        if(!$email || !$fk_class_id ){
+            return 'Informe o e-mail do estudante e a turma.';
+        }
+
+        $userLog = auth('api')->user(); //usuário ativo o sistema
+
+        $class = ClassQuestione::where('id', $fk_class_id )->first();
+
+        if(!$class){
+            return 'Turma não encontrada.';
+        }
+
+        if($class->fk_user_id != $userLog->id){
+            return 'Turma pertence a outro usuário.';
+        }
+
+        $user = User::where('email', $email)->first();
+
+        if(!$user){
+            return 'Estudante não encontrado.';
+        }
+
+        if($user->id == $userLog->id){
+            return 'O usuário logado não pode ser adicionado/excluído na turma.';
+        }
+
+        if($user->acess_level == 1){
+            return 'Usuário administrador não pode ser adicionado/excluído na turma.';
+        }
+
+        return null;
     }
 
     /*public function changeStatusStudent($id, Request $request)

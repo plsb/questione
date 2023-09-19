@@ -64,6 +64,7 @@ class ClassController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->with('user')
                 ->with('course')
+                ->with('class_student_all')
                 ->paginate(10);
         } else {
             $class = ClassQuestione::where('fk_user_id', '=', $user->id)
@@ -71,6 +72,7 @@ class ClassController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->with('user')
                 ->with('course')
+                ->with('class_student_all')
                 ->paginate(10);
         }
 

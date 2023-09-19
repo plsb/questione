@@ -46,6 +46,11 @@ const Sidebar = props => {
 
   const pagesAdm = [
     {
+      title: 'Áreas',
+      href: '/areas',
+      icon: <DashboardIcon />
+    },
+    {
       title: 'Cursos',
       href: '/courses',
       icon: <DashboardIcon />

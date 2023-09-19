@@ -20,9 +20,11 @@ Route::group(['prefix' => 'public'], function (){
 Route::group(['prefix' => 'all'], function (){
     Route::get('/type-of-evaluations', 'AllUsers@typeOfevaluation')->name('all.typeOfevaluation');
     Route::get('/courses', 'AllUsers@courses')->name('all.courses');
+    Route::get('/areas', 'AllUsers@areas')->name('all.areas');
     Route::get('/courses-with-questions-practice/{id}', 'AllUsers@coursesWithQuestionsByTypoOfEvaluation')->name('all.courses.practice');
     Route::get('/objects', 'AllUsers@knowledgeObjects')->name('all.knowledgeObjects');
-    Route::get('/skills', 'AllUsers@skills')->name('all.skills');
+    Route::get('/objects-by-regulation', 'AllUsers@allObjectsByRegulation')->name('all.allObjectsByRegulation');
+    Route::get('/skills-by-regulation', 'AllUsers@allSkillsByRegulation')->name('all.allSkillsByRegulation');
     Route::get('/skills-with-questions-practice', 'AllUsers@skillsWithQuestionsByTypoOfEvaluation')->name('all.skills.practice');
     Route::put('/update-profile-user', 'AllUsers@updateProfileUser')->name('all.updateProfileUser');
     Route::get('/courses-user', 'AllUsers@coursesUser')->name('all.coursesUser');
@@ -45,6 +47,14 @@ Route::group(['prefix' => 'course-professor'], function (){
     //rotas para usuário comum
     Route::get('/user', 'UserCourseProfessorController@index')->name('userCourseProfessor.index');
     Route::post('/', 'UserCourseProfessorController@store')->name('userCourseProfessor.store');
+});
+
+Route::group(['prefix' => 'area'], function (){
+    Route::get('/', 'Adm\AreaController@index')->name('area.index');
+    Route::post('/', 'Adm\AreaController@store')->name('area.store');
+    Route::get('/show/{area}', 'Adm\AreaController@show')->name('area.show');
+    Route::put('/{area}', 'Adm\AreaController@update')->name('area.update');
+    Route::delete('/{area}', 'Adm\AreaController@destroy')->name('area.destroy');
 });
 
 Route::group(['prefix' => 'course'], function (){
@@ -72,6 +82,7 @@ Route::group(['prefix' => 'object'], function (){
 
     Route::post('/relate', 'Adm\KnowledgeObjectsRelatedController@store')->name('objectRelated.store');
     Route::delete('/relate/{id}', 'Adm\KnowledgeObjectsRelatedController@destroy')->name('objectRelated.destroy');
+    Route::get('/relate/search-objects-related', 'Adm\KnowledgeObjectsRelatedController@searchObjectsRelated')->name('objectRelated.searchObjectsRelated');
 
 });
 
@@ -148,6 +159,10 @@ Route::group(['prefix' => 'class/professor'], function (){
     Route::post('/add-application/', 'Professor\EvaluationApplicationsController@store')->name('evaluationApplication.store');
     Route::put('/change-status-application/{idApplication}', 'Professor\EvaluationApplicationsController@changeStatus')->name('evaluationApplication.changeStatus');
     */
+    //adicionar estudante
+    Route::post('/add-student', 'Professor\ClassStudentsProfessor@addStudentClass')->name('class.addStudentClass');
+    Route::post('/change-student-status', 'Professor\ClassStudentsProfessor@changeStatusActiveStudent')->name('class.changeStatusActiveStudent');
+    Route::delete('/delete-student', 'Professor\ClassStudentsProfessor@destroy')->name('class.destroy');
     //visão geral
     Route::get('/overview/{idclass}', 'Professor\ClassStudentEvaluationApplicationsController@overview')->name('classEvaluationApplication.overview');
 });

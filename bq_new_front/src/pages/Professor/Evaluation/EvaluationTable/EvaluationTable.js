@@ -1,62 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import {
-  Card,
-  CardActions,
-  CardContent,
   Table,
   TableBody,
   TablePagination, CardHeader, Grid, LinearProgress,
   Box, Typography,
 } from '@material-ui/core';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import api from '../../../../services/api';
-import { toast } from 'react-toastify';
 import UsersToolbar from "./components/EvaluationToolbar";
 import PropTypes from "prop-types";
 import EvaluationCard from "../EvaluationCard";
-import EvaluationApplicationTable from '../../EvaluationApplication/EvaluationApplicationTable';
+import useStyles from "../../../../style/style";
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1)
-  },
-  content: {
-    padding: 0,
-    marginTop: theme.spacing(1)
-  },
-  inner: {
-    minWidth: 1050
-  },
-  nameContainer: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  avatar: {
-    marginRight: theme.spacing(2)
-  },
-  headTable: {
-    fontWeight: "bold"
-  },
-  actions: {
-    justifyContent: 'flex-end'
-  },
-  row: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  spacer: {
-    flexGrow: 1
-  },
-  importButton: {
-    marginRight: theme.spacing(1)
-  },
-  searchInput: {
-    marginRight: theme.spacing(1)
-  }
+const useStylesLocal = makeStyles(theme => ({
+
 }));
 
 function TabPanel(props) {
@@ -83,7 +40,8 @@ const EvaluationTable = props => {
 
   const [evaluations, setEvaluations] = useState(null);
 
-  const classes = useStyles();
+  const classes = useStylesLocal();
+  const classesGeneral = useStyles();
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
@@ -158,8 +116,7 @@ const EvaluationTable = props => {
   const [tabValue, setTabValue] = useState(parseInt(localStorage.getItem('@questione/evaluation-tab')) || 0);
 
   return (
-    <div className={classes.root}>
-
+    <div className={classesGeneral.root}>
       <UsersToolbar
         onChangeSearch={updateSearch.bind(this)}
         searchText={searchText}
@@ -167,52 +124,41 @@ const EvaluationTable = props => {
         handleStatusCallback={loadEvaluations}
         setStatus={setStatus}
       />
-      <div className={classes.content}>
-        <Card
-          className={clsx(classes.root, className)}>
-          <CardHeader
-            avatar={
-              <div>
-
-              </div>
-            }
-            action={
-              <TablePagination
-                component="div"
-                count={total}
-                onChangePage={handlePageChange}
-                onChangeRowsPerPage={handleRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[10]}
-              />
-
-            } />
-          <CardContent>
-            {evaluations == null ?
-              <LinearProgress color="secondary" />
-              :
-              <Grid
+      <div className={classesGeneral.content}>
+        <TablePagination
+            component="div"
+            count={total}
+            onChangePage={handlePageChange}
+            onChangeRowsPerPage={handleRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={[10]}
+        />
+        {evaluations == null ?
+            <LinearProgress color="secondary" />
+            :
+            <Grid
                 container
                 spacing={1}>
-                <Grid
+              <Grid
                   item
                   md={12}
                   xs={12}>
-                  <Table>
-                    <TableBody>
-                      {evaluations.map(evaluation => (
-                        <EvaluationCard evaluation={evaluation}
-                          setTabValue={setTabValue}
-                          setRefresh={setRefresh}
-                          refresh={refresh} />
-                      ))}
-                    </TableBody>
-                  </Table>
-                </Grid>
-              </Grid>}
-          </CardContent>
-          <CardActions className={classes.actions}>
+                <Table>
+                  <TableBody>
+                    {evaluations.map(evaluation => (
+                        <div style={{marginBottom: '20px'}}>
+                          <EvaluationCard evaluation={evaluation}
+                                        setTabValue={setTabValue}
+                                        setRefresh={setRefresh}
+                                        refresh={refresh} />
+                        </div>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Grid>
+            </Grid>}
+
             <TablePagination
               component="div"
               count={total}
@@ -222,8 +168,6 @@ const EvaluationTable = props => {
               rowsPerPage={rowsPerPage}
               rowsPerPageOptions={[10]}
             />
-          </CardActions>
-        </Card>
       </div>
     </div>
   );

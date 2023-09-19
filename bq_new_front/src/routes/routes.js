@@ -65,6 +65,9 @@ import StudentClassEvaluationApplicationResults from '../pages/StudentClass/Stud
 import RegulationTable from "../pages/Administrator/Regulation/RegulationTable";
 import RegulationDetails from "../pages/Administrator/Regulation/RegulationDetails";
 import Mapping from "../pages/Administrator/Mapping/MappingTable";
+import AreaTable from "../pages/Administrator/Area/AreaTable";
+import AreaDetails from "../pages/Administrator/Area/AreaDetails";
+import ObjectSuggestionTable from "../pages/Administrator/ObjectSuggestion";
 
 const Routes = () => (
     <BrowserRouter>
@@ -223,6 +226,20 @@ const Routes = () => (
                 path="/code/:codeAplication" />s
         {/*ROTAS DO ADMINISTRADOR*/}
             <RouteWithLayout
+                component={AreaTable}
+                exact
+                layout={MainLayout}
+                needToBeLogged={true}
+                typeUser={1}
+                path="/areas" />
+            <RouteWithLayout
+                component={AreaDetails}
+                exact
+                layout={MainLayout}
+                typeUser={1}
+                needToBeLogged={true}
+                path="/area-details/:codigoArea?" />
+            <RouteWithLayout
                 component={CourseTable}
                 exact
                 layout={MainLayout}
@@ -306,6 +323,13 @@ const Routes = () => (
                 needToBeLogged={true}
                 typeUser={1}
                 path="/mapping" />
+            <RouteWithLayout
+                component={ObjectSuggestionTable}
+                exact
+                layout={MainLayout}
+                needToBeLogged={true}
+                typeUser={1}
+                path="/object-suggestion" />
             <RouteWithLayout
                 component={UserTable}
                 exact

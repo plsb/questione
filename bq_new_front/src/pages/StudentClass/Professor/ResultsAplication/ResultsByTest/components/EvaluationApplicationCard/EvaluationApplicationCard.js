@@ -108,7 +108,7 @@ const EvaluationApplicationCard = props => {
                     document.body.appendChild(link);
                     link.click();
                 })
-                .catch((error) => console.log(error));
+                .catch();
 
             if (response.status === 202) {
                 if(response.data.message){

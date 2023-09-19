@@ -31,6 +31,7 @@ import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
 
 import './styles.css';
+import useStyles from "../../../../../style/style";
 
 // import Button from '@material-ui/core/Button';
 // import Snackbar from '@material-ui/core/Snackbar';
@@ -40,7 +41,7 @@ import './styles.css';
 //   return <MuiAlert elevation={6} variant="filled" {...props} />;
 // }
 
-const useStyles = makeStyles((theme) => ({
+const useStylesLocal = makeStyles((theme) => ({
   root: {
     margin: 10,
   },
@@ -220,7 +221,8 @@ const EvaluationsResultDetails = props => {
   // const [showSnackbar, setShowSnackbar] = useState(true);
   const [openSnack, setOpenSnack] = React.useState(true);
 
-  const classes = useStyles();
+  const classes = useStylesLocal();
+  const classesGeneral = useStyles();
 
   const [showQuestionPreview, setShowQuestionPreview] = React.useState(false);
 
@@ -329,8 +331,8 @@ const EvaluationsResultDetails = props => {
 
       <Card
         {...rest}
-        className={clsx(classes.root, className)}>
-        <div className={classes.contentHeader}>
+        className={clsx(classesGeneral.root, className)}>
+        <div className={classesGeneral.contentHeader}>
           <IconButton onClick={handleBack}>
             <ArrowBackIcon />
           </IconButton>
@@ -510,7 +512,7 @@ const EvaluationsResultDetails = props => {
                         <Grid
                           container
                           direction="row"
-                          justify="center"
+                          justifyContent="center"
                           alignItems="center">
                           <Typography align="center"
                             variant="body2" color="textPrimary"
@@ -527,7 +529,7 @@ const EvaluationsResultDetails = props => {
                         <Grid
                           container
                           direction="row"
-                          justify="center"
+                          justifyContent="center"
                           alignItems="center">
                           <Typography align="center"
                             variant="body2" color="textPrimary"

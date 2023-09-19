@@ -36,10 +36,11 @@ class CourseController extends Controller
     {
         if($request->description){
             $courses = Course::where('description', 'like', '%'.$request->description.'%')
+                ->with('knowledgeArea')
                 ->orderBy('description')
                 ->paginate(10);
         } else {
-            $courses = Course::orderBy('description')->paginate(10);
+            $courses = Course::with('knowledgeArea')->orderBy('description')->paginate(10);
         }
 
         return response()->json($courses, 200);
@@ -60,6 +61,7 @@ class CourseController extends Controller
         $course = new Course();
         $course->initials = $request->initials;
         $course->description = $request->description;
+        $course->fk_area_id = $request->fk_area_id;
         $course->save();
 
         return response()->json([
@@ -72,7 +74,7 @@ class CourseController extends Controller
     {
         $course = Course::find($id);
 
-        if(!$this->verifyRecord($course)){
+        if(!$course){
             return response()->json([
                 'message' => 'Registro não encontrado.'
             ], 202);
@@ -95,7 +97,7 @@ class CourseController extends Controller
 
         $course = Course::find($id);
 
-        if(!$this->verifyRecord($course)){
+        if(!$course){
             return response()->json([
                 'message' => 'Registro não encontrado.'
             ], 202);
@@ -103,6 +105,7 @@ class CourseController extends Controller
 
         $course->initials = $request->initials;
         $course->description = $request->description;
+        $course->fk_area_id = $request->fk_area_id;
         $course->save();
 
         return response()->json([
@@ -115,7 +118,7 @@ class CourseController extends Controller
     {
         $course = Course::find($id);
 
-        if(!$this->verifyRecord($course)){
+        if(!$course){
             return response()->json([
                 'message' => 'Registro não encontrado.'
             ], 202);
@@ -134,11 +137,4 @@ class CourseController extends Controller
         ], 200);
     }
 
-    public function verifyRecord($record){
-        if(!$record || $record == '[]'){
-            return response()->json([
-                'message' => 'Registro não encontrado.'
-            ], 202);
-        }
-    }
 }

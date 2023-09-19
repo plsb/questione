@@ -382,7 +382,7 @@ const EvaluationsResultDetails = props => {
           <CardHeader
               avatar={
                 <div>
-                  <Typography variant="button" color="textSecondary" component="p">
+                  <Typography variant="subtitle1" color="#000000" component="p">
                     {'Avaliação: '+evaluationDescription}
                   </Typography>
                 </div>

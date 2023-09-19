@@ -9,116 +9,82 @@ import {
   TotalEvaluation,
 } from './components';
 
-import { StartEvaluationCard } from './../../components';
 import NextEvaluations from "./components/NextEvaluations";
-import totalQuestion from "./components/TotalQuestion";
+import {toast} from "react-toastify";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(4)
+    padding: theme.spacing(4),
   },
   gridStartEvaluation: {
     paddingBottom: theme.spacing(4)
   }
 }));
 
-const Dashboard = () => {
+const Dashboard = props => {
+  const { history} = props;
   const classes = useStyles();
   const level_user = localStorage.getItem("@Questione-acess-level-user");
 
+  const onClickQuestion = () => {
+    if(level_user == 2) {
+      history.push('/questions');
+    }
+  };
+
+  const onClickEvaluations = () => {
+    if(level_user == 2) {
+      history.push('/evaluations');
+    }
+  };
+
   return (
     <div className={classes.root}>
-      <Grid
-          container
-          spacing={1}
-          className={classes.gridStartEvaluation}>
-        <Grid
-            item
-            xs={12}>
-          {/*<StartEvaluationCard colorBox="#03a9f4" className="start-evaluation-card"/>*/}
-        </Grid>
-      </Grid>
-      <Grid
-        container
-        spacing={2}>
-        <Grid
-          item
-          lg={3}
-          sm={6}
-          xl={3}
-          xs={12}>
-          <TotalQuestion className="total-question"/>
-        </Grid>
-        <Grid
-          item
-          lg={3}
-          sm={6}
-          xl={3}
-          xs={12}>
-          <TotalStudent className="total-student"/>
-        </Grid>
-        <Grid
-          item
-          lg={3}
-          sm={6}
-          xl={3}
-          xs={12}>
-          <TotalProfessor className="total-professor"/>
-        </Grid>
-        <Grid
-          item
-          lg={3}
-          sm={6}
-          xl={3}
-          xs={12}>
-          <TotalEvaluation className="total-evaluation"/>
-        </Grid>
+        { level_user == 2 &&
+            <Grid
+                container
+                spacing={2}>
+              <Grid
+                item
+                lg={3}
+                sm={6}
+                xl={3}
+                xs={12}>
+                <TotalStudent className="total-student"/>
+              </Grid>
+              <Grid
+                item
+                lg={3}
+                sm={6}
+                xl={3}
+                xs={12}>
+                <TotalProfessor className="total-professor"/>
+              </Grid>
+              <Grid item onClick={onClickQuestion}
+                    lg={3}
+                    sm={6}
+                    xl={3}
+                    xs={12}>
+                <TotalQuestion className="total-question"/>
+              </Grid>
+              <Grid
+                item onClick={onClickEvaluations}
+                lg={3}
+                sm={6}
+                xl={3}
+                xs={12}>
+                <TotalEvaluation className="total-evaluation"/>
+              </Grid>
+            </Grid>
+        }
         { level_user == 0 ?
             <Grid
                 item
-                lg={9}
-                sm={6}
-                xl={6}
                 xs={12}>
               <NextEvaluations className="next-evaluations"/>
             </Grid>
             : null
         }
-
-        {/*<Grid
-          item
-          lg={8}
-          md={12}
-          xl={9}
-          xs={12}>
-          <LatestSales />
-        </Grid>
-        <Grid
-          item
-          lg={4}
-          md={6}
-          xl={3}
-          xs={12}>
-          <UsersByDevice />
-        </Grid>
-        <Grid
-          item
-          lg={4}
-          md={6}
-          xl={3}
-          xs={12}>
-          <LatestProducts />
-        </Grid>
-        <Grid
-          item
-          lg={8}
-          md={12}
-          xl={9}
-          xs={12}
-        >
-          <LatestOrders />
-        </Grid>*/}
-      </Grid>
     </div>
   );
 };

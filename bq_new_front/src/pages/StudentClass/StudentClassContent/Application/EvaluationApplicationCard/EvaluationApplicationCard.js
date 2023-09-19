@@ -8,52 +8,43 @@ import {
     CardHeader,
     IconButton,
     Typography,
-    CardContent, Chip, Switch, Tooltip
+    CardContent, Chip, Switch, Tooltip, FormControlLabel, Box, Paper, Link
 } from '@material-ui/core';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import {withRouter} from "react-router-dom";
 import api from "../../../../../services/api";
-import { Edit, FormatListBulleted } from "@material-ui/icons";
+import {Edit, FormatListBulleted, PlayArrow} from "@material-ui/icons";
 import ShareIcon from '@material-ui/icons/Share';
+import {FormGroup} from "reactstrap";
+import useStyles from "../../../../../style/style";
 
-const useStyles = makeStyles(() => ({
+const useStylesLocal = makeStyles(() => ({
   root: {
-    margin: 8,
+      marginBottom: '10px'
+
   },
     head: {
         paddingBottom: 0,
         paddingTop: 6
     },
     chipred:{
-      margin: 3,
-      backgroundColor: '#e57373',
-      color: '#ffebee',
+        color: '#e57373',
     },
     chipgreen:{
-        margin: 3,
-        backgroundColor: '#009688',
-        color: '#ffebee',
+        color: '#009688',
     },
     chip_brown:{
-        margin: 3,
-        backgroundColor: '#795548',
-        color: '#ffebee',
+        color: '#795548',
     },
     chip_amber:{
-        margin: 3,
-        backgroundColor: '#ffc107',
-        color: '#212121',
+        color: '#ffc107',
     },
     chipyellow:{
-        margin: 3,
-        backgroundColor: '#fff176',
-        color: '#212121',
+        color: '#fff176',
     },
     chipblue:{
-        margin: 3,
-        backgroundColor: '#2196f3',
-        color: '#fff',
+        color: '#2196f3',
     },
   spacer: {
     flexGrow: 1
@@ -65,7 +56,8 @@ const EvaluationApplicationCard = props => {
   const [state, setState] = useState(0);
   const [evaluationApplication, setEvaluationApplication] = useState({});
 
-  const classes = useStyles();
+  const classes = useStylesLocal();
+  const classesGeneral = useStyles();
 
     useEffect(() => {
 
@@ -116,96 +108,124 @@ const EvaluationApplicationCard = props => {
               <Card
                   {...rest}
                   className={classes.root}>
-                  <CardHeader
-                      className={classes.head}
-                      action={
-                          <div>
-                              {evaluationApplication.public_results === 1 && (
-                                <Tooltip title="Copiar link da avaliação">
-                                    <IconButton
-                                        aria-label="share"
-                                        onClick={() => copyLinkToClipboard(evaluationApplication.id)}>
-                                        <ShareIcon />
-                                    </IconButton>
-                                </Tooltip>
-                              )}
+                  <Paper className={evaluationApplication.evaluation.status == 2 || evaluationApplication.status == 0 ? classesGeneral.paperTitleGray :
+                                         classesGeneral.paperTitleGreen}>
+                      <Box display="flex">
+                          <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-start">
+                              <div className={classesGeneral.paperTitleTextBold}>
+                                  {'Simulado: '+position+' - '+evaluationApplication.description }
+                              </div>
+                          </Box>
+                          <Box display="flex" justifyContent="flex-end">
+                                  {evaluationApplication.public_results === 1 && (
+                                      <Tooltip title="Copiar link da avaliação">
+                                          <IconButton
+                                              aria-label="share"
+                                              onClick={() => copyLinkToClipboard(evaluationApplication.id)}
+                                              size="small">
+                                              <ShareIcon />
+                                          </IconButton>
+                                      </Tooltip>
+                                  )}
 
-                              {evaluationApplication.evaluation.status == 1 ?
-                              <Tooltip title="Habilite o simulado">
-                                  <Switch
-                                      checked={evaluationApplication.status}
-                                      onChange={onClickOpenDialogEnableApplication}
-                                      color="primary"
-                                      name="checkedB"
-                                      inputProps={{ 'aria-label': 'primary checkbox' }}
-                                  />
-                              </Tooltip> : null }
-                              {/*<Tooltip title="Visualizar resultados 2">
+                                  {evaluationApplication.evaluation.status == 1 &&
+                                      <Tooltip title="Habilite o simulado">
+                                          <div style={{marginTop: '3px', marginLeft: '10px'}}>
+                                              { evaluationApplication.status == 0
+                                                  ? <FormGroup>
+                                                      <FormControlLabel control={
+                                                          <Switch
+                                                              checked={evaluationApplication.status}
+                                                              onChange={onClickOpenDialogEnableApplication}
+                                                              color="primary"
+                                                              name="checkedB"
+                                                              size="small"
+                                                              inputProps={{ 'aria-label': 'primary checkbox' }}
+                                                          />
+                                                      } label="Habilitar" />
+                                                  </FormGroup> :
+                                                  <Switch
+                                                      checked={evaluationApplication.status}
+                                                      onChange={onClickOpenDialogEnableApplication}
+                                                      color="primary"
+                                                      name="checkedB"
+                                                      size="small"
+                                                      inputProps={{ 'aria-label': 'primary checkbox' }}
+                                                  />}
+                                          </div>
+
+                                      </Tooltip>  }
+                                  {/*<Tooltip title="Visualizar resultados 2">
                                   <IconButton
                                       aria-label="copy"
                                       onClick={() => results(evaluationApplication.id)}>
                                       <FormatListBulleted />
                                   </IconButton>
                               </Tooltip>*/}
-                              {evaluationApplication.evaluation.status == 1 ?
-                                  <Tooltip title="Clique para editar">
-                                      <IconButton
-                                          aria-label="copy"
-                                          onClick={() => onEdit(evaluationApplication.id)}>
-                                          <Edit />
-                                      </IconButton>
-                                  </Tooltip> : null }
+                                  {evaluationApplication.evaluation.status == 1 &&
+                                      <Tooltip title="Clique para editar">
+                                          <IconButton
+                                              aria-label="copy"
+                                              size="small"
+                                              onClick={() => onEdit(evaluationApplication.id)}
+                                              style={{marginLeft: '10px'}}>
+                                              <Edit />
+                                          </IconButton>
+                                      </Tooltip>  }
+                          </Box>
+                      </Box>
+                  </Paper>
+                  <CardContent>
+                      <Box>
 
 
-                          </div>
-                      }
-                      title={'Simulado: '+position}/>
+                      </Box>
+                      <div className={classesGeneral.paperTitleText}>
+                          {'Este simulado foi criado por meio da avaliação: '+evaluationApplication.evaluation.id+' - '+evaluationApplication.evaluation.description+'.'}
+                      </div>
+                      <div className={classesGeneral.paperTitleText}>
+                          {'Este simulado foi criado em: '+ moment(evaluationApplication.created_at).format('DD/MM/YYYY')}
+                      </div>
+                      { evaluationApplication.evaluation.status == 2 &&
+                          <div className={classesGeneral.textRedInfo} style={{marginTop: '4px'}}>
+                              {'A avaliação deste simulado está arquivada.'}
+                          </div>}
+                      <Box display="flex" alignItems="row" style={{marginTop: '10px'}}>
 
-                    <CardContent>
+                          { evaluationApplication.show_results == 1 &&
+                              <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Os estudantes terão acesso ao resultado deste simulado.'}</div>
+                          }
 
-                      {/*<Typography variant="button" color="textSecondary" component="h2">
-                          {'Simulado: '+position }
-                    </Typography>*/}
-                      <Typography variant="h5" color="textSecondary" component="h2">
-                          {evaluationApplication.description }
-                      </Typography>
-                      {evaluationApplication.evaluation.status == 1 ?
-                      <Typography variant="body1" color="textSecondary" component="h2">
-                          {'Avaliação: '+evaluationApplication.evaluation.id+' - '+evaluationApplication.evaluation.description}
-                      </Typography> :
-                      <Typography variant="body1" color="textSecondary" component="h2">
-                          {'ARQUIVADA - Avaliação: '+evaluationApplication.evaluation.id+' - '+evaluationApplication.evaluation.description}
-                      </Typography>  }
+                          { evaluationApplication.release_preview_question == 1 &&
+                              <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Os estudantes tertão acesso as questões completas deste simulado.'}</div>
+                          }
 
+                          { evaluationApplication.random_questions == 1 &&
+                              <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'As questões serão apresentadas de forma aleatória.'}</div>
+                          }
 
-                      <Typography color="body2" variant="h6">
-                          {'Data de criação: '+ moment(evaluationApplication.created_at).format('DD/MM/YYYY')}
-                      </Typography>
-                      { evaluationApplication.evaluation.status == 2 ?
-                          <Chip label="Avaliação Arquivada" className={clsx(classes.chipred, className)} size="small"/> :
-                          evaluationApplication.status == 1 ?
-                              <Chip label="Ativado" className={clsx(classes.chipgreen, className)} size="small"/> :
-                                <Chip label="Desativado" className={clsx(classes.chipred, className)} size="small"/>
+                          {(evaluationApplication.date_start &&
+                                  <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Este simulado deve ser iniciado até o dia '+moment(evaluationApplication.date_start).utc().format('DD/MM/YYYY')+' às '+evaluationApplication.time_start+'.'}</div>)
+                          }
 
-                      }
-                      { evaluationApplication.random_questions == 1 &&
-                          <Chip label="Questões Aleatórias" className={clsx(classes.chipyellow, className)} size="small"/> }
+                          { ((evaluationApplication.date_finish) &&
+                                  <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Este simulado deve ser finalizado até o dia '+moment(evaluationApplication.date_finish).utc().format('DD/MM/YYYY')+' às '+evaluationApplication.time_finish+'.'}</div>)
+                          }
 
-                       { evaluationApplication.date_start  &&
-                        <Chip label="Tempo para iniciar definido" className={clsx(classes.chip_amber, className)} size="small"/> }
+                          { ((evaluationApplication.time_to_finalize) &&
+                                  <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Após iniciado, este simulado deve ser finalizado no tempo de '+evaluationApplication.time_to_finalize+'.'}</div>)
+                          }
 
-                      { evaluationApplication.time_to_finalize || evaluationApplication.date_finish  ?
-                        <Chip label="Tempo para finalizar definido" className={clsx(classes.chip_brown, className)} size="small"/> : null}
+                          {/*answer_head ?
+                                  (!answer_head.finalized_at ?
+                                      <div className={clsx(classes.chipblue, className)} style={{marginLeft: '4px'}}>{'| Iniciado'}</div> :
+                                      <div className={clsx(classes.chipgreen, className)} style={{marginLeft: '4px'}}>{'| Finalizado'}</div>) :
+                                  <div className={clsx(classes.chipred, className)} style={{marginLeft: '4px'}}>{'| Não iniciado'}</div>*/}
 
-                        { evaluationApplication.show_results == 1 &&
-                        <Chip label="Resultados Liberados" className={clsx(classes.chipblue, className)} size="small"/> }
-
-                        { evaluationApplication.release_preview_question == 1 &&
-                        <Chip label="Permite vizualizar questões" className={clsx(classes.chipblue, className)} size="small"/> }
-
-
+                      </Box>
 
                   </CardContent>
+
               </Card>
               </div>
               : null }

@@ -10,7 +10,7 @@ import {
     CardContent,
     MenuItem,
     Menu, Tooltip, Chip, Dialog, AppBar, Toolbar,
-    TextField, Button, TableCell
+    TextField, Button, TableCell, DialogTitle, DialogContent, DialogActions, Paper, Box, Link
 } from '@material-ui/core';
 import { MoreVert, Edit } from '@material-ui/icons';
 import moment from 'moment';
@@ -19,8 +19,11 @@ import { toast } from 'react-toastify';
 import {withRouter} from "react-router-dom";
 import {DialogQuestione} from "../../../../components";
 import CloseIcon from "@material-ui/icons/Close";
+import { useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import useStyles from "../../../../style/style";
 
-const useStyles = makeStyles(() => ({
+const useStylesLocal = makeStyles(() => ({
   root: {
     marginBottom: 8,
   },
@@ -53,6 +56,8 @@ const EvaluationCard = props => {
   const { className, history, refresh, setRefresh, evaluation, setTabValue, ...rest } = props;
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [open, setOpen] = React.useState(false);
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [descriptionNewApplication, setDescriptionNewApplication] = React.useState('');
 
     //Inserir o campo de turma no cadastro da nova aplicação
@@ -76,7 +81,8 @@ const EvaluationCard = props => {
     }
   }
 
-  const classes = useStyles();
+  const classes = useStylesLocal();
+  const classesGeneral = useStyles();
 
   const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
@@ -214,120 +220,137 @@ const EvaluationCard = props => {
        
       }, []);
 
-
-
   return (
     <Card
       {...rest}
       className={classes.root}>
-          <CardHeader
-              className={classes.head}
-              action={
-                  <div>
-                      { evaluation.status == 1 ?
-                      <Tooltip title="Editar Avaliação">
-                          <IconButton
-                              aria-label="copy"
-                              onClick={onEdit}>
-                              <Edit />
-                          </IconButton>
-                      </Tooltip> : null }
-                          <Tooltip title="Opções da Avaliação">
-                          <IconButton
-                                aria-label="settings"
-                                onClick={handleClick}>
-                              <MoreVert />
+        <Paper className={evaluation.status == 2 ? classesGeneral.paperTitleGray : classesGeneral.paperTitle}>
+            <Box display="flex">
+                <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-start">
+                    <div className={classesGeneral.paperTitleText}>
+                        {evaluation.id < 10 ? '00000' + evaluation.id :
+                            evaluation.id < 100 ? '0000' + evaluation.id :
+                                evaluation.id < 1000 ? '000' + evaluation.id :
+                                    evaluation.id < 10000 ? '00' + evaluation.id :
+                                        evaluation.id < 100000 ? '0' + evaluation.id :
+                                            evaluation.id}
+                    </div>
+                    <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '15px'}}>
+                        {evaluation.description}
+                    </div>
+                </Box>
+                <Box display="flex" justifyContent="flex-end">
+                    { evaluation.status == 1 ?
+                        <Tooltip title="Editar Avaliação">
+                            <IconButton
+                                aria-label="copy"
+                                onClick={onEdit}
+                                size="small">
+                                <Edit />
                             </IconButton>
-                      </Tooltip>
-                  </div>
-              }
+                        </Tooltip> : null }
+                    <Tooltip title="Opções da Avaliação">
+                        <IconButton
+                            aria-label="settings"
+                            onClick={handleClick}
+                            size="small">
+                            <MoreVert />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
+            </Box>
+        </Paper>
+        <CardContent>
+            <Tooltip title="Clique para visualizar as questões." placement="left-end">
+                <Link onClick={() => history.push(`/evaluation-questions/${evaluation.id}`)}>
+                    {evaluation.questions.length == 0 ?
+                        <div className={classesGeneral.paperTitleText} style={{color: '#f44336'}}>
+                            {'Esta avaliação possui '+evaluation.questions.length+' questões.'}
+                        </div> :
+                            <div className={classesGeneral.paperTitleText}>
+                                {'Esta avaliação possui '+evaluation.questions.length+' questões.'}
+                            </div>}
+                </Link>
+            </Tooltip>
+          <div className={classesGeneral.paperTitleText}>
+              {'Esta avaliação foi criada em: '+ moment(evaluation.created_at).format('DD/MM/YYYY')+'.'}
+          </div>
 
-              title={
-                  evaluation.id < 10 ? '00000' + evaluation.id :
-                      evaluation.id < 100 ? '0000' + evaluation.id :
-                          evaluation.id < 1000 ? '000' + evaluation.id :
-                              evaluation.id < 10000 ? '00' + evaluation.id :
-                                  evaluation.id < 100000 ? '0' + evaluation.id :
-                                      evaluation.id
-              }/>
-      <CardContent>
-        <Typography variant="h4" color="textSecondary" component="h2">
-            {'Avaliação: '+evaluation.description}
-        </Typography>
-          <Typography color="textSecondary" variant="h6">
-              {'Data de criação: '+ moment(evaluation.created_at).format('DD/MM/YYYY')}
-          </Typography>
-          { evaluation.status == 2 ?
-              <Chip label="Arquivada" className={clsx(classes.chip, className)} size="small"/> : null}
-      </CardContent>
+          { evaluation.status == 2 &&
+              <div className={classesGeneral.textRedInfo} style={{marginTop: '10px'}}>
+                  {'Arquivada'}
+              </div> }
+        </CardContent>
         <Menu
             id="simple-menu"
             anchorEl={anchorEl}
             keepMounted
             open={Boolean(anchorEl)}
             onClose={handleClose}>
-            { evaluation.status == 1 ? <MenuItem onClick={handleNewApplication}>Novo Simulado</MenuItem> : null}
-            <MenuItem onClick={() => history.push(`/evaluation-questions/${evaluation.id}`)}>Ver questões</MenuItem>
-            <MenuItem onClick={duplicate}>Duplicar</MenuItem>
-            { evaluation.status == 1 ? <MenuItem onClick={() => changeStatus(2) }>Arquivar</MenuItem> : null}
-            { evaluation.status == 2 ? <MenuItem onClick={() => changeStatus(1) }>Ativar</MenuItem> : null}
-            { evaluation.status == 2 ? <MenuItem onClick={onClickOpenDialog}>Deletar</MenuItem> : null}
+            {/* evaluation.status == 1 ? <MenuItem onClick={handleNewApplication}>Novo Simulado</MenuItem> : null*/}
+            {/*<MenuItem onClick={() => history.push(`/evaluation-questions/${evaluation.id}`)}>Ver questões</MenuItem>*/}
+            <MenuItem onClick={duplicate}><div className={classesGeneral.itensMenu}>{'Duplicar'}</div></MenuItem>
+            { evaluation.status == 1 ? <MenuItem onClick={() => changeStatus(2) }><div className={classesGeneral.itensMenu}>{'Arquivar'}</div></MenuItem> : null}
+            { evaluation.status == 2 ? <MenuItem onClick={() => changeStatus(1) }><div className={classesGeneral.itensMenu}>{'Ativar'}</div></MenuItem> : null}
+            { evaluation.status == 2 ? <MenuItem onClick={onClickOpenDialog}><div className={classesGeneral.itensMenu}>{'Deletar'}</div></MenuItem> : null}
         </Menu>
         <DialogQuestione handleClose={onClickCloseDialog}
                          open={open}
                          onClickAgree={onDelete}
                          onClickDisagree={onClickCloseDialog}
-                         mesage={'Deseja excluir a avaliação selecionada?'}
-                         title={'Excluir Avaliação'}/>
+                         mesage={
+                                <div className={classesGeneral.messageDialog}>
+                                {'Deseja excluir a avaliação '+evaluation.description+'?'}
+                            </div>}
+                         title={
+                             <div className={classesGeneral.titleDialog}>
+                                 {'Excluir Avaliação'}
+                             </div>}/>
         {/* Dialog de cadastro de aplicação */}
-        <Dialog fullScreen onClose={handleNewApplicationExit} aria-labelledby="simple-dialog-title" open={openNewApplication}>
-            <AppBar className={classes.appBar}>
-                <Toolbar>
-                    <IconButton edge="start" color="inherit" onClick={handleNewApplicationExit} aria-label="close">
-                        <CloseIcon />
-                    </IconButton>
-                    <Typography variant="h5" className={classes.title}>
-                        Informe a descrição e selecione a turma para o simulado
-                    </Typography>
-                </Toolbar>
-            </AppBar>
-            <TextField
-                fullWidth
-                label="Descrição"
-                margin="dense"
-                name="description"
-                variant="outlined"
-                onChange={handleChangeDescriptionNewApplication}
-                value={descriptionNewApplication}
-                className={classes.fieldsDialog}
-            />
-            <TextField className={classes.textField}
-                    id="filled-select-class"
-                    select
-                    label="Turma"
-                    value={searchText ? searchText : 0}
-                    onChange={onChangeClassProfessor}
-                    helperText=""
-                    variant="outlined"
+        <Dialog fullScreen={fullScreen}
+                onClose={handleNewApplicationExit}
+                aria-labelledby="responsive-dialog-title" open={openNewApplication}>
+            <DialogTitle id="responsive-dialog-title">{"Cadastrar novo simulado"}</DialogTitle>
+            <DialogContent>
+                <TextField
+                    fullWidth
+                    label="Descrição"
                     margin="dense"
-                   style={{width: '300px'}}
-                   >
-                  {classProfessor.map((option) => (
-                   
-                        <MenuItem key={option.id} value={option.id}>               
+                    name="description"
+                    variant="outlined"
+                    onChange={handleChangeDescriptionNewApplication}
+                    value={descriptionNewApplication}
+                    className={classes.fieldsDialog}
+                />
+                <TextField className={classes.textField}
+                           id="filled-select-class"
+                           select
+                           label="Turma"
+                           value={searchText ? searchText : 0}
+                           onChange={onChangeClassProfessor}
+                           helperText=""
+                           variant="outlined"
+                           margin="dense"
+                           style={{width: '300px'}}
+                >
+                    {classProfessor.map((option) => (
+
+                        <MenuItem key={option.id} value={option.id}>
                             {option.id_class+' - '+option.description}
                         </MenuItem>
-                      
-                  ))}
-                </TextField>
-            <Button
-                color="primary"
-                variant="outlined"
-                className={classes.fieldsDialog}
-                onClick={saveNewApplication}>
-                Salvar
-            </Button>
 
+                    ))}
+                </TextField>
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    color="primary"
+                    variant="outlined"
+                    className={classes.fieldsDialog}
+                    onClick={saveNewApplication}>
+                    Salvar
+                </Button>
+            </DialogActions>
         </Dialog>
     </Card>
   );

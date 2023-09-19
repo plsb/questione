@@ -8,7 +8,7 @@ import {
     CardHeader,
     IconButton,
     Typography,
-    CardContent, Chip, Switch, Tooltip
+    CardContent, Chip, Switch, Tooltip, FormControlLabel
 } from '@material-ui/core';
 import moment from 'moment';
 import { toast } from 'react-toastify';
@@ -16,6 +16,7 @@ import {withRouter} from "react-router-dom";
 import api from "../../../../services/api";
 import { Edit, FormatListBulleted } from "@material-ui/icons";
 import ShareIcon from '@material-ui/icons/Share';
+import {FormGroup} from "reactstrap";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -131,14 +132,18 @@ const EvaluationApplicationCard = props => {
                               )}
 
                               {evaluationApplication.evaluation.status == 1 ?
-                              <Tooltip title="Habilite a questão para aplicações">
-                                  <Switch
-                                      checked={evaluationApplication.status}
-                                      onChange={onClickOpenDialogEnableApplication}
-                                      color="primary"
-                                      name="checkedB"
-                                      inputProps={{ 'aria-label': 'primary checkbox' }}
-                                  />
+                              <Tooltip title="Habilite a avaliação para aplicações">
+                                  <FormGroup>
+                                      <FormControlLabel control={
+                                          <Switch
+                                              checked={evaluationApplication.status}
+                                              onChange={onClickOpenDialogEnableApplication}
+                                              color="primary"
+                                              name="checkedB"
+                                              inputProps={{ 'aria-label': 'primary checkbox' }}
+                                          />
+                                      } label="Label" />
+                                  </FormGroup>
                               </Tooltip> : null }
                               <Tooltip title="Visualizar resultados">
                                   <IconButton

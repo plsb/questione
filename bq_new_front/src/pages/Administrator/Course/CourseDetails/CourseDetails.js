@@ -33,6 +33,9 @@ const schema = {
       maximum: 8,
       message: 'A sigla do curso deve conter no mínimo 2 e no máximo 8 caracteres.'
     }
+  },
+  area: {
+    presence: { allowEmpty: false,  message: 'A área é obrigatória.'},
   }
 };
 
@@ -43,6 +46,7 @@ const useStyles = makeStyles(() => ({
 const CourseDetails = props => {
   const { className, history, ...rest } = props;
   const { codigoCourse } = props.match.params;
+  const [areas, setAreas] = useState([{'id': '0', 'description': '- Escolha uma área -'}]);
 
   const classes = useStyles();
 
@@ -53,14 +57,25 @@ const CourseDetails = props => {
     errors: {}
   });
 
+  async function loadAreas(){
+    try {
+      const response = await api.get('all/areas');
+      if(response.status == 200) {
+        setAreas([...areas, ...response.data]);
+      }
+    } catch (error) {
+
+    }
+  }
+
   async function saveCourseDetails(){
     try {
-      const fk_course_id = formState.values.course;
+      const fk_area_id = formState.values.area;
       const description = formState.values.description;
       const initials = formState.values.initials;
       const id = formState.values.id;
       const data = {
-        description, fk_course_id, initials
+        description, fk_area_id, initials
       }
       let response= {};
       let acao = "";
@@ -101,6 +116,7 @@ const CourseDetails = props => {
           values: {
             'description': response.data.description,
             'initials': response.data.initials,
+            'area': response.data.fk_area_id,
             'id': response.data.id
           },
           touched: {
@@ -114,6 +130,7 @@ const CourseDetails = props => {
   }
 
   useEffect(() => {
+    loadAreas();
     if(codigoCourse){
       findACourse(codigoCourse);
     }
@@ -125,7 +142,7 @@ const CourseDetails = props => {
 
     setFormState(formState => ({
       ...formState,
-      isValid: (errors || formState.values.course==0) ? false : true,
+      isValid: (errors || formState.values.area==0) ? false : true,
       errors: errors || {}
     }));
   }, [formState.values]);
@@ -205,6 +222,34 @@ const CourseDetails = props => {
                     value={formState.values.description || ''}
                     variant="outlined"
                 />
+              </Grid>
+              <Grid
+                  item
+                  md={6}
+                  xs={12}>
+                <TextField
+                    fullWidth
+                    error={hasError('area')}
+                    helperText={
+                      hasError('area') ? formState.errors.area[0] : null
+                    }
+                    label=""
+                    margin="dense"
+                    name="area"
+                    onChange={handleChange}
+                    select
+                    // eslint-disable-next-line react/jsx-sort-props
+                    SelectProps={{ native: true }}
+                    value={formState.values.area}
+                    variant="outlined">
+                  {areas.map(area => (
+                      <option
+                          key={area.id}
+                          value={area.id}>
+                        {area.description}
+                      </option>
+                  ))}
+                </TextField>
               </Grid>
             </Grid>
           </CardContent>

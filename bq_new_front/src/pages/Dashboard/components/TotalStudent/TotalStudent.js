@@ -69,7 +69,7 @@ const TotalStudent = props => {
       <CardContent>
         <Grid
           container
-          justify="space-between">
+          justifyContent="space-between">
           <Grid item>
             <Typography
               className={classes.title}
@@ -78,7 +78,7 @@ const TotalStudent = props => {
               variant="body2">
               ESTUDANTES
             </Typography>
-            <Typography variant="h3">{total}</Typography>
+            <Typography style={{margin: '8px'}} variant="h3">{total}</Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>

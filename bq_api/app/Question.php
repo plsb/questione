@@ -10,7 +10,8 @@ class Question extends Model
     protected $table = 'questions';
     protected $fillable = ['id', 'base_text', 'stem', 'validated', 'reference',
                                         'year', 'fk_type_of_evaluation_id',
-                                        'fk_skill_id', 'fk_user_id', 'fk_course_id'];
+                                        'fk_skill_id', 'fk_user_id', 'fk_course_id', 'fk_regulation_id',
+                                        'initial_difficulty'];
     protected $hidden = [];
 
     protected $appends = ['difficulty'];
@@ -40,6 +41,9 @@ class Question extends Model
     	return $this->belongsTo(Skill::class, 'fk_skill_id');
     }
 
+    public function regulation(){
+        return $this->belongsTo(Course::class, 'fk_regulation_id');
+    }
     public function course(){
         return $this->belongsTo(Course::class, 'fk_course_id');
     }

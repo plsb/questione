@@ -16,20 +16,22 @@ import {
     Chip,
     Switch, ListItem, ListItemText,
     List,
-    Dialog, AppBar, Toolbar, Box, Divider
+    Dialog, AppBar, Toolbar, Box, Divider, Link, CardActionArea, FormControlLabel
 } from '@material-ui/core';
-import Rating from '@material-ui/lab/Rating';
 import {MoreVert, PlaylistAdd, ExpandMoreRounded, Edit} from '@material-ui/icons';
 import {withRouter} from "react-router-dom";
 import ReactHtmlParser from 'react-html-parser';
 import api from "../../services/api";
 import {DialogQuestione} from "../index";
-import AssignmentTurnedIn from '@material-ui/icons/AssignmentTurnedIn';
+import SubjectIcon from '@material-ui/icons/Subject';
 import moment from "moment";
 import CloseIcon from '@material-ui/icons/Close';
 import { toast } from 'react-toastify';
+import QuestionText from "../QuestionText";
+import useStyles from "../../style/style";
+import {FormGroup} from "reactstrap";
 
-const useStyles = makeStyles(theme => ({
+const useStylesLocal = makeStyles(theme => ({
     root: {
 
     },
@@ -52,34 +54,12 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: '#2196f3',
         color: '#fff',
     },
-    spacer: {
-    flexGrow: 1
-    },
     expand: {
         transform: 'rotate(0deg)',
         marginLeft: 'auto',
         transition: theme.transitions.create('transform', {
             duration: theme.transitions.duration.shortest,
         }),
-    },
-    paper: {
-        display: 'flex',
-        marginBottom: 10,
-        '& > *': {
-            margin: theme.spacing(2),
-        },
-    },
-    paperWrong: {
-        backgroundColor: '#ef9a9a',
-        color: '#212121',
-        margin: 3,
-        padding: 8
-    },
-    paperRight: {
-        backgroundColor: '#80cbc4',
-        color: '#212121',
-        margin: 3,
-        padding: 8
     },
     appBar: {
         position: 'relative',
@@ -106,7 +86,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const QuestionCard = props => {
-  const { className, history, question, setRefresh, refresh, id_evaluation, ...rest } = props;
+  const { className, history, question, setRefresh, refresh, id_evaluation, id_course, ...rest } = props;
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [expanded, setExpanded] = React.useState(false);
@@ -118,8 +98,11 @@ const QuestionCard = props => {
     const [qtRank, setQtRank] = React.useState(0);
     //constante definirá nota de classificação para a questão
     const [rankUserQuestion, setRankUserQuestion] = React.useState(0);
+    const [alternativeLetters] = React.useState(['a', 'b', 'c', 'd', 'e']);
+    const [difficultyList] = React.useState(['Muito fácil', 'Fácil', 'Médio', 'Difícil', 'Muito difícil']);
 
-  const classes = useStyles();
+  const classes = useStylesLocal();
+  const classesGeneral = useStyles();
 
     async function loadEvaluations(){
         try {
@@ -214,6 +197,10 @@ const QuestionCard = props => {
 
     }, []);
 
+    useEffect(() => {
+
+    }, [anchorEl]);
+
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
@@ -240,6 +227,7 @@ const QuestionCard = props => {
 
     const onClickCloseDialogQuestion = () => {
         setOpenDeleteQuestion(false);
+        setAnchorEl(null);
     }
 
     const onClickOpenDialogEnableQuestion = () => {
@@ -342,10 +330,10 @@ const QuestionCard = props => {
     const [openEvalationChoose, setOpenEvalationChoose] = React.useState(false);
 
     const handleChooseEvaluation = () => {
-        if(question.fk_user_id !== parseInt(localStorage.getItem("@Questione-id-user")) && rank == 0){
+        /*if(question.fk_user_id !== parseInt(localStorage.getItem("@Questione-id-user")) && rank == 0){
             toast.error('Antes de aplicar a questão, você deve avaliá-la escolhendo de 1 a 5 estrelas.')
             return;
-        }
+        }*/
         setOpenEvalationChoose(true);
     };
 
@@ -402,170 +390,128 @@ const QuestionCard = props => {
             <Card
               {...rest}
               className={classes.root}>
-                <CardHeader
-                    avatar={
-                        <div>
-                            { question.validated != 1 &&
-                                <Chip label="Não finalizada" className={clsx(classes.chipRed, className)} size="small"/>}
-                            { question.course  !== null ?
-                                <Typography variant="subtitle1" color="#000000" component="p">
-                                    {'Área: '+question.course.description}
-                                    { question.year !== '' && question.year !== null &&
-                                        " (" +question.year + ")"}
-                                    { question.fk_type_of_evaluation_id !== '' && question.fk_type_of_evaluation_id !== null &&
-                                        ' - '+question.type_of_evaluation.description }
-
-                                </Typography> : null }
-                            { question.skill  !== null ?
-                                    <Typography variant="subtitle1" color="#000000" component="p">
-                                        Competência: {" " + question.skill.description }
-                                    </Typography>
-                                : null}
-                            { question.knowledge_objects[0] ?
-                                    <Typography variant="subtitle1" color="#000000" component="p">
-                                        Conteúdo(s):{" "}
-                                        {question.knowledge_objects.map(item => (
-                                            ReactHtmlParser (item.description)+'; '
-                                        ))}
-                                    </Typography>
-                                : null}
-                            {/*<div>
-                                { question.difficulty.total_answers == 0 ?
-                                    <p className={clsx(classes.colorLabelDifficultyWithoutAnswer)}>
-                                        {"Esta questão ainda não foi respondida em uma avaliação."}
-                                    </p>
-                                    :
-                                    <p className={clsx(classes.colorLabelDifficulty)}>
-                                        { question.difficulty.total_answers == 1 ?
-                                            "Esta questão só foi respondida "+question.difficulty.total_answers
-                                            +" vez."
-                                            :
-                                            "Das avaliações aplicadas, "+Math.round(question.difficulty.porc_correct*100)+ "% das "
-                                            +" respostas para esta questão foram corretas."}
-                                    </p>
+                <Paper className={classesGeneral.paperTitle}>
+                    <Box display="flex">
+                        <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-start">
+                            <div className={classesGeneral.paperTitleText}>
+                                {
+                                    question.id < 10 ? 'Q00000' + question.id :
+                                        question.id < 100 ? 'Q0000' + question.id :
+                                            question.id < 1000 ? 'Q000' + question.id :
+                                                question.id < 10000 ? 'Q00' + question.id :
+                                                    question.id < 100000 ? 'Q0' + question.id :
+                                                        question.id
                                 }
                             </div>
-                            <div>
-                                { question.difficulty.total_answers > 20 ?
-                                    <p className={clsx(classes.colorLabelDifficulty)}>
-                                        {'Dificuldade: '+difficulty(question.difficulty.porc_correct,
-                                                    question.difficulty.total_answers)+'.'}
-                                    </p>
-                                    :
-                                    <p className={clsx(classes.colorLabelDifficultyWithoutAnswer)}>
-                                    {"Não foi possível calcular a dificuldade."}
-                                    </p>
-                                }
-
-
-                            </div>*/}
-
-
-                        </div>
-                    }
-                    action={
-                        <div>
-                            <Box display="flex" justifyContent="flex-end" p={1} m={1} bgcolor="background.paper">
-                                { !id_evaluation && question.validated == 1 ?
+                            { question.validated != 1 &&
+                                <div className={classesGeneral.textRedInfo} style={{marginTop: '4px', marginLeft: '5px'}}>
+                                    {"(Questão não finalizada)"}
+                                </div>}
+                            {question.course &&
+                                <Box display="flex">
+                                    <div className={id_course != 0 && id_course != question.fk_course_id ? classesGeneral.paperTitleTextGreen : classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
+                                        { id_course != 0 && id_course != question.fk_course_id ? 'Área relacionada: '
+                                            : 'Área: '}
+                                    </div>
+                                    <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '5px'}}>
+                                        {question.course.description}
+                                    </div>
+                                </Box>
+                            }
+                        </Box>
+                        <Box display="flex" justifyContent="flex-end">
+                            { !id_evaluation && question.validated == 1 ?
                                 <Tooltip title="Aplicar questão em avaliação">
                                     <IconButton
                                         className={classes.labelRank}
                                         aria-label="copy"
-                                        onClick={handleChooseEvaluation}>
+                                        onClick={handleChooseEvaluation}
+                                        size="small"
+                                        style={{marginLeft: '10px'}}>
                                         <PlaylistAdd />
                                     </IconButton>
                                 </Tooltip> : null }
-                                { question.validated == 0 && question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
+                            { question.validated == 0 && question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
                                 <Tooltip title="Habilite a questão para aplicações">
-                                        <Switch
-                                            checked={question.validated}
-                                            onChange={onClickOpenDialogEnableQuestion}
-                                            color="primary"
-                                            name="checkedB"
-                                            inputProps={{ 'aria-label': 'primary checkbox' }}
-                                        />
+                                    <FormGroup>
+                                        <FormControlLabel control={
+                                            <Switch
+                                                checked={question.validated}
+                                                onChange={onClickOpenDialogEnableQuestion}
+                                                color="primary"
+                                                name="checkedB"
+                                                size="small"
+                                                inputProps={{ 'aria-label': 'primary checkbox' }}
+                                            />
+                                        } label="Habilitar a questão" />
+                                    </FormGroup>
+
                                 </Tooltip> : null }
-                                { question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
-                                    <Tooltip title="Editar Questão">
-                                        <IconButton className={classes.labelRank}
-                                            aria-label="copy"
-                                            onClick={() => onEditQuestion(question.id)}>
-                                            <Edit />
-                                        </IconButton>
-                                    </Tooltip> : null }
-                                <Tooltip title="Opções">
-                                    <Box flexDirection="row" alignSelf="flex-end">
-                                        <IconButton className={classes.labelRank} aria-label="settings"
-                                                    onClick={handleClick}>
-                                            <MoreVert />
-                                        </IconButton>
-                                    </Box>
-                                </Tooltip>
-                            </Box>
-                            {/*<Box display="flex" flexDirection="flex-end" p={1} m={1}>
-                                <Tooltip title="Avaliação da questão">
-                                    {parseInt(question.fk_user_id) != parseInt(localStorage.getItem("@Questione-id-user")) && parseInt(rank) == 0 ?
-                                        <div>
-                                            <Rating
-                                                name={question.id}
-                                                value={rank}
-                                                onChange={(event, newValue) => {
-                                                    modifyRank(newValue);
-                                                }}/>
+                            { question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
+                                <Tooltip title="Editar Questão">
+                                    <IconButton className={classes.labelRank}
+                                                aria-label="copy"
+                                                onClick={() => onEditQuestion(question.id)}
+                                                size="small"
+                                                style={{marginLeft: '10px'}}>
+                                        <Edit />
+                                    </IconButton>
+                                </Tooltip> : null }
+                            <Tooltip title="Opções">
+                                <Box flexDirection="row" alignSelf="flex-end">
+                                    <IconButton className={classes.labelRank} aria-label="settings"
+                                                onClick={handleClick}
+                                                size="small"
+                                                style={{marginLeft: '10px'}}>
+                                        <MoreVert />
+                                    </IconButton>
+                                </Box>
+                            </Tooltip>
+                        </Box>
+                    </Box>
 
-                                        </div>   :
-                                        <div>
-                                            <Rating
-                                                name="simple-controlled"
-                                                value={rank}
-                                                precision={1} disabled/>
-                                            <Typography className={classes.labelRank} variant="caption" color="textSecondary" component="p">
-                                                { qtRank < 2 ?  qtRank + ' Classificação.' : qtRank + ' Classificações.'}
-                                            </Typography>
-                                            <Typography className={classes.labelRank} variant="caption" color="textSecondary" component="p">
-                                                { rank > 0 ?  'Média: ' + rank + ' estrela(s).' : null}
-                                            </Typography>
-                                            <Typography className={classes.labelRank} variant="caption" color="textSecondary" component="p">
-                                                { rankUserQuestion > 0 ?  'Sua classificação: ' + rankUserQuestion + ' estrela(s).' : ''}
-                                            </Typography>
-                                        </div> }
-
-                                </Tooltip>
-                            </Box>*/}
-                        </div>
-                    }/>
-                <CardContent >
-                    <div> { ReactHtmlParser (question.base_text) } </div>
-                    <div> { ReactHtmlParser (question.stem) } </div>
-
-                    {question.question_items.map(item => (
-                        item.correct_item == 1 ?
-                            <Paper className={clsx(classes.paper, classes.paperRight)} elevation={3} variant="outlined"> { ReactHtmlParser (item.description)  }</Paper>
-                            : <Paper className={clsx(classes.paper, classes.paperWrong)} variant="outlined"> { ReactHtmlParser (item.description) } </Paper>
-                    ))}
-
-                    <Divider style={{padding: '3px', marginTop: '20px', marginBottom: '15px'}}/>
-
-                    <Typography variant="body1" color="#000000" component="p">
-                        {
-                            question.id < 10 ? 'Questão - 00000' + question.id :
-                                question.id < 100 ? 'Questão - 0000' + question.id :
-                                    question.id < 1000 ? 'Questão - 000' + question.id :
-                                        question.id < 10000 ? 'Questão - 00' + question.id :
-                                            question.id < 100000 ? 'Questão - 0' + question.id :
-                                                question.id
+                </Paper>
+                <Paper className={classesGeneral.paperSubtitle}>
+                    <Box display="flex">
+                        {question.year !== '' && question.year !== null &&
+                            <div className={classesGeneral.paperTitleText}>
+                                {"Ano: " +question.year}
+                            </div>
                         }
-                        { question.fk_user_id == localStorage.getItem("@Questione-id-user") &&
-                            " (Esta questão foi cadastrada por você)"}
-                    </Typography>
-                    { question.keywords[0] ?
-                        <Typography variant="body1" color="#000000" component="p">
-                            Palavra(s)-chave:
-                            {" " + question.keywords.map(item => (
-                                ReactHtmlParser (item.keyword) + '; '
-                            ))}
-                        </Typography> : null}
+                        { question.fk_type_of_evaluation_id !== '' && question.fk_type_of_evaluation_id !== null &&
+                            <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
+                                {'Banca: '+question.type_of_evaluation.description}
+                            </div>
+                        }
+                        { question.initial_difficulty !== null &&
+                            <Box display="flex">
+                                <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
+                                    {'Dificuldade: '}
+                                </div>
+                                <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '5px'}}>
+                                    {difficultyList[question.initial_difficulty-1]}
+                                </div>
+                            </Box>
+                        }
+                        { question.knowledge_objects[0] &&
+                            <Box display="flex">
+                                <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
+                                    {'Conteúdo(s):'}
+                                </div>
+                                <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '5px'}}>
+                                    {question.knowledge_objects.map(item => (
+                                        ReactHtmlParser (item.description)+'. '
+                                        ))}
+                                </div>
+                            </Box>
 
+                        }
+
+                    </Box>
+
+                </Paper>
+                <CardContent>
+                    <QuestionText question={question}/>
                 </CardContent>
 
                 <Menu
@@ -574,13 +520,19 @@ const QuestionCard = props => {
                     keepMounted
                     open={Boolean(anchorEl)}
                     onClose={handleClose}>
-                    { !id_evaluation ? <MenuItem onClick={duplicateQuestion}>Duplicar</MenuItem> : null }
+                    { !id_evaluation ?
+                        <MenuItem onClick={duplicateQuestion}>
+                            <div className={classesGeneral.itensMenu}>{'Duplicar'}</div>
+                        </MenuItem> : null }
                     {/* exclui de questão de avaliação */}
-                    { id_evaluation ? <MenuItem onClick={onClickOpenDialogQEvaluation}>Excluir da Avaliação</MenuItem> : null }
+                    { id_evaluation ?
+                        <MenuItem onClick={onClickOpenDialogQEvaluation}>
+                            <div  className={classesGeneral.itensMenu}>{'Excluir da Avaliação'}</div>
+                        </MenuItem> : null }
                     {/* exclui de questão */}
                     { !id_evaluation && question.validated == 0
                             && question.fk_user_id == localStorage.getItem("@Questione-id-user")
-                        ? <MenuItem onClick={onClickOpenDialogQuestion}>Excluir</MenuItem> : null }
+                        ? <MenuItem onClick={onClickOpenDialogQuestion}> <div  className={classesGeneral.itensMenu}>{'Excluir'}</div></MenuItem> : null }
                 </Menu>
                 <DialogQuestione handleClose={onClickCloseDialogQEvaluation}
                                  open={openDeleteQuestionEvaluation}
@@ -592,14 +544,26 @@ const QuestionCard = props => {
                                  open={openDeleteQuestion}
                                  onClickAgree={deleteQuestion}
                                  onClickDisagree={onClickCloseDialogQuestion}
-                                 mesage={'Deseja excluir a questão selecionada?'}
-                                 title={'Excluir Questão'}/>
+                                 mesage={
+                                     <div className={classesGeneral.messageDialog}>
+                                        {'Deseja excluir a questão Q'+question.id+'?'}
+                                     </div>}
+                                 title={
+                                    <div className={classesGeneral.titleDialog}>
+                                        {'Excluir Questão'}
+                                    </div>}/>
                 <DialogQuestione handleClose={onClickCloseDialogEnableQuestion}
                                  open={openEnableQuestion}
                                  onClickAgree={handleChangeValidated}
                                  onClickDisagree={onClickCloseDialogEnableQuestion}
-                                 mesage={'Depois de habilitada, a questão não poderá ser deletada e não poderá sofrer mudanças no texto base, enunciado e alternativas. Deseja habilitar?'}
-                                 title={'Habilitar Questão'}/>
+                                 mesage={
+                                     <div className={classesGeneral.messageDialog}>
+                                         {'Depois de habilitada, a questão não poderá ser deletada e não poderá sofrer mudanças no texto base, enunciado e alternativas. Deseja habilitar?'}
+                                     </div>}
+                                 title={
+                                     <div className={classesGeneral.titleDialog}>
+                                         {'Habilitar Questão'}
+                                     </div>}/>
                 {/* Dialog de escolha da avaliação */}
                 <Dialog fullScreen onClose={handleChooseEvaluationExit} aria-labelledby="simple-dialog-title" open={openEvalationChoose}>
                     <AppBar className={classes.appBar}>
@@ -640,6 +604,7 @@ QuestionCard.propTypes = {
     className: PropTypes.string,
     question: PropTypes.object,
     id_evaluation: PropTypes.object,
+    id_course: PropTypes.object,
     evaluations: PropTypes.object,
     history: PropTypes.object,
     setRefresh: PropTypes.func,

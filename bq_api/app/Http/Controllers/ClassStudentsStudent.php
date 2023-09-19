@@ -52,12 +52,18 @@ class ClassStudentsStudent extends Controller
                         $query->where('description', 'like', $request->description ? '%'.$request->description.'%' : null);
                     })
                 ->orderBy('created_at', 'desc')
+                ->with('course')
                 ->with('user')
+                ->with('class_student')
+                ->with('class_student_all')
                 ->paginate(10);
         } else {
             $class = ClassQuestione::whereIn('id', $arr)
                 ->orderBy('created_at', 'desc')
+                ->with('course')
                 ->with('user')
+                ->with('class_student')
+                ->with('class_student_all')
                 ->paginate(10);
         }
 
@@ -107,7 +113,7 @@ class ClassStudentsStudent extends Controller
         $class_students_student = new ClassStudents();
         $class_students_student->fk_user_id = $user->id;
         $class_students_student->fk_class_id = $class_verify->id;
-        $class_students_student->active = 1;
+        $class_students_student->active = 0;
         $class_students_student->save();
 
         //pontuação XP ao entrar em uma sala de aula
@@ -128,6 +134,7 @@ class ClassStudentsStudent extends Controller
         $class = ClassQuestione::where('id', '=', $id)
             ->with('user')
             ->with('course')
+            ->with('class_student_all')
             ->first();
         if(!$class){
             return response()->json([
@@ -199,8 +206,11 @@ class ClassStudentsStudent extends Controller
         $students = array();
         foreach ($class_students as $class_s){
             $student = (object)[
-                'name' => $class_s->user->name,
+                'name' => mb_convert_case($class_s->user->name, MB_CASE_TITLE, 'UTF-8'),
                 'id' => $this->iniciais($class_s->user->name),
+                'email' => $class_s->user->email,
+                'fk_class_id' => $class_s->fk_class_id,
+                'active' => $class_s->active,
             ];
             $students[] = $student;
         }

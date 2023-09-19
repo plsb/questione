@@ -154,7 +154,7 @@ const QuestionKeywords = props => {
                 <Grid
                     container
                     direction="row"
-                    justify="flex-star"
+                    justifyContent="flex-star"
                     alignItems="center"
                 >
                     <Tooltip placement="top" title="Selecione a palavra-chave que deseja adicionar. Caso NÃO encontre nesta listagem, clique no ícone ao lado para adicionar.">
@@ -189,7 +189,7 @@ const QuestionKeywords = props => {
             <Grid
                 container
                 direction="row"
-                justify="flex-star"
+                justifyContent="flex-star"
                 alignItems="flex-start" style={{ marginTop: '20px', paddingLeft: '16px' }}>
                 {keywordsQuestion.length > 0 && (
                     <Typography variant="h5" color="textSecondary" component="p" className={classes.textButtonLarge}>

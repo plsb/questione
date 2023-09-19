@@ -75,6 +75,7 @@ class ResultEvaluationStudent extends Controller
 
         $application_evaluation = EvaluationApplication::where('id', $head_answer->fk_application_evaluation_id)
             ->with('evaluation')
+            ->with('class')
             ->first();
         if($application_evaluation->show_results == 0){
             return response()->json([

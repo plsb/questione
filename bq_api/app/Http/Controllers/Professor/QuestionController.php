@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Professor;
 
 use App\Course;
 use App\CourseProfessor;
+use App\Http\Controllers\Util\DepthFirstSearch;
 use App\KeywordQuestion;
 use App\KnowledgeObject;
 use App\Providers\KnowledgeObjectRelated;
@@ -11,6 +12,7 @@ use App\Question;
 use App\QuestionHasKnowledgeObject;
 use App\QuestionItem;
 use App\RankQuestion;
+use App\Regulation;
 use App\Skill;
 use App\TypeOfEvaluation;
 use Illuminate\Http\Request;
@@ -38,8 +40,11 @@ class QuestionController extends Controller
 
     ];
 
+
     public function index(Request $request)
     {
+
+
         //retorna todas as questões do usuário ativo
         $user = auth('api')->user();
 
@@ -55,10 +60,12 @@ class QuestionController extends Controller
         $object = $request->fk_object_id;
         $skill = $request->fk_skill_id;
         $keyword = $request->keyword;
-        $questions = Question::when($opcao == "S", function ($query, $opcao) {
+
+        $questions = Question::when($opcao == "S", function ($query) {
                 //pega todas as questões do usuário logado
                 $user = auth('api')->user();
-                return $query->where('fk_user_id', '=', $user->id);
+                return $query->where('fk_user_id', '=', $user->id)
+                    ->where('validated', '=', 1);
             })
             ->when($id, function ($query, $id) {
                 //pega questões validadas de todos os usuário
@@ -68,12 +75,18 @@ class QuestionController extends Controller
                 //pega questões validadas de todos os usuário
                 return $query->where('validated', '=', 1);
             })
-            /*->when($course > 0, function ($query) use ($course){
+            ->when($opcao == "N", function ($query) {
+                //pega todas as questões do usuário logado
+                $user = auth('api')->user();
+                return $query->where('fk_user_id', '=', $user->id)
+                    ->where('validated', '=', 0);
+            })
+            ->when($course > 0 && !$object, function ($query) use ($course){
                 //pega questão de um curso específicp
                 //dd($course);
                 return $query->where('fk_course_id', '=', $course);
 
-            })*/
+            })
             ->when($skill > 0, function ($query) use ($skill){
                 //pega questão de um curso específicp
                 //dd($course);
@@ -92,7 +105,7 @@ class QuestionController extends Controller
                 return $query->whereIn('id', $arr);
 
             })
-            ->when(($opcao != "S") && ($course == 0 || $course == null), function ($query) {
+            ->when(($opcao == "T") && ($course == 0 || $course == null), function ($query) {
                 //pega questões de todos os cursos que o usuário tem permissão
                 $user = auth('api')->user();
                 $courses_user = CourseProfessor::where('fk_user_id', $user->id)
@@ -106,47 +119,17 @@ class QuestionController extends Controller
                         ->where('validated', 1);
             })
             ->when($object > 0, function ($query) use ($object) {
-                //pega questões de todos os cursos
+                $obj_relate = KnowledgeObjectRelated::select('fk_obj1_id', 'fk_obj2_id')->get();
 
-                $objects_array = array();
-                $objects_array[] = $object;
-                $objects_array_previous = array();
-                $continue = 0;
+                // Encontre todos os itens relacionados a partir do valor inicial
+                $dfs = new DepthFirstSearch();
+                $itens_relacionados = $dfs->encontrarItensRelacionados($object, $obj_relate);
 
-                for(;$continue == 0;){
-                    $obj_relate = KnowledgeObjectRelated::where('fk_obj1_id', $object)
-                        ->orWhere('fk_obj2_id', $object)
-                        ->whereNotIn('fk_obj1_id', $objects_array_previous)
-                        ->whereNotIn('fk_obj2_id', $objects_array_previous)->get();
+                $question_knowledge_objects = QuestionHasKnowledgeObject::whereIn('fk_knowledge_object', $itens_relacionados)
+                    ->select('fk_question_id')->get();
 
-                    foreach ($obj_relate as $item){
+                return $query->whereIn('id', $question_knowledge_objects);
 
-                        if(in_array($item->fk_obj1_id, $objects_array) && in_array($item->fk_obj2_id, $objects_array) ){
-
-                            $continue = 1;
-                            continue ;
-                        }
-
-                        $id_item_search = $item->fk_obj1_id == $object ? $item->fk_obj2_id : $item->fk_obj1_id;
-                        $obj_item = KnowledgeObject::where('id', $id_item_search)->first();
-                        $objects_array[] = $obj_item->id;
-                        //$objects_array[] = $item;
-
-                        $objects_array_previous[] = $object;
-                        $object = $id_item_search;
-
-                    }
-
-                }
-
-                $questions_objects = QuestionHasKnowledgeObject::whereIn('fk_knowledge_object', $objects_array)
-                    ->get();
-                $arr = array();
-                foreach ($questions_objects as $object){
-                    //dd($enaq);
-                    $arr[] = $object->fk_question_id;
-                }
-                return $query->whereIn('id', $arr);
             })
             ->orderBy('id', 'desc')
             ->withCount('rank')
@@ -161,6 +144,7 @@ class QuestionController extends Controller
             ->with('user')
             ->with('questionItems')
             ->with('typeOfEvaluation')
+            ->with('regulation')
             ->paginate(8);
 
         return response()->json($questions, 200);
@@ -178,26 +162,12 @@ class QuestionController extends Controller
             return response($json_str, 202);
         }
 
-        if($request->fk_course_id){
-            $course = Course::find($request->fk_course_id);
-            if(!$course){
-                return response()->json([
-                    'message' => 'Curso não encontrado.'
-                ], 202);
-            }
-        }
-
         //verifica competência
         if($request->fk_skill_id){
             $skill = Skill::find($request->fk_skill_id);
             if(!$skill){
                 return response()->json([
                     'message' => 'Competência não encontrada.'
-                ], 202);
-            }
-            if($skill->fk_course_id != $course->id){
-                return response()->json([
-                    'message' => 'Operação não permitida. A Competência não pertence ao curso informado.'
                 ], 202);
             }
         }
@@ -213,6 +183,17 @@ class QuestionController extends Controller
             }
         }
 
+        $regulation = null;
+        if($request->fk_regulation_id){
+            $regulation = Regulation::find($request->fk_regulation_id);
+
+            if(!$regulation){
+                return response()->json([
+                    'message' => 'Regulamentação não encontrado.'
+                ], 202);
+            }
+        }
+
         $user = auth('api')->user();
 
         $question = new Question();
@@ -222,12 +203,18 @@ class QuestionController extends Controller
         $question->reference = $request->reference;
         $question->fk_skill_id = $request->fk_skill_id;
         $question->fk_user_id = $user->id;
-        $question->fk_course_id = $request->fk_course_id;
         $question->fk_type_of_evaluation_id = $request->fk_type_of_evaluation_id;
         if($request->year){
             $question->year = $request->year;
         } else {
             $question->year = date("Y");
+        }
+        if($regulation) {
+            $question->fk_regulation_id = $regulation->id;
+            $question->fk_course_id = $regulation->fk_course_id;
+        }
+        if($request->initial_difficulty){
+            $question->initial_difficulty = $request->initial_difficulty;
         }
         $question->save();
 
@@ -246,6 +233,7 @@ class QuestionController extends Controller
             ->with('user')
             ->with('questionItems')
             ->with('typeOfEvaluation')
+            ->with('regulation')
             ->get();
 
         $this->verifyRecord($question);
@@ -274,21 +262,12 @@ class QuestionController extends Controller
             ], 202);
         }
 
-        if($question->validated == 1){
+        /*if($question->validated == 1){
             //falta colocar validacao se a questão já tiver sido aplicada em uma avaliacao
             return response()->json([
                 'message' => 'A questão não pode ser editada.'
             ], 202);
-        }
-
-        if($request->fk_course_id){
-            $course = Course::find($request->fk_course_id);
-            if(!$course){
-                return response()->json([
-                    'message' => 'Curso não encontrado.'
-                ], 202);
-            }
-        }
+        }*/
 
         //verifica competência
         if($request->fk_skill_id){
@@ -296,11 +275,6 @@ class QuestionController extends Controller
             if(!$skill){
                 return response()->json([
                     'message' => 'Competência não encontrada.'
-                ], 202);
-            }
-            if($skill->fk_course_id != $course->id){
-                return response()->json([
-                    'message' => 'Operação não permitida. A Competência não pertence ao curso informado.'
                 ], 202);
             }
         }
@@ -314,20 +288,38 @@ class QuestionController extends Controller
             }
         }
 
+        $regulation = null;
+        if($request->fk_regulation_id){
+            $regulation = Regulation::find($request->fk_regulation_id);
+
+            if(!$regulation){
+                return response()->json([
+                    'message' => 'Regulamentação não encontrado.'
+                ], 202);
+            }
+        }
+
         $this->verifyRecord($question);
 
-        $question->base_text = $request->base_text;
-        $question->stem = $request->stem;
+        if($question->validated == 0) {
+            $question->base_text = $request->base_text;
+            $question->stem = $request->stem;
+        }
         $question->reference = $request->reference;
         if($request->fk_skill_id) {
             $question->fk_skill_id = $request->fk_skill_id;
         }
-        $question->fk_user_id = $user->id;
-        if($request->fk_course_id){
-            $question->fk_course_id = $request->fk_course_id;
+        if($regulation) {
+            $question->fk_regulation_id = $regulation->id;
+            $question->fk_course_id = $regulation->fk_course_id;
         }
+        $question->fk_user_id = $user->id;
         if($request->fk_type_of_evaluation_id){
             $question->fk_type_of_evaluation_id = $request->fk_type_of_evaluation_id;
+        }
+        error_log($request->difficulty);
+        if($request->initial_difficulty){
+            $question->initial_difficulty = $request->initial_difficulty;
         }
         $question->year = $request->year;
         $question->save();
@@ -344,7 +336,7 @@ class QuestionController extends Controller
     {
         $validation = Validator::make($request->all(),$this->rules, $this->messages);
 
-        if(!$request->fk_course_id){
+        if(!$request->fk_regulation_id){
             return response()->json([
                 'message' => 'Informe o Curso.'
             ], 202);
@@ -359,10 +351,10 @@ class QuestionController extends Controller
             ], 202);
         }
 
-        $course = Course::find($request->fk_course_id);
-        if(!$course){
+        $regulation = Regulation::find($request->fk_regulation_id);
+        if(!$regulation){
             return response()->json([
-                'message' => 'Curso não encontrado.'
+                'message' => 'Regulamentação não encontrada.'
             ], 202);
         }
 
@@ -374,16 +366,12 @@ class QuestionController extends Controller
                     'message' => 'Competência não encontrada.'
                 ], 202);
             }
-            if($skill->fk_course_id != $course->id){
-                return response()->json([
-                    'message' => 'Operação não permitida. A Competência não pertence ao curso informado.'
-                ], 202);
-            }
         }
 
         $this->verifyRecord($question);
         $question->fk_skill_id = $request->fk_skill_id;
-        $question->fk_course_id = $request->fk_course_id;
+        $question->fk_regulation_id = $regulation->id;
+        $question->fk_course_id = $regulation->fk_course_id;
         $question->save();
 
 

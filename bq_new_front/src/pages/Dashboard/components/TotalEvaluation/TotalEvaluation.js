@@ -28,6 +28,18 @@ const useStyles = makeStyles(theme => ({
   icon: {
     height: 32,
     width: 32
+  },
+  difference: {
+    marginTop: theme.spacing(2),
+    display: 'flex',
+    alignItems: 'center'
+  },
+  differenceIcon: {
+    color: theme.palette.success.dark
+  },
+  differenceValue: {
+    color: theme.palette.white,
+    marginRight: theme.spacing(1)
   }
 }));
 
@@ -60,7 +72,7 @@ const TotalEvaluation = props => {
       <CardContent>
         <Grid
           container
-          justify="space-between">
+          justifyContent="space-between">
           <Grid item>
             <Typography
               className={classes.title}
@@ -71,7 +83,7 @@ const TotalEvaluation = props => {
             </Typography>
             <Typography
               color="inherit"
-              variant="h3">
+              variant="h3" style={{margin: '8px'}}>
               {total}
             </Typography>
           </Grid>
@@ -81,6 +93,13 @@ const TotalEvaluation = props => {
             </Avatar>
           </Grid>
         </Grid>
+        <div className={classes.difference}>
+          <Typography
+              className={classes.differenceValue}
+              variant="body2">
+            Total de avaliações realizadas.
+          </Typography>
+        </div>
       </CardContent>
     </Card>
   );

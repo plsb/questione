@@ -95,7 +95,7 @@ const StartEvaluationCard = props => {
           <div className={classes.codeContainer}>
               <Grid container
                     spacing={1}
-                    justify="center"
+                    justifyContent="center"
                     className={classes.gridInputCodeContainer}>
                 <Grid item>
                   <Tooltip TransitionComponent={Zoom} placement="top"
@@ -115,7 +115,7 @@ const StartEvaluationCard = props => {
               </Grid>
             <Grid container
                   spacing={1}
-                  justify="center">
+                  justifyContent="center">
               <button
                   type="button"
                   className={classes.buttonCode}
@@ -128,7 +128,7 @@ const StartEvaluationCard = props => {
       <CardActions>
         <Grid
           container
-          justify="space-between">
+          justifyContent="space-between">
           <Grid
             className={classes.statsItem}
             item>

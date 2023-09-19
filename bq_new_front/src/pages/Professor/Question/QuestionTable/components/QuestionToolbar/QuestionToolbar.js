@@ -10,41 +10,22 @@ import {
   FormControl,
   RadioGroup,
   FormControlLabel,
-  Radio, Card, CardContent, Box
+  Radio, Card, CardContent, Box, Tooltip, Divider
 } from '@material-ui/core';
 import {withRouter} from "react-router-dom";
 import api from "../../../../../../services/api";
+import useStyles from "../../../../../../style/style";
 
-const useStyles = makeStyles(theme => ({
-  root: {},
-  row: {
-    display: 'flex',
-    alignItems: 'flex-start',
-  },
-  spacer: {
-    flexGrow: 1
-  },
-  importButton: {
-    marginRight: theme.spacing(1)
-  },
-  exportButton: {
-    marginRight: theme.spacing(1)
-  },
-  searchInput: {
-    marginRight: theme.spacing(1)
-  },
-  title: {
-    fontWeight: 'bold',
-    paddingTop: '16px',
+const useStylesLocal = makeStyles(theme => ({
+  root: {
   },
   textField: {
     marginLeft: theme.spacing(1),
   },
   subtitle: {
-    paddingTop: '16px',
-    paddingBottom: '16px',
-    fontSize: '13px',
-  }
+    padding: '16px',
+    fontSize: '15px',
+  },
 }));
 
 const QuestionToolbar = props => {
@@ -63,7 +44,8 @@ const QuestionToolbar = props => {
    */
   const [valueSelect, setValueSelect] = React.useState('S');
 
-  const classes = useStyles();
+  const classes = useStylesLocal();
+  const classesGeneral = useStyles();
 
 
   const onClickNewCourse = e => {
@@ -75,6 +57,14 @@ const QuestionToolbar = props => {
     searchText[1] = {"fk_course_id" : e.target.value};
     searchText[2] = {"fk_object_id" : 0};
     searchText[3] = {"fk_skill_id" : 0};
+  }
+
+  const onClean = () =>{
+    setCourseSelect(0);
+    searchText[1] = {"fk_course_id" : 0};
+    searchText[2] = {"fk_object_id" : 0};
+    searchText[3] = {"fk_skill_id" : 0};
+    onClickCleanSearch();
   }
 
   const onChangeObject = (e) =>{
@@ -196,27 +186,17 @@ const QuestionToolbar = props => {
       <div
           {...rest}
           className={clsx(classes.root, className)}>
-        <div className={classes.row}>
+        <div className={classesGeneral.row}>
           <div style={{ flex: 1 }}>
-            <Typography variant="h3" className={classes.title}>{'Questões'}</Typography>
-            <span className={classes.spacer} />
 
-            <div className={classes.subtitle}>
+            {/*<div className={classes.subtitle}>
               Para mais informações sobre o módulo questões,&nbsp;
               <a href="https://docs.google.com/document/d/1JzpLbCMDaOQbGubzB6l1KDBaPjGro10-x2OHxdFLtqU/edit?usp=sharing"
                   target="_blank"
                   rel="noopener noreferrer">
                 clique aqui
               </a>.
-            </div>
-          </div>
-          <div style={{ paddingTop: '16px' }}>
-            <Button
-                color="primary"
-                variant="contained"
-                onClick={onClickNewCourse}>
-              Nova Questão
-            </Button>
+            </div>*/}
           </div>
         </div>
         <Card className={classes.root}>
@@ -236,7 +216,21 @@ const QuestionToolbar = props => {
           </CardContent>*/}
 
           <CardContent>
-            <Box display="flex" justifyContent="flex-start">
+            <Box display="flex">
+              <Box display="flex" justifyContent="flex-start">
+                <div className={classesGeneral.titleList}>{'Questões'}</div>
+              </Box>
+              <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-end">
+                <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={onClickNewCourse}
+                    className={classesGeneral.buttons}>
+                  Nova Questão
+                </Button>
+              </Box>
+            </Box>
+            <Box display="flex" justifyContent="flex-start" style={{marginTop: '25px'}}>
               {/* <TextField
                   label="Código"
                   helperText="Código da Questão"
@@ -319,33 +313,37 @@ const QuestionToolbar = props => {
                   renderInput={(params) => <TextField {...params} label="Palavra-chave" variant="outlined" />}
               />
             </div>*/}
-            <div >
 
               <Box display="flex" justifyContent="flex-start">
                   <FormControl component="fieldset">
-                    <RadioGroup row={true} aria-label="gender" name="gender1" value={searchText[0] ? searchText[0].value : 'S'} onChange={handleChangeSelect}>
-                      <FormControlLabel value="S" control={<Radio />} label="Suas questões" />
-                      <FormControlLabel value="T" control={<Radio />} label="Todas as questões" />
+                    <RadioGroup row={true} aria-label="opcao" name="opcao" value={searchText[0] ? searchText[0].value : 'T'} onChange={handleChangeSelect}>
+                      <Tooltip title="Apresenta apenas as questões do usuário ativo que não foram finalizadas.">
+                        <FormControlLabel value="N" control={<Radio />} label="Não finalizadas" />
+                      </Tooltip>
+                      <Tooltip title="Apresenta apenas as questões do usuário ativo que estão habilitadas.">
+                        <FormControlLabel value="S" control={<Radio />} label="Suas questões" />
+                      </Tooltip>
+                      <Tooltip title="Apresenta as questões de todos os usuários que estejam habilitadas.">
+                        <FormControlLabel value="T" control={<Radio />} label="Todas as questões" />
+                      </Tooltip>
                     </RadioGroup>
                   </FormControl>
               </Box>
 
               <Box display="flex" justifyContent="flex-start">
 
-                  <Button variant="contained" color="primary" onClick={onClickSearch}>
-                    Pesquisar
+                  <Button variant="contained" color="primary" className={classesGeneral.buttons} onClick={onClickSearch}>
+                    Filtrar questões
                   </Button>
                 <div style={{marginLeft: '10px'}}>
-                  <Button variant="contained" onClick={onClickCleanSearch}>
+                  <Button variant="contained"className={classesGeneral.buttons} onClick={onClean}>
                     Limpar Filtro
                   </Button>
                 </div>
               </Box>
-            </div>
 
           </CardContent>
         </Card>
-
     </div>
   );
 };

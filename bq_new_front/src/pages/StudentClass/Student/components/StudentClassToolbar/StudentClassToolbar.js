@@ -4,61 +4,81 @@ import { withRouter } from "react-router-dom";
 import clsx from 'clsx';
 import FindInPage from '@material-ui/icons/SearchSharp';
 
-import { Button, MenuItem, TextField, Typography } from '@material-ui/core';
+import {Box, Breadcrumbs, Button, Card, CardContent, Link, MenuItem, TextField, Typography} from '@material-ui/core';
+import {makeStyles} from "@material-ui/styles";
+import useStyles from "../../../../../style/style";
+import {CharmHome} from "../../../StudentClassContent/StudentClassContent";
 
 
-import useStyles from './styles';
+const useStylesLocal = makeStyles(theme => ({
+
+}));
 
 const StudentClassToolbar = props => {
   const { className, onClickSearch, onChangeSearch, searchText, handleStatusCallback, tabValue, history, setShowRegisterDialog, ...rest } = props;
 
-  const classes = useStyles();
+  const classes = useStylesLocal();
+  const classesGeneral = useStyles();
 
   return (
     <div
       {...rest}
-      className={clsx(classes.root, className)}
-    >
-      <div className={classes.row}>
-        <div style={{ flex: 1 }}>
-          <Typography variant="h3" className={classes.title}>{'Minhas turmas'}</Typography>
-          <span className={classes.spacer} />
-        </div>
-        <div style={{ padding: '16px' }}>
-          <Button
-            aria-controls="simple-menu"
-            aria-haspopup="true"
-            color="primary"
-            variant="contained"
-            onClick={() => {
-              setShowRegisterDialog(true);
-            }}
-            style={{ marginRight: '12px' }}
-          >
-            Participar de uma turma
-          </Button>
-        </div>
-      </div>
-      <div className={classes.row}>
-        <div className={classes.filters}>
-          <TextField
-            label="Buscar"
-            helperText="Buscar por descrição"
-            margin="dense"
-            onChange={onChangeSearch}
-            value={searchText}
-            style={{ width: '300px', marginLeft: '16px' }}
-            variant="outlined"
-          />
+      className={clsx(classesGeneral.root, className)}>
+      <Box display="flex">
+        <Breadcrumbs aria-label="breadcrumb">
+          <Link color="inherit" href="/">
+            <Box display="flex">
+              <Box style={{marginTop: '2px', marginRight: '5px'}}>
+                <CharmHome/>
+              </Box>
+              <Box>
+                Inicio
+              </Box>
+            </Box>
+          </Link>
+          <Link color="inherit" onClick={null}>
+            Minhas turmas
+          </Link>
+        </Breadcrumbs>
+      </Box>
+      <Card>
+        <CardContent>
+          <Box display="flex">
+            <Box display="flex" justifyContent="flex-start">
+              <div className={classesGeneral.titleList}>{'Minhas turmas'}</div>
+            </Box>
+            <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-end">
+              <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={() => {
+                    setShowRegisterDialog(true);
+                  }}
+                  className={classesGeneral.buttons}>
+                Participar de uma turma
+              </Button>
+            </Box>
+          </Box>
 
-          <Button
-            onClick={onClickSearch}
-            className={classes.searchButton}
-          >
-            <FindInPage fontSize="large" />
-          </Button>
-        </div>
-      </div>
+          <Box display="flex" justifyContent="flex-start" style={{marginTop: '25px'}}>
+            <TextField
+                label="Buscar"
+                helperText="Buscar por descrição da turma"
+                margin="dense"
+                onChange={onChangeSearch}
+                value={searchText}
+                style={{ width: '400px' }}
+                variant="outlined"
+            />
+          </Box>
+          <Box display="flex" justifyContent="flex-start">
+
+            <Button variant="contained" color="primary" onClick={onClickSearch} className={classesGeneral.buttons}>
+              Filtrar turmas
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
     </div>
   );
 };

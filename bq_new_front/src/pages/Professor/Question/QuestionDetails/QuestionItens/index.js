@@ -4,7 +4,7 @@ import {
     Button,
     Switch,
     FormControlLabel,
-    Tooltip, Grid
+    Tooltip, Grid, Divider
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
@@ -13,8 +13,9 @@ import { Editor } from "@tinymce/tinymce-react";
 import api from "../../../../../services/api";
 import Save from "@material-ui/icons/Save";
 import { toast } from 'react-toastify';
+import useStyles from "../../../../../style/style";
 
-const useStyles = makeStyles({
+const useStylesLocal = makeStyles({
     root: {
         flexGrow: 1,
     },
@@ -32,7 +33,7 @@ const useStyles = makeStyles({
 
 
 const QuestionItens = props => {
-    const { className, history, idQuestion, imageUploadHandler, ...rest } = props;
+    const { className, history, idQuestion, imageUploadHandler, question_validated, tabValueChange, ...rest } = props;
     const [inputItens, setInputItens] = useState([
         { idItem: 0, description: '', correct: 0 },
         { idItem: 0, description: '', correct: 0 }
@@ -43,7 +44,8 @@ const QuestionItens = props => {
     const timer = React.useRef();
 
 
-    const classes = useStyles();
+    const classes = useStylesLocal();
+    const classesGeneral = useStyles();
 
     useEffect(() => {
         const length = inputItens.length;
@@ -86,6 +88,12 @@ const QuestionItens = props => {
     useEffect(() => {
         loadItens()
     }, []);
+
+    useEffect(() => {
+        if(question_validated == 0){
+            verifyToSave();
+        }
+    }, [tabValueChange]);
 
     const handleAddItem = () => {
         const values = [...inputItens];
@@ -159,17 +167,15 @@ const QuestionItens = props => {
 
                 if (id === 0) {
                     response = await api.post('questionitem', data);
-                    acao = "cadastradas";
+                    acao = "cadastrada";
                 } else {
                     response = await api.put('questionitem/' + id, data);
-                    acao = "atualizadas";
+                    acao = "atualizada";
                 }
-
                 if (response.status == 200 || response.status == 201) {
-                    toast.success('Alternativas da questão ' + acao + '.');
                     inputItens[i].idItem = response.data.id;
+                    toast.success('Alternativa da questão ' + acao + '.');
                 } else {
-
                     toast.error( 'Erro ao inserir alternativa.');
                 }
             }
@@ -179,9 +185,10 @@ const QuestionItens = props => {
         }
     }
 
-    const onClickItens = () => {
+    const verifyToSave = () => {
         let correct = false;
         let text = true;
+
         inputItens.forEach(function logArrayElements(element, index, array) {
             if (inputItens[index].description === '') {
                 text = false;
@@ -192,19 +199,24 @@ const QuestionItens = props => {
         });
         //verifica se faltou alguma descrição
         if (text === false) {
-            toast.error( 'Informe a descrição de todas as alternativas');
-            return;
+            return 'Informe a descrição de todas as alternativas';;
         }
         //verifica se marcou algum item como correto
         if (correct === false) {
-            toast.error('Informe a alternativa correta');
-            return;
+            return 'Informe a alternativa correta';
         }
         itemDelete.forEach(function logArrayElements(element, index, array) {
             deleteItem(element);
         });
 
         saveItem(inputItens, 0);
+        return true;
+    }
+
+    const onClickItens = () => {
+        let messageSaveItens = verifyToSave();
+        if(messageSaveItens != true)
+            toast.error(messageSaveItens);
 
     }
 
@@ -220,15 +232,40 @@ const QuestionItens = props => {
 
     return (
         <div>
+            {question_validated == 1 && <font style={{ padding: "15px" }} color="#FF0000">As alternativas não podem ser editadas (a questão foi habilitada).</font>}
+            <div style={{ margin: "20px 0px", paddingLeft: '15px'}} >
+                <Grid
+                    container
+                    direction="row"
+                    justifyContent="flex-start"
+                    alignItems="flex-start">
+                    <Tooltip title="A questão deverá ter no mínimo 02 e no máximo 05 alternativas, sendo apenas UMA correta.">
+                        {btAddItem == true ?
+                            <Button color="primary" size="small" disabled={question_validated == 1} onClick={handleAddItem}>Adicionar Alternativa</Button> :
+                            <Button color="primary" size="small" disabled>Adicionar Alternativa</Button>
+                        }
+                    </Tooltip>
+                    {/* <Tooltip title="A questão deverá ter no mínimo 02 e no máximo 05 alternativas, sendo apenas UMA correta.">
+                       {btRemoveItem == true ?
+                           <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined"  onClick={handleRemoveItem}>Remover Alternativa</Button> :
+                           <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined"  disabled>Remover Alternativa</Button>
+                       }
+                   </Tooltip> */}
+                </Grid>
+            </div>
             {inputItens.map((inputField, index) => (
-                <div style={{ padding: "30px" }}>
+                <div style={{ padding: "15px" }}>
                     <div className={classes.btnRemoveWrapper}>
-                        <b className="item1">Alternativa de resposta {index + 1} *:</b>
+                        <b className={classesGeneral.paperTitleTextBold}>Alternativa de resposta {index + 1} *:</b>
                         {(index > 1 && inputItens.length === index + 1) && (
-                            <Button style={{ marginLeft: "10px" }} className={clsx(classes.btRemove, className)} variant="outlined" onClick={handleRemoveItem}>Remover</Button>
+                            <Button style={{ marginLeft: "10px" }}
+                                    className={clsx(classes.btRemove, className)}
+                                    disabled={question_validated == 1}
+                                    size="small" onClick={handleRemoveItem}>Remover alternativa</Button>
                         )}
                     </div>
                     <Editor
+                        disabled={question_validated == 1}
                         key={"item" + index}
                         apiKey="ndvo85oqtt9mclsdb6g3jc5inqot9gxupxd0scnyypzakm18"
                         init={{
@@ -250,6 +287,8 @@ const QuestionItens = props => {
                         value={inputItens[index].description}
                         onEditorChange={(e) => handleChangeItem(e, index)} />
                     <FormControlLabel
+                        disabled={question_validated == 1}
+                        className={classesGeneral.paperTitleText}
                         control={
                             <Tooltip title="Se marcado, indica que o item está correto">
                                 <Switch
@@ -267,39 +306,23 @@ const QuestionItens = props => {
 
                 </div>
             ))}
-            <div style={{ margin: "20px 0px", paddingLeft: '30px' }}>
-                <Grid
-                    container
-                    direction="row"
-                    justify="flex-start"
-                    alignItems="flex-start">
-                    <Tooltip title="A questão deverá ter no mínimo 02 e no máximo 05 alternativas, sendo apenas UMA correta.">
-                        {btAddItem == true ?
-                            <Button color="primary" variant="outlined" onClick={handleAddItem}>Adicionar Alternativa</Button> :
-                            <Button color="primary" variant="outlined" disabled>Adicionar Alternativa</Button>
-                        }
-                    </Tooltip>
-                    {/* <Tooltip title="A questão deverá ter no mínimo 02 e no máximo 05 alternativas, sendo apenas UMA correta.">
-                       {btRemoveItem == true ?
-                           <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined"  onClick={handleRemoveItem}>Remover Alternativa</Button> :
-                           <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined"  disabled>Remover Alternativa</Button>
-                       }
-                   </Tooltip> */}
-                </Grid>
+            <div style={{ marginTop: '16px' }}>
+                <Divider /><br />
             </div>
             <Grid
                 container
                 direction="row"
-                justify="center"
-                alignItems="center">
+                justifyContent="center"
+                alignItems="center" style={{padding: "15px"}}>
                 <Button
-                    variant="contained"
+                    disabled={question_validated == 1}
                     color="primary"
+                    variant="outlined"
                     className={classes.button}
-                    endIcon={<Save />}
                     onClick={onClickItens}>
-                    Salvar
-               </Button>
+                    Salvar alternativas
+                </Button>
+
             </Grid>
         </div>
 
@@ -309,6 +332,7 @@ const QuestionItens = props => {
 QuestionItens.propTypes = {
     className: PropTypes.string,
     idQuestion: PropTypes.number,
+    question_validated: PropTypes.number,
     indexTab: PropTypes.number,
 };
 

@@ -75,7 +75,7 @@ const RequestUserDetails = props => {
             document.body.appendChild(link);
             link.click();
           })
-          .catch((error) => console.log(error));
+          .catch();
     } catch (error) {
 
     }

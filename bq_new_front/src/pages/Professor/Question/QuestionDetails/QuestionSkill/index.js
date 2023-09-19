@@ -4,7 +4,7 @@ import { uniqueId } from 'lodash';
 import {
     MenuItem,
     TextField,
-    Button, Grid, Tooltip
+    Button, Grid, Tooltip, Divider
 } from "@material-ui/core";
 import api from "../../../../../services/api";
 import PropTypes from "prop-types";
@@ -24,7 +24,7 @@ const useStyles = makeStyles({
 });
 
 const QuestionSkill = props => {
-    const { className, idQuestion, history, ...rest } = props;
+    const { className, idQuestion, history, tabValueChange, ...rest } = props;
     const [courses, setCourses] = useState([{ 'id': '0', 'description': 'Todas as áreas' }]);
     const [objects, setObjects] = useState([{ 'id': '0', 'description': 'Todos os conteúdos' }]);
     const [skills, setSkills] = useState([{ 'id': '0', 'description': 'Todas as competências' }]);
@@ -56,13 +56,6 @@ const QuestionSkill = props => {
         try {
             const response = await api.get('all/courses-user');
             setCourses([{ 'id': '0', 'description': 'Todos as áreas' }, ...response.data]);
-
-            if (question.fk_course_id != null) {
-                setCourseSelect(question.fk_course_id);
-            } else {
-                setCourseSelect(0);
-            }
-
         } catch (error) {
 
         }
@@ -77,8 +70,9 @@ const QuestionSkill = props => {
             if (response.status === 200) {
                 const values = [];
                 if (response.data.length > 0) {
+
                     response.data.forEach(function logArrayElements(element, index, array) {
-                        if (element.object.fk_course_id == courseSelect) {
+                        if (element.object.fk_regulation_id == courseSelect) {
                             values.push({
                                 idItem: response.data[index].id,
                                 objectSelected: response.data[index].fk_knowledge_object,
@@ -88,6 +82,7 @@ const QuestionSkill = props => {
                         }
 
                     });
+
 
                     if (values[0]) {
                         setInputObjects(values);
@@ -107,7 +102,7 @@ const QuestionSkill = props => {
         try {
             setObjectLoading(true);
 
-            const response = await api.get('all/objects?fk_course_id=' + courseSelect);
+            const response = await api.get('all/objects-by-regulation?fk_regulation_id=' + courseSelect);
             setObjects([{ 'id': '0', 'description': 'Todos os objetos' }, ...response.data]);
             //setObjectSelect(0);
             loadObjectsSelectQuestion();
@@ -119,7 +114,7 @@ const QuestionSkill = props => {
 
     async function loadSkills() {
         try {
-            const response = await api.get('all/skills?fk_course_id=' + courseSelect);
+            const response = await api.get('all/skills-by-regulation?fk_regulation_id=' + courseSelect);
             if (response.status == 200) {
                 setSkills([{ 'id': '0', 'description': 'Todas as competências' }, ...response.data]);
                 setSkillSelect(0);
@@ -166,13 +161,21 @@ const QuestionSkill = props => {
 
     useEffect(() => {
         loadCourses();
-        if (question.fk_course_id != null) {
-            setCourseSelect(question.fk_course_id);
-        } else {
-            setCourseSelect(0);
-        }
 
     }, [question]);
+
+    useEffect(() => {
+        verifyToSave();
+    }, [tabValueChange]);
+
+    /*useEffect(() => {
+
+        return () => {
+
+            onClickSkill();
+        }
+
+    }, []);*/
 
     useEffect(() => {
         loadSkills();
@@ -182,6 +185,32 @@ const QuestionSkill = props => {
     useEffect(() => {
 
     }, [inputObjects]);
+
+    useEffect(() => {
+        if(question.fk_regulation_id != null){
+            setCourseSelect(question.fk_regulation_id);
+        } else if (question.skill != null) {
+            setCourseSelect(question.skill.fk_regulation_id);
+        } else if(question.fk_course_id) {
+            let id_regulation = 0;
+            courses.forEach(
+                function (element) {
+                    if(element.id == question.fk_course_id) {
+
+                        if (element.regulations) {
+                            id_regulation = element.regulations[0].id;
+                            return false;
+                        }
+                    }
+
+                }
+            );
+            setCourseSelect(id_regulation);
+        } else{
+            setCourseSelect(0);
+        }
+
+    }, [courses]);
 
     /*const onChangeObject = (e) =>{
         setObjectSelect(e.target.value);
@@ -231,17 +260,17 @@ const QuestionSkill = props => {
 
     async function saveSkill() {
         try {
-            const fk_course_id = courseSelect;
+            const fk_regulation_id = courseSelect;
             let fk_skill_id = skillSelect;
             if (skillSelect == 0) {
                 fk_skill_id = null;
             }
             const data = {
-                fk_course_id, fk_skill_id
+                fk_regulation_id, fk_skill_id
             }
             const response = await api.put('question/update-course-skill/' + idQuestion, data);
             if (response.status === 200) {
-                toast.success('Questão atualizada.');
+                toast.success('Área de conhecimento atualizada.');
             }
         } catch (error) {
 
@@ -253,7 +282,7 @@ const QuestionSkill = props => {
             setObjectLoading(true);
             const response = await api.delete('question/deleteobject/' + idObject);
             if (response.status === 200 || response.status === 201) {
-                // console.log('Sucesso');
+
             }
             setObjectLoading(false);
         } catch (error) {
@@ -281,7 +310,7 @@ const QuestionSkill = props => {
             if (response.status === 200) {
                 inputObjects[index].idItem = response.data[0].id;
                 setInputObjects(inputObjects);
-                toast.success( 'Objetos de conhecimento atualizados.');
+                //toast.success( 'Objetos de conhecimento atualizados.');
             }
 
             setObjectLoading(false);
@@ -290,10 +319,9 @@ const QuestionSkill = props => {
         }
     }
 
-    const onClickSkill = () => {
+    const verifyToSave = () => {
         if (courseSelect == 0) {
-            toast.error('Informe a área.');
-            return;
+            return 'Informe a área.';
         } else {
             saveSkill();
             objectsDelete.forEach(function logArrayElements(element, index, array) {
@@ -321,7 +349,16 @@ const QuestionSkill = props => {
                     }
                 });
             }
+            return true;
         }
+
+    }
+
+    const onClickSkill = () => {
+        let messageSaveItens = verifyToSave();
+        if(messageSaveItens != true)
+            toast.error(messageSaveItens);
+
     }
 
     const handleChangeCourse = (event) => {
@@ -330,7 +367,7 @@ const QuestionSkill = props => {
 
     return (
         <div>
-            <div style={{ marginTop: "10px" }}>
+            <div style={{ padding: "15px" }}>
                 <TextField
                     key="area"
                     select
@@ -341,14 +378,24 @@ const QuestionSkill = props => {
                     margin="dense"
                     style={{ width: "100%" }}>
                     {courses.map((option) => (
-                        <MenuItem key={option.id} value={option.id}>
-                            {option.description}
-                        </MenuItem>
+                        option.id == 0 ?
+                            <MenuItem key={option.id} value={option.id}>
+                                {option.description}
+                            </MenuItem>
+                        :
+                        option.regulations && option.regulations.map((regulation) => (
+                                <MenuItem key={regulation.id} value={regulation.id}>
+                                    {option.description+' ('+regulation.year+')'}
+                                </MenuItem>
+                            )
+
+                        )
+
                     ))}
                 </TextField>
             </div>
 
-            <div style={{ marginTop: "10px" }}>
+            <div style={{ padding: "15px" }}>
                 <TextField
                     id="filled-select-currency"
                     select
@@ -365,8 +412,26 @@ const QuestionSkill = props => {
                     ))}
                 </TextField>
             </div>
+            <div style={{ padding: "15px" }}>
+                <Grid
+                    container
+                    direction="row"
+                    justifyContent="flex-start"
+                    alignItems="center">
+                    <Tooltip title="A questão deverá ter no máximo 03 objetos de conhecimento.">
+                        {btAddObject == true ?
+                            <Button size="small" color="primary" onClick={handleAddObjects}>Adicionar Objeto</Button> :
+                            <Button size="small" color="primary" disabled>Adicionar Objeto</Button>
+                        }
+                    </Tooltip>
+                    {/* {btRemoveObject == true ?
+                       <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined" onClick={() => handleRemoveObjects()}>Remover Objeto</Button> :
+                       <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined" disabled>Remover Objeto</Button>
+                   } */}
+                </Grid>
+            </div>
             {inputObjects.map((inputField, index) => (
-                <div style={{ marginTop: "10px", display: 'flex', alignItems: 'center' }}>
+                <div style={{ padding: "15px", display: 'flex', alignItems: 'center' }}>
                     <TextField
                         id={"obj" + index}
                         select
@@ -386,28 +451,28 @@ const QuestionSkill = props => {
                     <Button style={{ marginLeft: "10px", marginTop: '2px', maxHeight: '38px' }} className={clsx(classes.btRemove, className)} variant="outlined" onClick={() => handleRemoveObjects(inputField.idItem)}>Remover</Button>
                 </div>
             ))}
-            <div style={{ margin: "20px 0px" }}>
-                <Grid
-                    container
-                    direction="row"
-                    justify="flex-start"
-                    alignItems="center">
-                    <Tooltip title="A questão deverá ter no máximo 03 objetos de conhecimento.">
-                        {btAddObject == true ?
-                            <Button color="primary" variant="outlined" onClick={handleAddObjects}>Adicionar Objeto</Button> :
-                            <Button color="primary" variant="outlined" disabled>Adicionar Objeto</Button>
-                        }
-                    </Tooltip>
-                    {/* {btRemoveObject == true ?
-                       <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined" onClick={() => handleRemoveObjects()}>Remover Objeto</Button> :
-                       <Button style={{marginLeft: "10px"}} className={clsx(classes.btRemove, className)} variant="outlined" disabled>Remover Objeto</Button>
-                   } */}
-                </Grid>
+            <div style={{ marginTop: '16px' }}>
+                <Divider /><br />
             </div>
             <Grid
                 container
                 direction="row"
-                justify="center"
+                justifyContent="center"
+                alignItems="center" style={{padding: "15px"}}>
+                <Button
+                    color="primary"
+                    variant="outlined"
+                    className={classes.button}
+                    disabled={objectLoading}
+                    onClick={onClickSkill}>
+                    Salvar área de conhecimento
+                </Button>
+
+            </Grid>
+            {/*<Grid
+                container
+                direction="row"
+                justifyContent="center"
                 alignItems="center">
                 <Button
                     variant="contained"
@@ -416,11 +481,10 @@ const QuestionSkill = props => {
                     onClick={onClickSkill}
                     endIcon={<Save />}
                     style={{ marginTop: '20px' }}
-                    disabled={objectLoading}
-                >
+                    disabled={objectLoading}>
                     Salvar
                </Button>
-            </Grid>
+            </Grid>*/}
         </div>
 
     );

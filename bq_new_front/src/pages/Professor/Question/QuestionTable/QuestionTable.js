@@ -4,54 +4,14 @@ import {
   Table,
   TableBody,
   LinearProgress,
-  TablePagination, Grid, CardHeader
+  TablePagination, Grid
 } from '@material-ui/core';
 import api from '../../../../services/api';
 import UsersToolbar from "./components/QuestionToolbar";
 import PropTypes from "prop-types";
 import QuestionCard from "../../../../components/QuestionCard/QuestionCard";
 import {QUESTION_SEARCH_SKILL, searchQuestions, searchQuestionsPage} from "../../../../services/seacrhQuestions";
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(2),
-
-  },
-  content: {
-    padding: 0,
-    marginTop: theme.spacing(1)
-  },
-  inner: {
-    minWidth: '100%'
-  },
-  nameContainer: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  avatar: {
-    marginRight: theme.spacing(2)
-  },
-  headTable: {
-    fontWeight: "bold"
-  },
-  actions: {
-    justifyContent: 'flex-end'
-  },
-  row: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  spacer: {
-    flexGrow: 1
-  },
-  importButton: {
-    marginRight: theme.spacing(1)
-  },
-  searchInput: {
-    marginRight: theme.spacing(1)
-  }
-}));
+import useStyles from "../../../../style/style";
 
 const QuestionTable = props => {
   const { className, history } = props;
@@ -71,12 +31,9 @@ const QuestionTable = props => {
       let url = 'question?page='+page;
 
       let QUESTION_SEARCH_TYPE = "";
-      if(searchText[0].value == "S"){
-        url += '&user=S';
-        QUESTION_SEARCH_TYPE = 'S';
-      } else {
-        url += '&user=T';
-        QUESTION_SEARCH_TYPE = 'T';
+      if(searchText[0].value){
+        url += '&user='+searchText[0].value;
+        QUESTION_SEARCH_TYPE = searchText[0].value;
       }
       let QUESTION_SEARCH_COURSE = 0;
       let QUESTION_SEARCH_SKILL = 0;
@@ -96,6 +53,7 @@ const QuestionTable = props => {
         }
 
       }
+      console.log('response', url);
       let data = {};
       let QUESTION_SEARCH_KEYWORD = "";
       if(searchText[4].keyword != ''){
@@ -162,7 +120,7 @@ const QuestionTable = props => {
   }
 
   const onClickCleanSearch = (e) => {
-    searchText[0] = {"value" : "S"};
+    searchText[0] = {"value" : "T"};
     searchText[1] = {"fk_course_id" : 0};
     searchText[2] = {"fk_object_id" : 0};
     searchText[3] = {"fk_skill_id" : 0};
@@ -215,7 +173,8 @@ const QuestionTable = props => {
                             <QuestionCard
                                 question={question}
                                 setRefresh={setRefresh}
-                                refresh={refresh}/>
+                                refresh={refresh}
+                                id_course={searchText[1].fk_course_id}/>
                           </div>
                       ))}
                     </TableBody>

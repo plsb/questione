@@ -6,6 +6,10 @@ export const LEVEL_USER = '@Questione-acess-level-user';
 export const CURRENT_LEVEL_USER = '@Questione-current-acess-level-user';
 export const SHOW_TOUR = '@Questione-acess-show-tour';
 export const EXTERNAL_QUESTION = '@Questione-external-question';
+export const COURSE_SELECTED = '@Questione-course-selected';
+export const REGULATION_SELECTED = '@Questione-regulation-selected';
+export const REGULATION_MAPPING_SELECTED_1 = '@Questione-regulation-mapping-selected-1';
+export const REGULATION_MAPPING_SELECTED_2 = '@Questione-regulation-mapping-selected-2';
 
 export const isAuthenticated = () => localStorage.getItem(TOKEN_KEY) !== null;
 

@@ -13,7 +13,7 @@ import {
   IconButton,
   Typography, Grid, Tooltip,
   Paper, LinearProgress, Box,
-  List, ListItem
+  List, ListItem, Chip, Breadcrumbs, Link
 } from '@material-ui/core';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -31,16 +31,34 @@ import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
 
 import './styles.css';
+import useStyles from "../../../../style/style";
+import moment from "moment/moment";
+import Pagination from "@material-ui/lab/Pagination";
+import QuestionText from "../../../../components/QuestionText";
+import {CharmHome} from "../../../StudentClass/StudentClassContent/StudentClassContent";
 
-// import Button from '@material-ui/core/Button';
-// import Snackbar from '@material-ui/core/Snackbar';
-// import MuiAlert from '@material-ui/lab/Alert';
 
-// function Alert(props) {
-//   return <MuiAlert elevation={6} variant="filled" {...props} />;
-// }
+export function IconParkOutlineCorrect(props) {
+  return (
+      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 48 48" {...props}><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="m4 24l5-5l10 10L39 9l5 5l-25 25L4 24Z" clipRule="evenodd"></path></svg>
+  )
+}
 
-const useStyles = makeStyles((theme) => ({
+
+export function BxsXCircle(props) {
+  return (
+      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10s10-4.486 10-10S17.514 2 12 2zm4.207 12.793l-1.414 1.414L12 13.414l-2.793 2.793l-1.414-1.414L10.586 12L7.793 9.207l1.414-1.414L12 10.586l2.793-2.793l1.414 1.414L13.414 12l2.793 2.793z"></path></svg>
+  )
+}
+
+
+export function MingcuteAlertOctagonFill(props) {
+  return (
+      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><g fill="none" fillRule="evenodd"><path d="M24 0v24H0V0h24ZM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018Zm.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022Zm-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01l-.184-.092Z"></path><path fill="currentColor" d="M15.314 2a2 2 0 0 1 1.414.586l4.686 4.686A2 2 0 0 1 22 8.686v6.628a2 2 0 0 1-.586 1.414l-4.686 4.686a2 2 0 0 1-1.414.586H8.686a2 2 0 0 1-1.414-.586l-4.686-4.686A2 2 0 0 1 2 15.314V8.686a2 2 0 0 1 .586-1.414l4.686-4.686A2 2 0 0 1 8.686 2h6.628ZM12 15a1 1 0 1 0 0 2a1 1 0 0 0 0-2Zm0-9a1 1 0 0 0-.993.883L11 7v6a1 1 0 0 0 1.993.117L13 13V7a1 1 0 0 0-1-1Z"></path></g></svg>
+  )
+}
+
+const useStylesLocal = makeStyles((theme) => ({
   root: {
     margin: 10,
   },
@@ -155,13 +173,6 @@ const useStyles = makeStyles((theme) => ({
     background: 'red',
     color: '#ffffff',
   },
-  paper: {
-    display: 'flex',
-    marginBottom: 10,
-    '& > *': {
-        margin: theme.spacing(2),
-    },
-  },
   paperWrong: {
       backgroundColor: '#ef9a9a',
       color: '#212121',
@@ -179,7 +190,20 @@ const useStyles = makeStyles((theme) => ({
   tituloCard: {
     fontSize: '15px',
     fontWeight: 'bold'
-  }
+  },
+  paper: {
+    display: 'flex',
+    marginBottom: 10,
+    '& > *': {
+      margin: theme.spacing(2),
+    },
+    margin: 3,
+    padding: 8
+  },
+  paperCorrect: {
+    backgroundColor: '#e2f2e7',
+    color: '#212121',
+  },
 }));
 
 const TooltipCustomized = withStyles((theme) => ({
@@ -192,35 +216,23 @@ const TooltipCustomized = withStyles((theme) => ({
   },
 }))(Tooltip);
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-      <div
-          role="tabpanel"
-          hidden={value !== index}
-          id={`nav-tabpanel-${index}`}
-          aria-labelledby={`nav-tab-${index}`}
-          {...other}>
-          {value === index && (
-              <Box p={3}>
-                  <Typography>{children}</Typography>
-              </Box>
-          )}
-      </div>
-  );
-}
-
 const EvaluationsResultDetails = props => {
   const { className, history, ...rest } = props;
   const { idHead } = props.match.params;
   const [head, setHead] = useState([]);
   const [questions, setQuestions] = useState(null);
-  const [applicationDescription, setApplicationDescription] = useState(null);
+  const [application, setApplication] = useState(null);
   // const [showSnackbar, setShowSnackbar] = useState(true);
   const [openSnack, setOpenSnack] = React.useState(true);
+  const [page, setPage] = React.useState(1);
+  const [alternativeLetters] = React.useState(['a', 'b', 'c', 'd', 'e']);
 
-  const classes = useStyles();
+  const handleChangePage = (event, value) => {
+    setPage(value);
+  };
+
+  const classes = useStylesLocal();
+  const classesGeneral = useStyles();
 
   const [showQuestionPreview, setShowQuestionPreview] = React.useState(false);
 
@@ -232,7 +244,7 @@ const EvaluationsResultDetails = props => {
       if (response.status == 200) {
         setQuestions(response.data.questions);
         setShowQuestionPreview(response.data.question_preview);
-        setApplicationDescription(response.data.application.description);
+        setApplication(response.data.application);
 
         setHead(response.data);
       } if (response.status == 202) {
@@ -298,15 +310,15 @@ const EvaluationsResultDetails = props => {
       return ''
     }
     if (porc >= 0.86) {
-      return '- Dificuldade: Muito Fácil'
+      return ' - Dificuldade: Muito Fácil'
     } else if(porc >= 0.61 && porc <= 0.85){
-      return '- Dificuldade: Fácil'
+      return ' - Dificuldade: Fácil'
     } else if(porc >= 0.41 && porc <= 0.60){
-      return '- Dificuldade: Média'
+      return ' - Dificuldade: Média'
     } else if(porc >= 0.16 && porc <= 0.40){
-      return '- Dificuldade: Difícil'
+      return ' - Dificuldade: Difícil'
     } else if(porc <= 0.15){
-      return '- Dificuldade: Muito Difícil'
+      return ' - Dificuldade: Muito Difícil'
     }
     return '';
   }
@@ -316,243 +328,244 @@ const EvaluationsResultDetails = props => {
   // };
 
   return (
-    <div>
-      {/* <Snackbar open={showSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity="success">
-          This is a success message! asd ada sda dd adad a sda d asd asd asd asd asd as da sd ad a sd ad a da d ad a da d asd a da sd ad a da d ad a d
-        </Alert>
-      </Snackbar> */}
-      {/* <Alert severity="error">This is an error message!</Alert>
-      <Alert severity="warning">This is a warning message!</Alert>
-      <Alert severity="info">This is an information message!</Alert>
-      <Alert severity="success">This is a success message!</Alert> */}
-
+    <div className={classesGeneral.root}>
+      <Box display="flex">
+        <Breadcrumbs aria-label="breadcrumb">
+          <Link color="inherit" href="/">
+            <Box display="flex">
+              <Box style={{marginTop: '2px', marginRight: '5px'}}>
+                <CharmHome/>
+              </Box>
+              <Box>
+                Inicio
+              </Box>
+            </Box>
+          </Link>
+          <Link color="inherit" onClick={() => history.push('/student-class/student')}>
+            Minhas turmas
+          </Link>
+          <Link color="inherit" onClick={() => history.goBack()}>
+            Turma {application && application.class.id_class}
+          </Link>
+          <Link color="inherit" onClick={null}>
+            Resultado do simulado
+          </Link>
+        </Breadcrumbs>
+      </Box>
       <Card
         {...rest}
-        className={clsx(classes.root, className)}>
-        <div className={classes.contentHeader}>
-          <IconButton onClick={handleBack}>
-            <ArrowBackIcon />
-          </IconButton>
-        </div>
+        className={clsx(classesGeneral.root, className)}>
         <CardHeader
-          subheader=""
-          title="Avaliação" />
+            title={
+              <div className={classesGeneral.titleList}>{'Resultado do simulado'}</div>}
+            subheader={
+                showQuestionPreview ?
+                    <div className={classesGeneral.subtitles}>{'Por meio deste resultado você pode visualizar quais questões acertou ou errou, como também pode visualizar as questões completas.'}</div>
+                    :
+                    <div className={classesGeneral.subtitles}>{'Por meio deste resultado você pode visualizar quais questões acertou ou errou. Você não terá acesso as questões completas.'}</div>
+
+            }
+        />
         <Divider />
-        {applicationDescription && (
-          <Card className={classes.root}>
-            <CardHeader
-                avatar={
-                  <div>
-                    <Typography variant="button" color="textSecondary" component="p">
-                      {'Descrição da aplicação: '+applicationDescription}
-                    </Typography>
-                  </div>
-                }
-            />
-          </Card>
-        )}
+        <Card style={{marginTop: '5px'}}>
+          <CardHeader
+              avatar={
+                <div>
+                  { application &&
+                      <div>
+                        <div className={classesGeneral.paperTitleTextBold}>
+                          {'Simulado: '+application.description}
+                        </div>
+                        <div className={classesGeneral.paperTitleText}>
+                          {'Professor: '+application.evaluation.user.name}
+                        </div>
+                        <div className={classesGeneral.paperTitleText}>
+                          {'Turma: '+application.class.id_class+' - '+application.class.description}
+                        </div>
+                      </div>}
+
+                </div>
+              }
+          />
+        </Card>
+
         <CardContent>
           {questions == null ?
             <LinearProgress color="secondary" />
             :
             <div>
-              {head.qtdCorrect != null ?
-                <Paper variant="outlined" style={{ padding: '5px', marginBottom: '15px' }}>
-                  <Typography align="center"
-                    variant="body2" color="textPrimary"
-                    style={{
-                      fontWeight: 'bold', fontSize: '15px', marginRight: '5px',
-                    }} className={classes.paperRightFont}>
-                    {head.qtdCorrect >= 2 ? 'Você acertou ' + head.qtdCorrect + ' questões.'
-                      : 'Você acertou ' + head.qtdCorrect + ' questão.'}
-                  </Typography>
-                  <Typography align="center"
-                    variant="body2" color="textPrimary"
-                    style={{
-                      fontWeight: 'bold', fontSize: '15px', marginRight: '5px',
-                    }} className={classes.paperWrongFont}>
-                    {head.qtdIncorrect >= 2 ? 'Você errou ' + head.qtdIncorrect + ' questões.'
-                      : 'Você errou ' + head.qtdIncorrect + ' questão.'}
-                  </Typography>
 
-                </Paper>
-                : null}
+              {head.qtdCorrect != null &&
+                  <Box display="flex" alignItems="row" justifyContent="center" style={{marginBottom: '20px'}}>
+                    <Paper style={{
+                      background: '#80cbc4',
+                      marginTop: '5px',
+                      marginBotton: '5px',
+                      paddingTop: '5px',
+                      paddingBottom: '5px',
+                      paddingLeft: '15px',
+                      paddingRight: '15px',
+                      color: '#FFF', fontWeight: 'bold', fontSize: '15px', marginRight: '5px',
+                    }}>
+                      <Tooltip title={'Total de questões corretas: '+head.qtdCorrect}>
+                        <Box display="flex" alignItems="row">
+                          <IconParkOutlineCorrect />
+                          <div style={{marginLeft: '10px'}}>
+                            {head.qtdCorrect}
+                          </div>
+                        </Box>
+                      </Tooltip>
 
-              <Tabs
-                variant="fullWidth"
-                value={tabValue}
-                onChange={handleChangeTab}
-                aria-label="nav tabs example"
-              >
-                <LinkTab label="Questões" href="#" {...a11yProps(0)} />
-                {/*<LinkTab label="Gráfico" href="#" {...a11yProps(1)} />*/}
-              </Tabs>
-
-              <TabPanel value={tabValue} index={0}>
-                {showQuestionPreview ? (
-                  questions.map((data, i) => (
-                    <ExpansionPanel expanded={expanded === i} key={data.question.id} onChange={handleChange(i)}>
-                      <ExpansionPanelSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-label="Expand"
-                        aria-controls="additional-actions1-content"
-                        id="additional-actions1-header"
-                      >
-                        {/* <FormControlLabel
-                          aria-label="Acknowledge"
-                          onClick={(event) => event.stopPropagation()}
-                          onFocus={(event) => event.stopPropagation()}
-                          control={(
-                            // <Tooltip title={data.question.answer != null ? 'Esta questão já foi respondida' : 'Não respondida'}>
-                            //   <Checkbox
-                            //     className={data.question.answer != null ? '' : classes.hide}
-                            //     checked={data.question.answer != null}
-                            //   />
-                            // </Tooltip>
-                          )}
-                          label={(i + 1) <10 ? ('Questão 00' + (i + 1)) :
-                                    (i + 1) <100 ? ('Questão 0' + (i + 1)) : (i + 1)}
-                        /> */}
-
-                        <p className={classes.tituloCard}>
-                          Questão {i + 1} {difficulty(data.question.difficulty.porc_correct,
-                            data.question.difficulty.total_answers)}
-                        </p>
-                         <span className={classes.ml}>
-                            {data.correct == 1 ? (
-                              <CheckIcon className={classes.correct} />
-                            ) : (
-                              <CloseIcon className={classes.incorrect} />
-                            )}
-                        </span>
-                      </ExpansionPanelSummary>
-                      <ExpansionPanelDetails key={data.question.id}>
-                        <div className={classes.lineQuestion}>
-                          {data.skill ?
-                              <div>
-                                <Typography variant="button" color="textSecondary" component="p">
-                                  Competência:
-                                </Typography>
-                                {ReactHtmlParser(data.skill.description)}
+                    </Paper>
+                    <Paper style={{
+                      background: '#ef9a9a',
+                      marginTop: '5px',
+                      marginBotton: '5px',
+                      paddingTop: '5px',
+                      paddingBottom: '5px',
+                      paddingLeft: '15px',
+                      paddingRight: '15px',
+                      color: '#FFF', fontWeight: 'bold', fontSize: '15px', marginRight: '5px',
+                    }}>
+                      <Tooltip title={'Total de questões incorretas: '+head.qtdIncorrect}>
+                        <Box display="flex" alignItems="row">
+                          <BxsXCircle />
+                            <div style={{marginLeft: '10px'}}>
+                              {head.qtdIncorrect}
+                            </div>
+                        </Box>
+                      </Tooltip>
+                    </Paper>
+                    <Paper style={{
+                      background: '#3a7cf7',
+                      marginTop: '5px',
+                      marginBotton: '5px',
+                      paddingTop: '5px',
+                      paddingBottom: '5px',
+                      paddingLeft: '15px',
+                      paddingRight: '15px',
+                      color: '#FFF', fontWeight: 'bold', fontSize: '15px', marginRight: '5px',
+                    }}>
+                      <Box display="flex" alignItems="row">
+                          <MingcuteAlertOctagonFill />
+                          <div style={{marginLeft: '10px'}}>
+                            {(head.qtdCorrect/(head.qtdCorrect+head.qtdIncorrect))*100 + '% de precisão'}
+                          </div>
+                      </Box>
+                    </Paper>
+                  </Box>}
+              <Divider style={{margin: '5px'}}/>
+                {showQuestionPreview ?
+                  <div>
+                    <Box display='flex' margin='10px' justifyContent='center'>
+                      <Pagination count={questions.length} variant="outlined" page={page} color="primary" onChange={handleChangePage}/>
+                    </Box>
+                    <Box style={{margin: '10px'}}>
+                      <Box display="flex">
+                        <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-start">
+                          <div style={{color: '#757575', fontFamily: 'Verdana', fontSize: '14px', marginTop: '7px'}}>
+                            {'Questão    '}
+                          </div>
+                          &nbsp;
+                          <div style={{color: '#000000', fontWeight: 'bold', fontFamily: 'Verdana', fontSize: '20px', marginTop: '0px', textDecoration: 'underline'}}>
+                            {page}
+                          </div>
+                          &nbsp;
+                          <div style={{color: '#757575', fontFamily: 'Verdana', fontSize: '14px', marginTop: '7px'}}>
+                            {'   de '+questions.length}
+                            {difficulty(questions[page-1].question.difficulty.porc_correct,
+                                questions[page-1].question.difficulty.total_answers)}
+                          </div>
+                        </Box>
+                      </Box>
+                      <Divider style={{padding: '3px', marginTop: '10px', marginBottom: '15px'}} className={classesGeneral.paperTitle}/>
+                      <div style={{margin: '10px'}}>
+                        { questions[page-1].objects.length > 0 && (
+                            <Box display="flex" style={{marginBottom: '30px'}}>
+                              <div className={classesGeneral.paperTitleText} style={{marginLeft: '20px'}}>
+                                {'Conteúdo(s) da questão:'}
                               </div>
-                            : null}
-                          {data.objects ?
-                              <div>
-                                <Typography variant="button" color="textSecondary" component="p">
-                                  Objeto(s) de Conhecimento:
-                                </Typography>
-                                {data.objects.map(item => (
-                                    ReactHtmlParser(item.object.description) + '; '
+                              <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '5px'}}>
+                                {questions[page-1].objects.map(item => (
+                                    ReactHtmlParser (item.object.description)+'. '
                                 ))}
                               </div>
-                            : null}
-                            <br />
-                          <Typography variant="button" color="textSecondary" component="p">
-                            Texto base:
-                          </Typography>
-                          <div> { ReactHtmlParser (data.question.base_text) } </div>
-                          <br/>
-                          <Typography variant="button" color="textSecondary" component="p">
-                            Enunciado:
-                          </Typography>
-                          <div> { ReactHtmlParser (data.question.stem) } </div>
-                          <br />
-                          <Typography variant="button" color="textSecondary" component="p">
-                            Alternativas:
-                          </Typography>
-                          <br />
-                          {data.answer == null ?
-                              <p className={classes.paperWrongFont}>Você não respondeu esta questão.</p> : null }
-                          {data.question.items.map(item => (
-                             item.correct_item == 1 ?
-                                 <div>
-                                    <Paper className={clsx(classes.paper, classes.paperRight)}   variant="outlined"> { ReactHtmlParser (item.description)  }</Paper>
-                                   {data.answer == item.id && item.correct_item == 1 ? <p className={classes.paperRightFont}>Você marcou esta alternativa e acertou.</p> :
-                                       <p className={classes.paperRightFont}>Esta é a alterantiva correta.</p>}
-                                 </div>
-                              : <div>
-                                 <Paper className={clsx(classes.paper, data.answer == item.id && item.correct_item == 0 ? classes.paperWrong : '')} variant="outlined"> { ReactHtmlParser (item.description) } </Paper>
-                                   {data.answer == item.id && item.correct_item == 0 ? <p className={classes.paperWrongFont}>Você marcou esta alternativa e errou.</p> : null}
-                                 </div>
-                              // <Tooltip title="Clique para escolher esta alternativa." placement="top-start">
-                              //   <List
-                              //     className={classes.lineItemQuestion}
-                              //     key={item.id}
-                              //     // onClick={handleToggle(item.id)}
-                              //     component="nav" aria-label="secondary mailbox folder"
-                              //   >
-                              //     <ListItem
-                              //       key={item.id}
-                              //       selected={data.question.answer == item.id}
-                              //       button
-                              //       className={`
-                              //         ${item.correct_item == 1 && classes.bgCorrect} ${data.answer == item.id && item.correct_item == 0 && classes.bgIncorrect}`}
-                              //       // onClick={(event) => handleListItemClick(event, data.id, item.id)}
-                              //     >
-                              //       { ReactHtmlParser (item.description)  }
-                              //     </ListItem>
-                              //   </List>
-                              // </Tooltip>
+                            </Box>)
+
+                        }
+                        <div style={{marginLeft: '15px'}}>
+                          { ReactHtmlParser (questions[page-1].question.base_text) }
+                        </div>
+                        <div style={{marginLeft: '10px', marginTop: '10px'}}>
+                          { ReactHtmlParser (questions[page-1].question.stem) }
+                        </div>
+                        <div style={{marginTop: '15px'}}>
+                          {questions[page-1].question.items.map((item, i) => (
+                              item.correct_item == 1 ?
+                                  <Box display="flex" flexDirection="row"  style={{ width: '100%' }}>
+                                    <Box style={{marginTop: '15px', marginRight: '5px'}} sx={{ flexShrink: 1 }}>
+                                      <Chip label={alternativeLetters[i]} style={{fontSize: '14px', fontWeight: 'bold', background:"#e2f2e7"}} size="small"/>
+                                    </Box>
+                                    <Box sx={{ width: '100%' }}>
+                                      <Paper className={clsx(classes.paper, classes.paperCorrect)} elevation={3} variant="outlined">
+                                        {ReactHtmlParser (item.description)}
+                                      </Paper>
+                                      {questions[page-1].answer == item.id && item.correct_item == 1 ? <p className={classes.paperRightFont}>{'Você marcou a alternativa '+alternativeLetters[i].toUpperCase()+' e acertou.'}</p> :
+                                          <p className={classes.paperRightFont}>{'A alternativa '+alternativeLetters[i].toUpperCase()+' é a correta.'}</p>}
+                                    </Box>
+                                  </Box>
+                                  :
+                                  <Box display="flex" flexDirection="row" style={{ width: '100%' }}>
+                                    <Box style={{marginTop: '15px', marginRight: '5px'}}>
+                                      <Chip label={alternativeLetters[i]} style={{fontSize: '14px', fontWeight: 'bold', background:"#e1f5fe"}} size="small"/>
+                                    </Box>
+                                    <Box sx={{ width: '100%' }}>
+                                      <Paper className={clsx(classes.paper)} variant="outlined">
+                                        { ReactHtmlParser (item.description) }
+                                      </Paper>
+                                      {questions[page-1].answer == item.id && item.correct_item == 0 ? <p className={classes.paperWrongFont}>{'Você marcou a alternativa '+alternativeLetters[i].toUpperCase()+' e errou.'}</p> : null}
+                                    </Box>
+                                  </Box>
                           ))}
                         </div>
-                      </ExpansionPanelDetails>
-                    </ExpansionPanel>
-                  ))
-                ) : (
-                  questions.map((result, i) => (
-                    <div style={{ marginBottom: '30px' }}>
-                      <Typography align="center" style={{ fontWeight: 'bold' }}
-                        variant="h5" component="h2">
-                        {'Questão ' + (i + 1)}
-                      </Typography>
-                      {result.skill ?
-                        <Grid
-                          container
-                          direction="row"
-                          justify="center"
-                          alignItems="center">
-                          <Typography align="center"
-                            variant="body2" color="textPrimary"
-                            style={{ fontWeight: 'bold', marginRight: '5px' }} >
-                            Competência:
-                                    </Typography>
-                          <Typography align="center"
-                            variant="body2" color="textPrimary" >
-                            {result.skill.description}
-                          </Typography>
-                        </Grid>
-                        : null}
-                      {result.objects ?
-                        <Grid
-                          container
-                          direction="row"
-                          justify="center"
-                          alignItems="center">
-                          <Typography align="center"
-                            variant="body2" color="textPrimary"
-                            style={{ fontWeight: 'bold', marginRight: '5px' }} >
-                            Objeto(s) de Conhecimento:
-                                      </Typography>
-                          <Typography align="center"
-                            variant="body2" color="textPrimary" >
-                            {result.objects.map(item => (
-                              item.object.description + '; '
-                            ))}
-                          </Typography>
-                        </Grid>
-                        : null}
-                      {result.answer == null ?
-                        <span className={classes.percentageNull}><Block /></span>
-                        :
-                        result.correct == 1 ?
-                          <span className={classes.percentageGreen}><Done /></span>
-                          :
-                          <span className={classes.percentageRed}><Close /></span>}
+                      </div>
+                    </Box>
+                  </div>
+                  :
+                    <div style={{ width: '100%'}}>
+                      <Grid container
+                            spacing={0}
+                            direction="row"
+                            alignItems="center"
+                            justifyContent="center">
+                        {questions.map((result, i) => (
+                            <Grid item xs={2} sm={2} md={1} >
+                              <TooltipCustomized
+                                  title={
+                                      <Box display="flex" style={{marginBottom: '30px'}} justifyContent="row">
+                                          <div className={classesGeneral.paperTitleText} style={{marginLeft: '20px'}}>
+                                            {'Conteúdo(s) da questão:'}
+                                          </div>
+                                          <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '5px'}}>
+                                            {questions[page-1].objects.map(item => (
+                                                ReactHtmlParser (item.object.description)+'. '
+                                            ))}
+                                          </div>
+                                        </Box>
+                                  }>
+                                  <Box display="flex" alignItems="center">
+                                    <div className={!result.answer ? classes.percentageNull : result.correct == 1 ? classes.percentageGreen : classes.percentageRed}>
+                                      {'Q' + (i + 1)}
+                                    </div>
+                                  </Box>
+                              </TooltipCustomized>
+
+
+                            </Grid>
+                        ))}
+                      </Grid>
                     </div>
-                  ))
-                )}
-              </TabPanel>
+                }
 
               {/*<TabPanel value={tabValue} index={1}>
                 <Chart

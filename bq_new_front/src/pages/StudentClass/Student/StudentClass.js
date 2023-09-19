@@ -1,34 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import clsx from 'clsx';
 
 import api from "../../../services/api";
 
 import {
-    Card,
-    CardHeader,
-    CardActions,
-    Button,
-    Menu,
-    MenuItem,
     TablePagination,
-    CardContent,
     LinearProgress,
     Grid,
     Table,
     TableBody,
-    Tabs,
-    Tab,
-    Box,
-    Typography,
-    TextField
 } from '@material-ui/core';
 
 import StudentClassCard from '../../../components/StudentClassCard';
 import DialogStudentClassRegister from '../../../components/DialogStudentClassRegister';
 import StudentClassToolbar from './components/StudentClassToolbar';
+import {makeStyles} from "@material-ui/core/styles";
 
-import useStyles from './styles';
+const useStyles = makeStyles(theme => ({
+    root: {
+        paddingLeft: theme.spacing(1),
+        paddingRight: theme.spacing(1)
+    },
+    content: {
+        padding: 0,
+        marginTop: theme.spacing(1)
+    },
+    header: {
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'space-between',
+        padding: '16px 8px 16px 0px',
+    },
+}));
 
 function StudentClass({ history }) {
     // Salas criadas
@@ -67,10 +70,14 @@ function StudentClass({ history }) {
     };
 
     const registerInStudentClasses = async (studentClassCode) => {
+        if(!studentClassCode){
+            toast.error('Informe o código da turma.');
+        }
+
         setRegisterLoading(true);
 
         try {
-            const response = await api.post(`class/student/`, {
+            const response = await api.post(`class/student`, {
                 id_class: studentClassCode,
             });
 
@@ -120,78 +127,63 @@ function StudentClass({ history }) {
                 handleStatusCallback={getStudentClasses}
                 setShowRegisterDialog={setShowRegisterDialog}
             />
-            <div className={classes.content}>
-                <Card
-                    className={clsx(classes.root)}>
-                    <CardHeader
-                        avatar={
-                            <div>
 
-                            </div>
-                        }
-                        action={
-                            <TablePagination
-                                component="div"
-                                count={total}
-                                onChangePage={handlePageChange}
-                                onChangeRowsPerPage={handleRowsPerPageChange}
-                                page={page}
-                                rowsPerPage={rowsPerPage}
-                                rowsPerPageOptions={[10]}
-                            />
-                        }
-                    />
-                    <CardContent>
-                        {studentClasses == null
-                            ? (
-                                <LinearProgress color="secondary" />
-                            )
-                            : (
-                                <Grid
-                                    container
-                                    spacing={1}>
-                                    <Grid
-                                        item
-                                        md={12}
-                                        xs={12}>
-                                        <Table>
-                                            <TableBody>
-                                                {studentClasses.map((studentClass) => (
-                                                    <StudentClassCard
-                                                        key={studentClass.id}
-                                                        id={studentClass.id}
-                                                        classId={studentClass.id_class}
-                                                        title={studentClass.description}
-                                                        user={studentClass.user}
-                                                        showUser
-                                                        isOwner={false}
-                                                        setRefresh={setRefresh}
-                                                        refresh={refresh}
-                                                        gamified_class={studentClass.gamified_class}
-                                                        toFileCallback={() => {
-                                                            setRefresh(refresh + 1);
-                                                        }}
-                                                    />
-                                                ))}
-                                            </TableBody>
-                                        </Table>
-                                    </Grid>
-                                </Grid>
-                            )
-                        }
-                    </CardContent>
-                    <CardActions className={classes.actions}>
-                        <TablePagination
-                            component="div"
-                            count={total}
-                            onChangePage={handlePageChange}
-                            onChangeRowsPerPage={handleRowsPerPageChange}
-                            page={page}
-                            rowsPerPage={rowsPerPage}
-                            rowsPerPageOptions={[10]}
-                        />
-                    </CardActions>
-                </Card>
+            <div className={classes.content}>
+                <TablePagination
+                    component="div"
+                    count={total}
+                    onChangePage={handlePageChange}
+                    onChangeRowsPerPage={handleRowsPerPageChange}
+                    page={page}
+                    rowsPerPage={rowsPerPage}
+                    rowsPerPageOptions={[10]}
+                />
+                {studentClasses == null
+                    ? (
+                        <LinearProgress color="secondary" />
+                    )
+                    : (
+                        <Grid
+                            container
+                            spacing={1}>
+                            <Grid
+                                item
+                                md={12}
+                                xs={12}>
+                                <Table>
+                                    <TableBody>
+                                        {studentClasses.map((studentClass) => (
+                                            <div style={{marginBottom: '20px'}}>
+                                                <StudentClassCard
+                                                    key={studentClass.id}
+                                                    id={studentClass.id}
+                                                    class_student={studentClass}
+                                                    class_student_student={studentClass.class_student && studentClass.class_student[0]}
+                                                    showUser
+                                                    isOwner={false}
+                                                    setRefresh={setRefresh}
+                                                    refresh={refresh}
+                                                    toFileCallback={() => {
+                                                        setRefresh(refresh + 1);
+                                                    }}
+                                                />
+                                            </div>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </Grid>
+                        </Grid>
+                    )
+                }
+                <TablePagination
+                    component="div"
+                    count={total}
+                    onChangePage={handlePageChange}
+                    onChangeRowsPerPage={handleRowsPerPageChange}
+                    page={page}
+                    rowsPerPage={rowsPerPage}
+                    rowsPerPageOptions={[10]}
+                />
 
                 <DialogStudentClassRegister
                     handleClose={() => setShowRegisterDialog(false)}

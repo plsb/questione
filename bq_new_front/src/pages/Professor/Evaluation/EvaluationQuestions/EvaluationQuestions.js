@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import ReactDOM  from 'react-dom';
-import Chart from "react-google-charts";
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import ReactHtmlParser from "react-html-parser";
 import { makeStyles } from '@material-ui/styles';
 import {
   Card,
@@ -12,39 +9,21 @@ import {
   Divider,
   IconButton,
   Typography, Grid, Tooltip,
-  Paper, LinearProgress, Box,
-  List, ListItem, Button, Menu, MenuItem
+  Box,
 } from '@material-ui/core';
-import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import api from "../../../../services/api";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { MoreVert } from '@material-ui/icons';
-import DeleteIcon from '@material-ui/icons/Delete';
-import { Close, Done, Block } from "@material-ui/icons";
 import { withStyles } from "@material-ui/core/styles";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import CheckIcon from '@material-ui/icons/Check';
-import CloseIcon from '@material-ui/icons/Close';
-import DialogQuestione from '../../../../components/DialogQuestione';
-import EvaluationQuestionCard from './components/EvaluationQuestionCard';
 
 import './styles.css';
+import EvaluationQuestions from "../../../../components/EvaluationQuestions";
+import useStyles from "../../../../style/style";
 
-// import Button from '@material-ui/core/Button';
-// import Snackbar from '@material-ui/core/Snackbar';
-// import MuiAlert from '@material-ui/lab/Alert';
 
-// function Alert(props) {
-//   return <MuiAlert elevation={6} variant="filled" {...props} />;
-// }
-
-const useStyles = makeStyles((theme) => ({
+const useStylesLocal = makeStyles((theme) => ({
   root: {
     margin: 10,
   },
@@ -222,22 +201,22 @@ function TabPanel(props) {
 }
 
 const EvaluationsResultDetails = props => {
+
   const { className, history, ...rest } = props;
   const { evaluationId } = props.match.params;
   const [questions, setQuestions] = useState(null);
   const [hasApplication, setHasApplication] = useState(null);
-  const [evaluationDescription, setEvaluationDescription] = useState('');
+  const [evaluation, setEvaluation] = useState('');
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [openDeleteQuestionEvaluation, setOpenDeleteQuestionEvaluation] = React.useState(false);
   const [refresh, setRefresh] = React.useState(0);
-  // const [showSnackbar, setShowSnackbar] = useState(true);
-//   const [openSnack, setOpenSnack] = React.useState(true);
 
     const handleClose = () => {
         setAnchorEl(null);
     };
 
-  const classes = useStyles();
+  const classes = useStylesLocal();
+  const classesGeneral = useStyles();
 
   async function loadQuestionsEvaluation(id){
     try {
@@ -245,7 +224,7 @@ const EvaluationsResultDetails = props => {
       if (response.status === 200) {
         setQuestions(response.data.evaluation_questions);
         setHasApplication(response.data.has_application);
-        setEvaluationDescription(response.data.evaluation.description);
+        setEvaluation(response.data.evaluation);
       } else {
         setQuestions([]);
       }
@@ -368,165 +347,16 @@ const EvaluationsResultDetails = props => {
       <Card
         {...rest}
         className={clsx(classes.root, className)}>
-        <div className={classes.contentHeader}>
-          <IconButton onClick={handleBack}>
-            <ArrowBackIcon />
-          </IconButton>
-        </div>
         <CardHeader
-          subheader=""
-          title="Questões da avaliação"
+          subheader={
+            <div className={classesGeneral.subtitleList}>{'Verifique as questões da sua avaliação.'}</div>}
+          title={
+          <div className={classesGeneral.titleList}>{'Questões da avaliação'}</div>}
         />
         <Divider />
-        <Card className={classes.root}>
-          <CardHeader
-              avatar={
-                <div>
-                  <Typography variant="button" color="textSecondary" component="p">
-                    {'Avaliação: '+evaluationDescription}
-                  </Typography>
-                </div>
-              }
-          />
-        </Card>
 
-        <CardContent>
-          {questions == null ?
-            <LinearProgress color="secondary" />
-            :
-            <div>
-              {/* {head.qtdCorrect != null ?
-                <Paper variant="outlined" style={{ padding: '5px', marginBottom: '15px' }}>
-                  <Typography align="center"
-                    variant="body2" color="textPrimary"
-                    style={{
-                      fontWeight: 'bold', fontSize: '15px', marginRight: '5px',
-                    }} className={classes.paperRightFont}>
-                    {head.qtdCorrect >= 2 ? 'Você acertou ' + head.qtdCorrect + ' questões.'
-                      : 'Você acertou ' + head.qtdCorrect + ' questão.'}
-                  </Typography>
-                  <Typography align="center"
-                    variant="body2" color="textPrimary"
-                    style={{
-                      fontWeight: 'bold', fontSize: '15px', marginRight: '5px',
-                    }} className={classes.paperWrongFont}>
-                    {head.qtdIncorrect >= 2 ? 'Você errou ' + head.qtdIncorrect + ' questões.'
-                      : 'Você errou ' + head.qtdIncorrect + ' questão.'}
-                  </Typography>
+        <EvaluationQuestions evaluationId={evaluationId}/>
 
-                </Paper>
-                : null} */}
-
-              <Tabs
-                variant="fullWidth"
-                value={tabValue}
-                onChange={handleChangeTab}
-                aria-label="nav tabs example"
-              >
-                <LinkTab label="Questões" href="#" {...a11yProps(0)} />
-                {/*<LinkTab label="Gráfico" href="#" {...a11yProps(1)} />*/}
-              </Tabs>
-
-              <TabPanel value={tabValue} index={0}>
-                {questions.map((data, i) => (
-                    <ExpansionPanel expanded={expanded === i} key={data.question.id} onChange={handleChange(i)}>
-                        <ExpansionPanelSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-label="Expand"
-                        aria-controls="additional-actions1-content"
-                        id="additional-actions1-header">
-                          <p className={classes.tituloCard}>
-                            Questão {i + 1} {difficulty(data.question.difficulty.porc_correct,
-                                                                data.question.difficulty.total_answers)}
-                          </p>
-
-                        </ExpansionPanelSummary>
-                        <ExpansionPanelDetails key={data.question.id}>
-                          <EvaluationQuestionCard
-                            question={data}
-                            id_evaluation={evaluationId}
-                            setQuestions={setQuestions}
-                            hasApplication={hasApplication}
-                          />
-                        {/* <div className={classes.lineQuestion}>
-                            <div className={classes.questionActions}>
-                                <Button onClick={() => {}} color="primary">
-                                    <DeleteIcon /> Excluir questão
-                                </Button>
-
-                                <DialogQuestione
-                                  handleClose={onClickCloseDialogQEvaluation}
-                                  open={openDeleteQuestionEvaluation}
-                                  onClickAgree={() => deleteQuestionEvaluation(data.question.id)}
-                                  onClickDisagree={onClickCloseDialogQEvaluation}
-                                  mesage={'Deseja excluir a questão selecionada da avaliação?'}
-                                  title={'Excluir Questão da Avaliaçao'}
-                                />
-                            </div>
-
-                            {data.skill ?
-                            <Grid
-                                container
-                                direction="row"
-                                justify="center"
-                                alignItems="center">
-                                <Typography align="center"
-                                variant="body2" color="textPrimary"
-                                style={{ fontWeight: 'bold', marginRight: '5px' }} >
-                                Competência:
-                                        </Typography>
-                                <Typography align="center"
-                                variant="body2" color="textPrimary" >
-                                {data.skill.description}
-                                </Typography>
-                            </Grid>
-                            : null}
-                            {data.objects ?
-                            <Grid
-                                container
-                                direction="row"
-                                justify="center"
-                                alignItems="center">
-                                <Typography align="center"
-                                variant="body2" color="textPrimary"
-                                style={{ fontWeight: 'bold', marginRight: '5px' }} >
-                                Objeto(s) de Conhecimento:
-                                            </Typography>
-                                <Typography align="center"
-                                variant="body2" color="textPrimary" >
-                                {data.objects.map(item => (
-                                    item.object.description + '; '
-                                ))}
-                                </Typography>
-                            </Grid>
-                            : null}
-                            <Typography variant="button" color="textSecondary" component="p">
-                            Texto base:
-                            </Typography>
-                            <div> { ReactHtmlParser (data.question.base_text) } </div>
-                            <br/>
-                            <Typography variant="button" color="textSecondary" component="p">
-                            Enunciado:
-                            </Typography>
-                            <div> { ReactHtmlParser (data.question.stem) } </div>
-                            <br />
-                            <Typography variant="button" color="textSecondary" component="p">
-                            Alternativas:
-                            </Typography>
-                            <br />
-                            {data.question.question_items.map(item => (
-                                <div>
-                                    <Paper className={clsx(classes.paper)} variant="outlined"> { ReactHtmlParser (item.description) } </Paper>
-                                </div>
-                            ))}
-                        </div> */}
-                        </ExpansionPanelDetails>
-                    </ExpansionPanel>
-                ))}
-              </TabPanel>
-            </div>
-          }
-        </CardContent>
       </Card>
     </div>
   );

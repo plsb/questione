@@ -4,17 +4,29 @@ import { withRouter } from "react-router-dom";
 import clsx from 'clsx';
 import FindInPage from '@material-ui/icons/SearchSharp';
 
-import { Button, MenuItem, TextField, Typography } from '@material-ui/core';
+import {Box, Breadcrumbs, Button, Card, CardContent, Link, MenuItem, TextField, Typography} from '@material-ui/core';
+import {makeStyles} from "@material-ui/styles";
+import useStyles from "../../../../../style/style";
+import {CharmHome} from "../../../StudentClassContent/StudentClassContent";
 
 
-import useStyles from './styles';
+const useStylesLocal = makeStyles(theme => ({
+  row: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  textField: {
+    marginLeft: theme.spacing(1),
+  },
+}));
 
 const StudentClassToolbar = props => {
   const { className, onClickSearch, onChangeSearch, searchText, handleStatusCallback, tabValue, history, setStatus, ...rest } = props;
 
   const [value, setValue] = useState(1);
 
-  const classes = useStyles();
+  const classes = useStylesLocal();
+  const classesGeneral = useStyles();
 
   const handleChange = (event) => {
     handleStatusCallback(1, event.target.value, searchText);
@@ -26,67 +38,76 @@ const StudentClassToolbar = props => {
     <div
       {...rest}
       className={clsx(classes.root, className)}>
-      <div className={classes.row}>
-        <div style={{ flex: 1 }}>
-          <Typography variant="h3" className={classes.title}>{'Turmas'}</Typography>
-          
-          <span className={classes.spacer} />
+      <Box display="flex">
+        <Breadcrumbs aria-label="breadcrumb">
+          <Link color="inherit" href="/">
+            <Box display="flex">
+              <Box style={{marginTop: '2px', marginRight: '5px'}}>
+                <CharmHome/>
+              </Box>
+              <Box>
+                Inicio
+              </Box>
+            </Box>
+          </Link>
+          <Link color="inherit" onClick={null}>
+            {localStorage.getItem('@Questione-acess-level-user') === "2" ? 'Turmas' : 'Minhas turmas'}
+          </Link>
+        </Breadcrumbs>
+      </Box>
+      <Card>
+        <CardContent>
+          <Box display="flex">
+            <Box display="flex" justifyContent="flex-start">
+              <div className={classesGeneral.titleList}>{'Turmas'}</div>
+            </Box>
+            <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-end">
+              <Button
+                  aria-controls="simple-menu"
+                  aria-haspopup="true"
+                  color="primary"
+                  variant="contained"
+                  onClick={() => history.push('/student-class-details/professor')}
+                  className={classesGeneral.buttons}>
+                Nova Turma
+              </Button>
+            </Box>
+          </Box>
 
-          <div className={classes.subtitle}>
-            Para mais informações sobre o módulo turmas,&nbsp;
-            <a href="https://docs.google.com/document/d/10u_l5bjyYjy-Pii18ya4OzWptxOnAJFfn_lUYmYQ4y4/edit?usp=sharing"
-               target="_blank"
-               rel="noopener noreferrer">
-              clique aqui.
-            </a>
-          </div>
-        </div>
-        <div style={{ padding: '16px' }}>
-          <Button
-            aria-controls="simple-menu"
-            aria-haspopup="true"
-            color="primary"
-            variant="contained"
-            onClick={() => history.push('/student-class-details/professor')}
-          >
-            Nova turma
-          </Button>
-        </div>
-      </div>
-      <div className={classes.row}>
-        <div className={classes.filters}>
-          <TextField
-            className={classes.root}
-            id="type-of-evaluation"
-            select
-            label="Status"
-            value={value}
-            onChange={handleChange}
-            helperText="Selecione um status para aplicar o filtro."
-            variant="outlined"
-            margin="dense"
-            style={{ width: '300px' }}>
-            <MenuItem value={1}>Ativas</MenuItem>
-            <MenuItem value={2}>Arquivadas</MenuItem>
-          </TextField>
+          <Box display="flex" justifyContent="flex-start" style={{marginTop: '25px'}}>
+            <TextField
+                id="type-of-evaluation"
+                select
+                label="Status"
+                value={value}
+                onChange={handleChange}
+                helperText="Selecione um status para aplicar o filtro."
+                variant="outlined"
+                margin="dense"
+                style={{ width: '300px' }}>
+              <MenuItem value={1}>Ativas</MenuItem>
+              <MenuItem value={2}>Arquivadas</MenuItem>
+            </TextField>
 
-          <TextField
-            label="Buscar"
-            helperText="Buscar por descrição"
-            margin="dense"
-            onChange={onChangeSearch}
-            value={searchText}
-            style={{ width: '300px', marginLeft: '16px' }}
-            variant="outlined"
-          />
+            <TextField
+                label="Buscar"
+                className={classes.textField}
+                helperText="Buscar por descrição"
+                margin="dense"
+                onChange={onChangeSearch}
+                value={searchText}
+                style={{ width: '300px', marginLeft: '16px' }}
+                variant="outlined"
+            />
+          </Box>
+          <Box display="flex" justifyContent="flex-start">
 
-          <Button
-            onClick={onClickSearch}
-            className={classes.searchButton}>
-            <FindInPage fontSize="large" />
-          </Button>
-        </div>
-      </div>
+            <Button variant="contained" color="primary" onClick={onClickSearch} className={classesGeneral.buttons}>
+              Filtrar turmas
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
     </div>
   );
 };

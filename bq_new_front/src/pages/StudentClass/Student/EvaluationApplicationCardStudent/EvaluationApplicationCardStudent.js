@@ -8,16 +8,17 @@ import {
     CardHeader,
     IconButton,
     Typography,
-    CardContent, Chip, Switch, Tooltip
+    CardContent, Chip, Switch, Tooltip, Box, Paper, Link, Divider
 } from '@material-ui/core';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import {withRouter} from "react-router-dom";
 import api from "../../../../services/api";
-import { Edit, FormatListBulleted, PlayArrow } from "@material-ui/icons";
+import {Edit, FormatListBulleted, MoreVert, PlayArrow} from "@material-ui/icons";
 import ShareIcon from '@material-ui/icons/Share';
+import useStyles from "../../../../style/style";
 
-const useStyles = makeStyles(() => ({
+const useStylesLocal = makeStyles(() => ({
   root: {
     margin: 8,
   },
@@ -26,34 +27,22 @@ const useStyles = makeStyles(() => ({
         paddingTop: 6
     },
     chipred:{
-      margin: 3,
-      backgroundColor: '#e57373',
-      color: '#ffebee',
+      color: '#e57373',
     },
     chipgreen:{
-        margin: 3,
-        backgroundColor: '#009688',
-        color: '#ffebee',
+        color: '#009688',
     },
     chip_brown:{
-        margin: 3,
-        backgroundColor: '#795548',
-        color: '#ffebee',
+        color: '#795548',
     },
     chip_amber:{
-        margin: 3,
-        backgroundColor: '#ffc107',
-        color: '#212121',
+        color: '#ffc107',
     },
     chipyellow:{
-        margin: 3,
-        backgroundColor: '#fff176',
-        color: '#212121',
+        color: '#fff176',
     },
     chipblue:{
-        margin: 3,
-        backgroundColor: '#2196f3',
-        color: '#fff',
+        color: '#2196f3',
     },
   spacer: {
     flexGrow: 1
@@ -65,7 +54,8 @@ const EvaluationApplicationCardStudent = props => {
   const [state, setState] = useState(0);
   const [evaluationApplication, setEvaluationApplication] = useState({});
 
-  const classes = useStyles();
+  const classes = useStylesLocal();
+  const classesGeneral = useStyles();
 
     useEffect(() => {
 
@@ -80,8 +70,9 @@ const EvaluationApplicationCardStudent = props => {
       history.push(`/student-class/${studentClassId}/applications-evaluation/details/${id}`);
   }
 
-  const results = (id) => {
-      history.push(`/student-class/${studentClassId}/applications-evaluation/results/${id}`);
+  const results = (idHead) => {
+      history.push('/student/result-evaluations/details/'+idHead);
+      //history.push(`/student-class/${studentClassId}/applications-evaluation/results/${id}`);
   }
 
     const copyLinkToClipboard = (id) => {
@@ -115,80 +106,98 @@ const EvaluationApplicationCardStudent = props => {
               <div className={classes.content}>
               <Card
                   {...rest}
-                  className={classes.root}>
-                  <CardHeader
-                      className={classes.head}
-                      action={
-                          <div>
-
-                              {/*<Tooltip title="Visualizar resultados 2">
-                                  <IconButton
-                                      aria-label="copy"
-                                      onClick={() => results(evaluationApplication.id)}>
-                                      <FormatListBulleted />
-                                  </IconButton>
-                              </Tooltip>*/}
-                              {(answer_head == null || answer_head.finalized_at == null) && evaluationApplication.status == 1  && (
-                                  <Tooltip title="Realizar avaliação">
-                                      <IconButton
-                                          aria-label="settings"
-                                          onClick={() => history.push(`/code/${application.id_application}`)}>
-                                          <PlayArrow />
-                                      </IconButton>
-                                  </Tooltip>
-                              )}
-                          </div>
-                      }
-                      title={'Simulado: '+position}/>
+                  className={classes.root} pointerEv >
+                  <div style={{pointerEvents: evaluationApplication.status == 0 ? 'none' : 'auto'}}>
+                      <Paper className={evaluationApplication.status == 0 ?  classesGeneral.paperTitleGray
+                                             : answer_head && answer_head.finalized_at ? classesGeneral.paperTitleGreen : classesGeneral.paperTitle}>
+                          <Box display="flex">
+                              <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-start">
+                                  <div className={classesGeneral.paperTitleTextBold}>
+                                      {'Simulado: '+position+' - '+evaluationApplication.description }
+                                  </div>
+                              </Box>
+                              <Box display="flex" justifyContent="flex-end">
+                                  {(answer_head == null || answer_head.finalized_at == null) && evaluationApplication.status == 1  && (
+                                      <Tooltip title="Realizar simulado">
+                                          <IconButton
+                                              size="small"
+                                              aria-label="settings"
+                                              onClick={() => history.push(`/code/${application.id_application}`)}>
+                                              <PlayArrow />
+                                          </IconButton>
+                                      </Tooltip>
+                                  )}
+                              </Box>
+                          </Box>
+                      </Paper>
 
                     <CardContent>
+                            <Box>
+                                { answer_head && (evaluationApplication.show_results == 1 &&
+                                    evaluationApplication.canShowResults == 1 && answer_head.finalized_at ?
+                                        <Link
+                                            component="button"
+                                            onClick={() => {
+                                                results(answer_head.id)
+                                            }}
+                                            className={clsx(classes.link, className)}>
+                                            <div className={clsx(classesGeneral.paperTitleTextBold, classes.chipblue)}>
+                                                Clique aqui para visualizar o resultado
+                                            </div>
+                                        </Link>
+                                        :
+                                    (evaluationApplication.canShowResults == 0 && evaluationApplication.show_results == 1 && answer_head.finalized_at)
+                                            ?
+                                            <div className={clsx(classesGeneral.paperTitleTextBold)}>{'O resultado será liberado no dia: '+moment(`${evaluationApplication.date_release_results} ${evaluationApplication.time_release_results}`).format('DD/MM/YYYY H:mm')+'.'}</div>
+                                            :
+                                            evaluationApplication.show_results == 0 && answer_head.finalized_at &&
+                                            <div className={clsx(classesGeneral.paperTitleTextBold)}>{'Resultado indisponível.'}</div>
+                                )}
+                                { !answer_head && (evaluationApplication.evaluation.status == 2 ?
+                                    <div className={clsx(classesGeneral.paperTitleTextBold)}>{'Simulado indisponível.'}</div> :
+                                    evaluationApplication.status == 0 &&
+                                    <div className={clsx(classesGeneral.paperTitleTextBold)}>{'Simulado indisponível.'}</div>)
+                                }
+                            </Box>
+                            <div className={classesGeneral.paperTitleText}>
+                                {'Esta avaliação foi criada em: '+ moment(evaluationApplication.created_at).format('DD/MM/YYYY')+'.'}
+                            </div>
+                            <Box display="flex" alignItems="row" style={{marginTop: '10px'}}>
 
-                      {/*<Typography variant="button" color="textSecondary" component="h2">
-                          {'Simulado: '+position }
-                    </Typography>*/}
-                      <Typography variant="h5" color="textSecondary" component="h2">
-                          {evaluationApplication.description }
-                      </Typography>
-                      {evaluationApplication.evaluation.status == 1 ?
-                      <Typography variant="body1" color="textSecondary" component="h2">
-                          {'Avaliação: '+evaluationApplication.evaluation.id+' - '+evaluationApplication.evaluation.description}
-                      </Typography> :
-                      <Typography variant="body1" color="textSecondary" component="h2">
-                          {'ARQUIVADA - Avaliação: '+evaluationApplication.evaluation.id+' - '+evaluationApplication.evaluation.description}
-                      </Typography>  }
+                              {/*answer_head ?
+                                  (!answer_head.finalized_at ?
+                                      <div className={clsx(classes.chipblue, className)} style={{marginLeft: '4px'}}>{'| Iniciado'}</div> :
+                                      <div className={clsx(classes.chipgreen, className)} style={{marginLeft: '4px'}}>{'| Finalizado'}</div>) :
+                                  <div className={clsx(classes.chipred, className)} style={{marginLeft: '4px'}}>{'| Não iniciado'}</div>*/}
+                               { !answer_head  &&
+                                   (evaluationApplication.date_start &&
+                                       <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Este simulado deve ser iniciado até o dia '+moment(evaluationApplication.date_start).utc().format('DD/MM/YYYY')+' às '+evaluationApplication.time_start+'.'}</div>)
+                               }
 
+                              { !answer_head ?
+                                  ((evaluationApplication.date_finish) &&
+                                      <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Este simulado deve ser finalizado até o dia '+moment(evaluationApplication.date_finish).utc().format('DD/MM/YYYY')+' às '+evaluationApplication.time_finish+'.'}</div>)
+                                   :
+                                  !answer_head.finalized_at && evaluationApplication.date_finish ?
+                                      <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Este simulado deve ser finalizado até o dia '+moment(evaluationApplication.date_finish).utc().format('DD/MM/YYYY')+' às '+evaluationApplication.time_finish+'.'}</div> : null}
+                                { !answer_head ?
+                                    ((evaluationApplication.time_to_finalize) &&
+                                        <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Após iniciado, este simulado deve ser finalizado no tempo de '+evaluationApplication.time_to_finalize+'.'}</div>)
+                                    :
+                                    !answer_head.finalized_at && evaluationApplication.time_to_finalize ?
+                                        <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Após iniciado, este simulado deve ser finalizado no tempo de '+moment(evaluationApplication.time_to_finalize).utc().format('hh:mm')+'.'}</div> : null}
 
-                      <Typography color="body2" variant="h6">
-                          {evaluationApplication.created_at && ('Data de criação: '+ moment(evaluationApplication.created_at).format('DD/MM/YYYY'))}
-                      </Typography>
-                      { evaluationApplication.evaluation.status == 2 ?
-                          <Chip label="Avaliação Arquivada" className={clsx(classes.chipred, className)} size="small"/> :
-                          evaluationApplication.status == 1 ?
-                              <Chip label="Ativado" className={clsx(classes.chipgreen, className)} size="small"/> :
-                                <Chip label="Desativado" className={clsx(classes.chipred, className)} size="small"/>
+                                {/* evaluationApplication.show_results == 1 &&
+                                    <div className={clsx(classes.chipblue, className)}>{'| Resultados Liberados'}</div>  */}
 
-                      }
+                                {/* !answer_head ?
+                                    <div className={clsx(classes.chipblue, className)} style={{marginRight: '6px'}}>{'Permite vizualizar questões'}</div> :
+                                    !answer_head.finalized_at && evaluationApplication.release_preview_question == 1 ?
+                                    <div className={clsx(classes.chipblue, className)} style={{marginRight: '6px'}}>{'Permite vizualizar questões'}</div> : null*/}
+                            </Box>
 
-                      {answer_head ?
-                          (!answer_head.finalized_at ?
-                              <Chip label="Iniciado" className={clsx(classes.chipblue, className)} size="small"/> :
-                              <Chip label="Finalizado" className={clsx(classes.chipgreen, className)} size="small"/>) :
-                          <Chip label="Não iniciado" className={clsx(classes.chipred, className)} size="small"/>}
-
-                       { evaluationApplication.date_start  &&
-                        <Chip label="Tempo para iniciar definido" className={clsx(classes.chip_amber, className)} size="small"/> }
-
-                      { evaluationApplication.time_to_finalize || evaluationApplication.date_finish  ?
-                        <Chip label="Tempo para finalizar definido" className={clsx(classes.chip_brown, className)} size="small"/> : null}
-
-                        { evaluationApplication.show_results == 1 &&
-                        <Chip label="Resultados Liberados" className={clsx(classes.chipblue, className)} size="small"/> }
-
-                        { evaluationApplication.release_preview_question == 1 &&
-                        <Chip label="Permite vizualizar questões" className={clsx(classes.chipblue, className)} size="small"/> }
-
-
-                  </CardContent>
+                      </CardContent>
+                  </div>
               </Card>
               </div>
               : null }
