@@ -18,6 +18,9 @@ import {Box, Paper} from "@material-ui/core";
 import {
   MingcuteAlertOctagonFill
 } from "../../../../../Student/EvaluationsResult/EvaluationResultDetails/EvaluationsResultDetails";
+import PropTypes from "prop-types";
+import withWidth from "@material-ui/core/withWidth";
+import TooltipQuestione from "../../../../../../components/TooltipQuestione";
 
 ChartJS.register(
     CategoryScale,
@@ -179,8 +182,8 @@ const ResultsGeneral = props =>{
 
     };
 
-    return <div style={{marginLeft: '100px', marginRight: '100px'}}>
-              <Box display="flex">
+    return <div style={{marginLeft: '10px', marginRight: '10px'}}>
+              <Box display="flex" justifyContent="center">
                       <Paper style={{
                                   background: '#3a7cf7',
                                   marginTop: '5px',
@@ -191,15 +194,21 @@ const ResultsGeneral = props =>{
                                   paddingRight: '15px',
                                   color: '#FFF', fontWeight: 'bold', fontSize: '15px', marginRight: '5px',
                                 }}>
+                                <TooltipQuestione description={'De todos os simulados respondidos, você acertou '+precisionCorrect+'% das questões.'} position={'bottom'} content={
                                   <Box display="flex" alignItems="row">
                                     <MingcuteAlertOctagonFill />
                                     <div style={{marginLeft: '10px'}}>
                                       {precisionCorrect+ '% de precisão nesta turma.'}
                                     </div>
                                   </Box>
+                                }/>
                         </Paper>
               </Box>
-                {data && <Line data={data} options={options} />}
+                <Box display="flex" justifyContent="center">
+                      <div style={{width: props.width == 'xs' || props.width == 'sm' ? '100%' : props.width == 'md' ? '70%' : '50%'}}>
+                                {data && <Line data={data} options={options} />}
+                      </div>
+                </Box>
                 <Box display="flex" justifyContent="center">
                   <div className={classesGeneral.paperTitleTextBold} style={{ marginRight: '10px'}}>
                     Legenda:
@@ -218,4 +227,9 @@ const ResultsGeneral = props =>{
           </div>;
 }
 
-export default ResultsGeneral;
+ResultsGeneral.propTypes = {
+    string: PropTypes.string,
+    width: PropTypes.oneOf(['lg', 'md', 'sm', 'xl', 'xs']).isRequired,
+};
+
+export default withWidth()(ResultsGeneral);

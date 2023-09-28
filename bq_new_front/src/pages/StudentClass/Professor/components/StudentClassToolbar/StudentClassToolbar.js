@@ -7,7 +7,7 @@ import FindInPage from '@material-ui/icons/SearchSharp';
 import {Box, Breadcrumbs, Button, Card, CardContent, Link, MenuItem, TextField, Typography} from '@material-ui/core';
 import {makeStyles} from "@material-ui/styles";
 import useStyles from "../../../../../style/style";
-import {CharmHome} from "../../../StudentClassContent/StudentClassContent";
+import {CharmHome} from "../../../../../icons/Icons";
 
 
 const useStylesLocal = makeStyles(theme => ({
@@ -46,13 +46,13 @@ const StudentClassToolbar = props => {
                 <CharmHome/>
               </Box>
               <Box>
-                Inicio
+                Início
               </Box>
             </Box>
           </Link>
-          <Link color="inherit" onClick={null}>
+          <div color="inherit" onClick={null}>
             {localStorage.getItem('@Questione-acess-level-user') === "2" ? 'Turmas' : 'Minhas turmas'}
-          </Link>
+          </div>
         </Breadcrumbs>
       </Box>
       <Card>

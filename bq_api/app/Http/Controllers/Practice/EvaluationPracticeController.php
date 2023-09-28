@@ -171,7 +171,7 @@ class EvaluationPracticeController extends Controller
 
         $application = EvaluationApplication::where('fk_evaluation_id', '=', $id)->get();
         if(sizeof($application)>0) {
-            return response()->json(['message' => 'Operação não realizada. Existem aplicações para esta avaliação.'], 202);
+            return response()->json(['message' => 'Operação não realizada. Existem simulados para esta avaliação.'], 202);
         }
 
         $evaluation->delete();

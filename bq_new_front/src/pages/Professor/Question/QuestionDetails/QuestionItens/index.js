@@ -174,7 +174,10 @@ const QuestionItens = props => {
                 }
                 if (response.status == 200 || response.status == 201) {
                     inputItens[i].idItem = response.data.id;
-                    toast.success('Alternativa da questão ' + acao + '.');
+                    if(i == 0){
+                        toast.success('Alternativas da questão ' + acao + '.');
+                    }
+
                 } else {
                     toast.error( 'Erro ao inserir alternativa.');
                 }

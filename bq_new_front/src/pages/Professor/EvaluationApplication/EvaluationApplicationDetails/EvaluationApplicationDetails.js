@@ -20,6 +20,7 @@ import { toast } from 'react-toastify';
 import validate from "validate.js";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {withStyles} from "@material-ui/core/styles";
+import TooltipQuestione from "../../../../components/TooltipQuestione";
 
 const schema = {
   description: {
@@ -345,31 +346,23 @@ const EvaluationApplicationDetails = props => {
                 value={formState.values.description || ''}
                 variant="outlined"
               />
-              <TooltipCustomized
-                  title={
-                    <React.Fragment>
-                      <p>
-                        <Typography color="textPrimary" variant="body2">
-                          {'Caso esta opção esteja habilitada, todos os estudantes que forem realizar ' +
-                          ' esta aplicação, receberão' +
-                          ' uma avaliação com as mesmas questões, mas cada estudante possuirá uma ' +
-                          ' avaliação com questões em ordem diferente dos demais estudantes.'}
-                        </Typography>
-                      </p>
-                    </React.Fragment>
-                  }>
-                  <FormControlLabel
-                      control={
-                        <Switch
-                            checked={checkedRandom}
-                            onChange={handleChangeRandom}
-                            name="random_questions"
-                            color="primary"
-                        />
-                      }
-                      label="Questões aleatórias?"
-                  />
-              </TooltipCustomized>
+              <TooltipQuestione description={'Caso esta opção esteja habilitada, todos os estudantes que forem realizar ' +
+                  ' esta aplicação, receberão' +
+                  ' uma avaliação com as mesmas questões, mas cada estudante possuirá uma ' +
+                  ' avaliação com questões em ordem diferente dos demais estudantes.'} position='bottom' content={
+                <FormControlLabel
+                    control={
+                      <Switch
+                          checked={checkedRandom}
+                          onChange={handleChangeRandom}
+                          name="random_questions"
+                          color="primary"
+                      />
+                    }
+                    label="Questões aleatórias?"
+                />
+
+              }/>
             </Grid>
           </Grid>
           <Grid

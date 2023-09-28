@@ -17,8 +17,20 @@ import {
 
 import StudentClassCard from '../../components/StudentClassCard';
 import StudentClassToolbar from './components/StudentClassToolbar';
+import {makeStyles} from "@material-ui/core/styles";
+import useStyles from "../../style/style";
 
-import useStyles from './styles';
+const useStylesLocal = makeStyles({
+    root: {
+
+    },
+    header: {
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'space-between',
+        padding: '0px 8px 0px 0px',
+    },
+});
 
 function StudentClassroom({ history }) {
     const [studentClasses, setStudentClasses] = React.useState([]);
@@ -29,7 +41,8 @@ function StudentClassroom({ history }) {
     const [status, setStatus] = React.useState(1);
     const [refresh, setRefresh] = React.useState(1);
 
-    const classes = useStyles();
+    const classes = useStylesLocal();
+    const classesGeneral = useStyles();
 
     const getStudentClassrooms = async (page, status, description = '') => {
         try {
@@ -77,8 +90,8 @@ function StudentClassroom({ history }) {
     }, [refresh]);
 
     return (
-        <div className={classes.root}>
-            <Card className={classes.header}>
+        <div className={classesGeneral.root}>
+            <Card >
                 <CardHeader
                     avatar={(
                         <h3>Turmas em que estou matriculado</h3>

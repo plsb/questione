@@ -41,18 +41,18 @@ function Timer({ expiryTimestamp, onExpire, setShowTimeDialog }) {
             }
 
             if (parseInt(minutes, 10) <= 20) {
-                return '#0000ff';
+                return '#f57c00';
             }
         }
 
-        return '#546e7a';
+        return '#3a7cf7';
     };
 
     return (
-        <div className="timer" style={{ width: 'max-content', padding: '0px 4px', fontWeight: 'bold', color: getTimeColor(hours, minutes, seconds) }}>
+        <div className="timer" style={{ width: 'max-content', padding: '0px 4px', fontSize: '20px', fontWeight: 'bold', color: getTimeColor(hours, minutes, seconds) }}>
             {days > 0 && (
                 <>
-                    <span>{days} dias e </span>
+                    <span>{days} dia(s) e </span>
                 </>
             )}
             <span>{addZeroToLeft(hours)}</span>:

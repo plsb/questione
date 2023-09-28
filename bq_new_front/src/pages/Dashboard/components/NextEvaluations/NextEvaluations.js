@@ -3,21 +3,15 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import {
-  Card, CardContent, Grid, Typography, Avatar,
-  List,
-  ListItem,
-  ListItemText,
-  ListSubheader,
-  ListItemSecondaryAction, CardActions, Button, CardHeader, Tooltip, Paper, Box, CardActionArea
+  Grid, Typography, Avatar,
+  Paper, Box, CardActionArea
 } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
-import PlayArrow from '@material-ui/icons/PlayArrow';
-import InfoIcon from '@material-ui/icons/Info';
 import api from "../../../../services/api";
 import { useHistory } from "react-router-dom";
-import {Edit, MoreVert} from "@material-ui/icons";
 import moment from "moment/moment";
 import useStyles from "../../../../style/style";
+import TooltipQuestione from "../../../../components/TooltipQuestione";
+import DecreaseStringSize from "../../../../components/DecreaseStringSize";
 
 const useStylesLocal = makeStyles(theme => ({
   root: {
@@ -106,33 +100,26 @@ const NextEvaluations = props => {
               }
             </Box>
           </div>
-            <Grid container >
+            <Grid container style={{width: '100%'}} spacing={1}>
               {nextEvaluations && nextEvaluations.map((evaluations, i) => (
-                  <Grid item xs={12} sm={12} md={5} key={i} style={{marginBottom: '10px', marginRight: '40px'}}>
-                    <Tooltip title={'Clique para realizar o simulado '+evaluations.description}>
+                  <Grid item xs={12} sm={12} md={12} lg={5} key={i} style={{marginBottom: '10px', marginRight: '40px'}}>
+                    <TooltipQuestione description={'Clique para realizar o simulado '+evaluations.description} position={'bottom'} content={
                       <CardActionArea onClick={() => history.push(`/code/${evaluations.id_application}`)}>
                         <Paper className={classesGeneral.paperTitle}>
                           <Box display="flex">
                             <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-start">
-                              <div className={classesGeneral.paperTitleTextBold}>
-                                {'Simulado: '+evaluations.description}
+                              <div className={classesGeneral.paperTitleText} >
+                                {'Simulado: '}<DecreaseStringSize string={evaluations.description}/>
                               </div>
                             </Box>
                             <Box display="flex" justifyContent="flex-end">
-                              {/*<Tooltip title="Iniciar simulado">
-                                <IconButton
-                                    aria-label="comments"
-                                    onClick={() => history.push(`/code/${evaluations.id_application}`)} size="small">
-                                  <PlayArrow />
-                                </IconButton>
-                              </Tooltip>*/}
                             </Box>
                           </Box>
                         </Paper>
                         <Paper style={{padding: '5px', paddingBottom: '10px'}}>
 
                           <div className={classesGeneral.paperTitleText}>
-                            {'Turma: '+evaluations.class.id_class+' - '+ evaluations.class.description}
+                            {'Turma: '}<DecreaseStringSize string={evaluations.class.id_class+' - '+evaluations.class.description} />
                           </div>
                           <div className={classesGeneral.paperTitleText}>
                             {'Professor: '+evaluations.class.user.name}
@@ -142,7 +129,7 @@ const NextEvaluations = props => {
                           </div>
                         </Paper>
                       </CardActionArea>
-                    </Tooltip>
+                    }/>
 
                   </Grid>
               ))}

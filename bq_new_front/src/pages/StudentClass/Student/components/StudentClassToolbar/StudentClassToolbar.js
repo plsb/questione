@@ -1,13 +1,24 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from "react-router-dom";
-import clsx from 'clsx';
-import FindInPage from '@material-ui/icons/SearchSharp';
+import SearchIcon from '@material-ui/icons/Search';
 
-import {Box, Breadcrumbs, Button, Card, CardContent, Link, MenuItem, TextField, Typography} from '@material-ui/core';
+import {
+  Box,
+  Breadcrumbs,
+  Button,
+  Card,
+  CardContent, Grid,
+  Link,
+  MenuItem,
+  TextField,
+  Tooltip,
+  Typography
+} from '@material-ui/core';
 import {makeStyles} from "@material-ui/styles";
 import useStyles from "../../../../../style/style";
-import {CharmHome} from "../../../StudentClassContent/StudentClassContent";
+import {CharmHome, SubwayAdd} from "../../../../../icons/Icons";
+import TooltipQuestione from "../../../../../components/TooltipQuestione";
 
 
 const useStylesLocal = makeStyles(theme => ({
@@ -22,8 +33,7 @@ const StudentClassToolbar = props => {
 
   return (
     <div
-      {...rest}
-      className={clsx(classesGeneral.root, className)}>
+    >
       <Box display="flex">
         <Breadcrumbs aria-label="breadcrumb">
           <Link color="inherit" href="/">
@@ -32,51 +42,71 @@ const StudentClassToolbar = props => {
                 <CharmHome/>
               </Box>
               <Box>
-                Inicio
+                Início
               </Box>
             </Box>
           </Link>
-          <Link color="inherit" onClick={null}>
+          <div color="inherit" onClick={null}>
             Minhas turmas
-          </Link>
+          </div>
         </Breadcrumbs>
       </Box>
       <Card>
         <CardContent>
-          <Box display="flex">
-            <Box display="flex" justifyContent="flex-start">
-              <div className={classesGeneral.titleList}>{'Minhas turmas'}</div>
-            </Box>
-            <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-end">
-              <Button
-                  color="primary"
-                  variant="contained"
-                  onClick={() => {
-                    setShowRegisterDialog(true);
-                  }}
-                  className={classesGeneral.buttons}>
-                Participar de uma turma
-              </Button>
-            </Box>
-          </Box>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={12} md={4} key={0}>
+              <Box display="flex" justifyContent="flex-start">
+                <div className={classesGeneral.titleList}>{'Minhas turmas'}</div>
+                <div style={{marginTop: '8px', marginLeft: '5px'}}>
+                  <TooltipQuestione
+                      position="left-start"
+                      description={'Clique neste botão para participar de uma nova turma.'} content={
 
-          <Box display="flex" justifyContent="flex-start" style={{marginTop: '25px'}}>
-            <TextField
-                label="Buscar"
-                helperText="Buscar por descrição da turma"
-                margin="dense"
-                onChange={onChangeSearch}
-                value={searchText}
-                style={{ width: '400px' }}
-                variant="outlined"
-            />
-          </Box>
-          <Box display="flex" justifyContent="flex-start">
+                    <Button
+                        color="primary"
+                        size="large"
+                        variant="text"
+                        onClick={() => {
+                          setShowRegisterDialog(true);
+                        }}
+                        className={classesGeneral.buttons}>
+                      <SubwayAdd style={{ fontSize: 25 }}/>
+                    </Button>
+                  }/>
+                </div>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={12} md={1} key={1}>
+                <Box display="flex"  justifyContent="flex-start" style={{marginTop: '5px'}}>
+                  <div>
+                    <TextField
+                        label="Buscar"
+                        helperText="Buscar por descrição da turma"
+                        margin="dense"
+                        onChange={onChangeSearch}
+                        value={searchText}
+                        style={{ width: '200px' }}
+                        variant="outlined"
+                    />
+                  </div>
+                  <div style={{marginTop: '5px'}}>
+                    <TooltipQuestione
+                        position="left-start"
+                        description={'Informe a descrição da turma e clique neste botão para realizar a pesquisa.'} content={
+                      <Button variant="text"
+                              color="primary"
+                              size="large"
+                              onClick={onClickSearch}
+                              className={classesGeneral.buttons}>
+                        <SearchIcon style={{ fontSize: 30 }}/>
+                      </Button>
+                    }/>
+                  </div>
 
-            <Button variant="contained" color="primary" onClick={onClickSearch} className={classesGeneral.buttons}>
-              Filtrar turmas
-            </Button>
-          </Box>
+                </Box>
+            </Grid>
+          </Grid>
+
         </CardContent>
       </Card>
     </div>

@@ -7,7 +7,7 @@ import {
   CardContent,
   Divider, IconButton, Table, TableHead, TableRow,
   TableCell, TableBody, Tab, Paper, Tabs,
-  Box, Typography, AppBar, Tooltip, LinearProgress
+  Box, Typography, AppBar, Tooltip, LinearProgress, Breadcrumbs, Link, Chip, Hidden
 } from '@material-ui/core';
 import api from "../../../../../services/api";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -19,8 +19,13 @@ import EvaluationApplicationResultsSkillObjects from "./EvaluationApplicationRes
 import moment from "moment";
 import { toast } from 'react-toastify';
 import { removeDestionationPath } from '../../../../../services/navigation';
+import useStyles from "../../../../../style/style";
+import {CharmHome} from "../../../../../icons/Icons";
+import EvaluationQuestions from "../../../../../components/EvaluationQuestions/EvaluationQuestions";
+import EvaluationQuestionCard
+  from "../../../../Professor/Evaluation/EvaluationQuestions/components/EvaluationQuestionCard";
 
-const useStyles = makeStyles(() => ({
+const useStylesLocal = makeStyles(() => ({
   root: {
     margin: 10,
   },
@@ -104,7 +109,7 @@ const useStyles = makeStyles(() => ({
     fontSize: '14px'
   },
   percentageRed: {
-    backgroundColor: '#EC0B43',
+    backgroundColor: '#F14D76',
     display: 'block',
     margin: '8px',
     padding: '0 4px',
@@ -276,7 +281,8 @@ const EvaluationApplicationResults = props => {
 
   const [classProfessor, setClassProfessor] = useState(null);
 
-  const classes = useStyles();
+  const classes = useStylesLocal();
+  const classesGeneral = useStyles();
 
   
 
@@ -312,6 +318,7 @@ const EvaluationApplicationResults = props => {
 
       if (response.status === 200) {
         setOverviewQuestions(response.data[0].questions);
+
         setOverviewQuestionsHead(response.data[0]);
         setTotalVarianceQuestions(response.data[0].variance_total);
       } else {
@@ -369,18 +376,36 @@ const EvaluationApplicationResults = props => {
   };
 
   return (
-      <div>
-        <Card
-            {...rest}
-            className={clsx(classes.root, className)}>
-          <div className={classes.contentHeader}>
-            <IconButton onClick={handleBack}>
-              <ArrowBackIcon />
-            </IconButton>
-          </div>
+      <div className={classesGeneral.root}>
+        <Box display="flex">
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link color="inherit" href="/">
+              <Box display="flex">
+                <Box style={{marginTop: '2px', marginRight: '5px'}}>
+                  <CharmHome />
+                </Box>
+                <Box>
+                  Início
+                </Box>
+              </Box>
+            </Link>
+            <Link color="inherit" onClick={() => history.push('/student-class/professor')}>
+              Turmas
+            </Link>
+            <Link color="inherit" onClick={() => history.goBack()}>
+              Turma
+            </Link>
+            <div color="inherit">
+              {overviewQuestionsHead ? 'Resultado do simulado '+overviewQuestionsHead.description_application : 'Resultado do simulado'}
+            </div>
+
+          </Breadcrumbs>
+        </Box>
+        <Card>
+
           <CardHeader
-              subheader=""
-              title="Resultado da Aplicação"/>
+              subheader={<div className={classesGeneral.subtitleList}>{'O resultado do simulado permite visualizar os acertos e erros dos estudantes de uma forma geral, por questão e por conteúdo.'}</div>}
+              title={<div className={classesGeneral.titleList}>{'Resultado do simulado '}</div>}/>
           <Divider />
           <Card className={classes.root}>
             {overviewQuestionsHead.idApplication!= null ?
@@ -388,44 +413,27 @@ const EvaluationApplicationResults = props => {
                 {/*<Typography variant="h5" color="textPrimary" component="p">
                   {'Código da aplicação: '+overviewQuestionsHead.idApplication +'.'}
             </Typography>*/}
-                <Typography variant="h5" color="textPrimary" component="p">
-                 {overviewQuestionsHead.class.description != null ? 
-                  'Descrição da turma: '+overviewQuestionsHead.class.description +'.' : null}
-                </Typography>
-
-                <Typography variant="h5" color="textPrimary" component="p">
-                  {'Descrição do simulado: '+overviewQuestionsHead.description_application + '.'}
-                </Typography>
-                {/*<Typography variant="h5" color="textPrimary" component="p">
-                  {overviewQuestionsHead.qtdQuestions > 1 ?
-                      'Esta avaliação possui '+ overviewQuestionsHead.qtdQuestions + ' questões.' :
-                      'Esta avaliação possui '+ overviewQuestionsHead.qtdQuestions + ' questão.'}
-                </Typography>
-                <Typography variant="h5" color="textPrimary" component="p">
-                  {overviewQuestionsHead.qtdStudents > 1 ?
-                      'Esta avaliação foi respondida por '+ overviewQuestionsHead.qtdStudents +' estudantes.' :
-                      'Esta avaliação foi respondida por '+ overviewQuestionsHead.qtdStudents +' estudante.'
-                      }
-                    </Typography> 
-                <Typography variant="h5" color="textPrimary" component="p">
-                  { avgCorrectQuestions != 0 ?
-                    avgCorrectQuestions > 1 ?
-                      'Esta avaliação possui uma média de acerto igual a '+ avgCorrectQuestions + ' questões por estudante.' :
-                      'Esta avaliação possui uma média de acerto igual a '+ avgCorrectQuestions + ' questão por estudante.' :
-                  null}
-                </Typography> */}
-                <Typography variant="h5" color="textPrimary" component="p">
-                { overviewQuestionsHead.percentagem_geral_correct_evaluation != 0 ?
-                  'A porcentagem média de questões corretas é: '+ overviewQuestionsHead.percentagem_geral_correct_evaluation+'%.' :
-                  null}
-                </Typography>
-                {/*{ overviewQuestionsHead.qtdStudents > 1 && totalVarianceStudents > 0 ?
-                <Typography variant="h5" color="textPrimary" component="p">
-                  {'Alfa de Cronbach: '+
-                  (overviewQuestionsHead.qtdQuestions/(overviewQuestionsHead.qtdQuestions-1) *
-                      (1-(totalVarianceQuestions/totalVarianceStudents))).toFixed(3)
-                      + '.'}
-                </Typography> : null } */}
+                <div>
+                  <div className={classesGeneral.subtitleList} style={{fontWeight: 'bold'}}>
+                    {'Simulado: '+overviewQuestionsHead.description_application+'.'}
+                  </div>
+                  <div className={classesGeneral.subtitleList}>
+                    {'Professor: '+localStorage.getItem("@Questione-name-user") +'.'}
+                  </div>
+                  <div className={classesGeneral.subtitleList}>
+                    {overviewQuestionsHead.class.description != null ?
+                        'Turma: '+overviewQuestionsHead.class.id_class+' - '+overviewQuestionsHead.class.description +'.' : null}
+                  </div>
+                  <div className={classesGeneral.subtitleList}>
+                    { overviewQuestionsHead.percentagem_geral_correct_evaluation != 0 &&
+                        'A porcentagem média de questões corretas é: '+ overviewQuestionsHead.percentagem_geral_correct_evaluation+'%.'}
+                  </div>
+                  <div className={classesGeneral.subtitleList}>
+                    {overviewQuestionsHead.qtdQuestions > 1 ?
+                        'Este simulado possui '+ overviewQuestionsHead.qtdQuestions + ' questões.' :
+                        'Este simulado possui '+ overviewQuestionsHead.qtdQuestions + ' questão.'}
+                  </div>
+                </div>
                 { answerStudents == null ? null :
                   !answerStudents[0] ?
                     <span className={classes.percentageRed}>SEM RESULTADO</span>
@@ -445,7 +453,7 @@ const EvaluationApplicationResults = props => {
                       aria-label="nav tabs example">
                     <LinkTab label="Visão Geral" href="/drafts" {...a11yProps(0)} />
                     <LinkTab label="Questões" href="/trash" {...a11yProps(1)} />
-                    <LinkTab label="Outros Dados" href="/spam" {...a11yProps(2)} />
+                    <LinkTab label="Conteúdos" href="/spam" {...a11yProps(2)} />
                   </Tabs>
                 </AppBar>
                 <TabPanel value={value} index={0}>
@@ -635,8 +643,21 @@ const EvaluationApplicationResults = props => {
                 <TabPanel value={value} index={1}>
                   { !overviewQuestions ? null :
                       overviewQuestions.map((result, i) => (
-                    <EvaluationApplicationResultsOverviewQuestion
-                                                      result={result} numberQuestion={i}/>
+                          <Box display="flex" style={{marginBottom: '20px'}}>
+                            <Hidden xsDown>
+                              <Chip label={(i + 1)}
+                                    style={{fontSize: '14px',
+                                      fontWeight: 'bold',
+                                      margin: '8px'}} color="secondary" size="medium"/>
+                            </Hidden>
+                            <EvaluationQuestionCard
+                                question={result}
+                                hasApplication={1}
+                            />
+                          </Box>
+
+                          /*<EvaluationApplicationResultsOverviewQuestion
+                                                      result={result} numberQuestion={i}/>*/
                       ))}
                 </TabPanel>
                 {/* competências e objetos de conhecimento */}

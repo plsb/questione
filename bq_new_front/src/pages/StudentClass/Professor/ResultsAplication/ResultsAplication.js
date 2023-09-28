@@ -49,28 +49,6 @@ const ResultsAplication = props =>{
                                  </Grid>
                     </Grid>
 
-
-                
-                </AccordionDetails>
-            </Accordion>
-            <Accordion>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel2a-content"
-                    id="panel2a-header">
-                    <Typography>Resultados por Simulado</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Grid
-                        container
-                        spacing={1}>
-                        <Grid
-                            item
-                            md={12}
-                            xs={12}>
-                            <ResultsByTest studentClassId={studentClassId}/>
-                        </Grid>
-                    </Grid>
                 </AccordionDetails>
             </Accordion>
 

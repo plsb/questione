@@ -22,6 +22,8 @@ import CloseIcon from "@material-ui/icons/Close";
 import { useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import useStyles from "../../../../style/style";
+import DecreaseStringSize from "../../../../components/DecreaseStringSize";
+import TooltipQuestione from "../../../../components/TooltipQuestione";
 
 const useStylesLocal = makeStyles(() => ({
   root: {
@@ -236,7 +238,7 @@ const EvaluationCard = props => {
                                             evaluation.id}
                     </div>
                     <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '15px'}}>
-                        {evaluation.description}
+                        <DecreaseStringSize string={evaluation.description} large={1.4}/>
                     </div>
                 </Box>
                 <Box display="flex" justifyContent="flex-end">
@@ -261,7 +263,7 @@ const EvaluationCard = props => {
             </Box>
         </Paper>
         <CardContent>
-            <Tooltip title="Clique para visualizar as questões." placement="left-end">
+            <TooltipQuestione description={"Clique para visualizar as questões da avaliação."} position={'top'} content={
                 <Link onClick={() => history.push(`/evaluation-questions/${evaluation.id}`)}>
                     {evaluation.questions.length == 0 ?
                         <div className={classesGeneral.paperTitleText} style={{color: '#f44336'}}>
@@ -271,14 +273,14 @@ const EvaluationCard = props => {
                                 {'Esta avaliação possui '+evaluation.questions.length+' questões.'}
                             </div>}
                 </Link>
-            </Tooltip>
+            }/>
           <div className={classesGeneral.paperTitleText}>
               {'Esta avaliação foi criada em: '+ moment(evaluation.created_at).format('DD/MM/YYYY')+'.'}
           </div>
 
           { evaluation.status == 2 &&
               <div className={classesGeneral.textRedInfo} style={{marginTop: '10px'}}>
-                  {'Arquivada'}
+                  {'Avaliação arquivada.'}
               </div> }
         </CardContent>
         <Menu

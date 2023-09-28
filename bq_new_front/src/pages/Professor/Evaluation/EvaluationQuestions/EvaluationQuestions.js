@@ -9,7 +9,7 @@ import {
   Divider,
   IconButton,
   Typography, Grid, Tooltip,
-  Box,
+  Box, Breadcrumbs, Link,
 } from '@material-ui/core';
 import Tab from '@material-ui/core/Tab';
 import api from "../../../../services/api";
@@ -21,6 +21,7 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import './styles.css';
 import EvaluationQuestions from "../../../../components/EvaluationQuestions";
 import useStyles from "../../../../style/style";
+import {CharmHome} from "../../../../icons/Icons";
 
 
 const useStylesLocal = makeStyles((theme) => ({
@@ -333,16 +334,27 @@ const EvaluationsResultDetails = props => {
   }
 
   return (
-    <div>
-      {/* <Snackbar open={showSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity="success">
-          This is a success message! asd ada sda dd adad a sda d asd asd asd asd asd as da sd ad a sd ad a da d ad a da d asd a da sd ad a da d ad a d
-        </Alert>
-      </Snackbar> */}
-      {/* <Alert severity="error">This is an error message!</Alert>
-      <Alert severity="warning">This is a warning message!</Alert>
-      <Alert severity="info">This is an information message!</Alert>
-      <Alert severity="success">This is a success message!</Alert> */}
+    <div className={classesGeneral.root}>
+      <Box display="flex">
+        <Breadcrumbs aria-label="breadcrumb">
+          <Link color="inherit" href="/">
+            <Box display="flex">
+              <Box style={{marginTop: '2px', marginRight: '5px'}}>
+                <CharmHome />
+              </Box>
+              <Box>
+                Início
+              </Box>
+            </Box>
+          </Link>
+          <Link color="inherit" onClick={() => history.goBack()}>
+            Avaliações
+          </Link>
+          <div color="inherit">
+            {evaluationId ? 'Questões da avaliação de código '+evaluationId : 'Questões da avaliação'}
+          </div>
+        </Breadcrumbs>
+      </Box>
 
       <Card
         {...rest}

@@ -6,12 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class EvaluationApplication extends Model
 {
+    //data_start_type {DI - data inicial | DF - data fixa}
     protected $table = 'evaluation_application';
     protected $fillable = ['id', 'id_application', 'description','fk_evaluation_id', 'status',
         'random_questions', 'show_results', 'date_start', 'time_start', 'time_to_finalize',
         'date_finish', 'time_finish', 'date_release_results', 'time_release_results',
         'public_results', 'can_see_students',
-        'release_preview_question','created_at', 'fk_class_id'];
+        'release_preview_question','created_at', 'fk_class_id', 'data_start_type'];
     protected $hidden = [];
 
     protected $dates = [
@@ -19,7 +20,7 @@ class EvaluationApplication extends Model
         'updated_at',
     ];
 
-    protected $appends = ['canShowResults'];
+    protected $appends = ['canShowResults', 'totalAnswers'];
 
     public function getCanShowResultsAttribute(){
         if($this->show_results == 1){
@@ -36,6 +37,12 @@ class EvaluationApplication extends Model
             return 1;
         }
         return 0;
+    }
+
+    public function getTotalAnswersAttribute(){
+        $answer_head = AnswersHeadEvaluation::where('fk_application_evaluation_id', $this->id)
+            ->get();
+        return $answer_head->count();
     }
 
     public function evaluation(){

@@ -10,7 +10,18 @@ import {
   Divider,
   Grid,
   Button,
-  TextField, IconButton, FormControlLabel, Switch, Tooltip, Typography
+  TextField,
+  IconButton,
+  FormControlLabel,
+  Switch,
+  Tooltip,
+  Typography,
+  Box,
+  Breadcrumbs,
+  Link,
+  FormControl,
+  RadioGroup,
+  Radio
 } from '@material-ui/core';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -20,6 +31,9 @@ import { toast } from 'react-toastify';
 import validate from "validate.js";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {withStyles} from "@material-ui/core/styles";
+import {CharmHome} from "../../../../../icons/Icons";
+import useStyles from "../../../../../style/style.js";
+import TooltipQuestione from "../../../../../components/TooltipQuestione";
 
 const schema = {
   description: {
@@ -32,7 +46,7 @@ const schema = {
   },
 };
 
-const useStyles = makeStyles(() => ({
+const useStylesLocal = makeStyles(() => ({
   root: {},
   inputInline: {
     margin: '0 8px',
@@ -72,7 +86,8 @@ const EvaluationApplicationDetails = props => {
   const [shareEvaluation, setShareEvaluation] = React.useState(false);
   const [canViewStudentName, setCanViewStudentName] = React.useState(false);
 
-  const classes = useStyles();
+  const classes = useStylesLocal();
+  const classesGeneral = useStyles();
 
   const [formState, setFormState] = useState({
     isValid: false,
@@ -95,6 +110,7 @@ const EvaluationApplicationDetails = props => {
         duration,
         date_release_results,
         time_release_results,
+        data_start_type,
       } = formState.values;
 
       const random_questions = checkedRandom;
@@ -116,9 +132,11 @@ const EvaluationApplicationDetails = props => {
         time_release_results: checkedShowResult && time_release_results !== '' ? time_release_results : null,
         release_preview_question,
         public_results,
-        can_see_students
+        can_see_students,
+        data_start_type
       }
       const response = await api.put('evaluation/applications/'+idApplication, data);
+
 
       if (response.status === 202) {
         if(response.data.message){
@@ -165,6 +183,7 @@ const EvaluationApplicationDetails = props => {
           setCanViewStudentName(true);
         }
 
+
         setFormState(formState => ({
           values: {
             'description': response.data.description,
@@ -175,7 +194,8 @@ const EvaluationApplicationDetails = props => {
             'duration': response.data.time_to_finalize,
             'date_release_results': response.data.date_release_results,
             'time_release_results': response.data.time_release_results,
-            'release_preview_question': response.data.release_preview_question
+            'release_preview_question': response.data.release_preview_question,
+            'data_start_type': response.data.data_start_type
           },
           touched: {
             ...formState.touched,
@@ -239,6 +259,7 @@ const EvaluationApplicationDetails = props => {
           ...formState.values,
           date: '',
           hour: '',
+          data_start_type: '',
         },
       })
     }
@@ -310,54 +331,66 @@ const EvaluationApplicationDetails = props => {
   };
 
   return (
-    <Card
-      {...rest}
-      className={clsx(classes.root, className)}>
-      <form
-        autoComplete="off">
-        <div className={classes.contentHeader}>
-          <IconButton onClick={handleBack}>
-            <ArrowBackIcon />
-          </IconButton>
-        </div>
-        <CardHeader
-          subheader=""
-          title="Aplicação de Avaliação"/>
-        <Divider />
-        <CardContent>
-          <Grid
-            container
-            spacing={3}>
+      <div
+          {...rest}
+          className={clsx(classesGeneral.root, className)}>
+        <Box display="flex">
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link color="inherit" href="/">
+              <Box display="flex">
+                <Box style={{marginTop: '2px', marginRight: '5px'}}>
+                  <CharmHome/>
+                </Box>
+                <Box>
+                  Início
+                </Box>
+              </Box>
+            </Link>
+            <Link color="inherit" onClick={() => history.push('/student-class/professor')}>
+              {localStorage.getItem('@Questione-acess-level-user') === "2" ? 'Turmas' : 'Minhas turmas'}
+            </Link>
+            <Link color="inherit" onClick={() => history.goBack()}>
+              {'Turma'}
+            </Link>
+            <div color="inherit">
+              Editar simulado
+            </div>
+          </Breadcrumbs>
+        </Box>
+      <Card
+        {...rest}
+        className={clsx(classes.root, className)}>
+        <form
+          autoComplete="off">
+          <CardHeader
+              subheader={<div className={classesGeneral.subtitleList}>{'Configure parâmetros do simulado'}</div>}
+              title={<div className={classesGeneral.titleList}>{'Editar simulado'}</div>}/>
+          <Divider />
+          <CardContent>
             <Grid
-              item
-              md={6}
-              xs={12}>
-              <TextField
-                fullWidth
-                error={hasError('description')}
-                helperText={
-                  hasError('description') ? formState.errors.description[0] : null
-                }
-                label="Descrição"
-                margin="dense"
-                name="description"
-                onChange={handleChange}
-                value={formState.values.description || ''}
-                variant="outlined"
-              />
-              <TooltipCustomized
-                  title={
-                    <React.Fragment>
-                      <p>
-                        <Typography color="textPrimary" variant="body2">
-                          {'Caso esta opção esteja habilitada, todos os estudantes que forem realizar ' +
-                          ' esta aplicação, receberão' +
-                          ' uma avaliação com as mesmas questões, mas cada estudante possuirá uma ' +
-                          ' avaliação com questões em ordem diferente dos demais estudantes.'}
-                        </Typography>
-                      </p>
-                    </React.Fragment>
-                  }>
+              container
+              spacing={3}>
+              <Grid
+                item
+                md={12}
+                xs={12}>
+                <TextField
+                  fullWidth
+                  error={hasError('description')}
+                  helperText={
+                    hasError('description') ? formState.errors.description[0] : null
+                  }
+                  label="Descrição"
+                  margin="dense"
+                  name="description"
+                  onChange={handleChange}
+                  value={formState.values.description || ''}
+                  variant="outlined"
+                />
+                <TooltipQuestione description={'Caso esta opção esteja habilitada, todos os estudantes que forem realizar ' +
+                    ' este simulado receberão' +
+                    ' um simulado com as mesmas questões, mas cada estudante possuirá um ' +
+                    ' simulado com questões em ordem diferente dos demais estudantes.'} position={'bottom-start'} content={
                   <FormControlLabel
                       control={
                         <Switch
@@ -369,429 +402,386 @@ const EvaluationApplicationDetails = props => {
                       }
                       label="Questões aleatórias?"
                   />
-              </TooltipCustomized>
+                }/>
+              </Grid>
             </Grid>
-          </Grid>
-          <Grid
-            item
-            md={6}
-            xs={12}
-            className={classes.row}
-          >
-            <TooltipCustomized
-                title={
-                  <React.Fragment>
-                    <p>
-                      <Typography color="textPrimary" variant="body2">
-                        {'Caso esta opção esteja habilitada, poderá ser configurada' +
-                        ' data e hora em que o estudante deverá iniciar a avaliação.' +
-                        ' Caso o estudante não inicie a avaliação no tempo programado, ' +
-                        ' o estudante ficará incapacitado de realizar a avaliação. A tolerância é de 05 minutos, '+
-                        ' ou seja, caso esteja programado para às 18 horas, a avaliação poderá ser iniciada entre '+
-                        ' 17:59 e 18:05.'}
-                      </Typography>
-                    </p>
-                  </React.Fragment>
-                }>
+            <Grid
+              item
+              md={12}
+              xs={12}
+              className={classes.row}>
+              <TooltipQuestione description={'Caso esta opção esteja habilitada, poderá ser configurada' +
+                  ' data e hora em que o estudante deverá iniciar o simulado.'} position={'bottom-start'} content={
                 <FormControlLabel
-                  control={
-                    <Switch
-                      checked={checkedDefineDateAndHourInitial}
-                      onChange={handleChangeDefineDateAndHourInitial}
-                      name="define_date_and_hour"
-                      color="primary"
-                    />
-                  }
-                  label="Definir data e hora inicial?"
-                />
-            </TooltipCustomized>
-
-            <List
-              component="nav"
-              aria-labelledby="nested-list-subheader"
-              className={classes.root}
-            >
-              <Collapse in={checkedDefineDateAndHourInitial} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding className={classes.subGroup}>
-                  <ListItem className={classes.nested}>
-                    <TextField
-                      // error={hasError('description')}
-                      // helperText={
-                      //   hasError('description') ? formState.errors.description[0] : null
-                      // }
-                      type="date"
-                      label="Data da avaliação"
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      margin="dense"
-                      name="date"
-                      onChange={handleChange}
-                      value={formState.values.date || ''}
-                      variant="outlined"
-                      className={classes.inputInline}
-                    />
-                  </ListItem>
-                  <ListItem className={classes.nested}>
-                    <TextField
-                      // error={hasError('description')}
-                      // helperText={
-                      //   hasError('description') ? formState.errors.description[0] : null
-                      // }
-                      type="time"
-                      label="Hora de início"
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      margin="dense"
-                      name="hour"
-                      onChange={handleChange}
-                      value={formState.values.hour || ''}
-                      variant="outlined"
-                      className={classes.inputInline}
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
-            </List>
-          </Grid>
-          <Grid
-            item
-            md={6}
-            xs={12}
-            className={classes.row}
-          >
-            <TooltipCustomized
-                title={
-                  <React.Fragment>
-                    <p>
-                      <Typography color="textPrimary" variant="body2">
-                        {'Caso esta opção esteja habilitada, poderá ser configurada' +
-                        ' data e hora em que o estudante deverá finalizar a avaliação.' +
-                        ' Caso o estudante não finnalize a avaliação no tempo programado,' +
-                        ' o sistema irá finalizar a avaliação automaticamente (essa informação'+
-                        ' ficará disponível no relatório). '}
-                      </Typography>
-                    </p>
-                  </React.Fragment>
-                }>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={checkedDefineDateAndHourFinal}
-                      onChange={handleChangeDefineDateAndHourFinal}
-                      name="define_date_and_hour_final"
-                      color="primary"
-                    />
-                  }
-                  label="Definir data e hora final?"
-                />
-            </TooltipCustomized>
-
-            <List
-              component="nav"
-              aria-labelledby="nested-list-subheader"
-              className={classes.root}
-            >
-              <Collapse in={(checkedDefineDateAndHourFinal && !checkedDefineDuration)} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding className={classes.subGroup}>
-                  <ListItem className={classes.nested}>
-                    <TextField
-                      // error={hasError('description')}
-                      // helperText={
-                      //   hasError('description') ? formState.errors.description[0] : null
-                      // }
-                      type="date"
-                      label="Data de fim da avaliação"
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      margin="dense"
-                      name="date_finish"
-                      onChange={handleChange}
-                      value={formState.values.date_finish || ''}
-                      variant="outlined"
-                      className={classes.inputInline}
-                    />
-                  </ListItem>
-                  <ListItem className={classes.nested}>
-                    <TextField
-                      // error={hasError('description')}
-                      // helperText={
-                      //   hasError('description') ? formState.errors.description[0] : null
-                      // }
-                      type="time"
-                      label="Hora de fim da avaliação"
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      margin="dense"
-                      name="hour_finish"
-                      onChange={handleChange}
-                      value={formState.values.hour_finish || ''}
-                      variant="outlined"
-                      className={classes.inputInline}
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
-            </List>
-          </Grid>
-          <Grid
-            item
-            md={6}
-            xs={12}
-            className={classes.row}
-          >
-            <TooltipCustomized
-                title={
-                  <React.Fragment>
-                    <p>
-                      <Typography color="textPrimary" variant="body2">
-                        {'Caso esta opção esteja habilitada, poderá ser configurado' +
-                        ' o tempo de duração (em horas) da avaliação. Se for cofigurado 01:00 hora,' +
-                        ' após o estudante iniciar a sua avaliação terá um prazo de uma hora para finalizar. ' +
-                        ' Caso o tempo de duração da avaliação seja de dias, deve-se multiplicar 24 * QUANTIDADE_DE_DIAS'+
-                        ' e informar no campo. '}
-                      </Typography>
-                    </p>
-                  </React.Fragment>
-                }>
-                  <FormControlLabel
                     control={
                       <Switch
-                        checked={checkedDefineDuration}
-                        onChange={handleChangeDefineDuration}
-                        name="define_duration"
-                        color="primary"
+                          checked={checkedDefineDateAndHourInitial}
+                          onChange={handleChangeDefineDateAndHourInitial}
+                          name="define_date_and_hour"
+                          color="primary"
                       />
                     }
-                    label="Definir duração?"
-                  />
-            </TooltipCustomized>
+                    label="Definir data e hora inicial?"
+                />
+              }/>
 
-            <List
-              component="nav"
-              aria-labelledby="nested-list-subheader"
-              className={classes.root}
-            >
-              <Collapse in={(checkedDefineDuration && !checkedDefineDateAndHourFinal)} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding className={classes.subGroup}>
-                  <ListItem className={classes.nested}>
-                    <TextField
-                      // error={hasError('description')}
-                      // helperText={
-                      //   hasError('description') ? formState.errors.description[0] : null
-                      // }
-                      type="time"
-                      label="Duração da prova em horas"
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      margin="dense"
-                      name="duration"
-                      onChange={handleChange}
-                      value={formState.values.duration || ''}
-                      variant="outlined"
-                      className={classes.inputInline}
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
-            </List>
-          </Grid>
-          <Grid
-              item
-              md={6}
-              xs={12}
-              className={classes.row}
-          >
-            <TooltipCustomized
-                title={
-                  <React.Fragment>
-                    <p>
-                      <Typography color="textPrimary" variant="body2">
-                        {'Caso esta opção esteja habilitada, todos os estudantes terão acesso' +
-                        ' ao resultado desta aplicação. Você pode configurar uma data e hora programada' +
-                        ' para que os estudantes tenham acesso aos resultados, e se o estudante' +
-                        ' poderá visualizar a questão completa ou não.'}
-                      </Typography>
-                    </p>
-                  </React.Fragment>
-                }>
-              <FormControlLabel
-                  control={
-                    <Switch
-                        checked={checkedShowResult}
-                        onChange={handleChangeShowResult}
-                        name="show_results"
-                        color="primary"
-                    />
-                  }
-                  label="Liberar o resultado?"
-              />
-            </TooltipCustomized>
-
-            <List
+              <List
                 component="nav"
                 aria-labelledby="nested-list-subheader"
-                className={classes.root}
-            >
-              <Collapse in={checkedShowResult} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding className={classes.subGroup}>
-                  <ListItem className={classes.nested}>
-                    <TextField
+                className={classes.root}>
+                <Collapse in={checkedDefineDateAndHourInitial} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding className={classes.subGroup}>
+                    <ListItem className={classes.nested}>
+                      <Box display="flex" justifyContent="flex-start">
+                        <FormControl component="fieldset">
+                          <RadioGroup row={true} aria-label="data_start_type" name="data_start_type" value={formState.values.data_start_type}
+                                      onChange={handleChange}>
+                            <TooltipQuestione description={'Caso esta opção esteja habilitada, os estudantes poderão iniciar a avaliação qualquer dia e horário após a data e horário especificados.'}
+                                              position={'bottom-start'}
+                                              content={
+                                                 <FormControlLabel value="DI" checked={formState.values.data_start_type == 'DI' && true} control={<Radio />} label={'A partir da data e horário.'} />
+                                              }
+                            />
+                            <TooltipQuestione description={'Caso esta opção esteja habilitada, os estudantes terão que iniciar a avaliação exatamente no dia e horário especificado. A tolerância é de 5 minutos.' +
+                                    ' Caso o estudante não inicie o simulado no tempo programado, ' +
+                                    ' o estudante ficará incapacitado de realizar o simulado. A tolerância é de 10 minutos, '+
+                                    ' ou seja, caso esteja programado para às 18 horas, o simulado poderá ser iniciado entre '+
+                                    ' 17:50 e 18:10.'} position={'bottom-start'} content={
+                                      <FormControlLabel value="DF" checked={formState.values.data_start_type == 'DF' && true} control={<Radio />} label="Data e horário fixo." />
+                            }/>
+                          </RadioGroup>
+                        </FormControl>
+                      </Box>
+                    </ListItem>
+                    <ListItem className={classes.nested}>
+                      <TextField
                         // error={hasError('description')}
                         // helperText={
                         //   hasError('description') ? formState.errors.description[0] : null
                         // }
                         type="date"
-                        label="Data da liberação"
+                        label="Data da avaliação"
                         InputLabelProps={{
                           shrink: true,
                         }}
                         margin="dense"
-                        name="date_release_results"
+                        name="date"
                         onChange={handleChange}
-                        value={formState.values.date_release_results || ''}
+                        value={formState.values.date || ''}
                         variant="outlined"
                         className={classes.inputInline}
-                    />
-                  </ListItem>
-                  <ListItem className={classes.nested}>
-                    <TextField
+                      />
+                    </ListItem>
+                    <ListItem className={classes.nested}>
+                      <TextField
                         // error={hasError('description')}
                         // helperText={
                         //   hasError('description') ? formState.errors.description[0] : null
                         // }
                         type="time"
-                        label="Hora da liberação"
+                        label="Hora de início"
                         InputLabelProps={{
                           shrink: true,
                         }}
                         margin="dense"
-                        name="time_release_results"
+                        name="hour"
                         onChange={handleChange}
-                        value={formState.values.time_release_results || ''}
+                        value={formState.values.hour || ''}
                         variant="outlined"
                         className={classes.inputInline}
-                    />
-                  </ListItem>
-                  <ListItem className={classes.nested}>
-                    <TooltipCustomized
-                        title={
-                          <React.Fragment>
-                            <p>
-                              <Typography color="textPrimary" variant="body2">
-                                {'Caso esta opção esteja habilitada, o estudante terá acesso' +
-                                ' a todas as informações das questões (texto base, enunciado e alternativas).' +
-                                ' Caso esteja desabilitada, o estudante poderá visualizar apenas se ' +
-                                ' acertou ou errou cada questão.'}
-                              </Typography>
-                            </p>
-                          </React.Fragment>
-                        }>
-                      <FormControlLabel
-                          control={
-                            <Switch
-                                checked={checkedReleasePreviewQuestion}
-                                onChange={handleChangeReleasePreviewQuestion}
-                                name="release_preview_question"
-                                color="primary"
-                            />
-                          }
-                          label="Liberar visualização das questões"
                       />
-                    </TooltipCustomized>
-                  </ListItem>
-                </List>
-              </Collapse>
-            </List>
-          </Grid>
-
-          <Grid
+                    </ListItem>
+                  </List>
+                </Collapse>
+              </List>
+            </Grid>
+            <Grid
               item
-              md={6}
+              md={12}
               xs={12}
-              className={classes.row}
-          >
-            <TooltipCustomized
-                title={
-                  <React.Fragment>
-                    <p>
-                      <Typography color="textPrimary" variant="body2">
-                        {'Caso esta opção esteja habilitada, todos os estudantes terão acesso' +
-                        ' ao resultado desta aplicação. Você pode configurar uma data e hora programada' +
-                        ' para que os estudantes tenham acesso aos resultados, e se o estudante' +
-                        ' poderá visualizar a questão completa ou não.'}
-                      </Typography>
-                    </p>
-                  </React.Fragment>
-                }>
-              <FormControlLabel
-                  control={
-                    <Switch
-                        checked={shareEvaluation}
-                        onChange={handleChangeShareEvaluation}
-                        name="share_evaluation"
-                        color="primary"
-                    />
-                  }
-                  label="Gerar link para compartilhar resultados com professores?"
-              />
-            </TooltipCustomized>
+              className={classes.row}>
+              <TooltipQuestione description={'Caso esta opção esteja habilitada, poderá ser configurada' +
+                  ' data e hora em que o estudante deverá finalizar o simulado.' +
+                  ' Caso o estudante não finalize o simulado no tempo programado,' +
+                  ' o sistema irá finalizar o simulado automaticamente (essa informação'+
+                  ' ficará disponível no relatório). '} position={'bottom-start'} content={
+                <FormControlLabel
+                    control={
+                      <Switch
+                          checked={checkedDefineDateAndHourFinal}
+                          onChange={handleChangeDefineDateAndHourFinal}
+                          name="define_date_and_hour_final"
+                          color="primary"
+                      />
+                    }
+                    label="Definir data e hora final?"
+                />
+              }/>
 
-            <List
+              <List
                 component="nav"
                 aria-labelledby="nested-list-subheader"
                 className={classes.root}
-            >
-              <Collapse in={shareEvaluation} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding className={classes.subGroup}>
-                  <ListItem className={classes.nested}>
-                    <TooltipCustomized
-                        title={
-                          <React.Fragment>
-                            <p>
-                              <Typography color="textPrimary" variant="body2">
-                                {'Caso esta opção esteja habilitada, o estudante terá acesso' +
-                                ' a todas as informações das questões (texto base, enunciado e alternativas).' +
-                                ' Caso esteja desabilitada, o estudante poderá visualizar apenas se ' +
-                                ' acertou ou errou cada questão.'}
-                              </Typography>
-                            </p>
-                          </React.Fragment>
-                        }>
-                      <FormControlLabel
-                          control={
-                            <Switch
-                                checked={canViewStudentName}
-                                onChange={handleChangeCanViewStudentName}
-                                name="can_view_student_name"
-                                color="primary"
-                            />
-                          }
-                          label="Permitir visualização do nome dos alunos nos resultados?"
+              >
+                <Collapse in={(checkedDefineDateAndHourFinal && !checkedDefineDuration)} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding className={classes.subGroup}>
+                    <ListItem className={classes.nested}>
+                      <TextField
+                        // error={hasError('description')}
+                        // helperText={
+                        //   hasError('description') ? formState.errors.description[0] : null
+                        // }
+                        type="date"
+                        label="Data de fim da avaliação"
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        margin="dense"
+                        name="date_finish"
+                        onChange={handleChange}
+                        value={formState.values.date_finish || ''}
+                        variant="outlined"
+                        className={classes.inputInline}
                       />
-                    </TooltipCustomized>
-                  </ListItem>
-                </List>
-              </Collapse>
-            </List>
-          </Grid>
-        </CardContent>
-        <Divider />
-        <CardActions>
-          <Button
-            color="primary"
-            variant="outlined"
-            onClick={saveApplicationDetails}
-            disabled={!formState.isValid}>
-            Salvar
-          </Button>
-        </CardActions>
-      </form>
-    </Card>
+                    </ListItem>
+                    <ListItem className={classes.nested}>
+                      <TextField
+                        // error={hasError('description')}
+                        // helperText={
+                        //   hasError('description') ? formState.errors.description[0] : null
+                        // }
+                        type="time"
+                        label="Hora de fim da avaliação"
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        margin="dense"
+                        name="hour_finish"
+                        onChange={handleChange}
+                        value={formState.values.hour_finish || ''}
+                        variant="outlined"
+                        className={classes.inputInline}
+                      />
+                    </ListItem>
+                  </List>
+                </Collapse>
+              </List>
+            </Grid>
+            <Grid
+              item
+              md={12}
+              xs={12}
+              className={classes.row}>
+              <TooltipQuestione description={'Caso esta opção esteja habilitada, poderá ser configurado' +
+                  ' o tempo de duração (em horas) do simulado. Se for cofigurado 01:00 hora,' +
+                  ' após o estudante iniciar o seu simulado terá um prazo de uma hora para finalizar. ' +
+                  ' Caso o tempo de duração do simulado seja de dias, deve-se multiplicar 24 * QUANTIDADE_DE_DIAS'+
+                  ' e informar no campo. '} position={'bottom-start'} content={
+                <FormControlLabel
+                    control={
+                      <Switch
+                          checked={checkedDefineDuration}
+                          onChange={handleChangeDefineDuration}
+                          name="define_duration"
+                          color="primary"
+                      />
+                    }
+                    label="Definir duração?"
+                />
+              }/>
+
+              <List
+                component="nav"
+                aria-labelledby="nested-list-subheader"
+                className={classes.root}
+              >
+                <Collapse in={(checkedDefineDuration && !checkedDefineDateAndHourFinal)} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding className={classes.subGroup}>
+                    <ListItem className={classes.nested}>
+                      <TextField
+                        // error={hasError('description')}
+                        // helperText={
+                        //   hasError('description') ? formState.errors.description[0] : null
+                        // }
+                        type="time"
+                        label="Duração da prova em horas"
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        margin="dense"
+                        name="duration"
+                        onChange={handleChange}
+                        value={formState.values.duration || ''}
+                        variant="outlined"
+                        className={classes.inputInline}
+                      />
+                    </ListItem>
+                  </List>
+                </Collapse>
+              </List>
+            </Grid>
+            <Grid
+                item
+                md={12}
+                xs={12}
+                className={classes.row}>
+              <TooltipQuestione description={'Caso esta opção esteja habilitada, todos os estudantes terão acesso' +
+                  ' ao resultado deste simulado. Você pode configurar uma data e hora programada' +
+                  ' para que os estudantes tenham acesso aos resultados, e se o estudante' +
+                  ' poderá visualizar as questões completas ou não.'} position={'bottom-start'} content={
+                <FormControlLabel
+                    control={
+                      <Switch
+                          checked={checkedShowResult}
+                          onChange={handleChangeShowResult}
+                          name="show_results"
+                          color="primary"
+                      />
+                    }
+                    label="Liberar o resultado?"
+                />
+              }/>
+
+              <List
+                  component="nav"
+                  aria-labelledby="nested-list-subheader"
+                  className={classes.root}
+              >
+                <Collapse in={checkedShowResult} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding className={classes.subGroup}>
+                    <ListItem className={classes.nested}>
+                      <TextField
+                          // error={hasError('description')}
+                          // helperText={
+                          //   hasError('description') ? formState.errors.description[0] : null
+                          // }
+                          type="date"
+                          label="Data da liberação"
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          margin="dense"
+                          name="date_release_results"
+                          onChange={handleChange}
+                          value={formState.values.date_release_results || ''}
+                          variant="outlined"
+                          className={classes.inputInline}
+                      />
+                    </ListItem>
+                    <ListItem className={classes.nested}>
+                      <TextField
+                          // error={hasError('description')}
+                          // helperText={
+                          //   hasError('description') ? formState.errors.description[0] : null
+                          // }
+                          type="time"
+                          label="Hora da liberação"
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          margin="dense"
+                          name="time_release_results"
+                          onChange={handleChange}
+                          value={formState.values.time_release_results || ''}
+                          variant="outlined"
+                          className={classes.inputInline}
+                      />
+                    </ListItem>
+                    <ListItem className={classes.nested}>
+                      <TooltipQuestione description={'Caso esta opção esteja habilitada, o estudante terá acesso' +
+                          ' a todas as informações das questões (texto base, enunciado e alternativas).' +
+                          ' Caso esteja desabilitada, o estudante poderá visualizar apenas se ' +
+                          ' acertou ou errou cada questão.'} position={'bottom-start'} content={
+                        <FormControlLabel
+                            control={
+                              <Switch
+                                  checked={checkedReleasePreviewQuestion}
+                                  onChange={handleChangeReleasePreviewQuestion}
+                                  name="release_preview_question"
+                                  color="primary"
+                              />
+                            }
+                            label="Liberar visualização das questões"
+                        />
+                      }/>
+                    </ListItem>
+                  </List>
+                </Collapse>
+              </List>
+            </Grid>
+
+            <Grid
+                item
+                md={12}
+                xs={12}
+                className={classes.row}>
+              <TooltipQuestione description={'Caso esta opção esteja habilitada, você poderá compartilhar '+
+              'os resultados deste simulado com outros professores por meio de um link.'} position={'bottom-start'} content={
+                <FormControlLabel
+                    control={
+                      <Switch
+                          checked={shareEvaluation}
+                          onChange={handleChangeShareEvaluation}
+                          name="share_evaluation"
+                          color="primary"
+                      />
+                    }
+                    label="Gerar link para compartilhar resultados com professores?"
+                />
+              }/>
+
+              <List
+                  component="nav"
+                  aria-labelledby="nested-list-subheader"
+                  className={classes.root}
+              >
+                <Collapse in={shareEvaluation} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding className={classes.subGroup}>
+                    <ListItem className={classes.nested}>
+                      <TooltipCustomized
+                          title={
+                            <React.Fragment>
+                              <p>
+                                <Typography color="textPrimary" variant="body2">
+                                  {'Caso esta opção esteja habilitada, o estudante terá acesso' +
+                                  ' a todas as informações das questões (texto base, enunciado e alternativas).' +
+                                  ' Caso esteja desabilitada, o estudante poderá visualizar apenas se ' +
+                                  ' acertou ou errou cada questão.'}
+                                </Typography>
+                              </p>
+                            </React.Fragment>
+                          }>
+                        <FormControlLabel
+                            control={
+                              <Switch
+                                  checked={canViewStudentName}
+                                  onChange={handleChangeCanViewStudentName}
+                                  name="can_view_student_name"
+                                  color="primary"
+                              />
+                            }
+                            label="Permitir visualização do nome dos alunos nos resultados?"
+                        />
+                      </TooltipCustomized>
+                    </ListItem>
+                  </List>
+                </Collapse>
+              </List>
+              <Divider /><br />
+              <Box display="flex" justifyContent="center">
+                <Button
+                    color="primary"
+                    variant="outlined"
+                    onClick={saveApplicationDetails}
+                    disabled={!formState.isValid}>
+                  Salvar
+                </Button>
+              </Box>
+            </Grid>
+          </CardContent>
+        </form>
+      </Card>
+    </div>
   );
 };
 

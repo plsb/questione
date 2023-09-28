@@ -317,7 +317,6 @@ class QuestionController extends Controller
         if($request->fk_type_of_evaluation_id){
             $question->fk_type_of_evaluation_id = $request->fk_type_of_evaluation_id;
         }
-        error_log($request->difficulty);
         if($request->initial_difficulty){
             $question->initial_difficulty = $request->initial_difficulty;
         }

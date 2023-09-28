@@ -47,7 +47,7 @@ class RequestCourseProfessorNotifications extends Notification implements Should
         return (new MailMessage)
             ->subject('[QUESTIONE] Solicitação de acesso ao curso')
             ->greeting('Olá, '.$this->user->name.'.')
-            ->line('Você solicitou permissão para produzir questões para ao curso de '.$this->course.'.')
+            ->line('Você solicitou permissão para produzir questões para o curso de '.$this->course.'.')
             ->line('Já temos uma decisão. Situação '.$this->situaton. '.')
             ->action('Acesse o Questione', url($url));;
 

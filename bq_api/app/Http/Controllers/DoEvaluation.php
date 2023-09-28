@@ -150,48 +150,76 @@ class DoEvaluation extends Controller
 
             //verifica se o professor pre detemrinou uma data e horário específico para iniciar a avaliação
             if($application->date_start){
+                //pega hora que foi inserida pelo professor para iniciar a avaliação
+                $timeInserted = new \DateTime($application->time_start);
+                //pega data que foi inserida pelo professor para iniciar a avaliação
+                $dateCanStart = new \DateTime($application->date_start);
 
-                //verifica se a data atual é igual a data de iniciar a avaliação
-                if($application->date_start == $dateNow){
-                    //verifica se tem hora inicial
+                if($application-> data_start_type == 'DI'){
+                    //caso tenha configurada como tipo DI (A partir da data ou data inicial)
 
-                    if($application->time_start){
-                        //pega hora atual
-                        $timeStartedEvaluationStarted = new \DateTime(date('H:i'));
-                        $timeFinisedEvaluationStarted = new \DateTime(date('H:i'));
-                        //pega hora que foi inserida pelo professor para iniciar a avaliação
-                        $timeInserted = new \DateTime($application->time_start);
-                        //diminui 05 minutos para especificar o tempo inicial para iniciar limite
-                        $timeStartedEvaluationStarted->sub(new \DateInterval('PT5M'));
-                        //aumenta 05 minutos para especificar o tempo final pata iniciar limite
-                        $timeFinisedEvaluationStarted->add(new \DateInterval('PT5M'));
-
-                        //horário que o estudante deve iniciar a avaliação
-                        $timeStudentShouldStarted = new \DateTime($application->time_start);
-                        $timeStudentShouldFinished = new \DateTime($application->time_start);
-                        $timeStudentShouldStarted->sub(new \DateInterval('PT5M'));
-                        $timeStudentShouldFinished->add(new \DateInterval('PT5M'));
-
-                        $dateCanStart = new \DateTime($application->date_start);
-
-                        if(!($timeInserted >= $timeStartedEvaluationStarted && $timeInserted <= $timeFinisedEvaluationStarted)){
+                    //hora atuaal
+                    $timeNow = new \DateTime(date('H:i'));
+                    if($application->date_start == $dateNow){
+                        if($timeInserted >= $timeNow){
                             return response()->json([
-                                'message' => 'A avaliação não pode ser iniciada. '.
-                                    'O estudante só pode iniciar esta avaliação entre o horário '.$timeStudentShouldStarted->format('H:i').
-                                    ' e '. $timeStudentShouldFinished->format('H:i').' do dia '
-                                    .$dateCanStart->format('d/m/Y').'.'
+                                'message' => 'A avaliação não pode ser iniciada. ' .
+                                    'O estudante só pode iniciar esta avaliação a partir do horário de '
+                                    . $application->time_start . '.'
                             ], 202);
                         }
+
+                    } else if ($application->date_start > $dateNow) {
+                        return response()->json([
+                            'message' => 'A avaliação não pode ser iniciada. ' .
+                                'O estudante só pode iniciar esta avaliação a partir do dia '
+                                . $dateCanStart->format('d/m/Y').'.'
+                        ], 202);
+
                     }
 
                 } else {
+                    //caso tenha configurada como tipo DF (Data Fixa)
+                    //verifica se a data atual é igual a data de iniciar a avaliação
+                    if ($application->date_start == $dateNow) {
+                        //verifica se tem hora inicial
 
-                    $dateCanStart = new \DateTime($application->date_start);
-                    return response()->json([
-                        'message' => 'A avaliação não pode ser iniciada. '.
-                            'O estudante só pode iniciar esta avaliação no dia '
-                            .$dateCanStart->format('d/m/Y'). ' às '.$application->time_start.'.'
-                    ], 202);
+                        if ($application->time_start) {
+                            //pega hora atual
+                            $timeStartedEvaluationStarted = new \DateTime(date('H:i'));
+                            $timeFinisedEvaluationStarted = new \DateTime(date('H:i'));
+
+                            //diminui 05 minutos para especificar o tempo inicial para iniciar limite
+                            $timeStartedEvaluationStarted->sub(new \DateInterval('PT10M'));
+                            //aumenta 05 minutos para especificar o tempo final pata iniciar limite
+                            $timeFinisedEvaluationStarted->add(new \DateInterval('PT10M'));
+
+                            //horário que o estudante deve iniciar a avaliação
+                            $timeStudentShouldStarted = new \DateTime($application->time_start);
+                            $timeStudentShouldFinished = new \DateTime($application->time_start);
+                            $timeStudentShouldStarted->sub(new \DateInterval('PT10M'));
+                            $timeStudentShouldFinished->add(new \DateInterval('PT10M'));
+
+
+                            if (!($timeInserted >= $timeStartedEvaluationStarted && $timeInserted <= $timeFinisedEvaluationStarted)) {
+                                return response()->json([
+                                    'message' => 'A avaliação não pode ser iniciada. ' .
+                                        'O estudante só pode iniciar esta avaliação entre o horário ' . $timeStudentShouldStarted->format('H:i') .
+                                        ' e ' . $timeStudentShouldFinished->format('H:i') . ' do dia '
+                                        . $dateCanStart->format('d/m/Y') . '.'
+                                ], 202);
+                            }
+                        }
+
+                    } else {
+
+                        $dateCanStart = new \DateTime($application->date_start);
+                        return response()->json([
+                            'message' => 'A avaliação não pode ser iniciada. ' .
+                                'O estudante só pode iniciar esta avaliação no dia '
+                                . $dateCanStart->format('d/m/Y') . ' às ' . $application->time_start . '.'
+                        ], 202);
+                    }
                 }
 
             }

@@ -15,7 +15,7 @@ import {
     AppBar,
     Toolbar,
     Dialog,
-    Breadcrumbs,
+    Breadcrumbs, Button, LinearProgress, TablePagination, List, Divider, ListItem, ListItemText, Hidden,
 } from '@material-ui/core';
 
 import People from './People';
@@ -26,13 +26,11 @@ import {makeStyles} from "@material-ui/styles";
 import useStyles from "./../../../style/style";
 import CloseIcon from "@material-ui/icons/Close";
 import GamificationPanel from "../../../components/GamificationPanel";
-
-
-export function CharmHome(props) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" {...props}><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3.75 5.75v7.5h8.5v-7.5m-10.5 1.5L8 1.75l6.25 5.5"></path></svg>
-    )
-}
+import {CharmHome} from "../../../icons/Icons";
+import moment from "moment";
+import EvaluationQuestions from "../../../components/EvaluationQuestions/EvaluationQuestions";
+import {toast} from "react-toastify";
+import TooltipQuestione from "../../../components/TooltipQuestione";
 
 const useStylesLocal = makeStyles(theme => ({
     root: {
@@ -80,6 +78,43 @@ const StudentClassContent = props => {
 
     const [classProfessor, setClassProfessor] = useState(null);
     const [openDialogPeople, setOpenDialogPeople] = React.useState(false);
+
+    const [evaluationSelected, setEvaluationSelected] = useState(null);
+    const [openNewApplication, setOpenNewApplication] = React.useState(false);
+    const [evaluations, setEvaluations] = useState(null);
+    const [totalEvaluations, setTotalEvaluations] = useState(0);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+
+    const loadEvaluations = async (page) => {
+        try {
+            let status = 1;
+            const response = await api.get(`evaluation`, {
+                params: {
+                    status,
+                    page
+                },
+            });
+
+            if (response.status == 200) {
+                setTotalEvaluations(response.data.total);
+                setEvaluations(response.data.data);
+            } else {
+                setEvaluations([]);
+            }
+
+        } catch (e) {
+
+        }
+    };
+    const handlePageChangeEvaluations = (event, page) => {
+        loadEvaluations(page + 1, 1)
+        setPage(page);
+    };
+
+    const handleRowsPerPageChange = event => {
+        setRowsPerPage(event.target.value);
+    };
 
     const handleCloseDialogPeople = () => {
         setOpenDialogPeople(false);
@@ -146,8 +181,49 @@ const StudentClassContent = props => {
     };
 
     useEffect(() => {
+        loadEvaluations(1);
         loadClassProfessor();
     }, []);
+
+    const handleNewApplicationExit = () => {
+        setOpenNewApplication(false);
+        setEvaluationSelected(null);
+    }
+
+    const handleNewApplication = () => {
+        setOpenNewApplication(true);
+    };
+
+    async function newApplication(){
+        if(evaluationSelected != null){
+            try {
+
+                const fk_evaluation_id = evaluationSelected.id;
+                const description = evaluationSelected.description + ' (Simulado de '+new Date().toLocaleDateString('pt-BR')+')';
+                const fk_class_id = studentClassId;
+                const data = {
+                    description, fk_evaluation_id, fk_class_id
+                }
+                const response = await api.post('evaluation/add-application', data);
+                if (response.status === 202) {
+                    if(response.data.message){
+                        toast.error(response.data.message);
+                    }
+                    setOpenNewApplication(false);
+                    setEvaluationSelected(null);
+                } else {
+                    toast.success('Nova aplicação cadastrada.');
+                    setOpenNewApplication(false);
+                    setEvaluationSelected(null);
+                    window.location.reload();
+                }
+
+            } catch (error) {
+
+            }
+
+        }
+    }
 
     return (
         <div className={classesGeneral.root}>
@@ -159,16 +235,16 @@ const StudentClassContent = props => {
                                 <CharmHome/>
                             </Box>
                             <Box>
-                                Inicio
+                                Início
                             </Box>
                         </Box>
                     </Link>
                     <Link color="inherit" onClick={() => history.goBack()}>
                         {localStorage.getItem('@Questione-acess-level-user') === "2" ? 'Turmas' : 'Minhas turmas'}
                     </Link>
-                    <Link color="inherit">
+                    <div color="inherit">
                         Turma {classProfessor && classProfessor.id_class}
-                    </Link>
+                    </div>
                 </Breadcrumbs>
             </Box>
             <Card className={classes.root}>
@@ -178,16 +254,18 @@ const StudentClassContent = props => {
                             <Grid container direction="row" xs={12}>
                                 <Grid item xs={12} sm={12} md={7} style={{marginBottom: '20px'}}>
                                     <Box display="flex" alignItems="row">
-                                        <Box>
-                                            { classProfessor
-                                                && (classProfessor.gamified_class === 1 &&
-                                                    <img
-                                                        style={{marginTop: '20px', marginRight: '10px'}}
-                                                        alt="Logo"
-                                                        src="/images/videogame.png" width='100px'/>
-                                                )}
+                                        <Hidden smDown>
+                                            <Box>
+                                                { classProfessor
+                                                    && (classProfessor.gamified_class === 1 &&
+                                                        <img
+                                                            style={{marginTop: '20px', marginRight: '10px'}}
+                                                            alt="Logo"
+                                                            src="/images/videogame.png" width='100px'/>
+                                                    )}
 
-                                        </Box>
+                                            </Box>
+                                        </Hidden>
                                         <Box>
                                             { classProfessor
                                                 &&
@@ -207,19 +285,24 @@ const StudentClassContent = props => {
                                                         </div>
                                                     }
                                                     <Link onClick={() => setOpenDialogPeople(true)}>
-                                                        <div className={classesGeneral.paperTitleText} style={{fontSize: '15px'}}>
-                                                            {classProfessor.class_student_all && classProfessor.class_student_all.length + ' estudante(s)'}
-                                                        </div>
+                                                        <TooltipQuestione description={'Clique aqui para visualizar os participantes desta turma.'} position={'bottom'} content={
+                                                            <div className={classesGeneral.paperTitleText} style={{fontSize: '15px'}}>
+                                                                {classProfessor.class_student_all && classProfessor.class_student_all.length + ' estudante(s)'}
+                                                            </div>
+                                                        }/>
                                                     </Link>
                                                 </div>
                                             }
+                                            { localStorage.getItem('@Questione-acess-level-user') === "2" &&
+                                                <Button style={{marginTop:'20px'}} color="primary" variant='outlined' onClick={handleNewApplication}>Adicionar Simulado</Button>}
                                         </Box>
                                     </Box>
                                 </Grid>
+                                { classProfessor && (classProfessor.gamified_class === 1
+                                        && localStorage.getItem('@Questione-acess-level-user') === "0") &&
                                 <Grid item xs={12} sm={12} md={5}>
-                                    {classProfessor &&
-                                        <GamificationPanel gamified_class={classProfessor.gamified_class} classId={studentClassId}/>}
-                                </Grid>
+                                        <GamificationPanel gamified_class={classProfessor.gamified_class} classId={studentClassId}/>
+                                </Grid> }
                             </Grid>
                             <Dialog
                                 open={openDialogPeople}
@@ -243,81 +326,79 @@ const StudentClassContent = props => {
                                     </div>
                                 </div>}
                             </Dialog>
+                            <Dialog fullScreen={true}
+                                    onClose={handleNewApplicationExit}
+                                    aria-labelledby="responsive-dialog-title" open={openNewApplication}>
+                                <AppBar className={classes.appBar}>
+                                    <Toolbar>
+                                        <IconButton edge="start" color="inherit" onClick={handleNewApplicationExit} aria-label="close">
+                                            <CloseIcon />
+                                        </IconButton>
+                                        <div className={classesGeneral.titleList} style={{color: '#FFF', marginBottom: '15px'}}>
+                                            {evaluationSelected != null ? 'Crie um simulado a partir da avaliação '+evaluationSelected.id : 'Selecione a avaliação'}
+                                        </div>
+
+                                    </Toolbar>
+                                </AppBar>
+
+                                {/* não foi selecionada a avaliação*/}
+                                {evaluationSelected == null && evaluations == null ?
+                                    <LinearProgress color="secondary" />
+                                    :
+                                    evaluationSelected == null &&
+                                    <div style={{margin: '10px'}}>
+                                        <TablePagination
+                                            component="div"
+                                            count={totalEvaluations}
+                                            onChangePage={handlePageChangeEvaluations}
+                                            onChangeRowsPerPage={handleRowsPerPageChange}
+                                            page={page}
+                                            rowsPerPage={rowsPerPage}
+                                            rowsPerPageOptions={[10]}
+                                        />
+                                        <List>
+                                            {evaluations.map(evaluation => (
+                                                <div>
+                                                    <Divider/>
+                                                    <ListItem button onClick={() => setEvaluationSelected(evaluation)}>
+                                                        <ListItemText id={evaluation.id} primary={
+                                                            <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '10px'}}>
+                                                                {evaluation.description}
+                                                            </div>}
+
+                                                                      secondary={
+                                                                          <div className={classesGeneral.paperTitleText}>
+                                                                              {'Esta avaliação foi criada em: '+ moment(evaluation.created_at).format('DD/MM/YYYY')+'.'}
+                                                                          </div>}/>
+                                                    </ListItem>
+                                                    <Divider/>
+                                                </div>
+
+                                            ))}
+
+                                        </List>
+                                    </div>}
+
+                                {(evaluationSelected != null && level_user === '2') &&
+                                    <div style={{margin: '10px'}}>
+                                        <Box display={'flex'} justifyContent='center' style={{marginTop: '20px', marginBottom: '30px'}}>
+                                            <Button variant="outlined" color="primary" size="medium" onClick={newApplication}>
+                                                Criar um Simulado a partir da avaliação {evaluationSelected.id}
+                                            </Button>
+                                        </Box>
+                                        <EvaluationQuestions evaluationId={evaluationSelected.id}/>
+                                    </div>
+                                }
+                            </Dialog>
                         </div>
                     }
                 />
             </Card>
 
             {level_user === '2' &&
-                <Tabs
-                    variant="fullWidth"
-                    value={tabValue}
-                    onChange={handleChangeTab}
-                    aria-label="nav tabs example">
-                   {/* <LinkTab label="Avaliações" style={{ display: level_user === '2' ? 'block' : 'none' }} href="/student-class/evaluations" {...a11yProps(0)} /> */}
-                    {level_user === '2' && <LinkTab label="Simulados"  href="/student-class/applications" {...a11yProps(0)} />}
-                    {/*<LinkTab label="Avaliações" style={{ display: level_user === '0' ? 'block' : 'none' }} href="/student-class/evaluations/student" {...a11yProps(2)} />*/}
-                    {/*<LinkTab label="Avaliações respondidas" style={{ display: level_user === '0' ? 'block' : 'none' }} href="/student-class/answed-evaluations" {...a11yProps(3)} />*/}
-                    {level_user === '2' && <LinkTab label="Resultados" href="/student-class/applications" {...a11yProps(1)} />}
-                </Tabs>}
-
-            {/*<TabPanel value={tabValue} index={0}>
-                <Card
-                    className={classes.table}
-                >
-                    <CardContent>
-                        <div style={{ margin: '16px', marginLeft: '16px' }}>
-                            <EvaluationTable studentClassId={studentClassId} />
-                        </div>
-                    </CardContent>
-                </Card>
-    </TabPanel> */}
-
-            <TabPanel value={tabValue} index={0}>
-                {level_user === '2' ?
-                    <div style={{ margin: '5px', marginLeft: '16px' }}>
-                        <ApplicationTable studentClassId={studentClassId} />
-                    </div>
-                    :
-                    null}
-
-
-            </TabPanel>
-
-
-
-            {/*<TabPanel value={tabValue} index={2}>
-                <Card className={classes.header}>
-                    <CardContent>
-                        <div style={{ margin: '16px', marginLeft: '16px' }}>
-                            <StudentEvaluationTable studentClassId={studentClassId} />
-                        </div>
-                    </CardContent>
-                </Card>
-        </TabPanel>*/}
-
-           {/* <TabPanel value={tabValue} index={3}>
-                <Card className={classes.header}>
-                    <CardContent>
-                        <div style={{ margin: '16px', marginLeft: '16px' }}>
-                            <EvaluationsResults studentClassId={studentClassId} history={history} />
-                        </div>
-                    </CardContent>
-                </Card>
-         </TabPanel>*/}
-
-            <TabPanel value={tabValue} index={1}>
-                {level_user === '2' &&
-                    <div style={{ margin: '16px', marginLeft: '16px' }}>
-                        <ResultsAplicationProfessor studentClassId={studentClassId}/>
-                    </div>
-
-                   /* <div style={{ margin: '16px', marginLeft: '16px' }}>
-                        <ResultsAplicationStudent studentClassId={studentClassId}/>
-                    </div>*/
-
-                }
-            </TabPanel>
+                <div>
+                    <ApplicationTable studentClassId={studentClassId} />
+                </div>}
 
             {level_user === '0' &&
                 <div>

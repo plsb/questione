@@ -148,6 +148,11 @@ class EvaluationApplicationsController extends Controller
                     'message' => 'A hora para iniciar a prova deve ser informada.'
                 ], 202);
             }
+            if(!$request->data_start_type){
+                return response()->json([
+                    'message' => 'Informe o tipo da data e hora inicial.'
+                ], 202);
+            }
         }
         if($request->date_finish){
             if(!$request->time_finish){
@@ -188,6 +193,7 @@ class EvaluationApplicationsController extends Controller
         $evaluation_application->fk_evaluation_id = $request->fk_evaluation_id;
         $evaluation_application->date_start = $request->date_start;
         $evaluation_application->time_start = $request->time_start;
+        $evaluation_application->data_start_type = $request->data_start_type;
         $evaluation_application->time_to_finalize = $request->time_to_finalize;
         $evaluation_application->date_finish = $request->date_finish;
         $evaluation_application->time_finish = $request->time_finish;
@@ -238,7 +244,7 @@ class EvaluationApplicationsController extends Controller
         }
 
         //verifica se as horas iniciais ou finais foram informadas e se a data inicial não é menor que a atual
-        if($request->date_start){
+        if($request->date_start || $request->time_start || $request->data_start_type){
             if($request->date_start < date('Y-m-d')){
                 return response()->json([
                     'message' => 'A data para iniciar a avaliação deve ser maior ou igual a data atual.'
@@ -249,8 +255,18 @@ class EvaluationApplicationsController extends Controller
                     'message' => 'A hora para iniciar a prova deve ser informada.'
                 ], 202);
             }
+            if(!$request->data_start_type){
+                return response()->json([
+                    'message' => 'Informe o tipo da data e hora inicial.'
+                ], 202);
+            }
         }
-        if($request->date_finish){
+        if($request->date_finish || $request->time_finish){
+            if(!$request->date_finish){
+                return response()->json([
+                    'message' => 'A data para finalizar a prova deve ser informada.'
+                ], 202);
+            }
             if(!$request->time_finish){
                 return response()->json([
                     'message' => 'A hora para finalizar a prova deve ser informada.'
@@ -355,6 +371,7 @@ class EvaluationApplicationsController extends Controller
         }
         $evaluation_application->date_start = $request->date_start;
         $evaluation_application->time_start = $request->time_start;
+        $evaluation_application->data_start_type = $request->data_start_type;
         $evaluation_application->time_to_finalize = $request->time_to_finalize;
         $evaluation_application->date_finish = $request->date_finish;
         $evaluation_application->time_finish = $request->time_finish;
@@ -778,7 +795,16 @@ class EvaluationApplicationsController extends Controller
         foreach ($evaluation_question as $ev_question){
             $qtdQuestions++;
 
-            $question = Question::where('id', $ev_question->fk_question_id)->first();
+            $question = Question::where('id', $ev_question->fk_question_id)
+                ->with('typeOfEvaluation')
+                ->with('knowledgeObjects')
+                ->with('skill')
+                ->with('course')
+                ->with('regulation')
+                ->with('user')
+                ->with('questionItems')
+                ->with('keywords')
+                ->first();
             //verifica qual o item correto
             $item_correct = QuestionItem::where('fk_question_id', $question->id)
                 ->where('correct_item', 1)->first();
@@ -854,8 +880,7 @@ class EvaluationApplicationsController extends Controller
                         'description' => $iq->description,
                         'total_answer_item' => $count_total_answer_item,
                         'percentage_answer' => number_format($percentageAnswerItem, 2),
-                        'correct' => 1,
-                        'ordem' => $ordemDescription,
+                        'correct_item' => 1,
                     ];
                 } else {
                     //verifica se algum estudante respondeu o item
@@ -873,8 +898,7 @@ class EvaluationApplicationsController extends Controller
                         'description' => $iq->description,
                         'total_answer_item' => $count_total_answer_item,
                         'percentage_answer' => number_format($percentageAnswerItem, 2),
-                        'correct' => 0,
-                        'ordem' => $ordemDescription,
+                        'correct_item' => 0,
                     ];
                 }
 
@@ -909,20 +933,26 @@ class EvaluationApplicationsController extends Controller
             }
 
             $auxQuestion= (object)[
-                'idQuestion' => $question->id,
+                'id' => $question->id,
                 'difficulty' => $question->difficulty,
+                'validated' => $question->validated,
                 'cancel' => $ev_question->cancel,
                 'base_text' => $question->base_text,
                 'stem' => $question->stem,
                 'reference' => $question->reference,
-                'skill' => $descSkill,
-                'course' => $course->description,
+                'skill' => $question->skill,
+                'course' => $course,
+                'year' => $question->year,
+                'type_of_evaluation' => $question->typeOfEvaluation,
+                'knowledge_objects' => $question->knowledgeObjects,
+                'keywords' => $question->keywords,
                 'variance' => number_format($variance_question,3),
                 'total_asnwer' => $count_total_answer_question,
                 'percentage_correct' => number_format($percentageCorrectQuestion, 2),
                 'percentage_correct_round' => round($percentageCorrectQuestion),
                 'objects' => $resultObjects,
-                'itens' => $resultItens,
+                'question_items' => $resultItens,
+                'fk_user_id' => $question->fk_user_id,
 
             ];
 

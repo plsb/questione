@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {withRouter} from "react-router-dom";
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
-// import moment from 'moment';
+import withWidth from '@material-ui/core/withWidth';
 
 import api from "../../services/api";
 
@@ -21,13 +21,15 @@ import {
     TextField,
     Button,
     Dialog,
-    Grid, Box, Paper, CardActionArea, Link
+    Grid, Box, Paper, CardActionArea, Link, Hidden
 } from '@material-ui/core';
 import {Edit, MoreVert} from '@material-ui/icons';
-import { makeStyles } from '@material-ui/styles';
+import {makeStyles, useTheme} from '@material-ui/styles';
 import CloseIcon from "@material-ui/icons/Close";
 import useStyles from "../../style/style";
 import moment from "moment/moment";
+import TooltipQuestione from "../TooltipQuestione";
+import DecreaseStringSize from "../DecreaseStringSize";
 
 export function EntypoEye(props) {
     return (
@@ -84,6 +86,7 @@ const StudendClassCard = props => {
     const { className, id, status, showUser, toFileCallback, isOwner,
         history, class_student, class_student_student, ...rest } = props;
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [refresh, setRefresh] = React.useState(null);
 
     const classes = useStylesLocal();
     const classesGeneral = useStyles();
@@ -165,30 +168,34 @@ const StudendClassCard = props => {
         }*/
     }
 
-
     return (
         <Card
             {...rest}
             className={classes.root}>
             <div>
-                    <Paper className={classesGeneral.paperTitle} style={{background: class_student_student && class_student_student.active == 0 && '#ffcdd2'}}>
+                    <Paper className={status == 2 ? classesGeneral.paperTitleGray : classesGeneral.paperTitle} style={{background: class_student_student && class_student_student.active == 0 && '#ffcdd2'}}>
                         <Box display="flex">
                             <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-start">
                                 <div className={classesGeneral.paperTitleText}>
                                     {class_student.id_class}
                                 </div>
-                                { status == 2 &&
-                                    <div className={classesGeneral.textRedInfo} style={{marginLeft: '15px', marginTop: '4px'}}>
-                                        {'Arquivada'}
-                                    </div>}
-                                <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '15px'}}>
-                                    {class_student.description}
-                                </div>
                                 {class_student.gamified_class === 1 && (
-                                    <div className={classesGeneral.textGreeInfo} style={{marginLeft: '15px'}}>
-                                        {'(Gamificada)'}
+                                    <div >
+                                        <TooltipQuestione description={'A turma '+class_student.id_class+' é uma turma gamificada.'} position={'bottom'} content={
+                                            <img
+                                                style={{marginTop: '2px', marginLeft: '10px'}}
+                                                alt="Logo"
+                                                src="/images/controle-de-video-game.png" width='20px'/>
+                                        }/>
+
                                     </div>
                                 )}
+
+                                <div className={classesGeneral.paperTitleTextBold}
+                                     style={{marginLeft: '15px'}}>
+                                    <DecreaseStringSize string={class_student.description} large={0.85} />
+
+                                </div>
                             </Box>
                             <Box display="flex" justifyContent="flex-end">
                                 <Box display="flex">
@@ -201,31 +208,39 @@ const StudendClassCard = props => {
                                             </IconButton>
                                         </Tooltip>
                                     )*/}
-                                    <div className={classesGeneral.paperTitleText}>
-                                        {class_student.class_student_all && class_student.class_student_all.length + ' estudante(s)'}
-                                    </div>
+                                    <Hidden xsDown>
+                                        <div className={classesGeneral.paperTitleText} style={{marginTop: '5px'}}>
+                                                <TooltipQuestione description={'Total de estudantes participantes da turma '+class_student.id_class+'.'} position={'bottom'} content={
+                                                            class_student.class_student_all && class_student.class_student_all.length + ' estudante(s)'
+                                                }/>
+                                        </div>
+                                    </Hidden>
 
                                     {
-                                        <IconButton
-                                            aria-label="settings"
-                                            onClick={() => history.push(`/student-class/${id}`)}
-                                            size="small"
-                                            style={{marginLeft: '20px'}}
-                                            disabled={class_student_student && class_student_student.active == 0}>
-                                            {class_student_student && class_student_student.active == 0 ? <EntypoEyeWithLine /> : <EntypoEye /> }
-                                        </IconButton>
+                                        <TooltipQuestione description={'Clique aqui para visualizar a turma '+class_student.id_class+'.'} position={'bottom'} content={
+                                            <IconButton
+                                                aria-label="settings"
+                                                onClick={() => history.push(`/student-class/${id}`)}
+                                                size="small"
+                                                style={{marginLeft: '10px', marginTop: '3px'}}
+                                                disabled={class_student_student && class_student_student.active == 0}>
+                                                {class_student_student && class_student_student.active == 0 ? <EntypoEyeWithLine /> : <EntypoEye /> }
+                                            </IconButton>
+                                        }/>
 
                                     }
 
-                                    { isOwner && <Tooltip title="Opções da turma">
-                                        <IconButton
-                                            aria-label="settings"
-                                            onClick={handleClick}
-                                            size="small"
-                                            style={{marginLeft: '20px'}}>
-                                            <MoreVert />
-                                        </IconButton>
-                                    </Tooltip> }
+                                    { isOwner &&
+                                        <TooltipQuestione description={'Clique para visualizar mais opções da turma '+class_student.id_class+'.'} position={'bottom'} content={
+                                            <IconButton
+                                                aria-label="settings"
+                                                onClick={handleClick}
+                                                size="small"
+                                                style={{marginLeft: '20px'}}>
+                                                <MoreVert />
+                                            </IconButton>
+                                        }/>
+                                        }
 
                                 </Box>
                             </Box>
@@ -235,7 +250,7 @@ const StudendClassCard = props => {
                         <Box display="flex">
                             {class_student.course &&
                                 <div className={classesGeneral.paperTitleText}>
-                                    {'Curso: '+class_student.course.description}
+                                    {'Curso: '}<DecreaseStringSize string={class_student.course.description} large={1.8}/>
                                 </div> }
 
                         </Box>
@@ -245,11 +260,16 @@ const StudendClassCard = props => {
 
                         {class_student.user &&
                             <div className={classesGeneral.paperTitleText} style={{fontWeight: 'bold'}}>
-                                {'Professor: '+ class_student.user.name}
+                                {'Professor: '}<DecreaseStringSize string={class_student.user.name} large={1.3}/>
                             </div> }
                         <div className={classesGeneral.paperTitleText}>
                             {'Esta turma foi criada em: '+ moment(class_student.created_at).format('DD/MM/YYYY')+'.'}
                         </div>
+
+                        { status == 2 &&
+                            <div className={classesGeneral.textRedInfo} style={{marginTop: '10px'}}>
+                                {'Turma arquivada.'}
+                            </div>}
 
                         {class_student_student && class_student_student.active == 0 &&
                             <div className={classesGeneral.textRedInfo} style={{marginTop: '10px'}}>
@@ -436,7 +456,7 @@ StudendClassCard.propTypes = {
     class_student: PropTypes.object,
     history: PropTypes.object,
     setRefresh: PropTypes.func,
-    refresh: PropTypes.number
+    refresh: PropTypes.number,
 };
 
 export default withRouter(StudendClassCard);

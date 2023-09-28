@@ -83,7 +83,6 @@ const CourseTable = props => {
         url += '&description='+searchText;
       }
       const response = await api.get(url);
-      console.log('course', response);
       setTotal(response.data.total);
       setCourses(response.data.data);
     } catch (error) {

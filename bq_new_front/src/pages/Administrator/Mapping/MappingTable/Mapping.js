@@ -117,7 +117,7 @@ const Mapping = props => {
       const response = await api.get('regulation/show/'+id);
 
       if (response.status == 200) {
-        console.log('year', response.data);
+
         setRegulationsObjectSelected1(response.data);
       }
 

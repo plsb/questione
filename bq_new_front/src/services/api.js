@@ -25,7 +25,8 @@ api.interceptors.response.use(async response => {
 
   return response;
 }, function (error) {
-  const { response: { data, status } } = error;
+
+
 
   //verifica se o código de resposta é 401 (não autorizado ou 500 (erro interno no servidor)
   // if (status === 401) {

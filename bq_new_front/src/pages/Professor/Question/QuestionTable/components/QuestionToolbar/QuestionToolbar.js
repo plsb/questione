@@ -10,11 +10,12 @@ import {
   FormControl,
   RadioGroup,
   FormControlLabel,
-  Radio, Card, CardContent, Box, Tooltip, Divider
+  Radio, Card, CardContent, Box, Tooltip, Divider, Breadcrumbs, Link
 } from '@material-ui/core';
 import {withRouter} from "react-router-dom";
 import api from "../../../../../../services/api";
 import useStyles from "../../../../../../style/style";
+import {CharmHome} from "../../../../../../icons/Icons";
 
 const useStylesLocal = makeStyles(theme => ({
   root: {
@@ -185,7 +186,24 @@ const QuestionToolbar = props => {
   return (
       <div
           {...rest}
-          className={clsx(classes.root, className)}>
+          className={clsx(classesGeneral.root, className)}>
+        <Box display="flex">
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link color="inherit" href="/">
+              <Box display="flex">
+                <Box style={{marginTop: '2px', marginRight: '5px'}}>
+                  <CharmHome/>
+                </Box>
+                <Box>
+                  Início
+                </Box>
+              </Box>
+            </Link>
+            <div color="inherit">
+              {'Questões'}
+            </div>
+          </Breadcrumbs>
+        </Box>
         <div className={classesGeneral.row}>
           <div style={{ flex: 1 }}>
 

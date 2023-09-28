@@ -16,13 +16,14 @@ import {
     TextField,
     IconButton,
     Select,
-    MenuItem, Typography, FormControlLabel, Switch, Tooltip, Box
+    MenuItem, Typography, FormControlLabel, Switch, Tooltip, Box, Breadcrumbs, Link
 } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import {withStyles} from "@material-ui/core/styles";
 import useStylesLocal from "./styles";
 import useStyles from "../../../../style/style";
+import {CharmHome} from "../../../../icons/Icons";
 
 const schema = {
     description: {
@@ -190,129 +191,151 @@ const StudentClassDetails = props => {
     }, [studentClassId]);
 
     return (
-        <Card
-            {...rest}
-            className={clsx(classes.root, className)}>
-            <form
-                autoComplete="off">
-
-                <CardHeader
-                    subheader={<div className={classesGeneral.subtitleList}>{'Cadastro/edição da turma'}</div>}
-                    title={<div className={classesGeneral.titleList}>{'Turma'}</div>}
-                />
-                <Divider />
-                <CardContent>
-                    <Grid
-                        container
-                        spacing={1}>
-                        <Grid
-                            item
-                            md={12}
-                            xs={12}>
-                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-                                {/* GET  */}
-                                {/* No body do request o attr vai ser  */}
-
-                                <TextField
-                                    fullWidth
-                                    error={hasError('course')}
-                                    helperText={
-                                        hasError('course') ? formState.errors.course[0] : null
-                                    }
-                                    label="Curso"
-                                    margin="dense"
-                                    name="course"
-                                    onChange={handleChange}
-                                    select
-                                    // eslint-disable-next-line react/jsx-sort-props
-                                    value={formState.values.course || 'select'}
-                                    variant="outlined">
-                                    <MenuItem value="select">Selecione o curso</MenuItem>
-                                    {courseList.map((course) => (
-                                        <MenuItem key={course.id} value={course.id}>{course.description}</MenuItem>
-                                    ))}
-                                </TextField>
-
-                                {/*<Select
-                                    label="course-label"
-                                    id="course"
-                                    name="course"
-                                    open={courseSelectIsOpen}
-                                    onClose={handleCourseSelectClose}
-                                    onOpen={handleCourseSelectOpen}
-                                    value={formState.values.course || 'select'}
-                                    onChange={handleChange}
-                                    className={classes.root}
-                                    variant="outlined"
-                                    margin="dense"
-                                    style={{ width: '400px' }}
-                                    error={hasError('course')}
-                                    helperText={
-                                        hasError('course') ? formState.errors.course[0] : null
-                                    }>
-                                    <MenuItem value="select">Selecione</MenuItem>
-                                    {courseList.map((course) => (
-                                        <MenuItem key={course.id} value={course.id}>{course.description}</MenuItem>
-                                    ))}
-                                </Select>*/}
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-                                <TextField
-                                    fullWidth
-                                    error={hasError('description')}
-                                    helperText={
-                                        hasError('description') ? formState.errors.description[0] : null
-                                    }
-                                    label="Descrição"
-                                    margin="dense"
-                                    name="description"
-                                    onChange={handleChange}
-                                    value={formState.values.description || ''}
-                                    variant="outlined"/>
-                            </div>
-
-                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-                                <TooltipCustomized
-                                    title={
-                                        <React.Fragment>
-                                            <p>
-                                                <Typography color="textPrimary" variant="body2">
-                                                    {'Caso esta opção esteja habilitada, será habilitado o módulo de ' +
-                                                        ' gamificação para esta turma.'}
-                                                </Typography>
-                                            </p>
-                                        </React.Fragment>
-                                    }>
-                                     <FormControlLabel
-                                        control={
-                                            <Switch
-                                                checked={checkedGamified}
-                                                onChange={handleChangeGamified}
-                                                name="gamified_class"
-                                                color="primary"
-                                            />
-                                        }
-                                        label="Turma gamificada"
-                                    />
-                                </TooltipCustomized>
-                            </div>
-                            <Divider /><br />
-                            <Box display="flex" justifyContent="center">
-                                <Button
-                                    color="primary"
-                                    variant="outlined"
-                                    disabled={!formState.isValid}
-                                    onClick={saveStudentClass}>
-                                    Salvar
-                                </Button>
+        <div className={classesGeneral.root}>
+            <Box display="flex">
+                <Breadcrumbs aria-label="breadcrumb">
+                    <Link color="inherit" href="/">
+                        <Box display="flex">
+                            <Box style={{marginTop: '2px', marginRight: '5px'}}>
+                                <CharmHome/>
                             </Box>
+                            <Box>
+                                Início
+                            </Box>
+                        </Box>
+                    </Link>
+                    <Link color="inherit" onClick={() => history.goBack()}>
+                        {localStorage.getItem('@Questione-acess-level-user') === "2" ? 'Turmas' : 'Minhas turmas'}
+                    </Link>
+                    <div color="inherit">
+                        {studentClassId ? 'Editar turma' : 'Nova turma'}
+                    </div>
+                </Breadcrumbs>
+            </Box>
+            <Card
+                {...rest}
+                className={clsx(classes.root, className)}>
+                <form
+                    autoComplete="off">
+
+                    <CardHeader
+                        subheader={<div className={classesGeneral.subtitleList}>{studentClassId ? 'Editar turma' : 'Nova turma'}</div>}
+                        title={<div className={classesGeneral.titleList}>{'Turma'}</div>}
+                    />
+                    <Divider />
+                    <CardContent>
+                        <Grid
+                            container
+                            spacing={1}>
+                            <Grid
+                                item
+                                md={12}
+                                xs={12}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                                    {/* GET  */}
+                                    {/* No body do request o attr vai ser  */}
+
+                                    <TextField
+                                        fullWidth
+                                        error={hasError('course')}
+                                        helperText={
+                                            hasError('course') ? formState.errors.course[0] : null
+                                        }
+                                        label="Curso"
+                                        margin="dense"
+                                        name="course"
+                                        onChange={handleChange}
+                                        select
+                                        // eslint-disable-next-line react/jsx-sort-props
+                                        value={formState.values.course || 'select'}
+                                        variant="outlined">
+                                        <MenuItem value="select">Selecione o curso</MenuItem>
+                                        {courseList.map((course) => (
+                                            <MenuItem key={course.id} value={course.id}>{course.description}</MenuItem>
+                                        ))}
+                                    </TextField>
+
+                                    {/*<Select
+                                        label="course-label"
+                                        id="course"
+                                        name="course"
+                                        open={courseSelectIsOpen}
+                                        onClose={handleCourseSelectClose}
+                                        onOpen={handleCourseSelectOpen}
+                                        value={formState.values.course || 'select'}
+                                        onChange={handleChange}
+                                        className={classes.root}
+                                        variant="outlined"
+                                        margin="dense"
+                                        style={{ width: '400px' }}
+                                        error={hasError('course')}
+                                        helperText={
+                                            hasError('course') ? formState.errors.course[0] : null
+                                        }>
+                                        <MenuItem value="select">Selecione</MenuItem>
+                                        {courseList.map((course) => (
+                                            <MenuItem key={course.id} value={course.id}>{course.description}</MenuItem>
+                                        ))}
+                                    </Select>*/}
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                                    <TextField
+                                        fullWidth
+                                        error={hasError('description')}
+                                        helperText={
+                                            hasError('description') ? formState.errors.description[0] : null
+                                        }
+                                        label="Descrição"
+                                        margin="dense"
+                                        name="description"
+                                        onChange={handleChange}
+                                        value={formState.values.description || ''}
+                                        variant="outlined"/>
+                                </div>
+
+                                {/*<div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                                    <TooltipCustomized
+                                        title={
+                                            <React.Fragment>
+                                                <p>
+                                                    <Typography color="textPrimary" variant="body2">
+                                                        {'Caso esta opção esteja habilitada, será habilitado o módulo de ' +
+                                                            ' gamificação para esta turma.'}
+                                                    </Typography>
+                                                </p>
+                                            </React.Fragment>
+                                        }>
+                                        <FormControlLabel
+                                            control={
+                                                <Switch
+                                                    checked={checkedGamified}
+                                                    onChange={handleChangeGamified}
+                                                    name="gamified_class"
+                                                    color="primary"
+                                                />
+                                            }
+                                            label="Turma gamificada"
+                                        />
+                                    </TooltipCustomized>
+                                </div>*/}
+                                <Divider /><br />
+                                <Box display="flex" justifyContent="center">
+                                    <Button
+                                        color="primary"
+                                        variant="outlined"
+                                        disabled={!formState.isValid}
+                                        onClick={saveStudentClass}>
+                                        Salvar
+                                    </Button>
+                                </Box>
+                            </Grid>
+                            <Divider />
                         </Grid>
-                        <Divider />
-                    </Grid>
-                </CardContent>
-                <Divider />
-            </form>
-        </Card>
+                    </CardContent>
+                    <Divider />
+                </form>
+            </Card>
+        </div>
     );
 };
 

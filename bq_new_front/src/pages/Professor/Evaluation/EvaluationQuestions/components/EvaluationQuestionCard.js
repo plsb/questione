@@ -7,7 +7,7 @@ import {
     MenuItem, Menu,
     Typography,
     Tooltip,
-    Paper, Box, Grid, Button, Chip, Switch, CardHeader, Card, CardContent, Divider
+    Paper, Box, Grid, Button, Chip, Switch, CardHeader, Card, CardContent, Divider, Hidden
 } from '@material-ui/core';
 import {MoreVert, Delete as DeleteIcon, PlaylistAdd, Edit} from '@material-ui/icons';
 import { withRouter } from "react-router-dom";
@@ -157,7 +157,8 @@ const QuestionCard = props => {
         setOpenDeleteQuestionEvaluation(false);
 
         try {
-            let url = 'evaluation/deletequestion/' + question.fk_question_id + '+?fk_evaluation_id=' + id_evaluation;
+            let url = 'evaluation/deletequestion/' + question.id + '+?fk_evaluation_id=' + id_evaluation;
+
             const fk_evaluation_id = id_evaluation;
             const data = {
                 fk_evaluation_id
@@ -168,9 +169,10 @@ const QuestionCard = props => {
                     toast.error(response.data.message);
                 }
             } else {
+                setRefresh();
                 toast.success('Questão excluída da avaliação.');
                 setQuestions((lastQuestions) => lastQuestions.filter((currentQuestion) => currentQuestion.id !== question.id));
-                setRefresh(refresh + 1);
+                setRefresh(Date.now());
             }
         } catch (error) {
 
@@ -185,27 +187,27 @@ const QuestionCard = props => {
                         <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-start">
                             <div className={classesGeneral.paperTitleText}>
                                 {
-                                    question.question.id < 10 ? 'Q00000' + question.id :
-                                        question.question.id < 100 ? 'Q0000' + question.id :
-                                            question.question.id < 1000 ? 'Q000' + question.id :
-                                                question.question.id < 10000 ? 'Q00' + question.id :
-                                                    question.question.id < 100000 ? 'Q0' + question.id :
-                                                        question.question.id
+                                    question.id < 10 ? 'Q00000' + question.id :
+                                        question.id < 100 ? 'Q0000' + question.id :
+                                            question.id < 1000 ? 'Q000' + question.id :
+                                                question.id < 10000 ? 'Q00' + question.id :
+                                                    question.id < 100000 ? 'Q0' + question.id :
+                                                        question.id
                                 }
                             </div>
-                            { question.question.validated != 1 &&
-                                <div className={classesGeneral.textRedInfo} style={{marginTop: '4px', marginLeft: '5px'}}>
+                            { question.validated != 1 &&
+                                (<div className={classesGeneral.textRedInfo} style={{marginTop: '4px', marginLeft: '5px'}}>
                                     {"(Questão não finalizada)"}
-                                </div>}
-                            { question.question.course &&
-                                <Box display="flex">
+                                </div>)}
+                            { question.course &&
+                                (<Box display="flex">
                                     <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
                                         { 'Área: '}
                                     </div>
                                     <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '5px'}}>
-                                        {question.question.course.description}
+                                        {question.course.description}
                                     </div>
-                                </Box>
+                                </Box>)
                             }
 
                         </Box>
@@ -223,33 +225,39 @@ const QuestionCard = props => {
                 </Paper>
                 <Paper className={classesGeneral.paperSubtitle}>
                     <Box display="flex">
-                        {question.question.year !== '' && question.question.year !== null &&
-                            <div className={classesGeneral.paperTitleText}>
-                                {"Ano: " +question.question.year}
-                            </div>
-                        }
-                        { question.question.fk_type_of_evaluation_id !== '' && question.question.fk_type_of_evaluation_id !== null &&
-                            <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
-                                {'Prova: '+question.question.type_of_evaluation.description}
-                            </div>
-                        }
-                        { question.question.initial_difficulty !== null &&
-                            <Box display="flex">
+                        <Hidden xsDown>
+                            {question.year !== '' && question.year !== null &&
+                                <div className={classesGeneral.paperTitleText}>
+                                    {"Ano: " +question.year}
+                                </div>
+                            }
+                        </Hidden>
+                        <Hidden smDown>
+                            { question.type_of_evaluation !== null &&
                                 <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
-                                    {'Dificuldade: '}
+                                    {'Prova: '+question.type_of_evaluation.description}
                                 </div>
-                                <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '5px'}}>
-                                    {difficultyList[question.question.initial_difficulty-1]}
-                                </div>
-                            </Box>
-                        }
-                        { question.question.knowledge_objects[0] &&
+                            }
+                        </Hidden>
+                        <Hidden smDown>
+                            { question.initial_difficulty !== null &&
+                                <Box display="flex">
+                                    <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
+                                        {'Dificuldade: '}
+                                    </div>
+                                    <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '5px'}}>
+                                        {difficultyList[question.initial_difficulty-1]}
+                                    </div>
+                                </Box>
+                            }
+                        </Hidden>
+                        { question.knowledge_objects[0] &&
                             <Box display="flex">
                                 <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
                                     {'Conteúdo(s):'}
                                 </div>
                                 <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '5px'}}>
-                                    {question.question.knowledge_objects.map(item => (
+                                    {question.knowledge_objects.map(item => (
                                         ReactHtmlParser (item.description)+'. '
                                     ))}
                                 </div>
@@ -261,7 +269,7 @@ const QuestionCard = props => {
 
                 </Paper>
                 <CardContent>
-                    <QuestionText question={question.question}/>
+                    <QuestionText question={question}/>
                 </CardContent>
 
                 <DialogQuestione

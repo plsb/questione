@@ -1,35 +1,31 @@
 import React, {useEffect, useState} from 'react';
-import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import {
     Card,
-    CardHeader,
     IconButton,
     MenuItem, Menu,
     CardContent,
-    Typography,
-    CardActions,
     Tooltip,
-    Collapse,
     Paper,
-    Chip,
     Switch, ListItem, ListItemText,
     List,
-    Dialog, AppBar, Toolbar, Box, Divider, Link, CardActionArea, FormControlLabel
+    Dialog, AppBar, Toolbar, Box, Divider, Link, CardActionArea, FormControlLabel, Hidden
 } from '@material-ui/core';
 import {MoreVert, PlaylistAdd, ExpandMoreRounded, Edit} from '@material-ui/icons';
 import {withRouter} from "react-router-dom";
 import ReactHtmlParser from 'react-html-parser';
 import api from "../../services/api";
 import {DialogQuestione} from "../index";
-import SubjectIcon from '@material-ui/icons/Subject';
 import moment from "moment";
 import CloseIcon from '@material-ui/icons/Close';
 import { toast } from 'react-toastify';
 import QuestionText from "../QuestionText";
 import useStyles from "../../style/style";
 import {FormGroup} from "reactstrap";
+import DecreaseStringSize from "../DecreaseStringSize";
+import TooltipQuestione from "../TooltipQuestione";
+import InfoIcon from '@material-ui/icons/Info';
 
 const useStylesLocal = makeStyles(theme => ({
     root: {
@@ -63,6 +59,7 @@ const useStylesLocal = makeStyles(theme => ({
     },
     appBar: {
         position: 'relative',
+        background: '#3a7cf7',
     },
     title: {
         marginLeft: theme.spacing(2),
@@ -408,15 +405,25 @@ const QuestionCard = props => {
                                     {"(Questão não finalizada)"}
                                 </div>}
                             {question.course &&
-                                <Box display="flex">
-                                    <div className={id_course != 0 && id_course != question.fk_course_id ? classesGeneral.paperTitleTextGreen : classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
-                                        { id_course != 0 && id_course != question.fk_course_id ? 'Área relacionada: '
-                                            : 'Área: '}
-                                    </div>
-                                    <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '5px'}}>
-                                        {question.course.description}
-                                    </div>
-                                </Box>
+                                    <Box display="flex">
+                                        { id_course != 0 && id_course != question.fk_course_id ?
+                                            <TooltipQuestione description={'Área relacionada é uma área que é diferente da área da busca realizada, mas seus conteúdos estão relacionados.'} position={'bottom'} content={
+                                                <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
+                                                    <DecreaseStringSize string= {'Área '}/>
+                                                    <InfoIcon style={{fontSize: '14px'}}/>
+                                                    {': '}
+                                                </div>
+                                            }/>
+                                            :
+                                        <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
+                                            {'Área: '}
+                                        </div> }
+                                        <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '5px'}}>
+                                            <TooltipQuestione description={question.course.description} position={'bottom'} content={
+                                                <DecreaseStringSize string={question.course.description} large={0.8}/>
+                                            }/>
+                                        </div>
+                                    </Box>
                             }
                         </Box>
                         <Box display="flex" justifyContent="flex-end">
@@ -473,26 +480,32 @@ const QuestionCard = props => {
                 </Paper>
                 <Paper className={classesGeneral.paperSubtitle}>
                     <Box display="flex">
-                        {question.year !== '' && question.year !== null &&
-                            <div className={classesGeneral.paperTitleText}>
-                                {"Ano: " +question.year}
-                            </div>
-                        }
-                        { question.fk_type_of_evaluation_id !== '' && question.fk_type_of_evaluation_id !== null &&
-                            <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
-                                {'Banca: '+question.type_of_evaluation.description}
-                            </div>
-                        }
-                        { question.initial_difficulty !== null &&
-                            <Box display="flex">
+                        <Hidden xsDown>
+                            {question.year !== '' && question.year !== null &&
+                                <div className={classesGeneral.paperTitleText}>
+                                    {"Ano: " +question.year}
+                                </div>
+                            }
+                        </Hidden>
+                        <Hidden xsDown>
+                            { question.fk_type_of_evaluation_id !== '' && question.fk_type_of_evaluation_id !== null &&
                                 <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
-                                    {'Dificuldade: '}
+                                    {'Banca: '+question.type_of_evaluation.description}
                                 </div>
-                                <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '5px'}}>
-                                    {difficultyList[question.initial_difficulty-1]}
-                                </div>
-                            </Box>
-                        }
+                            }
+                        </Hidden>
+                        <Hidden xsDown>
+                            { question.initial_difficulty !== null &&
+                                <Box display="flex">
+                                    <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
+                                        {'Dificuldade: '}
+                                    </div>
+                                    <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '5px'}}>
+                                        {difficultyList[question.initial_difficulty-1]}
+                                    </div>
+                                </Box>
+                            }
+                        </Hidden>
                         { question.knowledge_objects[0] &&
                             <Box display="flex">
                                 <div className={classesGeneral.paperTitleText} style={{marginLeft: '15px'}}>
@@ -558,7 +571,7 @@ const QuestionCard = props => {
                                  onClickDisagree={onClickCloseDialogEnableQuestion}
                                  mesage={
                                      <div className={classesGeneral.messageDialog}>
-                                         {'Depois de habilitada, a questão não poderá ser deletada e não poderá sofrer mudanças no texto base, enunciado e alternativas. Deseja habilitar?'}
+                                         {'Depois de habilitada, a questão não poderá ser deletada e não poderá sofrer mudanças no texto base, enunciado e alternativas. Após habilitada, a questão poderá ser encontrada na opção Suas questões ou Todas as questoes. Deseja habilitar?'}
                                      </div>}
                                  title={
                                      <div className={classesGeneral.titleDialog}>
@@ -571,22 +584,24 @@ const QuestionCard = props => {
                             <IconButton edge="start" color="inherit" onClick={handleChooseEvaluationExit} aria-label="close">
                                 <CloseIcon />
                             </IconButton>
-                            <Typography variant="h5" className={classes.title}>
+                            <div className={classesGeneral.titleList} style={{color: '#FFF', marginBottom: '15px'}}>
                                 Selecione a avaliação para aplicar a questão
-                            </Typography>
+                            </div>
                         </Toolbar>
                     </AppBar>
                     <List>
                         {evaluations.map((evaluation) => (
                             <ListItem button onClick={() => handleListItemClick(evaluation)} key={evaluation.id}>
                                 <ListItemText
-                                    primary={"Descrição: "+evaluation.description}
+                                    primary={
+                                        <div className={classesGeneral.paperTitleText} style={{marginBottom: '15px', fontSize: '16px'}}>
+                                            {"Descrição: "+evaluation.description}
+                                        </div>}
                                     secondary={(
                                         <div>
-                                            <p>{"Criada em: "+  moment(evaluation.created_at).format('DD/MM/YYYY')}</p>
-                                            {evaluation.class && (
-                                                <Chip label={evaluation.class.description} className={clsx(classes.chipblue, className)} size="small"/>
-                                            )}
+                                            <div className={classesGeneral.paperTitleText} style={{fontSize: '12px'}}>
+                                                {"Criada em: "+  moment(evaluation.created_at).format('DD/MM/YYYY')}
+                                            </div>
                                         </div>
                                     )}
                                 />

@@ -6,7 +6,7 @@ import {
     CardHeader,
     CardContent,
     Typography,
-    LinearProgress, Chip, Box
+    LinearProgress, Chip, Box, Hidden
 } from '@material-ui/core';
 import {withRouter} from "react-router-dom";
 import api from "../../services/api";
@@ -121,6 +121,7 @@ const EvaluationQuestions = props => {
     const [hasApplication, setHasApplication] = useState(null);
     const [evaluation, setEvaluation] = useState('');
     const [expanded, setExpanded] = React.useState(false);
+    const [refresh, setRefresh] = React.useState(false);
 
     async function loadQuestionsEvaluation(){
         try {
@@ -147,7 +148,7 @@ const EvaluationQuestions = props => {
         } else {
             setQuestions([]);
         }
-    }, []);
+    }, [refresh]);
 
   return (
       <div className={classes.content}>
@@ -188,15 +189,18 @@ const EvaluationQuestions = props => {
                               <div>
                                   {questions.map((data, i) => (
                                       <Box display="flex" style={{marginBottom: '20px'}}>
-                                          <Chip label={(i + 1)}
-                                                style={{fontSize: '14px',
-                                                    fontWeight: 'bold',
-                                                    margin: '8px'}} color="secondary" size="medium"/>
+                                          <Hidden xsDown>
+                                              <Chip label={(i + 1)}
+                                                    style={{fontSize: '14px',
+                                                        fontWeight: 'bold',
+                                                        margin: '8px'}} color="secondary" size="medium"/>
+                                          </Hidden>
                                           <EvaluationQuestionCard
-                                              question={data}
+                                              question={data.question}
                                               id_evaluation={evaluationId}
                                               setQuestions={setQuestions}
                                               hasApplication={hasApplication}
+                                              setRefresh={setRefresh}
                                           />
                                       </Box>
 

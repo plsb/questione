@@ -136,6 +136,7 @@ const StudentClassroomDetails = props => {
     }, [studentClassId]);
 
     return (
+
         <Card
             {...rest}
             className={clsx(classes.root, className)}>

@@ -17,6 +17,7 @@ import {withRouter} from "react-router-dom";
 import api from "../../services/api";
 import moment from "moment";
 import useStyles from "../../style/style";
+import TooltipQuestione from "../TooltipQuestione";
 
 const useStylesLocal = makeStyles(theme => ({
 
@@ -148,94 +149,98 @@ const GamificationPanel = props => {
 
     return (
       <div className={classes.content}>
-              { (gamified_class === 1 && localStorage.getItem('@Questione-acess-level-user') === "0" &&
-                      <Box>
-                          <Paper style={{paddingTop: '5px', paddingBottom: '20px', paddingRight: '20px', paddingLeft: '20px',}}>
-                              <Grid container spacing={1}>
-                                  <Grid item xs={6}>
-                                      <Box display="flex" alignItems="row">
-                                          <img
-                                              style={{marginTop: '15px', marginRight: '10px'}}
-                                              alt="Logo"
-                                              src="/images/podio.png" width='35px'/>
-                                          <div className={classesGeneral.paperTitleTextBold} style={{marginTop: '22px'}}>
-                                              {'Sua posição: '+rankPositionText}
-                                          </div>
-                                      </Box>
-                                      <Box display="flex">
-                                          <Box>
-                                              <img
-                                                  style={{marginTop: '15px', marginRight: '10px'}}
-                                                  alt="Logo"
-                                                  src="/images/moeda.png" width='35px'/>
-                                          </Box>
-                                          <div style={{ width: '100%' }}>
-                                              <Box display="flex">
-                                                  <Box display="flex" alignItems="row">
-                                                      <div className={classesGeneral.paperTitleTextBold} style={{marginTop: '20px'}}>
-                                                          {totalRP + ' PR'}
-                                                      </div>
-                                                  </Box>
-                                              </Box>
-                                              <Box display="flex" alignItems="row">
-                                                  <Link
-                                                      component="button"
-                                                      variant="body2"
-                                                      onClick={handleClickOpenDialogRP}>
-                                                      Histórico
-                                                  </Link>
-                                              </Box>
-                                          </div>
-                                      </Box>
-                                      <Box display="flex" alignItems="row">
-                                          <Box>
-                                              <img
-                                                  style={{marginTop: '15px', marginRight: '10px'}}
-                                                  alt="Logo"
-                                                  src="/images/distintivo.png" width='36px'/>
-                                          </Box>
-                                          <div style={{ width: '100%' }}>
-                                              <Box display="flex">
-                                                  <Box display="flex" alignItems="row">
-                                                      <div className={classesGeneral.paperTitleTextBold} style={{marginTop: '20px'}}>
-                                                          {totalXP + ' XP'}
-                                                      </div>
-                                                  </Box>
-                                              </Box>
-                                              <Box display="flex" alignItems="row">
-                                                  <Link
-                                                      component="button"
-                                                      variant="body2"
-                                                      onClick={handleClickOpenDialogXP}>
-                                                      Histórico
-                                                  </Link>
-                                              </Box>
-                                          </div>
-                                      </Box>
-                                  </Grid>
-                                  <Grid item xs={1}>
-                                      <Divider orientation="vertical" style={{marginTop: '5px', padding: '2px'}}/>
-                                  </Grid>
-                                  <Grid item xs={5}>
-                                      <Box display="flex" alignItems="row">
-                                          <img
-                                              style={{marginTop: '15px', marginRight: '10px'}}
-                                              alt="Logo"
-                                              src="/images/caixa-de-presente.png" width='35px'/>
-                                          <div className={classesGeneral.paperTitleTextBold} style={{marginTop: '25px'}}>
-                                              {'Conquistas:'}
-                                          </div>
-                                      </Box>
-                                      <div className={classesGeneral.textRedInfo} style={{marginTop: '25px'}}>
-                                          {'Você não tem conquistas nesta turma.'}
+              <Box>
+                  <Paper style={{paddingTop: '5px', paddingBottom: '20px', paddingRight: '20px', paddingLeft: '20px',}}>
+                      <Grid container spacing={1}>
+                          <Grid item xs={6}>
+                              <TooltipQuestione description={'A sua posição depende do total de pontos de experiência (XP) que você tem.'} position={'bottom'} content={
+                                  <Box display="flex" alignItems="row">
+                                      <img
+                                          style={{marginTop: '15px', marginRight: '10px'}}
+                                          alt="Logo"
+                                          src="/images/podio.png" width='35px'/>
+                                      <div className={classesGeneral.paperTitleTextBold} style={{marginTop: '22px'}}>
+                                          {'Sua posição: '+rankPositionText}
                                       </div>
+                                  </Box>
+                              }/>
+                              <TooltipQuestione description={'Pontos reutilizáveis (PR) são pontos que você poderá trocar por ajudas no Questione. Clique em histórico para vizualizar como você ganhou/gastou esses pontos.'} position={'bottom'} content={
+                                  <Box display="flex">
+                                      <Box>
+                                          <img
+                                              style={{marginTop: '15px', marginRight: '10px'}}
+                                              alt="Logo"
+                                              src="/images/moeda.png" width='35px'/>
+                                      </Box>
+                                      <div style={{ width: '100%' }}>
+                                          <Box display="flex">
+                                              <Box display="flex" alignItems="row">
+                                                  <div className={classesGeneral.paperTitleTextBold} style={{marginTop: '20px'}}>
+                                                      {totalRP + ' PR'}
+                                                  </div>
+                                              </Box>
+                                          </Box>
+                                          <Box display="flex" alignItems="row">
+                                              <Link
+                                                  component="button"
+                                                  variant="body2"
+                                                  onClick={handleClickOpenDialogRP}>
+                                                  Histórico
+                                              </Link>
+                                          </Box>
+                                      </div>
+                                  </Box>
+                              }/>
+                              <TooltipQuestione description={'Pontos de experiência (XP) são pontos que você ganha no Questione e te ajudam a alcançar uma posição no ranking. Clique em histórico para vizualizar como você ganhou esses pontos.'} position={'bottom'} content={
+                                  <Box display="flex" alignItems="row">
+                                      <Box>
+                                          <img
+                                              style={{marginTop: '15px', marginRight: '10px'}}
+                                              alt="Logo"
+                                              src="/images/distintivo.png" width='36px'/>
+                                      </Box>
+                                      <div style={{ width: '100%' }}>
+                                          <Box display="flex">
+                                              <Box display="flex" alignItems="row">
+                                                  <div className={classesGeneral.paperTitleTextBold} style={{marginTop: '20px'}}>
+                                                      {totalXP + ' XP'}
+                                                  </div>
+                                              </Box>
+                                          </Box>
+                                          <Box display="flex" alignItems="row">
+                                              <Link
+                                                  component="button"
+                                                  variant="body2"
+                                                  onClick={handleClickOpenDialogXP}>
+                                                  Histórico
+                                              </Link>
+                                          </Box>
+                                      </div>
+                                  </Box>
+                              }/>
+                          </Grid>
+                          <Grid item xs={1}>
+                              <Divider orientation="vertical" style={{marginTop: '5px', padding: '2px'}}/>
+                          </Grid>
+                          <Grid item xs={5}>
+                              <Box display="flex" alignItems="row">
+                                  <img
+                                      style={{marginTop: '15px', marginRight: '10px'}}
+                                      alt="Logo"
+                                      src="/images/caixa-de-presente.png" width='35px'/>
+                                  <div className={classesGeneral.paperTitleTextBold} style={{marginTop: '25px'}}>
+                                      {'Conquistas:'}
+                                  </div>
+                              </Box>
+                              <div className={classesGeneral.textRedInfo} style={{marginTop: '25px'}}>
+                                  {'Você não tem conquistas nesta turma.'}
+                              </div>
 
-                                  </Grid>
-                              </Grid>
-                          </Paper>
+                          </Grid>
+                      </Grid>
+                  </Paper>
 
-                      </Box>
-                  )}
+              </Box>
           <Dialog
               open={openDialogRP}
               onClose={handleCloseDialogRP}

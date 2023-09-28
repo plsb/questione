@@ -15,8 +15,10 @@ import StudentClassCard from '../../../components/StudentClassCard';
 import DialogStudentClassRegister from '../../../components/DialogStudentClassRegister';
 import StudentClassToolbar from './components/StudentClassToolbar';
 import {makeStyles} from "@material-ui/core/styles";
+import useStyles from "../../../style/style";
+import clsx from "clsx";
 
-const useStyles = makeStyles(theme => ({
+const useStylesLocal = makeStyles(theme => ({
     root: {
         paddingLeft: theme.spacing(1),
         paddingRight: theme.spacing(1)
@@ -46,7 +48,8 @@ function StudentClass({ history }) {
     const [showRegisterDialog, setShowRegisterDialog] = React.useState(false);
     const [registerLoading, setRegisterLoading] = React.useState(false);
 
-    const classes = useStyles();
+    const classes = useStylesLocal();
+    const classesGeneral = useStyles();
 
     const getStudentClasses = async (page, description = '') => {
         try {
@@ -119,7 +122,7 @@ function StudentClass({ history }) {
     }, [refresh]);
 
     return (
-        <div className={classes.root}>
+        <div className={classesGeneral.root}>
             <StudentClassToolbar
                 onChangeSearch={handleSearch.bind(this)}
                 searchText={searchText}
@@ -128,7 +131,7 @@ function StudentClass({ history }) {
                 setShowRegisterDialog={setShowRegisterDialog}
             />
 
-            <div className={classes.content}>
+            <div className={classesGeneral.content}>
                 <TablePagination
                     component="div"
                     count={total}

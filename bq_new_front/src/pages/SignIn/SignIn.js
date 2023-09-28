@@ -7,7 +7,7 @@ import {
   Button,
   TextField,
   Link,
-  Typography
+  Typography, Box
 } from '@material-ui/core';
 import api from '../../services/api';
 import { toast } from 'react-toastify';
@@ -185,77 +185,74 @@ const SignIn = props => {
           <form
             className={classes.form}
             onSubmit={handleSignIn}>
-            <div className={classes.logoImage}>
-              <img
-                   alt="Logo"
-                   src="/images/logomarca.png"/>
+            <div style={{border: '2px solid', borderRadius: '60px', borderColor: '#e0e0e0', margin: '20px', padding: '50px'}}>
+              <div className={classes.logoImage}>
+                <img
+                     alt="Logo"
+                     src="/images/logomarca.png"/>
+              </div>
+              <Typography
+                className={classes.title}
+                variant="h4">
+                Login
+              </Typography>
+              <TextField
+                className={classes.textField}
+                error={hasError('email')}
+                fullWidth
+                helperText={
+                  hasError('email') ? formState.errors.email[0] : null
+                }
+                label="Email"
+                name="email"
+                onChange={handleChange}
+                type="text"
+                value={formState.values.email || ''}
+                variant="outlined"
+              />
+              <TextField
+                className={classes.textField}
+                error={hasError('password')}
+                fullWidth
+                helperText={
+                  hasError('password') ? formState.errors.password[0] : null
+                }
+                label="Senha"
+                name="password"
+                onChange={handleChange}
+                type="password"
+                value={formState.values.password || ''}
+                variant="outlined"
+                margin="normal"
+              />
+              <Box display='flex' justifyContent='right' style={{ marginTop: '5px'}}>
+                <Link
+                    component={RouterLink}
+                    to="/redefine-password"
+                    variant="h6">
+                  <strong style={{fontWeight: 'bold', fontSize: '14px'}}>Esqueceu a senha?</strong>
+                </Link>
+              </Box>
+              <Button
+                className={classes.signInButton}
+                color="primary"
+                disabled={!formState.isValid}
+                fullWidth
+                size="large"
+                type="submit"
+                variant="contained">
+                Entrar
+              </Button>
+              <Box display='flex' justifyContent='center' style={{ marginTop: '15px', marginBottom: '20px'}}>
+                <Link
+                  component={RouterLink}
+                  to="/sign-up"
+                  variant="h6">
+                  <strong style={{fontWeight: 'bold', fontSize: '16px'}}>Cadastre-se</strong>
+                </Link>
+              </Box>
             </div>
-            <Typography
-              className={classes.title}
-              variant="h4">
-              Login
-            </Typography>
-            <TextField
-              className={classes.textField}
-              error={hasError('email')}
-              fullWidth
-              helperText={
-                hasError('email') ? formState.errors.email[0] : null
-              }
-              label="Email"
-              name="email"
-              onChange={handleChange}
-              type="text"
-              value={formState.values.email || ''}
-              variant="outlined"
-            />
-            <TextField
-              className={classes.textField}
-              error={hasError('password')}
-              fullWidth
-              helperText={
-                hasError('password') ? formState.errors.password[0] : null
-              }
-              label="Senha"
-              name="password"
-              onChange={handleChange}
-              type="password"
-              value={formState.values.password || ''}
-              variant="outlined"
-              margin="normal"
-            />
-            <Button
-              className={classes.signInButton}
-              color="primary"
-              disabled={!formState.isValid}
-              fullWidth
-              size="large"
-              type="submit"
-              variant="contained">
-              Entrar
-            </Button>
-            <Typography
-              color="textSecondary"
-              variant="body1">
-              Você não tem conta?{' '}
-              <Link
-                component={RouterLink}
-                to="/sign-up"
-                variant="h6">
-                Cadastre-se.
-              </Link>
-            </Typography>
-            <Typography
-              color="textSecondary"
-              variant="body1">
-              Esqueceu sua senha?{' '}
-              <Link
-                component={RouterLink}
-                to="/redefine-password"
-                variant="h6">
-                Redefina aqui.
-              </Link>
-            </Typography>
+
           </form>
         </div>
       </div>

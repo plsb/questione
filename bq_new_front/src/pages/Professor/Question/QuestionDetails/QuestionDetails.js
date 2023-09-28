@@ -5,7 +5,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {
     Box, Grid, IconButton, TextField, Typography,
-    Button, Tooltip, Select, MenuItem, CardHeader, Divider, Card, CardContent
+    Button, Tooltip, Select, MenuItem, CardHeader, Divider, Card, CardContent, Breadcrumbs, Link
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import {withRouter} from "react-router-dom";
@@ -21,6 +21,9 @@ import { EXTERNAL_QUESTION } from '../../../../services/auth';
 import { toast } from 'react-toastify';
 import clsx from "clsx";
 import useStyles from "../../../../style/style";
+import {CharmHome} from "../../../../icons/Icons";
+import DecreaseStringSize from "../../../../components/DecreaseStringSize";
+import TooltipQuestione from "../../../../components/TooltipQuestione";
 
 const useStylesLocal = makeStyles({
   root: {
@@ -316,117 +319,163 @@ const QuestionDetails = props => {
     };
 
   return (
-      <Card
-          {...rest}
-          className={clsx(classes.root, className)}>
-          <CardHeader
-              subheader={
-              <div className={classesGeneral.subtitleList}>{'Cadastro/edição da questão'}</div>}
-              title={
-              <div className={classesGeneral.titleList}>{'Questão'}</div>}/>
-          <Divider />
+      <div className={classesGeneral.root}>
+          <Box display="flex">
+              <Breadcrumbs aria-label="breadcrumb">
+                  <Link color="inherit" href="/">
+                      <Box display="flex">
+                          <Box style={{marginTop: '2px', marginRight: '5px'}}>
+                              <CharmHome/>
+                          </Box>
+                          <Box>
+                              Início
+                          </Box>
+                      </Box>
+                  </Link>
+                  <Link color="inherit" onClick={() => history.push('/questions')}>
+                      {'Questões'}
+                  </Link>
+                  <div>
+                      {idQuestion ? 'Editar questão de código '+idQuestion : 'Nova questão'}
+                  </div>
+              </Breadcrumbs>
+          </Box>
+          <Card
+              {...rest}
+              className={clsx(classes.root, className)}>
+              <CardHeader
+                  subheader={
+                  <div className={classesGeneral.subtitleList}>{idQuestion ? 'Editar questão' : 'Nova questão'}</div>}
+                  title={
+                  <div className={classesGeneral.titleList}>{'Questão'}</div>}/>
+              <Divider />
 
-          <CardContent>
-              <Tabs
-                  variant="fullWidth"
-                  value={value}
-                  onChange={handleChangeTab}
-                  aria-label="nav tabs example">
-                  <LinkTab label="Texto base & Enunciado" href="/drafts" {...a11yProps(0)} />
-                  { idQuestion ?
-                      <LinkTab label="Alternativas" href="#" {...a11yProps(1)} />
-                      : null }
+              <CardContent>
+                  <Tabs
+                      variant="fullWidth"
+                      value={value}
+                      onChange={handleChangeTab}
+                      aria-label="nav tabs example">
+                      <LinkTab label={<DecreaseStringSize string={"Texto base & Enunciado"} large={0.5}/>} href="/drafts" {...a11yProps(0)} />
+                      { idQuestion ?
+                          <LinkTab label="Alternativas" href="#" {...a11yProps(1)} />
+                          : null }
 
-                  {/* validated == 1 ?
-                        <LinkTab label="Alternativas" disabled href="#"  {...a11yProps(1)} />
-                            : tabItens == true ?
-                                  <LinkTab label="Alternativas" href="#"  {...a11yProps(1)} />
-                                        : null  */}
+                      {/* validated == 1 ?
+                            <LinkTab label="Alternativas" disabled href="#"  {...a11yProps(1)} />
+                                : tabItens == true ?
+                                      <LinkTab label="Alternativas" href="#"  {...a11yProps(1)} />
+                                            : null  */}
 
-                  { idQuestion ?
-                      <LinkTab label="Área de Conhecimento" href="#" {...a11yProps(2)} />
-                            :  null }
-                  {/* tabSkill==true ?
-                      <LinkTab label="Palavras-chave" href="#" {...a11yProps(3)} />
-                      :  null */}
-              </Tabs>
-              {/*texto base e enunciado*/}
-              <TabPanel value={value} index={0}>
-                    <Grid
-                      container
-                      direction="row"
-                      justifyContent="center"
-                      alignItems="center">
-                        {
-                            localStorage.getItem(EXTERNAL_QUESTION) == 1 && (
-                            <>
-                                <div className={classes.selectGroup}>
-                                    <Tooltip title="Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar no campo tipo de avaliação.">
-                                        <TextField
-                                            id="type-of-evaluation"
-                                            select
-                                            label="Tipo de Avaliação"
-                                            value={reference}
-                                            onChange={handleChangeReference}
-                                            helperText="Selecione o tipo de avaliação."
-                                            variant="outlined"
-                                            margin="dense"
-                                            style={{width: '200px'}}>
-                                            <MenuItem value="select">Selecione</MenuItem>
-                                            {typeOfEvaluationList && typeOfEvaluationList.map((type) => (
-                                                <MenuItem value={type.id}>{type.description}</MenuItem>
-                                            ))}
-                                        </TextField>
+                      { idQuestion ?
+                          <LinkTab label={<DecreaseStringSize string={"Área de Conhecimento"} large={0.4}/>} href="#" {...a11yProps(2)} />
+                                :  null }
+                      {/* tabSkill==true ?
+                          <LinkTab label="Palavras-chave" href="#" {...a11yProps(3)} />
+                          :  null */}
+                  </Tabs>
+                  {/*texto base e enunciado*/}
+                  <TabPanel value={value} index={0}>
+                        <Grid
+                          container
+                          direction="row"
+                          justifyContent="center"
+                          alignItems="center">
+                            {
+                                localStorage.getItem(EXTERNAL_QUESTION) == 1 && (
+                                <>
+                                    <div className={classes.selectGroup}>
+                                        <TooltipQuestione description={"Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar no campo tipo de avaliação."} position={'bottom'} content={
 
-                                    </Tooltip>
-                                    <div style={{paddingLeft: '10px'}}>
-                                        <Tooltip title="Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar o ano da questão.">
                                             <TextField
-                                                id="year"
+                                                id="type-of-evaluation"
                                                 select
-                                                label="Ano"
-                                                value={year}
-                                                onChange={handleChangeYear}
-                                                helperText="Selecione o ano da questão."
+                                                label="Tipo de Avaliação"
+                                                value={reference}
+                                                onChange={handleChangeReference}
+                                                helperText="Selecione o tipo de avaliação."
                                                 variant="outlined"
                                                 margin="dense"
-                                                style={{width: '150px'}}>
-                                                <MenuItem value="year">Selecione</MenuItem>
-                                                {yearList && yearList.map((year) => (
-                                                    <MenuItem value={year}>{year}</MenuItem>
+                                                style={{width: '200px'}}>
+                                                <MenuItem value="select">Selecione</MenuItem>
+                                                {typeOfEvaluationList && typeOfEvaluationList.map((type) => (
+                                                    <MenuItem value={type.id}>{type.description}</MenuItem>
                                                 ))}
                                             </TextField>
-                                        </Tooltip>
-                                    </div>
-                                </div>
-                                <div className={classes.selectGroup}>
-                                    <Tooltip title="Informe a dificuldade da questão.">
-                                        <TextField
-                                            id="difficulty"
-                                            select
-                                            label="Dificuldade"
-                                            value={difficulty}
-                                            onChange={handleChangeDifficulty}
-                                            helperText="Selecione a dificuldade da questão."
-                                            variant="outlined"
-                                            margin="dense"
-                                            style={{width: '200'}}>
-                                            <MenuItem value="select">Selecione</MenuItem>
-                                            {difficultyList && difficultyList.map((item) => (
-                                                <MenuItem value={item.id}>{item.description}</MenuItem>
-                                            ))}
-                                        </TextField>
 
-                                    </Tooltip>
-                                </div>
-                            </>
-                        )}
-                  </Grid>
-                  <div style={{padding: "15px"}}>
-                      <b className={classesGeneral.paperTitleTextBold}>Texto base *</b>
+                                        }/>
+                                        <div style={{paddingLeft: '10px'}}>
+                                            <TooltipQuestione description={"Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar o ano da questão."} position={'bottom'} content={
+                                                <TextField
+                                                    id="year"
+                                                    select
+                                                    label="Ano"
+                                                    value={year}
+                                                    onChange={handleChangeYear}
+                                                    helperText="Selecione o ano da questão."
+                                                    variant="outlined"
+                                                    margin="dense"
+                                                    style={{width: '150px'}}>
+                                                    <MenuItem value="year">Selecione</MenuItem>
+                                                    {yearList && yearList.map((year) => (
+                                                        <MenuItem value={year}>{year}</MenuItem>
+                                                    ))}
+                                                </TextField>
+                                            }/>
+                                        </div>
+                                    </div>
+                                    <div className={classes.selectGroup}>
+                                            <TextField
+                                                id="difficulty"
+                                                select
+                                                label="Dificuldade"
+                                                value={difficulty}
+                                                onChange={handleChangeDifficulty}
+                                                helperText="Selecione a dificuldade da questão."
+                                                variant="outlined"
+                                                margin="dense"
+                                                style={{width: '200'}}>
+                                                <MenuItem value="select">Selecione</MenuItem>
+                                                {difficultyList && difficultyList.map((item) => (
+                                                    <MenuItem value={item.id}>{item.description}</MenuItem>
+                                                ))}
+                                            </TextField>
+
+                                    </div>
+                                </>
+                            )}
+                      </Grid>
+                      <div style={{padding: "15px"}}>
+                          <b className={classesGeneral.paperTitleTextBold}>Texto base *</b>
+                              <Editor
+                                  disabled={validated == 1}
+                                  apiKey="viwc1vmqpf6f7ozb7m90ayace892e32hsg99bhpo06p6bz3d"
+                                  init={{
+                                      height: 200,
+                                      menubar: false,
+                                      file_picker_types: 'image',
+                                      images_upload_url: 'postAcceptor.php',
+                                      images_upload_handler: imageUploadHandler,
+                                      automatic_uploads: true,
+                                      plugins: [
+                                          'textpattern advlist autolink lists link image charmap print',
+                                          ' preview hr anchor pagebreak code media save',
+                                          'table contextmenu charmap'
+                                      ],
+                                      toolbar:
+                                          'insertfile undo redo | fontselect fontsizeselect | bold italic underline superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview  charmap'
+                                  }}
+                                  value={baseText}
+                                  onEditorChange={handleChangeBaseText}
+                                  name="base_text"
+                                  key="base_text"/>
+                          {validated == 1 && <font color="#FF0000">Texto base não pode ser editado (a questão foi habilitada).</font>}
+                      </div>
+                      <div style={{padding: "15px"}}>
+                          <b className={classesGeneral.paperTitleTextBold}>Enunciado *</b>
                           <Editor
                               disabled={validated == 1}
-                              apiKey="viwc1vmqpf6f7ozb7m90ayace892e32hsg99bhpo06p6bz3d"
+                              apiKey="ndvo85oqtt9mclsdb6g3jc5inqot9gxupxd0scnyypzakm18"
                               init={{
                                   height: 200,
                                   menubar: false,
@@ -442,74 +491,49 @@ const QuestionDetails = props => {
                                   toolbar:
                                       'insertfile undo redo | fontselect fontsizeselect | bold italic underline superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview  charmap'
                               }}
-                              value={baseText}
-                              onEditorChange={handleChangeBaseText}
-                              name="base_text"
-                              key="base_text"/>
-                      {validated == 1 && <font color="#FF0000">Texto base não pode ser editado (a questão foi habilitada).</font>}
-                  </div>
-                  <div style={{padding: "15px"}}>
-                      <b className={classesGeneral.paperTitleTextBold}>Enunciado *</b>
-                      <Editor
-                          disabled={validated == 1}
-                          apiKey="ndvo85oqtt9mclsdb6g3jc5inqot9gxupxd0scnyypzakm18"
-                          init={{
-                              height: 200,
-                              menubar: false,
-                              file_picker_types: 'image',
-                              images_upload_url: 'postAcceptor.php',
-                              images_upload_handler: imageUploadHandler,
-                              automatic_uploads: true,
-                              plugins: [
-                                  'textpattern advlist autolink lists link image charmap print',
-                                  ' preview hr anchor pagebreak code media save',
-                                  'table contextmenu charmap'
-                              ],
-                              toolbar:
-                                  'insertfile undo redo | fontselect fontsizeselect | bold italic underline superscript subscript | alignleft aligncenter alignright alignjustify | bullist numlist indent outdent | link image table print preview  charmap'
-                          }}
-                          value={stem}
-                          onEditorChange={handleChangeStem}
-                          name="stem"
-                          key="stem"/>
-                      {validated == 1 && <font color="#FF0000">Enunciado não pode ser editado (a questão foi habilitada).</font>}
-                  </div>
-                  <div style={{ marginTop: '16px' }}>
-                      <Divider /><br />
-                  </div>
-                  <Grid
-                      container
-                      direction="row"
-                      justifyContent="center"
-                      alignItems="center" style={{padding: "15px"}}>
-                      <Button
-                          color="primary"
-                          variant="outlined"
-                          className={classes.button}
-                          onClick={onClickTab1}>
-                          Salvar texto base
-                      </Button>
+                              value={stem}
+                              onEditorChange={handleChangeStem}
+                              name="stem"
+                              key="stem"/>
+                          {validated == 1 && <font color="#FF0000">Enunciado não pode ser editado (a questão foi habilitada).</font>}
+                      </div>
+                      <div style={{ marginTop: '16px' }}>
+                          <Divider /><br />
+                      </div>
+                      <Grid
+                          container
+                          direction="row"
+                          justifyContent="center"
+                          alignItems="center" style={{padding: "15px"}}>
+                          <Button
+                              color="primary"
+                              variant="outlined"
+                              className={classes.button}
+                              onClick={onClickTab1}>
+                              Salvar texto base
+                          </Button>
 
-                  </Grid>
+                      </Grid>
 
-              </TabPanel>
-              {/* INTES */}
-              <TabPanel value={value} index={1}>
-                    <QuestionItens idQuestion={idQuestion} question_validated={validated} tabValueChange={tabValueChange} imageUploadHandler={imageUploadHandler} />
+                  </TabPanel>
+                  {/* INTES */}
+                  <TabPanel value={value} index={1}>
+                        <QuestionItens idQuestion={idQuestion} question_validated={validated} tabValueChange={tabValueChange} imageUploadHandler={imageUploadHandler} />
 
-              </TabPanel>
-              {/* CURSO E COMPETÊNCIA*/}
-              <TabPanel value={value} index={2}>
-                <QuestionSkill idQuestion={idQuestion} tabValueChange={tabValueChange}/>
+                  </TabPanel>
+                  {/* CURSO E COMPETÊNCIA*/}
+                  <TabPanel value={value} index={2}>
+                    <QuestionSkill idQuestion={idQuestion} tabValueChange={tabValueChange}/>
 
-              </TabPanel>
-              {/* PALAVRAS-CHAVE*/}
-              <TabPanel value={value} index={3}>
-                    <QuestionKeywords idQuestion={idQuestion}/>
+                  </TabPanel>
+                  {/* PALAVRAS-CHAVE*/}
+                  <TabPanel value={value} index={3}>
+                        <QuestionKeywords idQuestion={idQuestion}/>
 
-              </TabPanel>
-          </CardContent>
-      </Card>
+                  </TabPanel>
+              </CardContent>
+          </Card>
+      </div>
   );
 }
 

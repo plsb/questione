@@ -53,7 +53,6 @@ const QuestionTable = props => {
         }
 
       }
-      console.log('response', url);
       let data = {};
       let QUESTION_SEARCH_KEYWORD = "";
       if(searchText[4].keyword != ''){

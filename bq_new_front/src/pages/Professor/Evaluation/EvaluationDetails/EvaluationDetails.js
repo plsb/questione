@@ -11,7 +11,7 @@ import {
   Button,
   TextField, IconButton,
   TableBody, Table, TableCell,
-  TableRow, TableHead, TablePagination, LinearProgress, Box
+  TableRow, TableHead, TablePagination, LinearProgress, Box, Breadcrumbs, Link
 } from '@material-ui/core';
 import api from "../../../../services/api";
 import { toast } from 'react-toastify';
@@ -19,6 +19,7 @@ import validate from "validate.js";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import QuestionCard from "../../../../components/QuestionCard";
 import useStyles from "../../../../style/style";
+import {CharmHome} from "../../../../icons/Icons";
 
 const schema = {
   description: {
@@ -197,55 +198,77 @@ const EvaluationDetails = props => {
   };
 
   return (
-    <Card
-      {...rest}
-      className={clsx(classes.root, className)}>
-      <form
-        autoComplete="off">
-        <CardHeader
-            subheader={<div className={classesGeneral.subtitleList}>{'Cadastro/edição da avaliação'}</div>}
-          title={<div className={classesGeneral.titleList}>{'Avaliação'}</div>}/>
-        <Divider />
-        <CardContent>
-          <Grid
-            container
-            spacing={1}>
-            <Grid
-              item
-              md={12}
-              xs={12}>
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-                <TextField
-                  fullWidth
-                  error={hasError('description')}
-                  helperText={
-                    hasError('description') ? formState.errors.description[0] : null
-                  }
-                  label="Descrição"
-                  margin="dense"
-                  name="description"
-                  onChange={handleChange}
-                  value={formState.values.description || ''}
-                  variant="outlined"
-                />
-              </div>
-              <Divider /><br />
-              <Box display="flex" justifyContent="center">
-                <Button
-                    color="primary"
-                    variant="outlined"
-                    disabled={!formState.isValid}
-                    onClick={saveEvaluationDetails}>
-                  Salvar
-                </Button>
+      <div
+          {...rest}
+          className={clsx(classesGeneral.root, className)}>
+        <Box display="flex">
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link color="inherit" href="/">
+              <Box display="flex">
+                <Box style={{marginTop: '2px', marginRight: '5px'}}>
+                  <CharmHome />
+                </Box>
+                <Box>
+                  Início
+                </Box>
               </Box>
-            </Grid>
+            </Link>
+            <Link color="inherit" onClick={() => history.goBack()}>
+              Avaliações
+            </Link>
+            <div color="inherit">
+              {codigoEvaluation ? 'Editar avaliação de código '+codigoEvaluation : 'Nova avaliação'}
+            </div>
+          </Breadcrumbs>
+        </Box>
+        <Card>
+          <form
+            autoComplete="off">
+            <CardHeader
+                subheader={<div className={classesGeneral.subtitleList}>{codigoEvaluation ? 'Editar avaliação' : 'Nova avaliação'}</div>}
+              title={<div className={classesGeneral.titleList}>{'Avaliação'}</div>}/>
             <Divider />
-          </Grid>
-        </CardContent>
-        <Divider />
-      </form>
-    </Card>
+            <CardContent>
+              <Grid
+                container
+                spacing={1}>
+                <Grid
+                  item
+                  md={12}
+                  xs={12}>
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                    <TextField
+                      fullWidth
+                      error={hasError('description')}
+                      helperText={
+                        hasError('description') ? formState.errors.description[0] : null
+                      }
+                      label="Descrição"
+                      margin="dense"
+                      name="description"
+                      onChange={handleChange}
+                      value={formState.values.description || ''}
+                      variant="outlined"
+                    />
+                  </div>
+                  <Divider /><br />
+                  <Box display="flex" justifyContent="center">
+                    <Button
+                        color="primary"
+                        variant="outlined"
+                        disabled={!formState.isValid}
+                        onClick={saveEvaluationDetails}>
+                      Salvar
+                    </Button>
+                  </Box>
+                </Grid>
+                <Divider />
+              </Grid>
+            </CardContent>
+            <Divider />
+          </form>
+        </Card>
+      </div>
   );
 };
 

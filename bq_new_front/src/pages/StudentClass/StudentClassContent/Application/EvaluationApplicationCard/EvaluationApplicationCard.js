@@ -18,6 +18,10 @@ import {Edit, FormatListBulleted, PlayArrow} from "@material-ui/icons";
 import ShareIcon from '@material-ui/icons/Share';
 import {FormGroup} from "reactstrap";
 import useStyles from "../../../../../style/style";
+import GetAppIcon from "@material-ui/icons/GetApp";
+import DecreaseStringSize from "../../../../../components/DecreaseStringSize";
+import SettingsIcon from '@material-ui/icons/Settings';
+import TooltipQuestione from "../../../../../components/TooltipQuestione";
 
 const useStylesLocal = makeStyles(() => ({
   root: {
@@ -52,7 +56,7 @@ const useStylesLocal = makeStyles(() => ({
 }));
 
 const EvaluationApplicationCard = props => {
-  const { className, history, application, studentClassId, position, ...rest } = props;
+  const { className, history, application, studentClassId, setRefresh, position, ...rest } = props;
   const [state, setState] = useState(0);
   const [evaluationApplication, setEvaluationApplication] = useState({});
 
@@ -94,11 +98,48 @@ const EvaluationApplicationCard = props => {
                 setEvaluationApplication(new_evaluation);
 
                 toast.success('Modificado o status da aplicação.');
+                setRefresh(Date.now());
             }
         } catch (error) {
 
         }
         setState(state+1);
+    }
+
+    async function downloadCSV(id){
+        try {
+            let url = `class/professor/get-csv/${id}`;
+
+
+            const response = api.get(url,
+                {
+                    responseType: 'arraybuffer',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/csv'
+                    }
+                })
+                .then((response) => {
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', 'cvs_'+id+'.csv'); //or any other extension
+                    document.body.appendChild(link);
+                    link.click();
+                })
+                .catch();
+
+            if (response.status === 202) {
+                if(response.data.message){
+                    toast.error(response.data.message);
+                }
+            } else {
+                toast.success('Dados exportados.');
+            }
+
+        } catch (error) {
+
+        }
     }
 
   return (
@@ -113,7 +154,10 @@ const EvaluationApplicationCard = props => {
                       <Box display="flex">
                           <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-start">
                               <div className={classesGeneral.paperTitleTextBold}>
-                                  {'Simulado: '+position+' - '+evaluationApplication.description }
+                                  {evaluationApplication.status == 1 ?
+                                      <div>{'Simulado '+position+': '} <DecreaseStringSize string={evaluationApplication.description} large={.9}/></div>
+                                          :
+                                      <div>{'Simulado '+position+': '} <DecreaseStringSize string={evaluationApplication.description} large={.65}/></div>}
                               </div>
                           </Box>
                           <Box display="flex" justifyContent="flex-end">
@@ -129,7 +173,7 @@ const EvaluationApplicationCard = props => {
                                   )}
 
                                   {evaluationApplication.evaluation.status == 1 &&
-                                      <Tooltip title="Habilite o simulado">
+                                      <TooltipQuestione description={'Clique para habilitar o simulado: '+evaluationApplication.description+'.'} position={'left-start'} content={
                                           <div style={{marginTop: '3px', marginLeft: '10px'}}>
                                               { evaluationApplication.status == 0
                                                   ? <FormGroup>
@@ -153,33 +197,54 @@ const EvaluationApplicationCard = props => {
                                                       inputProps={{ 'aria-label': 'primary checkbox' }}
                                                   />}
                                           </div>
+                                      }/>  }
 
-                                      </Tooltip>  }
-                                  {/*<Tooltip title="Visualizar resultados 2">
-                                  <IconButton
-                                      aria-label="copy"
-                                      onClick={() => results(evaluationApplication.id)}>
-                                      <FormatListBulleted />
-                                  </IconButton>
-                              </Tooltip>*/}
                                   {evaluationApplication.evaluation.status == 1 &&
-                                      <Tooltip title="Clique para editar">
+                                      <TooltipQuestione description={'Clique para configurar o simulado: '+evaluationApplication.description+'.'} position={'left-start'} content={
                                           <IconButton
                                               aria-label="copy"
                                               size="small"
                                               onClick={() => onEdit(evaluationApplication.id)}
                                               style={{marginLeft: '10px'}}>
-                                              <Edit />
+                                              <SettingsIcon />
                                           </IconButton>
-                                      </Tooltip>  }
+                                      }/>
+                                  }
                           </Box>
                       </Box>
                   </Paper>
                   <CardContent>
                       <Box>
+                          {evaluationApplication.totalAnswers > 0 ?
+                              <Box display={'flex'}>
+                                  <Link
+                                      component="button"
+                                      onClick={() => {
+                                          results(evaluationApplication.id)
+                                      }}
+                                      className={clsx(classes.link, className)}>
+                                      <div className={clsx(classesGeneral.paperTitleTextBold, classes.chipblue)}>
+                                          <DecreaseStringSize string={'Este simulado possui '+evaluationApplication.totalAnswers +' resposta(s). Clique aqui para visualizar o resultado.'} large={1.8}/>
+                                      </div>
+                                  </Link>
+                                  <TooltipQuestione description={'Clique para realizar o download do arquivo de respostas no formato csv do simulado: '+evaluationApplication.description+'.'}
+                                                    position={'bottom'} content={
+                                      <IconButton
+                                          aria-label="copy"
+                                          size={"small"}
+                                          onClick={() => downloadCSV(evaluationApplication.id)}
+                                          onClick={() => downloadCSV(evaluationApplication.id)}
+                                          style={{marginLeft: '10px', marginTop: '5px'}}>
+                                          <GetAppIcon />
 
-
+                                      </IconButton>
+                                  }/>
+                              </Box> :
+                              <div className={clsx(classesGeneral.paperTitleText)}>
+                                    {'Este simulado não possui resposta(s).'}
+                              </div>}
                       </Box>
+
                       <div className={classesGeneral.paperTitleText}>
                           {'Este simulado foi criado por meio da avaliação: '+evaluationApplication.evaluation.id+' - '+evaluationApplication.evaluation.description+'.'}
                       </div>
@@ -204,8 +269,17 @@ const EvaluationApplicationCard = props => {
                               <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'As questões serão apresentadas de forma aleatória.'}</div>
                           }
 
-                          {(evaluationApplication.date_start &&
-                                  <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Este simulado deve ser iniciado até o dia '+moment(evaluationApplication.date_start).utc().format('DD/MM/YYYY')+' às '+evaluationApplication.time_start+'.'}</div>)
+                          {evaluationApplication.date_start &&
+                              (evaluationApplication.data_start_type == 'DI' ?
+                                  <div className={clsx(classes.chip_brown, className)}
+                                       style={{marginRight: '6px'}}>{'Este simulado deve ser iniciado a partir do dia '
+                                      +moment(evaluationApplication.date_start).utc().format('DD/MM/YYYY')+' às '
+                                      +evaluationApplication.time_start+'.'}</div>
+                                  :
+                                  <div className={clsx(classes.chip_brown, className)}
+                                       style={{marginRight: '6px'}}>{'Este simulado deve ser iniciado no dia '
+                                      +moment(evaluationApplication.date_start).utc().format('DD/MM/YYYY')+' às '
+                                      +evaluationApplication.time_start+'.'}</div>)
                           }
 
                           { ((evaluationApplication.date_finish) &&
@@ -240,7 +314,8 @@ const EvaluationApplicationCard = props => {
 EvaluationApplicationCard.propTypes = {
     className: PropTypes.string,
     application: PropTypes.object,
-    history: PropTypes.object
+    history: PropTypes.object,
+    setRefresh: PropTypes.object
 };
 
 export default withRouter(EvaluationApplicationCard);

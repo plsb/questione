@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import ReactDOM  from 'react-dom';
-import Chart from "react-google-charts";
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import ReactHtmlParser from "react-html-parser";
@@ -10,32 +8,21 @@ import {
   CardHeader,
   CardContent,
   Divider,
-  IconButton,
-  Typography, Grid, Tooltip,
+  Grid, Tooltip,
   Paper, LinearProgress, Box,
-  List, ListItem, Chip, Breadcrumbs, Link
+  Chip, Breadcrumbs, Link
 } from '@material-ui/core';
-import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import api from "../../../../services/api";
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { Close, Done, Block } from "@material-ui/icons";
 import { withStyles } from "@material-ui/core/styles";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import CheckIcon from '@material-ui/icons/Check';
-import CloseIcon from '@material-ui/icons/Close';
-
 import './styles.css';
 import useStyles from "../../../../style/style";
-import moment from "moment/moment";
 import Pagination from "@material-ui/lab/Pagination";
-import QuestionText from "../../../../components/QuestionText";
-import {CharmHome} from "../../../StudentClass/StudentClassContent/StudentClassContent";
+import {CharmHome} from "../../../../icons/Icons";
+import DecreaseStringSize from "../../../../components/DecreaseStringSize";
+import TooltipQuestione from "../../../../components/TooltipQuestione";
 
 
 export function IconParkOutlineCorrect(props) {
@@ -192,7 +179,6 @@ const useStylesLocal = makeStyles((theme) => ({
     fontWeight: 'bold'
   },
   paper: {
-    display: 'flex',
     marginBottom: 10,
     '& > *': {
       margin: theme.spacing(2),
@@ -337,7 +323,7 @@ const EvaluationsResultDetails = props => {
                 <CharmHome/>
               </Box>
               <Box>
-                Inicio
+                Início
               </Box>
             </Box>
           </Link>
@@ -347,9 +333,9 @@ const EvaluationsResultDetails = props => {
           <Link color="inherit" onClick={() => history.goBack()}>
             Turma {application && application.class.id_class}
           </Link>
-          <Link color="inherit" onClick={null}>
+          <div color="inherit" onClick={null}>
             Resultado do simulado
-          </Link>
+          </div>
         </Breadcrumbs>
       </Box>
       <Card
@@ -374,13 +360,13 @@ const EvaluationsResultDetails = props => {
                   { application &&
                       <div>
                         <div className={classesGeneral.paperTitleTextBold}>
-                          {'Simulado: '+application.description}
+                          {'Simulado: '}<DecreaseStringSize string={application.description} />
                         </div>
                         <div className={classesGeneral.paperTitleText}>
                           {'Professor: '+application.evaluation.user.name}
                         </div>
                         <div className={classesGeneral.paperTitleText}>
-                          {'Turma: '+application.class.id_class+' - '+application.class.description}
+                          {'Turma: '}<DecreaseStringSize string={application.class.id_class+' - '+application.class.description} />
                         </div>
                       </div>}
 
@@ -407,14 +393,14 @@ const EvaluationsResultDetails = props => {
                       paddingRight: '15px',
                       color: '#FFF', fontWeight: 'bold', fontSize: '15px', marginRight: '5px',
                     }}>
-                      <Tooltip title={'Total de questões corretas: '+head.qtdCorrect}>
+                      <TooltipQuestione position={"bottom"} description={'Total de questões corretas: '+head.qtdCorrect} content={
                         <Box display="flex" alignItems="row">
                           <IconParkOutlineCorrect />
                           <div style={{marginLeft: '10px'}}>
                             {head.qtdCorrect}
                           </div>
                         </Box>
-                      </Tooltip>
+                      }/>
 
                     </Paper>
                     <Paper style={{
@@ -427,14 +413,14 @@ const EvaluationsResultDetails = props => {
                       paddingRight: '15px',
                       color: '#FFF', fontWeight: 'bold', fontSize: '15px', marginRight: '5px',
                     }}>
-                      <Tooltip title={'Total de questões incorretas: '+head.qtdIncorrect}>
+                      <TooltipQuestione position={"bottom"} description={'Total de questões incorretas: '+head.qtdIncorrect} content={
                         <Box display="flex" alignItems="row">
                           <BxsXCircle />
                             <div style={{marginLeft: '10px'}}>
                               {head.qtdIncorrect}
                             </div>
                         </Box>
-                      </Tooltip>
+                      }/>
                     </Paper>
                     <Paper style={{
                       background: '#3a7cf7',
@@ -446,12 +432,14 @@ const EvaluationsResultDetails = props => {
                       paddingRight: '15px',
                       color: '#FFF', fontWeight: 'bold', fontSize: '15px', marginRight: '5px',
                     }}>
-                      <Box display="flex" alignItems="row">
-                          <MingcuteAlertOctagonFill />
-                          <div style={{marginLeft: '10px'}}>
-                            {(head.qtdCorrect/(head.qtdCorrect+head.qtdIncorrect))*100 + '% de precisão'}
-                          </div>
-                      </Box>
+                      <TooltipQuestione position={"bottom"} description={'Você acertou '+(head.qtdCorrect/(head.qtdCorrect+head.qtdIncorrect))*100+'% das questões deste simulado'} content={
+                        <Box display="flex" alignItems="row">
+                              <MingcuteAlertOctagonFill />
+                              <div style={{marginLeft: '10px'}}>
+                                {(head.qtdCorrect/(head.qtdCorrect+head.qtdIncorrect))*100 + '% de precisão'}
+                              </div>
+                        </Box>
+                      }/>
                     </Paper>
                   </Box>}
               <Divider style={{margin: '5px'}}/>
@@ -479,6 +467,10 @@ const EvaluationsResultDetails = props => {
                         </Box>
                       </Box>
                       <Divider style={{padding: '3px', marginTop: '10px', marginBottom: '15px'}} className={classesGeneral.paperTitle}/>
+                      <Box>
+                        {questions[page-1].correct == 1 ? <p className={classes.paperRightFont} style={{margin: '10px'}}>{'Você acertou esta questão.'}</p> :
+                            <p className={classes.paperWrongFont} style={{margin: '10px'}}>{'Você errou esta questão.'}</p>}
+                      </Box>
                       <div style={{margin: '10px'}}>
                         { questions[page-1].objects.length > 0 && (
                             <Box display="flex" style={{marginBottom: '30px'}}>
@@ -504,28 +496,47 @@ const EvaluationsResultDetails = props => {
                               item.correct_item == 1 ?
                                   <Box display="flex" flexDirection="row"  style={{ width: '100%' }}>
                                     <Box style={{marginTop: '15px', marginRight: '5px'}} sx={{ flexShrink: 1 }}>
-                                      <Chip label={alternativeLetters[i]} style={{fontSize: '14px', fontWeight: 'bold', background:"#e2f2e7"}} size="small"/>
+                                      <Chip label={alternativeLetters[i]} style={{fontSize: '14px', fontWeight: 'bold', background: questions[page-1].answer == item.id && item.correct_item == 1 ? "#e2f2e7" : "#e1f5fe"}} size="small"/>
                                     </Box>
                                     <Box sx={{ width: '100%' }}>
-                                      <Paper className={clsx(classes.paper, classes.paperCorrect)} elevation={3} variant="outlined">
+                                      <Paper className={clsx(classes.paper, questions[page-1].answer == item.id && item.correct_item == 1 ? classes.paperCorrect : classes.paper)} elevation={3} variant="outlined">
                                         {ReactHtmlParser (item.description)}
                                       </Paper>
-                                      {questions[page-1].answer == item.id && item.correct_item == 1 ? <p className={classes.paperRightFont}>{'Você marcou a alternativa '+alternativeLetters[i].toUpperCase()+' e acertou.'}</p> :
-                                          <p className={classes.paperRightFont}>{'A alternativa '+alternativeLetters[i].toUpperCase()+' é a correta.'}</p>}
                                     </Box>
                                   </Box>
                                   :
                                   <Box display="flex" flexDirection="row" style={{ width: '100%' }}>
                                     <Box style={{marginTop: '15px', marginRight: '5px'}}>
-                                      <Chip label={alternativeLetters[i]} style={{fontSize: '14px', fontWeight: 'bold', background:"#e1f5fe"}} size="small"/>
+                                      <Chip label={alternativeLetters[i]} style={{fontSize: '14px', fontWeight: 'bold', background:questions[page-1].answer == item.id && item.correct_item == 0 ? "#ef9a9a" : "#e1f5fe"}} size="small"/>
                                     </Box>
                                     <Box sx={{ width: '100%' }}>
-                                      <Paper className={clsx(classes.paper)} variant="outlined">
+                                      <Paper className={clsx(classes.paper, questions[page-1].answer == item.id && item.correct_item == 0 ? classes.paperWrong : classes.paper)} variant="outlined">
                                         { ReactHtmlParser (item.description) }
                                       </Paper>
-                                      {questions[page-1].answer == item.id && item.correct_item == 0 ? <p className={classes.paperWrongFont}>{'Você marcou a alternativa '+alternativeLetters[i].toUpperCase()+' e errou.'}</p> : null}
                                     </Box>
                                   </Box>
+                          ))}
+                          {questions[page-1].question.items.map((item, i) => (
+                              item.correct_item == 1 && questions[page-1].answer != item.id ?
+                                  <div>
+                                    <Box display="flex" style={{marginTop: '20px'}}>
+                                      <div className={classesGeneral.paperTitleTextBold}>
+                                        {'Resposta correta:'}
+                                      </div>
+                                    </Box>
+                                    <Box display="flex" flexDirection="row"  style={{ width: '100%', marginTop: '10px'}}>
+                                      <Box style={{marginTop: '15px', marginRight: '5px'}} sx={{ flexShrink: 1 }}>
+                                        <Chip label={alternativeLetters[i]} style={{fontSize: '14px', fontWeight: 'bold', background: "#e1f5fe"}} size="small"/>
+                                      </Box>
+                                      <Box sx={{ width: '100%' }}>
+                                        <Paper className={clsx(classes.paper, classes.paper)} elevation={3} variant="outlined">
+                                          {ReactHtmlParser (item.description)}
+                                        </Paper>
+                                      </Box>
+                                    </Box>
+                                  </div>
+                                  :
+                                  null
                           ))}
                         </div>
                       </div>
@@ -540,25 +551,21 @@ const EvaluationsResultDetails = props => {
                             justifyContent="center">
                         {questions.map((result, i) => (
                             <Grid item xs={2} sm={2} md={1} >
-                              <TooltipCustomized
-                                  title={
-                                      <Box display="flex" style={{marginBottom: '30px'}} justifyContent="row">
-                                          <div className={classesGeneral.paperTitleText} style={{marginLeft: '20px'}}>
-                                            {'Conteúdo(s) da questão:'}
-                                          </div>
-                                          <div className={classesGeneral.paperTitleTextBold} style={{marginLeft: '5px'}}>
-                                            {questions[page-1].objects.map(item => (
-                                                ReactHtmlParser (item.object.description)+'. '
-                                            ))}
-                                          </div>
-                                        </Box>
-                                  }>
+                              <TooltipQuestione
+                                  description={
+                                      <div>
+                                        {'Conteúdo(s) da questão: '}{questions[page-1].objects.map(item => (
+                                            ReactHtmlParser (item.object.description)+'. '
+                                        ))}
+                                      </div>
+
+                                  } position={'top'} content={
                                   <Box display="flex" alignItems="center">
                                     <div className={!result.answer ? classes.percentageNull : result.correct == 1 ? classes.percentageGreen : classes.percentageRed}>
                                       {'Q' + (i + 1)}
                                     </div>
                                   </Box>
-                              </TooltipCustomized>
+                              }/>
 
 
                             </Grid>

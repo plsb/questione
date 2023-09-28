@@ -115,7 +115,7 @@ class EvaluationHasQuestionsController extends Controller
 
         $application = EvaluationApplication::where('fk_evaluation_id', '=', $evaluation->id)->get();
         if(sizeof($application)>0) {
-            return response()->json(['message' => 'Existem aplicações para esta avaliação.'], 202);
+            return response()->json(['message' => 'Existem simulados para esta avaliação.'], 202);
         }
 
         $user = auth('api')->user();

@@ -16,7 +16,7 @@ import {
   IconButton,
   Tooltip,
   AccordionSummary,
-  AccordionDetails, Accordion, Box
+  AccordionDetails, Accordion, Box, Breadcrumbs, Link
 } from '@material-ui/core';
 import api from '../../../../services/api';
 import EvaluationApplicationCardStudent from '../EvaluationApplicationCardStudent';
@@ -27,6 +27,7 @@ import PropTypes from "prop-types";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ResultsGeneral from "../ResultsAplication/ResultsGeneral/components/ResultsGeneral";
 import useStyles from "../../../../style/style";
+import {CharmHome} from "../../StudentClassContent/StudentClassContent";
 
 
 const useStylesLocal = makeStyles(theme => ({
@@ -146,7 +147,7 @@ const AplicationListStudent = props => {
                       <Grid
                           item
                           xs={12} sm={12}>
-                        <Accordion style={{margin: '10px'}}>
+                        <Accordion style={{marginTop: '15px', marginLeft: '5px', marginRight: '5px'}}>
                           <AccordionSummary
                               expandIcon={<ExpandMoreIcon />}
                               aria-controls="panel1a-content"

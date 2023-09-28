@@ -17,6 +17,8 @@ import api from "../../../../services/api";
 import {Edit, FormatListBulleted, MoreVert, PlayArrow} from "@material-ui/icons";
 import ShareIcon from '@material-ui/icons/Share';
 import useStyles from "../../../../style/style";
+import DecreaseStringSize from "../../../../components/DecreaseStringSize";
+import TooltipQuestione from "../../../../components/TooltipQuestione";
 
 const useStylesLocal = makeStyles(() => ({
   root: {
@@ -113,19 +115,19 @@ const EvaluationApplicationCardStudent = props => {
                           <Box display="flex">
                               <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-start">
                                   <div className={classesGeneral.paperTitleTextBold}>
-                                      {'Simulado: '+position+' - '+evaluationApplication.description }
+                                      {'Simulado '+position+': '}<DecreaseStringSize string={evaluationApplication.description} />
                                   </div>
                               </Box>
                               <Box display="flex" justifyContent="flex-end">
                                   {(answer_head == null || answer_head.finalized_at == null) && evaluationApplication.status == 1  && (
-                                      <Tooltip title="Realizar simulado">
+                                      <TooltipQuestione position={"left"} description={"Clique aqui para realizar simulado"} content={
                                           <IconButton
                                               size="small"
                                               aria-label="settings"
                                               onClick={() => history.push(`/code/${application.id_application}`)}>
                                               <PlayArrow />
                                           </IconButton>
-                                      </Tooltip>
+                                      }/>
                                   )}
                               </Box>
                           </Box>
@@ -171,7 +173,18 @@ const EvaluationApplicationCardStudent = props => {
                                   <div className={clsx(classes.chipred, className)} style={{marginLeft: '4px'}}>{'| Não iniciado'}</div>*/}
                                { !answer_head  &&
                                    (evaluationApplication.date_start &&
-                                       <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Este simulado deve ser iniciado até o dia '+moment(evaluationApplication.date_start).utc().format('DD/MM/YYYY')+' às '+evaluationApplication.time_start+'.'}</div>)
+                                       (evaluationApplication.data_start_type == 'DI' ?
+                                               <div className={clsx(classes.chip_brown, className)}
+                                                    style={{marginRight: '6px'}}>{'Este simulado só pode ser iniciado a partir do dia '
+                                                   +moment(evaluationApplication.date_start).utc().format('DD/MM/YYYY')+' às '
+                                                   +evaluationApplication.time_start+'.'}</div>
+                                               :
+                                               <div className={clsx(classes.chip_brown, className)}
+                                                    style={{marginRight: '6px'}}>{'Este simulado deve ser iniciado no dia '
+                                                   +moment(evaluationApplication.date_start).utc().format('DD/MM/YYYY')+' às '
+                                                   +evaluationApplication.time_start+'.'}</div>
+                                       )
+                                       )
                                }
 
                               { !answer_head ?
@@ -185,7 +198,7 @@ const EvaluationApplicationCardStudent = props => {
                                         <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Após iniciado, este simulado deve ser finalizado no tempo de '+evaluationApplication.time_to_finalize+'.'}</div>)
                                     :
                                     !answer_head.finalized_at && evaluationApplication.time_to_finalize ?
-                                        <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Após iniciado, este simulado deve ser finalizado no tempo de '+moment(evaluationApplication.time_to_finalize).utc().format('hh:mm')+'.'}</div> : null}
+                                        <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Após iniciado, este simulado deve ser finalizado no tempo de '+evaluationApplication.time_to_finalize+'.'}</div> : null}
 
                                 {/* evaluationApplication.show_results == 1 &&
                                     <div className={clsx(classes.chipblue, className)}>{'| Resultados Liberados'}</div>  */}

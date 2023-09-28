@@ -3,30 +3,14 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import {
-    Card,
-    CardHeader,
-    IconButton,
-    MenuItem, Menu,
-    CardContent,
-    Typography,
-    CardActions,
-    Tooltip,
-    Collapse,
+
     Paper,
     Chip,
-    Switch, ListItem, ListItemText,
-    List,
-    Dialog, AppBar, Toolbar, Box, Divider, Link, CardActionArea
+     Box, Divider, Link, CardActionArea, Grid
 } from '@material-ui/core';
-import {MoreVert, PlaylistAdd, ExpandMoreRounded, Edit} from '@material-ui/icons';
 import {withRouter} from "react-router-dom";
 import ReactHtmlParser from 'react-html-parser';
-import api from "../../services/api";
-import {DialogQuestione} from "../index";
 import SubjectIcon from '@material-ui/icons/Subject';
-import moment from "moment";
-import CloseIcon from '@material-ui/icons/Close';
-import { toast } from 'react-toastify';
 import useStyles from "../../style/style";
 
 const useStylesLocal = makeStyles(theme => ({
@@ -34,7 +18,6 @@ const useStylesLocal = makeStyles(theme => ({
         color: '#000000', fontFamily: 'Verdana', fontSize: '12px', marginTop: '10px'
     },
     paper: {
-        display: 'flex',
         marginBottom: 10,
         '& > *': {
             margin: theme.spacing(2),
@@ -45,6 +28,12 @@ const useStylesLocal = makeStyles(theme => ({
     paperCorrect: {
         backgroundColor: '#e2f2e7',
         color: '#212121',
+    },
+    paperRightFont: {
+        color: '#80cbc4',
+    },
+    paperWrongFont: {
+        color: '#ef9a9a',
     },
 }));
 
@@ -92,29 +81,75 @@ const QuestionText = props => {
                 </div>
             }
             {question.question_items.map((item, i) => (
-                item.correct_item == 1 ?
-                       <Box display="flex" flexDirection="row"  style={{ width: '100%' }}>
-                           <Box style={{marginTop: '15px', marginRight: '5px'}} sx={{ flexShrink: 1 }}>
-                               <Chip label={alternativeLetters[i]} style={{fontSize: '14px', fontWeight: 'bold', background:"#e2f2e7"}} size="small"/>
+                <div>
+                    {item.correct_item == 1 ?
+                        <div>
+                            <Box display="flex" flexDirection="row"  style={{ width: '100%' }}>
+                                   <Box style={{marginTop: '15px', marginRight: '5px'}} sx={{ flexShrink: 1 }}>
+                                       <Chip label={alternativeLetters[i]} style={{fontSize: '14px', fontWeight: 'bold', background:"#e2f2e7"}} size="small"/>
+                                   </Box>
+                                   <Box sx={{ width: '100%' }}>
+                                        <Paper className={clsx(classes.paper, classes.paperCorrect)} elevation={3} variant="outlined">
+                                            {ReactHtmlParser (item.description)}
+                                        </Paper>
+                                   </Box>
+
                            </Box>
-                           <Box sx={{ width: '100%' }}>
-                                <Paper className={clsx(classes.paper, classes.paperCorrect)} elevation={3} variant="outlined">
-                                    {ReactHtmlParser (item.description)}
-                                </Paper>
-                           </Box>
-                       </Box>
-                    :
-                    <Box display="flex" flexDirection="row" style={{ width: '100%' }}>
-                        <Box style={{marginTop: '15px', marginRight: '5px'}}>
-                            <Chip label={alternativeLetters[i]} style={{fontSize: '14px', fontWeight: 'bold', background:"#e1f5fe"}} size="small"/>
-                        </Box>
-                        <Box sx={{ width: '100%' }}>
-                            <Paper className={clsx(classes.paper)} variant="outlined">
-                                { ReactHtmlParser (item.description) }
-                            </Paper>
-                        </Box>
-                    </Box>
+                        </div>
+                        :
+                        <div>
+                            <Box display="flex" flexDirection="row" style={{ width: '100%' }}>
+                                <Box style={{marginTop: '15px', marginRight: '5px'}}>
+                                    <Chip label={alternativeLetters[i]} style={{fontSize: '14px', fontWeight: 'bold', background:"#e1f5fe"}} size="small"/>
+                                </Box>
+                                <Box sx={{ width: '100%' }}>
+                                    <Paper className={clsx(classes.paper)} variant="outlined">
+                                        { ReactHtmlParser (item.description) }
+                                    </Paper>
+                                </Box>
+                            </Box>
+                        </div>}
+                </div>
             ))}
+          {question.question_items.length > 0 ? (question.question_items[0].total_answer_item >= 0 ?
+              <div>
+                  <Box display="flex" style={{marginTop: '20px'}}>
+                      <div className={classesGeneral.paperTitleTextBold}>
+                          {'Respostas:'}
+                      </div>
+                  </Box>
+                  <Grid container spacing={1}>
+                      {question.question_items.map((item, i) => (
+                          <div>
+                              <Grid item xs={12} sm={12} md={12} lg={12} key={i} style={{marginRight: '30px'}}>
+                                {item.correct_item == 1 ?
+                                  <div>
+                                      <Box display="flex" flexDirection="row"  style={{ width: '100%' }}>
+                                          <Box display='flex' style={{marginTop: '15px', marginRight: '5px'}} sx={{ flexShrink: 1 }}>
+                                              <Chip label={alternativeLetters[i]} style={{fontSize: '14px', fontWeight: item.total_answer_item > 0 && 'bold', background:"#e2f2e7"}} size="small"/>
+                                              <div className={classesGeneral.paperTitleText} style={{fontWeight: item.total_answer_item > 0 && 'bold', marginLeft: '10px'}}>
+                                                {item.total_answer_item+' ('+item.percentage_answer+'%)'}
+                                              </div>
+                                          </Box>
+                                      </Box>
+                                  </div>
+                                  :
+                                  <div>
+                                      <Box display="flex" flexDirection="row" style={{ width: '100%' }}>
+                                          <Box display='flex' style={{marginTop: '15px', marginRight: '5px'}}>
+                                              <Chip label={alternativeLetters[i]} style={{fontSize: '14px', fontWeight: item.total_answer_item > 0 && 'bold', background:"#ef9a9a"}} size="small"/>
+                                              <div className={classesGeneral.paperTitleText} style={{fontWeight: item.total_answer_item > 0 && 'bold', marginLeft: '10px'}}>
+                                                {item.total_answer_item+' ('+item.percentage_answer+'%)'}
+                                              </div>
+                                          </Box>
+                                      </Box>
+                                  </div>}
+                              </Grid>
+                          </div>
+                      ))}
+                  </Grid>
+              </div>
+          : null) : null}
 
             <div style={{marginTop: '30px'}}></div>
 
