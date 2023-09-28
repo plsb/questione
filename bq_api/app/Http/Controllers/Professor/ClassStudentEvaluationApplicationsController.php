@@ -186,14 +186,10 @@ class ClassStudentEvaluationApplicationsController extends Controller
         }
 
         usort(
-
             $students,
-
             function( $a, $b ) {
-
-                if( $a->student == $b->student ) return 0;
-
-                return ( ( $a->student < $b->student ) ? -1 : 1 );
+                if( $a->student->name == $b->student->name ) return 0;
+                return ( ( $a->student->name < $b->student->name ) ? -1 : 1 );
             }
         );
 

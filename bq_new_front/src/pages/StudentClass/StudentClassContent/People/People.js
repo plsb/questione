@@ -28,12 +28,23 @@ import useStyles from "../../../../style/style";
 
 const useStylesLocal = makeStyles(theme => ({
   root: {
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.up('xs')]: {
+      paddingLeft: theme.spacing(4),
+      paddingRight: theme.spacing(4),
+    },
+    [theme.breakpoints.up('sm')]: {
+      paddingLeft: theme.spacing(6),
+      paddingRight: theme.spacing(6),
     },
     [theme.breakpoints.up('md')]: {
-      paddingLeft: theme.spacing(10),
-      paddingRight: theme.spacing(10),
+      paddingLeft: theme.spacing(15),
+      paddingRight: theme.spacing(15),
     },
+    [theme.breakpoints.up('lg')]: {
+      paddingLeft: theme.spacing(40),
+      paddingRight: theme.spacing(40),
+    },
+
   },
   content: {
     padding: 0,
@@ -70,7 +81,7 @@ const useStylesLocal = makeStyles(theme => ({
     marginRight: theme.spacing(1)
   },
   title: {
-    color: '#2196f3',
+    color: '#000',
     marginTop: '50px',
     marginBottom: '10px',
     fontWeight: 'bold',
@@ -203,14 +214,14 @@ const People = props => {
               </Box>
               <Box display="flex" alignItems="flex-end">
                 {students.length == 0 ?
-                    <div style={{ marginBottom: '12px', color: '#2196f3'}}>
+                    <div style={{ marginBottom: '12px'}}>
                       {'0 estudantes'}
                     </div> :
                     students.length == 1 ?
-                        <div style={{ marginBottom: '12px', color: '#2196f3'}}>
+                        <div style={{ marginBottom: '12px'}}>
                         {students.length+' estudante'}
                       </div> :
-                        <div style={{ marginBottom: '12px', color: '#2196f3'}}>
+                        <div style={{ marginBottom: '12px'}}>
                             {students.length+' estudantes'}
                           </div>}
 
