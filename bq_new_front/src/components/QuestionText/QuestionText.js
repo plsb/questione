@@ -55,6 +55,10 @@ const QuestionText = props => {
 
     return (
       <div className={classes.content}>
+          { question.validated != 1 &&
+              <div className={classesGeneral.textRedInfo} style={{marginTop: '4px'}}>
+                  {"(Questão não finalizada)"}
+              </div>}
             <Link onClick={() => changeShowBaseText()}>
                 <div className={classesGeneral.subtitles}>
                     <SubjectIcon />

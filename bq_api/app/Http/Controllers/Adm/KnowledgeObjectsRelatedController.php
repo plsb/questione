@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Adm;
 
+use App\Http\Controllers\Util\DepthFirstSearch;
 use App\KnowledgeObject;
 use App\Providers\KnowledgeObjectRelated;
 use App\QuestionHasKnowledgeObject;
@@ -166,7 +167,7 @@ class KnowledgeObjectsRelatedController extends Controller
 
         $combinedPhrases = $this->encontrarPalavrasMaisParecidas($list_Objects);
         $array = array();
-        //return response()->json($course, 200);
+        //return response()->json($combinedPhrases, 200);
         foreach ($combinedPhrases as $item) {
             if (intval($item->obj->fk_course_id) == intval($course->id)) {
 
@@ -235,10 +236,11 @@ class KnowledgeObjectsRelatedController extends Controller
     // Função para encontrar as palavras mais parecidas na lista
     private function encontrarPalavrasMaisParecidas($lista_palavras) {
         $resultado = array();
+        $list_object_relacted = KnowledgeObjectRelated::select('fk_obj1_id', 'fk_obj2_id')->get();
 
         foreach ($lista_palavras as $obj1) {
-            $custo_minimo = 60; //coeficiente de similaridade, ou seja tem ser parecido 60% ou mais
-            $obj_mais_parecido = null;
+            $accuracy_minimo = 60; //coeficiente de similaridade, ou seja tem ser parecido 60% ou mais
+
             $palavra1 = $obj1->description;
             $related = array();
 
@@ -246,19 +248,41 @@ class KnowledgeObjectsRelatedController extends Controller
                 $palavra2 = $obj2->description;
                 if ($obj1->id !== $obj2->id) {
 
-                    $custo = round($this->calcularSimilaridadeLevenshtein($palavra1, $palavra2), 2);
+                    $accuracy = round($this->calcularSimilaridadeLevenshtein($palavra1, $palavra2), 2);
 
-                    if ($custo >= $custo_minimo) {
-                        //$similaridade_minima = $similaridade;
-                        $obj_mais_parecido = $obj2;
+                    if ($accuracy >= $accuracy_minimo) {
+                        // Verifica se já não existe relação cadastrada entre os dois objetos de forma direta ou indireta
+                        $dfs = new DepthFirstSearch();
+                        $itens_relacionados = $dfs->encontrarItensRelacionados($obj2->id, $list_object_relacted);
+                        $is_related = in_array($obj1->id, $itens_relacionados);
 
-                        $object_relacted = (object)[
-                            'obj' => $obj2,
-                            'cost' => $custo,
-                        ];
+                        if($accuracy == 100){
+                            //se acurácia for 100% já cadastra a relação
 
-                        $related[] = $object_relacted;
+                            //verifica se já não foi cadastrado
+                            $ko_related_verify1 = KnowledgeObjectRelated::where('fk_obj1_id', $obj1->id)
+                                ->where('fk_obj2_id', $obj2->id)->first();
+                            $ko_related_verify2 = KnowledgeObjectRelated::where('fk_obj1_id', $obj2->id)
+                                ->where('fk_obj2_id', $obj1->id)->first();
+                            if(!($ko_related_verify1 || $ko_related_verify2)){
+                                $knowledge_object_related = new KnowledgeObjectRelated();
+                                $knowledge_object_related->fk_obj1_id = $obj1->id;
+                                $knowledge_object_related->fk_obj2_id = $obj2->id;
+                                $knowledge_object_related->save();
 
+                                $list_object_relacted = KnowledgeObjectRelated::select('fk_obj1_id', 'fk_obj2_id')->get();
+
+                            }
+
+                        } else if(!$is_related){
+                            $object_relacted = (object)[
+                                'obj' => $obj2,
+                                'cost' => $accuracy,
+                            ];
+
+                            $related[] = $object_relacted;
+
+                        }
                     }
 
                 }

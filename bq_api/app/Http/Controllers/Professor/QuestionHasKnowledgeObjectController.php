@@ -64,7 +64,7 @@ class QuestionHasKnowledgeObjectController extends Controller
 
         if(!$question){
             return response()->json([
-                'message' => 'Questão não encontrado.'
+                'message' => 'Questão não encontrada.'
             ], 202);
         }
 
@@ -87,13 +87,13 @@ class QuestionHasKnowledgeObjectController extends Controller
             ], 202);
         }
 
-        $course = Course::find($question->fk_course_id);
+        /*$course = Course::find($question->fk_course_id);
 
         if($course->id != $object->fk_course_id){
             return response()->json([
                 'message' => 'Objeto de Conhecimento não pertence ao curso informado.'
             ], 200);
-        }
+        }*/
 
         $verifyObjectStore = QuestionHasKnowledgeObject::where('fk_question_id', "=", $request->fk_question_id)
             ->where('fk_knowledge_object', "=", $request->fk_knowledge_object)->get();

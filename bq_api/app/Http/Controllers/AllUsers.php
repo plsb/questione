@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Course;
 use App\CourseProfessor;
+use App\Http\Controllers\Util\DepthFirstSearch;
 use App\KeywordQuestion;
 use App\KnowledgeArea;
 use App\KnowledgeObject;
@@ -151,7 +152,8 @@ class AllUsers extends Controller
         //seleciona todos os objetos pertecentes a questões do curso pesquisado
         $objects_questions = DB::table('questions')
             ->select('knowledge_objects.id',
-                'knowledge_objects.description'
+                'knowledge_objects.description',
+                'knowledge_objects.fk_course_id'
             )
             ->join('question_knowledge_objects', 'question_knowledge_objects.fk_question_id', '=', 'questions.id')
             ->join('knowledge_objects', 'question_knowledge_objects.fk_knowledge_object', '=', 'knowledge_objects.id')
@@ -160,20 +162,31 @@ class AllUsers extends Controller
             ->groupBy('knowledge_objects.id')
             ->get();
 
+
         $array = array();
         foreach ($objects_questions as $item){ //percorre cada objeto
-            $obj = $this->verifyObjectsRelated($item); //verifica se o objeto tem relação com outro objeto
+            //$obj = $this->verifyObjectsRelated($item); //verifica se o objeto tem relação com outro objeto
+            $obj_relate = KnowledgeObjectRelated::select('fk_obj1_id', 'fk_obj2_id')->get();
 
-            if($obj != null){ // se o objeto tiver relação apresenta o objeto mais atual na lista
-                $max_d = max($obj->fk_obj1_id, $obj->fk_obj2_id);
-                $obj_max = KnowledgeObject::where('id', $max_d)
-                        ->where('fk_course_id', $course_id)->first();
-                if($obj_max){
+            // Encontre todos os itens relacionados a partir do valor inicial
+            $dfs = new DepthFirstSearch();
+            $itens_relacionados = $dfs->encontrarItensRelacionados($item->id, $obj_relate);
+
+            $obj_max = DB::table('knowledge_objects')
+                ->select('knowledge_objects.id',
+                    'knowledge_objects.description',
+                    'knowledge_objects.fk_course_id',
+                    'knowledge_objects.fk_regulation_id'
+                )
+                ->join('regulation', 'regulation.id', '=', 'knowledge_objects.fk_regulation_id')
+                ->whereIn('knowledge_objects.id', $itens_relacionados)
+                ->where('knowledge_objects.fk_course_id', $item->fk_course_id)
+                ->orderBy('regulation.year', 'desc')
+                ->first();
+
+
+            if($obj_max != null){ // se o objeto tiver relação apresenta o objeto mais atual na lista
                     $array[] = $obj_max->id;
-                } else {
-                    $array[] = $item->id;;
-                }
-
             } else {
                 $array[] = $item->id;;
             }
@@ -191,19 +204,6 @@ class AllUsers extends Controller
 
         return response()->json($return, 200);
     }
-
-    private function verifyObjectsRelated($item){
-        $obj1 = KnowledgeObjectRelated::where('fk_obj1_id', $item->id)->first();
-        if($obj1 != null){
-            return $obj1;
-        }
-        $obj2 = KnowledgeObjectRelated::where('fk_obj2_id', $item->id)->first();
-        if($obj2 != null){
-            return $obj2;
-        }
-        return null;
-    }
-
     private $rulesUser = [
         'name' => 'required|max:50|min:8'
     ];

@@ -385,7 +385,7 @@ const QuestionDetails = props => {
                                 localStorage.getItem(EXTERNAL_QUESTION) == 1 && (
                                 <>
                                     <div className={classes.selectGroup}>
-                                        <TooltipQuestione description={"Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar no campo tipo de avaliação."} position={'bottom'} content={
+                                        <TooltipQuestione description={"Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar no campo tipo de avaliação."} position={'top-start'} content={
 
                                             <TextField
                                                 id="type-of-evaluation"
@@ -405,7 +405,7 @@ const QuestionDetails = props => {
 
                                         }/>
                                         <div style={{paddingLeft: '10px'}}>
-                                            <TooltipQuestione description={"Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar o ano da questão."} position={'bottom'} content={
+                                            <TooltipQuestione description={"Caso a questão tenha sido construída baseada em alguma já aplicada, você pode selecionar o ano da questão."} position={'top-start'} content={
                                                 <TextField
                                                     id="year"
                                                     select

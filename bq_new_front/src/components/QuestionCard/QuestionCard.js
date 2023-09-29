@@ -400,10 +400,6 @@ const QuestionCard = props => {
                                                         question.id
                                 }
                             </div>
-                            { question.validated != 1 &&
-                                <div className={classesGeneral.textRedInfo} style={{marginTop: '4px', marginLeft: '5px'}}>
-                                    {"(Questão não finalizada)"}
-                                </div>}
                             {question.course &&
                                     <Box display="flex">
                                         { id_course != 0 && id_course != question.fk_course_id ?
@@ -428,7 +424,7 @@ const QuestionCard = props => {
                         </Box>
                         <Box display="flex" justifyContent="flex-end">
                             { !id_evaluation && question.validated == 1 ?
-                                <Tooltip title="Aplicar questão em avaliação">
+                                <TooltipQuestione description="Clique para aplicar a questão em avaliação" position={"top-start"} content={
                                     <IconButton
                                         className={classes.labelRank}
                                         aria-label="copy"
@@ -437,7 +433,7 @@ const QuestionCard = props => {
                                         style={{marginLeft: '10px'}}>
                                         <PlaylistAdd />
                                     </IconButton>
-                                </Tooltip> : null }
+                                }/> : null }
                             { question.validated == 0 && question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
                                 <Tooltip title="Habilite a questão para aplicações">
                                     <FormGroup>
@@ -455,7 +451,7 @@ const QuestionCard = props => {
 
                                 </Tooltip> : null }
                             { question.fk_user_id == localStorage.getItem("@Questione-id-user") ?
-                                <Tooltip title="Editar Questão">
+                                <TooltipQuestione description={"Editar Questão"} position={"top-start"} content={
                                     <IconButton className={classes.labelRank}
                                                 aria-label="copy"
                                                 onClick={() => onEditQuestion(question.id)}
@@ -463,8 +459,8 @@ const QuestionCard = props => {
                                                 style={{marginLeft: '10px'}}>
                                         <Edit />
                                     </IconButton>
-                                </Tooltip> : null }
-                            <Tooltip title="Opções">
+                                }/> : null }
+                            <TooltipQuestione description={"Clique para visualizar mais opções da questão"} position={"top-start"} content={
                                 <Box flexDirection="row" alignSelf="flex-end">
                                     <IconButton className={classes.labelRank} aria-label="settings"
                                                 onClick={handleClick}
@@ -473,7 +469,7 @@ const QuestionCard = props => {
                                         <MoreVert />
                                     </IconButton>
                                 </Box>
-                            </Tooltip>
+                            }/>
                         </Box>
                     </Box>
 
@@ -481,11 +477,15 @@ const QuestionCard = props => {
                 <Paper className={classesGeneral.paperSubtitle}>
                     <Box display="flex">
                         <Hidden xsDown>
-                            {question.year !== '' && question.year !== null &&
-                                <div className={classesGeneral.paperTitleText}>
-                                    {"Ano: " +question.year}
-                                </div>
-                            }
+                            <TooltipQuestione description={"Ano em que a questão foi criada."} position={"top-start"} content={
+                                <div>{question.year !== '' && question.year !== null ?
+                                    <div className={classesGeneral.paperTitleText}>
+                                        {"Ano: " +question.year}
+                                    </div>
+                                : <div className={classesGeneral.paperTitleText}>
+                                        {"Ano: " +moment(question.created_at).format('YYYY')}
+                                    </div> }</div>
+                            }/>
                         </Hidden>
                         <Hidden xsDown>
                             { question.fk_type_of_evaluation_id !== '' && question.fk_type_of_evaluation_id !== null &&

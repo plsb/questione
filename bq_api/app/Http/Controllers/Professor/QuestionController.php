@@ -60,6 +60,8 @@ class QuestionController extends Controller
         $object = $request->fk_object_id;
         $skill = $request->fk_skill_id;
         $keyword = $request->keyword;
+        $year = $request->year;
+        $fk_type_of_evaluation_id = $request->fk_type_of_evaluation_id;
 
         $questions = Question::when($opcao == "S", function ($query) {
                 //pega todas as questões do usuário logado
@@ -91,6 +93,18 @@ class QuestionController extends Controller
                 //pega questão de um curso específicp
                 //dd($course);
                 return $query->where('fk_skill_id', '=', $skill);
+
+            })
+            ->when($year > 0, function ($query) use ($year){
+                //pega questão de um curso específicp
+                //dd($course);
+                return $query->where('year', '=', $year);
+
+            })
+            ->when($fk_type_of_evaluation_id > 0, function ($query) use ($fk_type_of_evaluation_id){
+                //pega questão de um curso específicp
+                //dd($course);
+                return $query->where('fk_type_of_evaluation_id', '=', $fk_type_of_evaluation_id);
 
             })
             ->when($keyword, function ($query) use ($keyword){
@@ -131,7 +145,6 @@ class QuestionController extends Controller
                 return $query->whereIn('id', $question_knowledge_objects);
 
             })
-            ->orderBy('id', 'desc')
             ->withCount('rank')
             //->with('difficulty')
             ->with('keywords')
@@ -144,10 +157,17 @@ class QuestionController extends Controller
             ->with('user')
             ->with('questionItems')
             ->with('typeOfEvaluation')
-            ->with('regulation')
-            ->paginate(8);
+            ->with('regulation');
 
-        return response()->json($questions, 200);
+        if($object){
+            $object_selected = KnowledgeObject::where('id', $object)->first();
+             $questions->orderByRaw('CASE WHEN fk_course_id = '.$object_selected->fk_course_id.' THEN 0 ELSE 1 END');
+
+        }
+
+        $questions->orderBy('id', 'desc');
+
+        return response()->json($questions->paginate(8), 200);
     }
 
     public function store(Request $request)
