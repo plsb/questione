@@ -220,7 +220,7 @@ const EvaluationApplicationResultsSkillObjects = props => {
                                   </div>
                                   <div className={classesGeneral.paperTitleText} style={{fontSize: '14px'}}>
                                     {!result.total_answer ? '0 estudantes responderam.' :
-                                      (result.total_questions/result.total_answer) == 1 ? (result.total_questions/result.total_answer)+' estudante respondeu.' : (result.total_questions/result.total_answer)+' estudantes responderam.'}
+                                      (result.total_answer) == 1 ? (result.total_answer)+' estudante respondeu.' : (result.total_answer)+' estudantes responderam.'}
                                   </div>
                                 </Box>
                               </Box>
