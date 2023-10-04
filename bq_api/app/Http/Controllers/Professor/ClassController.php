@@ -282,7 +282,7 @@ class ClassController extends Controller
         $this->storeGamificationBadges($class_id, 'achieve_third_placement_bronze', 'Medalha de bronze ', 40, 'medal_bronze.png');
         $this->storeGamificationBadges($class_id, 'two_gold_medals', 'Gênio da turma ', 70, 'medal_two_medals_gold.png');
         $this->storeGamificationBadges($class_id, 'correctly_answer_two_simulations', 'Oráculo', 80, 'medal_oracle.png');
-        $this->storeGamificationBadges($class_id, 'answer_a_test_same_day_was_posted', 'Pontual', 50, 'medal_star.png');
+        $this->storeGamificationBadges($class_id, 'answer_a_test_same_day_was_posted', 'Pontual', 50, 'medal_pontual.png');
         $this->storeGamificationBadges($class_id, 'get_100_xp', 'Estudioso!', 90, 'medal_star.png');
     }
 
