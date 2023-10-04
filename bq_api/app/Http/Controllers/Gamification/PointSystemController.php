@@ -54,12 +54,15 @@ class PointSystemController extends Controller
         return $XPpoint;
     }
 
-    public function RPpointCredit($descriptionID, $id_class, $id_answersHead, $id_answer)
+    public function RPpoint($descriptionID, $id_class, $id_answersHead, $id_answer, $user_for_pontuation, $type='C')
     {
         $user = auth('api')->user();
+        if($user_for_pontuation){
+            $user = $user_for_pontuation;
+        }
 
         $class = ClassQuestione::where('id', $id_class)->first();
-        if($class->gamified_class == 0){
+        if($class->gamified_class == 0 && !$user_for_pontuation){
             return ;
         }
 
@@ -69,7 +72,7 @@ class PointSystemController extends Controller
         $RPpoint = new RPPoints();
         $RPpoint->description_id = $settings->description_id;
         $RPpoint->point = $settings->RP;
-        $RPpoint->type = 'C';
+        $RPpoint->type = $type;
         $RPpoint->fk_class_id = $settings->fk_class_id;
         $RPpoint->fk_user_id = $user->id;
         if($id_answersHead){

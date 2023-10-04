@@ -341,6 +341,7 @@ const QuestionSkill = props => {
                     }
                 });
 
+
                 reduced.forEach(function logArrayElements(element, index, array) {
                     if (element.objectSelected != 0) {
                         saveObject(element, index);

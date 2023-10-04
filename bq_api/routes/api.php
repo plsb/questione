@@ -129,9 +129,10 @@ Route::group(['prefix' => 'class/student/gamification'], function (){
     Route::get('/historyxp/{idclass}', 'Gamification\ClassGamificationStudentController@historyXP')->name('class.gamification.historyXP');
     Route::get('/historyrp/{idclass}', 'Gamification\ClassGamificationStudentController@historyRP')->name('class.gamification.historyRP');
     Route::get('/rankPosition/{idclass}', 'Gamification\ClassGamificationStudentController@rankPosition')->name('class.gamification.rankPosition');
-    //badges
-    Route::get('/badge/{idclass}', 'Gamification\BadgesController@get100XP')->name('class.gamification.get100XP');
+    Route::get('/badges/{idclass}', 'Gamification\ClassGamificationStudentController@getBadges')->name('class.gamification.getBadges');
 
+    Route::post('/remove-alternative/{id_answer}', 'Gamification\HelpForStudentsController@removeAlternative')->name('helpForStudents.removeOneAlternative');
+    Route::post('/help-from-university-students/{id_answer}', 'Gamification\HelpForStudentsController@helpFromUniversityStudents')->name('helpForStudents.removeOneAlternative');
 });
 
 //Rotas do usuário professor
@@ -261,6 +262,7 @@ Route::group(['prefix' => 'evaluation'], function (){
     Route::post('/start/{id_application}', 'DoEvaluation@startEvaluation')->name('evaluationApplication.startEvaluation');
     Route::put('/finish/{id_application}', 'DoEvaluation@finishEvaluation')->name('evaluationApplication.finishEvaluation');
     Route::put('/answer/{id_application}', 'DoEvaluation@answer')->name('evaluationApplication.answer');
+
     //resultados da avaliação student
     Route::get('/student/result/evaluations', 'ResultEvaluationStudent@evaluations')->name('evaluationApplication.evaluations');
     Route::get('/student/result/evaluations-specific/{idHead}', 'ResultEvaluationStudent@applicationSpecific')->name('evaluationApplication.applicationSpecific');

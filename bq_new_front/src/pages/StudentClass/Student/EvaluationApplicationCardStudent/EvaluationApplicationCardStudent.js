@@ -65,6 +65,7 @@ const EvaluationApplicationCardStudent = props => {
 
     useEffect(() => {
         setEvaluationApplication(application);
+        console.log('app', application);
 
     }, []);
 
@@ -110,7 +111,7 @@ const EvaluationApplicationCardStudent = props => {
                   {...rest}
                   className={classes.root} pointerEv >
                   <div style={{pointerEvents: evaluationApplication.status == 0 ? 'none' : 'auto'}}>
-                      <Paper className={evaluationApplication.status == 0 ?  classesGeneral.paperTitleGray
+                      <Paper className={evaluationApplication.status == 0 || evaluationApplication.class.status === 2 || evaluationApplication.evaluation.status === 2 ?  classesGeneral.paperTitleGray
                                              : answer_head && answer_head.finalized_at ? classesGeneral.paperTitleGreen : classesGeneral.paperTitle}>
                           <Box display="flex">
                               <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-start">
@@ -119,95 +120,121 @@ const EvaluationApplicationCardStudent = props => {
                                   </div>
                               </Box>
                               <Box display="flex" justifyContent="flex-end">
-                                  {(answer_head == null || answer_head.finalized_at == null) && evaluationApplication.status == 1  && (
+                                  {(answer_head == null || answer_head.finalized_at == null) && evaluationApplication.status === 1
+                                      && evaluationApplication.class.status === 1 && evaluationApplication.evaluation.status === 1 && (
                                       <TooltipQuestione position={"left"} description={"Clique aqui para realizar simulado"} content={
                                           <IconButton
                                               size="small"
                                               aria-label="settings"
                                               onClick={() => history.push(`/code/${application.id_application}`)}>
                                               <PlayArrow />
+
                                           </IconButton>
                                       }/>
                                   )}
+
                               </Box>
                           </Box>
                       </Paper>
 
                     <CardContent>
+                        <Box display={'flex'}>
                             <Box>
-                                { answer_head && (evaluationApplication.show_results == 1 &&
-                                    evaluationApplication.canShowResults == 1 && answer_head.finalized_at ?
-                                        <Link
-                                            component="button"
-                                            onClick={() => {
-                                                results(answer_head.id)
-                                            }}
-                                            className={clsx(classes.link, className)}>
-                                            <div className={clsx(classesGeneral.paperTitleTextBold, classes.chipblue)}>
-                                                Clique aqui para visualizar o resultado
-                                            </div>
-                                        </Link>
-                                        :
-                                    (evaluationApplication.canShowResults == 0 && evaluationApplication.show_results == 1 && answer_head.finalized_at)
-                                            ?
-                                            <div className={clsx(classesGeneral.paperTitleTextBold)}>{'O resultado será liberado no dia: '+moment(`${evaluationApplication.date_release_results} ${evaluationApplication.time_release_results}`).format('DD/MM/YYYY H:mm')+'.'}</div>
+                                <Box>
+                                    { answer_head && (evaluationApplication.show_results == 1 &&
+                                        evaluationApplication.canShowResults == 1 && answer_head.finalized_at ?
+                                            <Link
+                                                component="button"
+                                                onClick={() => {
+                                                    results(answer_head.id)
+                                                }}
+                                                className={clsx(classes.link, className)}>
+                                                <div className={clsx(classesGeneral.paperTitleTextBold, classes.chipblue)}>
+                                                    Clique aqui para visualizar o resultado
+                                                </div>
+                                            </Link>
                                             :
-                                            evaluationApplication.show_results == 0 && answer_head.finalized_at &&
-                                            <div className={clsx(classesGeneral.paperTitleTextBold)}>{'Resultado indisponível.'}</div>
+                                        (evaluationApplication.canShowResults == 0 && evaluationApplication.show_results == 1 && answer_head.finalized_at)
+                                                ?
+                                                <div className={clsx(classesGeneral.paperTitleTextBold)}>{'O resultado será liberado no dia: '+moment(`${evaluationApplication.date_release_results} ${evaluationApplication.time_release_results}`).format('DD/MM/YYYY H:mm')+'.'}</div>
+                                                :
+                                                evaluationApplication.show_results == 0 && answer_head.finalized_at &&
+                                                <div className={clsx(classesGeneral.paperTitleTextBold)}>{'Resultado indisponível.'}</div>
+                                    )}
+                                    { answer_head && ( answer_head.finished_automatically == 1 &&
+                                        <div className={clsx(classesGeneral.textRedInfo)} style={{marginTop: '5px'}}>{'Este simulado foi finalizado automaticamente.'}</div>
+                                    )}
+                                    { !answer_head && (evaluationApplication.evaluation.status == 2 ?
+                                        <div className={clsx(classesGeneral.paperTitleTextBold)}>{'Simulado indisponível.'}</div> :
+                                        evaluationApplication.status == 0 &&
+                                        <div className={clsx(classesGeneral.paperTitleTextBold)}>{'Simulado indisponível.'}</div>)
+                                    }
+                                </Box>
+                                <div className={classesGeneral.paperTitleText}>
+                                    {'Este simulado foi criado em: '+ moment(evaluationApplication.created_at).format('DD/MM/YYYY')+'.'}
+                                </div>
+                                <Box display="flex" alignItems="row" style={{marginTop: '10px'}}>
+
+                                  {/*answer_head ?
+                                      (!answer_head.finalized_at ?
+                                          <div className={clsx(classes.chipblue, className)} style={{marginLeft: '4px'}}>{'| Iniciado'}</div> :
+                                          <div className={clsx(classes.chipgreen, className)} style={{marginLeft: '4px'}}>{'| Finalizado'}</div>) :
+                                      <div className={clsx(classes.chipred, className)} style={{marginLeft: '4px'}}>{'| Não iniciado'}</div>*/}
+                                   { !answer_head  &&
+                                       (evaluationApplication.date_start &&
+                                           (evaluationApplication.data_start_type == 'DI' ?
+                                                   <div className={clsx(classes.chip_brown, className)}
+                                                        style={{marginRight: '6px'}}>{'Este simulado só pode ser iniciado a partir do dia '
+                                                       +moment(evaluationApplication.date_start).utc().format('DD/MM/YYYY')+' às '
+                                                       +evaluationApplication.time_start+'.'}</div>
+                                                   :
+                                                   <div className={clsx(classes.chip_brown, className)}
+                                                        style={{marginRight: '6px'}}>{'Este simulado deve ser iniciado no dia '
+                                                       +moment(evaluationApplication.date_start).utc().format('DD/MM/YYYY')+' às '
+                                                       +evaluationApplication.time_start+'.'}</div>
+                                           )
+                                           )
+                                   }
+
+                                  { !answer_head ?
+                                      ((evaluationApplication.date_finish) &&
+                                          <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Este simulado deve ser finalizado até o dia '+moment(evaluationApplication.date_finish).utc().format('DD/MM/YYYY')+' às '+evaluationApplication.time_finish+'.'}</div>)
+                                       :
+                                      !answer_head.finalized_at && evaluationApplication.date_finish ?
+                                          <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Este simulado deve ser finalizado até o dia '+moment(evaluationApplication.date_finish).utc().format('DD/MM/YYYY')+' às '+evaluationApplication.time_finish+'.'}</div> : null}
+                                    { !answer_head ?
+                                        ((evaluationApplication.time_to_finalize) &&
+                                            <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Após iniciado, este simulado deve ser finalizado no tempo de '+evaluationApplication.time_to_finalize+'.'}</div>)
+                                        :
+                                        !answer_head.finalized_at && evaluationApplication.time_to_finalize ?
+                                            <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Após iniciado, este simulado deve ser finalizado no tempo de '+evaluationApplication.time_to_finalize+'.'}</div> : null}
+
+                                    {/* evaluationApplication.show_results == 1 &&
+                                        <div className={clsx(classes.chipblue, className)}>{'| Resultados Liberados'}</div>  */}
+
+                                    {/* !answer_head ?
+                                        <div className={clsx(classes.chipblue, className)} style={{marginRight: '6px'}}>{'Permite vizualizar questões'}</div> :
+                                        !answer_head.finalized_at && evaluationApplication.release_preview_question == 1 ?
+                                        <div className={clsx(classes.chipblue, className)} style={{marginRight: '6px'}}>{'Permite vizualizar questões'}</div> : null*/}
+                                </Box>
+                            </Box>
+
+                            <Box flexGrow={1}>
+                                {answer_head && (answer_head.finalized_at != null && evaluationApplication.badgesStudent != null &&
+                                    <Box display={'flex'} justifyContent={'flex-end'} style={{marginTop: '10px'}}>
+                                        {evaluationApplication.badgesStudent.map((badge, i) => (
+                                            <TooltipQuestione description={badge.badges_settings.description} position={'top-start'} content={
+                                                <img
+                                                    src={badge.badges_settings.image ? "/images/medals/"+badge.badges_settings.image : "/images/404.png"}
+                                                    style={{marginRight: '5px', width:'40px'}}/>
+                                            }/>
+                                        ))}
+
+
+                                    </Box>
                                 )}
-                                { !answer_head && (evaluationApplication.evaluation.status == 2 ?
-                                    <div className={clsx(classesGeneral.paperTitleTextBold)}>{'Simulado indisponível.'}</div> :
-                                    evaluationApplication.status == 0 &&
-                                    <div className={clsx(classesGeneral.paperTitleTextBold)}>{'Simulado indisponível.'}</div>)
-                                }
                             </Box>
-                            <div className={classesGeneral.paperTitleText}>
-                                {'Esta avaliação foi criada em: '+ moment(evaluationApplication.created_at).format('DD/MM/YYYY')+'.'}
-                            </div>
-                            <Box display="flex" alignItems="row" style={{marginTop: '10px'}}>
-
-                              {/*answer_head ?
-                                  (!answer_head.finalized_at ?
-                                      <div className={clsx(classes.chipblue, className)} style={{marginLeft: '4px'}}>{'| Iniciado'}</div> :
-                                      <div className={clsx(classes.chipgreen, className)} style={{marginLeft: '4px'}}>{'| Finalizado'}</div>) :
-                                  <div className={clsx(classes.chipred, className)} style={{marginLeft: '4px'}}>{'| Não iniciado'}</div>*/}
-                               { !answer_head  &&
-                                   (evaluationApplication.date_start &&
-                                       (evaluationApplication.data_start_type == 'DI' ?
-                                               <div className={clsx(classes.chip_brown, className)}
-                                                    style={{marginRight: '6px'}}>{'Este simulado só pode ser iniciado a partir do dia '
-                                                   +moment(evaluationApplication.date_start).utc().format('DD/MM/YYYY')+' às '
-                                                   +evaluationApplication.time_start+'.'}</div>
-                                               :
-                                               <div className={clsx(classes.chip_brown, className)}
-                                                    style={{marginRight: '6px'}}>{'Este simulado deve ser iniciado no dia '
-                                                   +moment(evaluationApplication.date_start).utc().format('DD/MM/YYYY')+' às '
-                                                   +evaluationApplication.time_start+'.'}</div>
-                                       )
-                                       )
-                               }
-
-                              { !answer_head ?
-                                  ((evaluationApplication.date_finish) &&
-                                      <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Este simulado deve ser finalizado até o dia '+moment(evaluationApplication.date_finish).utc().format('DD/MM/YYYY')+' às '+evaluationApplication.time_finish+'.'}</div>)
-                                   :
-                                  !answer_head.finalized_at && evaluationApplication.date_finish ?
-                                      <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Este simulado deve ser finalizado até o dia '+moment(evaluationApplication.date_finish).utc().format('DD/MM/YYYY')+' às '+evaluationApplication.time_finish+'.'}</div> : null}
-                                { !answer_head ?
-                                    ((evaluationApplication.time_to_finalize) &&
-                                        <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Após iniciado, este simulado deve ser finalizado no tempo de '+evaluationApplication.time_to_finalize+'.'}</div>)
-                                    :
-                                    !answer_head.finalized_at && evaluationApplication.time_to_finalize ?
-                                        <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Após iniciado, este simulado deve ser finalizado no tempo de '+evaluationApplication.time_to_finalize+'.'}</div> : null}
-
-                                {/* evaluationApplication.show_results == 1 &&
-                                    <div className={clsx(classes.chipblue, className)}>{'| Resultados Liberados'}</div>  */}
-
-                                {/* !answer_head ?
-                                    <div className={clsx(classes.chipblue, className)} style={{marginRight: '6px'}}>{'Permite vizualizar questões'}</div> :
-                                    !answer_head.finalized_at && evaluationApplication.release_preview_question == 1 ?
-                                    <div className={clsx(classes.chipblue, className)} style={{marginRight: '6px'}}>{'Permite vizualizar questões'}</div> : null*/}
-                            </Box>
+                        </Box>
 
                       </CardContent>
                   </div>

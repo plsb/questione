@@ -49,15 +49,15 @@ function Timer({ expiryTimestamp, onExpire, setShowTimeDialog }) {
     };
 
     return (
-        <div className="timer" style={{ width: 'max-content', padding: '0px 4px', fontSize: '20px', fontWeight: 'bold', color: getTimeColor(hours, minutes, seconds) }}>
+        <div className="timer" style={{ width: 'max-content', padding: '0px 4px', fontSize: '30px', fontWeight: 'bold', color: getTimeColor(hours, minutes, seconds) }}>
             {days > 0 && (
                 <>
                     <span>{days} dia(s) e </span>
                 </>
             )}
-            <span>{addZeroToLeft(hours)}</span>:
-            <span>{addZeroToLeft(minutes)}</span>:
-            <span>{addZeroToLeft(seconds)}</span>
+            <span>{addZeroToLeft(hours)}</span>h
+            <span>{addZeroToLeft(minutes)}</span>min
+            {(hours == 0 && minutes < 5) && <span>{addZeroToLeft(seconds)}s</span>}
         </div>
     );
 }

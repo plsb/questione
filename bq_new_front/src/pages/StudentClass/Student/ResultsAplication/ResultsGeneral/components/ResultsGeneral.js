@@ -166,9 +166,9 @@ const ResultsGeneral = props =>{
           },
           color: function(value) {
             let valor = value.dataset.data[value.dataIndex];
-            if(valor <= 20){
+            if(valor < 30){
               return '#f44336'
-            } else if (valor <= 50) {
+            } else if (valor < 70) {
               return '#ffab40'
             } else {
               return '#43a047'
@@ -183,27 +183,33 @@ const ResultsGeneral = props =>{
     };
 
     return <div style={{marginLeft: '10px', marginRight: '10px'}}>
-              <Box display="flex" justifyContent="center">
-                      <Paper style={{
-                                  background: '#3a7cf7',
-                                  marginTop: '5px',
-                                  marginBotton: '5px',
-                                  paddingTop: '5px',
-                                  paddingBottom: '5px',
-                                  paddingLeft: '15px',
-                                  paddingRight: '15px',
-                                  color: '#FFF', fontWeight: 'bold', fontSize: '15px', marginRight: '5px',
-                                }}>
-                                <TooltipQuestione description={'De todos os simulados respondidos, você acertou '+precisionCorrect+'% das questões.'} position={'bottom'} content={
-                                  <Box display="flex" alignItems="row">
-                                    <MingcuteAlertOctagonFill />
-                                    <div style={{marginLeft: '10px'}}>
-                                      {precisionCorrect+ '% de precisão nesta turma.'}
-                                    </div>
-                                  </Box>
-                                }/>
-                        </Paper>
-              </Box>
+        {!classProfessorOverview ?
+            <div className={classesGeneral.paperTitleText} style={{ marginRight: '10px'}}>
+                Esta turma não possui dados ainda.
+            </div>
+            :
+            <div>
+                <Box display="flex" justifyContent="center">
+                          <Paper style={{
+                                      background: '#3a7cf7',
+                                      marginTop: '5px',
+                                      marginBotton: '5px',
+                                      paddingTop: '5px',
+                                      paddingBottom: '5px',
+                                      paddingLeft: '15px',
+                                      paddingRight: '15px',
+                                      color: '#FFF', fontWeight: 'bold', fontSize: '15px', marginRight: '5px',
+                                    }}>
+                                    <TooltipQuestione description={'De todos os simulados respondidos, você acertou essa % das questões.'} position={'bottom'} content={
+                                      <Box display="flex" alignItems="row">
+                                        <MingcuteAlertOctagonFill />
+                                        <div style={{marginLeft: '10px'}}>
+                                          {precisionCorrect > 0 ? precisionCorrect+ '% de precisão nesta turma.' : '0% de precisão nesta turma.'}
+                                        </div>
+                                      </Box>
+                                    }/>
+                            </Paper>
+                  </Box>
                 <Box display="flex" justifyContent="center">
                       <div style={{width: props.width == 'xs' || props.width == 'sm' ? '100%' : props.width == 'md' ? '70%' : '50%'}}>
                                 {data && <Line data={data} options={options} />}
@@ -214,17 +220,19 @@ const ResultsGeneral = props =>{
                     Legenda:
                   </div>
                   <div className={classesGeneral.paperTitleText} style={{color: '#f44336', marginRight: '5px'}}>
-                    0 a 20%;
+                    0 a 29%;
                   </div>
                   <div className={classesGeneral.paperTitleText} style={{color: '#ffab40', marginRight: '5px'}}>
-                    21 a 50%;
+                    30 a 69%;
                   </div>
                   <div className={classesGeneral.paperTitleText} style={{color: '#43a047'}}>
-                    51 a 100%.
+                    70 a 100%.
                   </div>
                 </Box>
+            </div>
+        }
 
-          </div>;
+    </div>;
 }
 
 ResultsGeneral.propTypes = {

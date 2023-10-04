@@ -43,7 +43,7 @@ class BadgesController extends Controller
                 ->where('description_id', $id_badge)->first();
 
             if(!$verify){ //verifica se o estudante já tem o badge caso não, adiciona
-                $this->saveTheBadge($id_badge, $id_class, $user->id);
+                $this->saveTheBadge($id_badge, $id_class, $user->id, null,  true);
 
             }
 
@@ -69,10 +69,10 @@ class BadgesController extends Controller
             $this->saveBadgeParameter(null, $id_class, $id_badge, 1, $user->id);
         } else if($verify->parameter < $value_parameter_max){
             $parameter = $verify->parameter + 1;
-            $this->saveBadgeParameter(null, $id_class, $id_badge, $parameter, $user->id);
+            $this->saveBadgeParameter($verify, $id_class, $id_badge, $parameter, $user->id);
 
             if($parameter == $value_parameter_max){
-                $this->saveTheBadge($id_badge, $id_class, $user->id);
+                $this->saveTheBadge($id_badge, $id_class, $user->id, null, true);
 
             }
         }
@@ -97,10 +97,10 @@ class BadgesController extends Controller
             $this->saveBadgeParameter(null, $id_class, $id_badge, 1, $user->id);
         } else if($verify->parameter < $value_parameter_max){
             $parameter = $verify->parameter + 1;
-            $this->saveBadgeParameter(null, $id_class, $id_badge, $parameter, $user->id);
+            $this->saveBadgeParameter($verify, $id_class, $id_badge, $parameter, $user->id);
 
             if($parameter == $value_parameter_max){
-                $this->saveTheBadge($id_badge, $id_class, $user->id);
+                $this->saveTheBadge($id_badge, $id_class, $user->id, null, true);
             }
         }
     }
@@ -126,10 +126,10 @@ class BadgesController extends Controller
 
         } else if($verify->parameter < $value_parameter_max){
             $parameter = $verify->parameter + 1;
-            $this->saveBadgeParameter(null, $id_class, $id_badge, $parameter, $user->id);
+            $this->saveBadgeParameter($verify, $id_class, $id_badge, $parameter, $user->id);
 
             if($parameter == $value_parameter_max){
-                $this->saveTheBadge($id_badge, $id_class, $user->id);
+                $this->saveTheBadge($id_badge, $id_class, $user->id, null, true);
             }
         }
 
@@ -163,12 +163,88 @@ class BadgesController extends Controller
                 $isDateEquals = $date_finished_formated == $date_application_created_formated;
 
                 if($isDateEquals){
-                    $this->saveTheBadge($id_badge, $id_class, $user->id);
+                    $this->saveTheBadge($id_badge, $id_class, $user->id, $application->id, true);
                 }
 
             }
         }
 
+    }
+
+    public function getMedals($object){
+        if(!$object){
+            return ;
+        }
+        if(!$this->isGamified($object->application->fk_class_id)){
+            return null;
+        }
+        if(sizeof($object->answer_head) == 0){
+            return ;
+        }
+        $id_badge_gold_medal = 'achieve_first_placement_gold';
+        $id_badge_silver_medal = 'achieve_second_placement_silver';
+        $id_badge_bronze_medal = 'achieve_third_placement_bronze';
+        $id_badge_two_gold_medals = 'two_gold_medals';
+        $value_parameter_max_two_gold_medals = 2;
+
+        /*
+         * Verifica se na turma já Não foi dado um badge para
+         * o simulado em questão
+         */
+        if($this->verifyIfBadgeExistsInTheApplication($object->application, $id_badge_gold_medal)) return ;
+        if($this->verifyIfBadgeExistsInTheApplication($object->application, $id_badge_silver_medal)) return ;
+        if($this->verifyIfBadgeExistsInTheApplication($object->application, $id_badge_bronze_medal)) return ;
+
+
+        $position = 1;
+        foreach ($object->answer_head as $item){
+
+            if($position == 4) break;
+
+            switch ($position){
+                case 1:
+                    $this->saveTheBadge($id_badge_gold_medal, $object->application->fk_class_id,
+                                                    $item->student->id, $object->application->id, false);
+
+                    /*
+                     * Verifica se acumulou duas medalhas de ouro e dá o badge correspondente
+                     */
+                    $verify = ClassBadgesParameters::where('fk_class_id', $object->application->fk_class_id)
+                        ->where('fk_user_id', $item->student->id)
+                        ->where('description_id', $id_badge_two_gold_medals)->first();
+                    if(!$verify){
+                        $this->saveBadgeParameter(null, $object->application->fk_class_id, $id_badge_two_gold_medals,
+                                    1, $item->student->id);
+                    } else if($verify->parameter < $value_parameter_max_two_gold_medals){
+                        $parameter = $verify->parameter + 1;
+                        $this->saveBadgeParameter($verify, $object->application->fk_class_id, $id_badge_two_gold_medals,
+                            $parameter, $item->student->id);
+
+                        if($parameter == $value_parameter_max_two_gold_medals){
+                            $this->saveTheBadge($id_badge_two_gold_medals, $object->application->fk_class_id,
+                                $item->student->id, $object->application->id, true);
+                        }
+                    }
+                    break;
+                case 2: $this->saveTheBadge($id_badge_silver_medal, $object->application->fk_class_id,
+                                                    $item->student->id, $object->application->id, false);
+                        break;
+                case 3: $this->saveTheBadge($id_badge_bronze_medal, $object->application->fk_class_id,
+                                                    $item->student->id, $object->application->id, false);
+                        break;
+            }
+            $position += 1;
+        }
+    }
+
+    private function verifyIfBadgeExistsInTheApplication($application, $badge_description){
+        $veirfy_badge = ClassBadgesStudent::where('fk_class_id',$application->fk_class_id)
+            ->where('fk_evaluation_aplication_id', $application->id)
+            ->where('description_id', $badge_description)
+            ->first();
+        if($veirfy_badge) return true;
+
+        return false;
     }
 
     private function saveBadgeParameter($badge_obj, $id_class, $id_badge, $parameter, $id_user){
@@ -185,13 +261,13 @@ class BadgesController extends Controller
         $badge->save();
     }
 
-    private function saveTheBadge($id_badge, $id_class, $id_user){
+    private function saveTheBadge($id_badge, $id_class, $id_user, $id_application, $verifyIfExists){
         //verifica se o badge já  existe
         $verify = ClassBadgesStudent::where('description_id', $id_badge)
             ->where('fk_class_id', $id_class)
             ->where('fk_user_id', $id_user)->first();
         //se o badge já existe, encerra a função
-        if($verify){
+        if($verify && $verifyIfExists){
             return null;
         }
 
@@ -200,11 +276,18 @@ class BadgesController extends Controller
         $badge_student->description_id = $id_badge;
         $badge_student->fk_class_id = $id_class;
         $badge_student->fk_user_id = $id_user;
+        if($id_application){
+            /*
+                Verifica se possui simulado para associar
+            */
+            $badge_student->fk_evaluation_aplication_id = $id_application;
+        }
         $badge_student->save();
 
         //dá pontuação do badge
         $pointSystem = new PointSystemController();
         $pointSystem->RPpointBadgeCredit($id_badge, $id_class, null, null);
+
     }
 
     private function isGamified($id_class){

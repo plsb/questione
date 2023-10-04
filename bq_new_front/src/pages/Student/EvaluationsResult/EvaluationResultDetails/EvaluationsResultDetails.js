@@ -436,7 +436,9 @@ const EvaluationsResultDetails = props => {
                         <Box display="flex" alignItems="row">
                               <MingcuteAlertOctagonFill />
                               <div style={{marginLeft: '10px'}}>
-                                {(head.qtdCorrect/(head.qtdCorrect+head.qtdIncorrect))*100 + '% de precisão'}
+                                {head.qtdCorrect+head.qtdIncorrect > 0 ?
+                                    ((head.qtdCorrect/(head.qtdCorrect+head.qtdIncorrect))*100).toFixed(2) + ' % de precisão' :
+                                    '0 % de precisão'}
                               </div>
                         </Box>
                       }/>
@@ -554,7 +556,7 @@ const EvaluationsResultDetails = props => {
                               <TooltipQuestione
                                   description={
                                       <div>
-                                        {'Conteúdo(s) da questão: '}{questions[page-1].objects.map(item => (
+                                        {'Conteúdo(s) da questão: '}{result.objects.map(item => (
                                             ReactHtmlParser (item.object.description)+'. '
                                         ))}
                                       </div>

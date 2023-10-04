@@ -31,7 +31,7 @@ const TooltipCustomized = withStyles((theme) => ({
 }))(Tooltip);
 
 const TooltipQuestione = props => {
-    const { className, history, description, content, position, ...rest } = props;
+    const { className, history, description, content, position, justify, ...rest } = props;
 
     const classesGeneral = useStyles();
 
@@ -49,7 +49,7 @@ const TooltipQuestione = props => {
                       <div className={classesGeneral.paperTitleText} style={{fontSize: '10px'}}>{description}</div>
                   </Box>
               }>
-              <Box display="flex" alignItems="center">
+              <Box display="flex" alignItems="center" justifyContent={justify ? justify : null}>
                   {content}
               </Box>
           </TooltipCustomized>
@@ -61,7 +61,8 @@ TooltipQuestione.propTypes = {
     className: PropTypes.string,
     description: PropTypes.object,
     content: PropTypes.object,
-    position: PropTypes.string
+    position: PropTypes.string,
+    justify: PropTypes.string
 };
 
 export default withRouter(TooltipQuestione);

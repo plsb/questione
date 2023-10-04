@@ -202,34 +202,31 @@ const EvaluationApplicationResultsSkillObjects = props => {
                              background: result.percentage_correct < 30 ? '#ffcdd2'
                                  : result.percentage_correct < 70 ? '#ffe0b2'
                                      : '#c8e6c9' }}>
+                        <Box>
+                          <div className={classesGeneral.paperTitleText} style={{fontSize: '19px'}}>
+                            {result.description }
+                          </div>
+                          <div className={classesGeneral.paperTitleText} style={{fontSize: '11px'}}>
+                            {result.course }
+                          </div>
+                        </Box>
 
-                          <Box display='flex' height='100%'>
-                            <Box display='grid' flexGrow={1} >
-                              <Box >
-                                <div className={classesGeneral.paperTitleText} style={{fontSize: '17px'}}>
-                                  {result.description }
+                        <Box display='flex' alignSelf={'flex-end'}>
+                            <Box display='flex' flexGrow={1}>
+                              <Box style={{marginTop: '15px'}}>
+                                <div className={classesGeneral.paperTitleText} style={{fontSize: '14px'}}>
+                                  {result.total_questions+' questões no simulado.'}
                                 </div>
-                                <div className={classesGeneral.paperTitleText} style={{fontSize: '11px'}}>
-                                  {result.course }
+                                <div className={classesGeneral.paperTitleText} style={{fontSize: '14px'}}>
+                                  {!result.total_answer ? 'Nenhum estudante respondeu.' :
+                                    (result.total_answer) == 1 ? (result.total_answer)+' estudante respondeu.' : (result.total_answer)+' estudantes responderam.'}
                                 </div>
                               </Box>
-                              <Box display='flex' style={{alignSelf: 'flex-end', marginBottom: '10px'}} >
-                                <Box>
-                                  <div className={classesGeneral.paperTitleText} style={{fontSize: '14px', marginTop: '2px'}}>
-                                    {result.total_questions+' questões no simulado.'}
-                                  </div>
-                                  <div className={classesGeneral.paperTitleText} style={{fontSize: '14px'}}>
-                                    {!result.total_answer ? '0 estudantes responderam.' :
-                                      (result.total_answer) == 1 ? (result.total_answer)+' estudante respondeu.' : (result.total_answer)+' estudantes responderam.'}
-                                  </div>
-                                </Box>
-                              </Box>
-
                             </Box>
 
-                            <Box display='flex' style={{margin:'10px', alignSelf: 'center'}}>
+                            <Box display='flex' style={{margin:'10px', justifyContent: 'center'}}>
                                <Box>
-                                <div className={classesGeneral.paperTitleTextBold} style={{fontSize: '18px'}}>
+                                <div className={classesGeneral.paperTitleTextBold} style={{fontSize: '20px'}}>
                                   {result.percentage_correct+'%'}
                                 </div>
                                 <div className={classesGeneral.paperTitleText}>
@@ -237,7 +234,7 @@ const EvaluationApplicationResultsSkillObjects = props => {
                                 </div>
                               </Box>
                             </Box>
-                          </Box>
+                        </Box>
                     </Paper>
                   </Grid>
 

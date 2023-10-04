@@ -8,6 +8,7 @@ use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
 use App\AnswersHeadEvaluation;
+use App\Http\Controllers\Gamification\ClassGamificationStudentController;
 use App\KnowledgeObject;
 use App\Question;
 use App\QuestionHasKnowledgeObject;
@@ -102,17 +103,14 @@ class ClassStudentEvaluationApplicationsController extends Controller
 
         $students_class = ClassStudents::where('fk_class_id', $class->id)
             ->with('user')
+            ->with('classQuestione')
             ->get();
-
-        $teste_teste[] = $students_class;
 
         $students = array();
         foreach ($students_class as $student) {
-
             $resultsEvaluation = array();
             foreach ($evaliation_application as $e_application) {
                 $evaluation_answer = new \ArrayObject();
-
 
                 $answer_head = AnswersHeadEvaluation::where('fk_application_evaluation_id', $e_application->id)
                         ->where('fk_user_id', $student->fk_user_id)
@@ -157,13 +155,18 @@ class ClassStudentEvaluationApplicationsController extends Controller
                         $totalCorrect++;
                     }
 
+                    $porcentage_correct = 0;
+                    if($totalCorrect > 0){
+                        $porcentage_correct = round(($totalCorrect/$totalQuestionEvaluation)*100, 2);
+                    }
+
                     $evaluation_answer = (object)[
                         'application_id' => $e_application->id,
                         'application_description' => $e_application->description,
                         'finalized_at' => $answer_head->finalized_at,
                         'total_correct' => $totalCorrect,
                         'total_questions_evaluation' => $totalQuestionEvaluation,
-                        'porcentage_correct' => round(($totalCorrect/$totalQuestionEvaluation)*100, 2),
+                        'porcentage_correct' => $porcentage_correct ,
                         'created_at' => $answer_head->created_at,
                     ];
 
@@ -171,12 +174,29 @@ class ClassStudentEvaluationApplicationsController extends Controller
                 $resultsEvaluation[] = $evaluation_answer;
 
             }
+
+
             $totalPorcentageCorrect = 0;
             foreach($resultsEvaluation as $result){
-                $totalPorcentageCorrect += $result->porcentage_correct;
+                if(property_exists($result,'porcentage_correct'))
+                    $totalPorcentageCorrect += $result->porcentage_correct;
             }
+
+            $classGamificationStudentController_object = new ClassGamificationStudentController();
+            $ranking = $classGamificationStudentController_object->rankPosition($student->fk_class_id, $student->user);
+            $xp = $classGamificationStudentController_object->totalXP($student->fk_class_id, $student->user);
+            if($ranking){
+                $ranking = $ranking->original;
+            }
+            if($xp){
+                $xp = $xp->original;
+            }
+
             $resultStudent = (object)[
                 'student' => $student->user,
+                'class_gamified' => $student->classQuestione->gamified_class,
+                'position' => $ranking,
+                'total_xp' => $xp,
                 'evaluation_answer' => $resultsEvaluation,
                 'total_porcentage_correct_all' => round($totalPorcentageCorrect/sizeof($evaliation_application),
                     2),

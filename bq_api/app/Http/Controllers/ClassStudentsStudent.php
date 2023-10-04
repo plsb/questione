@@ -118,7 +118,7 @@ class ClassStudentsStudent extends Controller
 
         //pontuação XP ao entrar em uma sala de aula
         $pointSystem = new PointSystemController();
-        $pointSystem->RPpointCredit('enter_class', $class_verify->id, null, null);
+        $pointSystem->RPpoint('enter_class', $class_verify->id, null, null, null);
 
         return response()->json([
             'message' => 'Inscrição realizada.',

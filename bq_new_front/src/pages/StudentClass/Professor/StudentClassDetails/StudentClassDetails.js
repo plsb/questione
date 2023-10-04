@@ -24,6 +24,7 @@ import {withStyles} from "@material-ui/core/styles";
 import useStylesLocal from "./styles";
 import useStyles from "../../../../style/style";
 import {CharmHome} from "../../../../icons/Icons";
+import {DialogQuestione} from "../../../../components";
 
 const schema = {
     description: {
@@ -52,6 +53,9 @@ const TooltipCustomized = withStyles((theme) => ({
 const StudentClassDetails = props => {
     const { className, history, ...rest } = props;
     const { studentClassId } = props.match.params;
+
+    const [open, setOpen] = React.useState(false);
+    const [disableGamification, setDisableGamification] = React.useState(false);
 
     const classes = useStylesLocal();
     const classesGeneral = useStyles();
@@ -138,6 +142,10 @@ const StudentClassDetails = props => {
                     }
                 }));
                 setCheckedGamified(response.data.gamified_class);
+                if(response.data.gamified_class){
+                    setDisableGamification(true);
+                }
+
             }
         } catch (error) {
 
@@ -189,6 +197,10 @@ const StudentClassDetails = props => {
             showStudentClass(studentClassId);
         }
     }, [studentClassId]);
+
+    const onClickCloseDialog = () => {
+        setOpen(false);
+    }
 
     return (
         <div className={classesGeneral.root}>
@@ -293,8 +305,11 @@ const StudentClassDetails = props => {
                                         variant="outlined"/>
                                 </div>
 
-                                {/*<div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-                                    <TooltipCustomized
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                                    { disableGamification ?
+                                        <div className={classesGeneral.paperTitleTextBold}>{'O módulo de gamificação está ativo.'}</div>
+                                        :
+                                        <TooltipCustomized
                                         title={
                                             <React.Fragment>
                                                 <p>
@@ -308,6 +323,7 @@ const StudentClassDetails = props => {
                                         <FormControlLabel
                                             control={
                                                 <Switch
+                                                    disabled={disableGamification}
                                                     checked={checkedGamified}
                                                     onChange={handleChangeGamified}
                                                     name="gamified_class"
@@ -316,15 +332,15 @@ const StudentClassDetails = props => {
                                             }
                                             label="Turma gamificada"
                                         />
-                                    </TooltipCustomized>
-                                </div>*/}
+                                    </TooltipCustomized>}
+                                </div>
                                 <Divider /><br />
                                 <Box display="flex" justifyContent="center">
                                     <Button
                                         color="primary"
                                         variant="outlined"
                                         disabled={!formState.isValid}
-                                        onClick={saveStudentClass}>
+                                        onClick={checkedGamified && !disableGamification ? () => setOpen(true) : saveStudentClass }>
                                         Salvar
                                     </Button>
                                 </Box>
@@ -335,6 +351,18 @@ const StudentClassDetails = props => {
                     <Divider />
                 </form>
             </Card>
+            <DialogQuestione handleClose={onClickCloseDialog}
+                             open={open}
+                             onClickAgree={saveStudentClass}
+                             onClickDisagree={onClickCloseDialog}
+                             mesage={
+                                 <div className={classesGeneral.messageDialog}>
+                                     {'Você escolheu ativar o módulo de gamificação nesta turma. Após a ativação, não será possível desativá-lo. Você deseja prosseguir?'}
+                                 </div>}
+                             title={
+                                 <div className={classesGeneral.titleDialog}>
+                                     {'Turma gamificada'}
+                                 </div>}/>
         </div>
     );
 };

@@ -8,6 +8,7 @@ use App\ClassStudents;
 use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
+use App\Http\Controllers\Gamification\PointSystemController;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -95,6 +96,14 @@ class ClassStudentsProfessor extends Controller
         $class_students_student->fk_user_id = $user->id;
         $class_students_student->active = 1;
         $class_students_student->save();
+
+        //pontuação XP ao entrar em uma sala de aula
+        $class = ClassQuestione::find($fk_class_id);
+        if($class->gamified_class) {
+            $pointSystem = new PointSystemController();
+            $pointSystem->RPpoint('enter_class', $fk_class_id, null, null,
+                $user);
+        }
 
         return response()->json([
             'message' => 'Estudante '.$user->name.', cadastrado na turma.'

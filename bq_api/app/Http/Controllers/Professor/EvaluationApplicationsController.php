@@ -247,9 +247,16 @@ class EvaluationApplicationsController extends Controller
         if($request->date_start || $request->time_start || $request->data_start_type){
             if($request->date_start < date('Y-m-d')){
                 return response()->json([
-                    'message' => 'A data para iniciar a avaliação deve ser maior ou igual a data atual.'
+                    'message' => 'A data de início do simulado deve ser igual ou posterior à data atual.'
                 ], 202);
+            } else if($request->date_finish == date('Y-m-d'))  {
+                if($request->time_start < date('H:m:s')){
+                    return response()->json([
+                        'message' => 'A hora de início do simulado deve ser igual ou posterior à hora atual.'
+                    ], 202);
+                }
             }
+
             if(!$request->time_start){
                 return response()->json([
                     'message' => 'A hora para iniciar a prova deve ser informada.'
@@ -262,6 +269,18 @@ class EvaluationApplicationsController extends Controller
             }
         }
         if($request->date_finish || $request->time_finish){
+            if($request->date_finish < date('Y-m-d')){
+                return response()->json([
+                    'message' => 'A data de conclusão do simulado deve ser igual ou posterior à data atual.'
+                ], 202);
+            } else if($request->date_finish == date('Y-m-d'))  {
+                /*if(($request->time_finish + 60) < date('H:m:s')){
+                    return response()->json([
+                        'message' => 'A hora de conclusão do simulado deve ser igual ou posterior à hora atual.'
+                    ], 202);
+                }*/
+            }
+
             if(!$request->date_finish){
                 return response()->json([
                     'message' => 'A data para finalizar a prova deve ser informada.'
@@ -392,7 +411,9 @@ class EvaluationApplicationsController extends Controller
 
     public function changeStatus(Request $request, $id){
 
-        $evaluation_application = EvaluationApplication::find($id);
+        $evaluation_application = EvaluationApplication::where('id', $id)
+            ->with('class')
+            ->first();
 
         if(!$evaluation_application){
             return response()->json([
@@ -400,7 +421,8 @@ class EvaluationApplicationsController extends Controller
             ], 202);
         }
 
-        $evaluation = Evaluation::where('id', $evaluation_application->fk_evaluation_id)->first();
+        $evaluation = Evaluation::where('id', $evaluation_application->fk_evaluation_id)
+            ->first();
         //dd($evaluation);
         $user = auth('api')->user();
         if($user->id != $evaluation->fk_user_id){
@@ -420,12 +442,21 @@ class EvaluationApplicationsController extends Controller
         $status = $evaluation_application->status;
         if($status == 0){
             $evaluation_application->status = 1;
+
+            if($evaluation_application->class){
+                if($evaluation_application->class->gamified_class && !$evaluation_application->date_finish){
+                    return response()->json([
+                        'message' => 'A turma possui elementos de gamificação. Para ativar o simulado, por favor, indique o prazo para sua conclusão.'
+                    ], 202);
+                }
+            }
         } else {
             $evaluation_application->status = 0;
         }
         $evaluation_application->save();
 
         $evaluation_application = EvaluationApplication::where('id', $evaluation_application->id)
+            ->with('class')
             ->with('evaluation')->first();
 
         return response()->json([
@@ -438,6 +469,7 @@ class EvaluationApplicationsController extends Controller
     public function show(int $id)
     {
         $application = EvaluationApplication::where('id', '=', $id)
+            ->with('class')
             ->first();
 
         if(!$application){

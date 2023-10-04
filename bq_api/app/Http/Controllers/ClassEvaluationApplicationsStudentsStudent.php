@@ -41,6 +41,7 @@ class ClassEvaluationApplicationsStudentsStudent extends Controller
 
         $evaliation_application = EvaluationApplication::where('fk_class_id',$idclass)
             ->with('evaluation')
+            ->with('class')
             ->orderBy('id', 'DESC')
             ->get();
 
@@ -155,7 +156,8 @@ class ClassEvaluationApplicationsStudentsStudent extends Controller
         }
         $totalPorcentageCorrect = 0;
         foreach($resultsEvaluation as $result){
-            $totalPorcentageCorrect += $result->porcentage_correct;
+            if(property_exists($result,'porcentage_correct'))
+                $totalPorcentageCorrect += $result->porcentage_correct;
         }
         $resultStudent = (object)[
             'student' => $student_class->user,
@@ -184,6 +186,7 @@ class ClassEvaluationApplicationsStudentsStudent extends Controller
                 ->with('evaluation')
                 ->with('class.user')
                 ->with('headAnswer')
+                ->with('class')
                 ->orderby('id', 'desc')
                 ->get();
 

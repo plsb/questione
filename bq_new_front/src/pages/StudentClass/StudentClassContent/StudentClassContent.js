@@ -284,6 +284,11 @@ const StudentClassContent = props => {
                                                             {'Turma gamificada'}
                                                         </div>
                                                     }
+                                                    {classProfessor.status === 2 &&
+                                                        <div className={classesGeneral.textRedInfo} style={{marginTop: '5px', fontSize: '15px'}}>
+                                                            {'Turma arquivada'}
+                                                        </div>
+                                                    }
                                                     <Link onClick={() => setOpenDialogPeople(true)}>
                                                         <TooltipQuestione description={'Clique aqui para visualizar os participantes desta turma.'} position={'bottom'} content={
                                                             <div className={classesGeneral.paperTitleText} style={{fontSize: '15px'}}>

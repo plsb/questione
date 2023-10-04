@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import {
-  Typography, 
-  Box, 
-  Table, 
-  TableHead, 
+  Typography,
+  Box,
+  Table,
+  TableHead,
   TableRow,
-  TableCell, 
+  TableCell,
   Tooltip,
   TableBody,
-  Chip
+  Chip, TableContainer, Paper
 
 } from '@material-ui/core';
 import api from "../../../../../../services/api";
 import PerfectScrollbar from "react-perfect-scrollbar";
+import useStyles from "../../../../../../style/style";
+import TooltipQuestione from "../../../../../../components/TooltipQuestione";
+import ScrollBar from "react-perfect-scrollbar";
 
 const TooltipCustomized = withStyles((theme) => ({
     tooltip: {
@@ -25,17 +28,16 @@ const TooltipCustomized = withStyles((theme) => ({
     },
   }))(Tooltip);
 
-const useStyles = makeStyles(theme => ({
+const useStylesLocal = makeStyles(theme => ({
   root: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
+
   },
   content: {
     padding: 0,
-    marginTop: theme.spacing(2)
+
   },
   headStudent: {
-    width: '100px ',
+    width: '10px ',
     height: '115px',
     backgroundColor: '#FFF',
     color: '#393A68',
@@ -68,7 +70,7 @@ const useStyles = makeStyles(theme => ({
   bodyStudent: {
     maxWidth: '170px',
     width: '100px',
-    height: '82px',
+    height: '100px',
     backgroundColor: '#FFF',
     color: '#393A68',
     paddingLeft: '6px',
@@ -93,6 +95,24 @@ const useStyles = makeStyles(theme => ({
   },
   percentageOrange: {
     backgroundColor: '#F5A623',
+    display: 'block',
+    margin: '8px',
+    padding: '0 4px',
+    textAlign: 'center',
+    color: '#fff',
+    borderRadius: 4
+  },
+  percentageGold: {
+    backgroundColor: '#ffd600',
+    display: 'block',
+    margin: '8px',
+    padding: '0 4px',
+    textAlign: 'center',
+    color: '#fff',
+    borderRadius: 4
+  },
+  percentageBlue: {
+    backgroundColor: '#3a7cf7',
     display: 'block',
     margin: '8px',
     padding: '0 4px',
@@ -162,12 +182,15 @@ function TabPanel(props) {
 
 const ResultsGeneral = props =>{
 
-    const classes = useStyles();
+    const classes = useStylesLocal();
+    const classesGeneral = useStyles()
 
     const [classProfessorOverview, setClassProfessorOverview] = useState(null);
     const [ value, setValueTab] = React.useState(0);
 
    const { className, history, studentClassId} = props;
+
+
 
     async function loadClassProfessorOverview(){
         try {
@@ -197,20 +220,35 @@ const ResultsGeneral = props =>{
 
     return(
         <div className={classes.root}>
-              <TabPanel value={value} index={0}>
-               <Box
-                    display="flex"
-                    flexWrap="nowrap"
-                    p={1}
-                    m={1}
-                    bgcolor="background.paper">
-                    
-                    <Box p={1}>
-                      <Table>
+              <Box display="flex" justifyContent="center" style={{marginTop: '20px'}}>
+                <div className={classesGeneral.paperTitleTextBold} style={{ marginRight: '10px'}}>
+                  Legenda:
+                </div>
+                <div className={classesGeneral.paperTitleText} style={{color: '#f44336', marginRight: '5px'}}>
+                  0 a 29%;
+                </div>
+                <div className={classesGeneral.paperTitleText} style={{color: '#ffab40', marginRight: '5px'}}>
+                  30 a 69%;
+                </div>
+                <div className={classesGeneral.paperTitleText} style={{color: '#43a047'}}>
+                  70 a 100%.
+                </div>
+              </Box>
+
+             <Box
+                  display="flex"
+                  flexWrap="nowrap"
+                  justifyContent="center"
+                  p={1}
+                  m={1}
+                  bgcolor="background.paper">
+
+                  <Box p={1}>
+                    <TableContainer component={Paper}>
+                      <Table size="small">
                         <TableHead>
                             <TableRow>
-                            <TableCell className={classes.headStudent}> Aluno(a)</TableCell>
-                                <TableCell className={classes.headPercentage}> % de Acerto</TableCell>
+                                <TableCell className={classes.headStudent}> Aluno(a)</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -219,82 +257,105 @@ const ResultsGeneral = props =>{
                                             className={classes.tableRow}
                                             hover
                                             key={result.student.id}>
-                                                 <TableCell className={classes.bodyStudent}>
-                                                    <Typography align="center" color="inherit" style={{fontWeight: 'bold'}}>
-                                                        {result.student.name}
-                                                    </Typography>
-                                                 </TableCell>
-                                                 <TableCell className={classes.bodyStudent}>
-                                                    {/*<Typography align="center" color="inherit" style={{fontWeight: 'bold'}}>
-                                                        {result.total_porcentage_correct_all}
-                                                    </Typography>*/}
-                                                    {result.total_porcentage_correct_all < 30 ?
-                                                      <span className={classes.percentageRed}>{result.total_porcentage_correct_all+'%'}</span>
-                                                        : result.total_porcentage_correct_all < 70 ?
-                                                      <span className={classes.percentageOrange}>{result.total_porcentage_correct_all+'%'}</span>
-                                                      : <span className={classes.percentageGreen}>{result.total_porcentage_correct_all+'%'}</span> }
-                                                 </TableCell>
+                                           <TableCell className={classes.bodyStudent}>
+                                             <div className={classesGeneral.paperTitleTextBold} align="center">
+                                               <ScrollBar>
+                                                {result.student.name}
+                                               </ScrollBar>
+                                             </div>
+                                           </TableCell>
                                         </TableRow>
                               ))}
                         </TableBody>
                       </Table>
-                      </Box>
-                      <PerfectScrollbar>
-                        <Box p={1}>
-
-                              <div className={classes.inner}>
-                                  <Table>
-                                    <TableHead>
-                                      <TableRow>
-                                        {!classProfessorOverview ?
-                                            null :
-                                            classProfessorOverview[0].evaluation_answer.map((result, i) => (
-                                                <TableCell className={classes.headQuestion}>
-                                                  {'Simulado ' + (i+1)}
-                                                </TableCell>
-
-                                            ))}
-                                      </TableRow>
-                                    </TableHead>
-                                    <TableBody>
+                    </TableContainer>
+                    </Box>
+                    <PerfectScrollbar>
+                      <Box p={1}>
+                            <div className={classes.inner}>
+                              <TableContainer component={Paper}>
+                                <Table>
+                                  <TableHead>
+                                    <TableRow>
                                       {!classProfessorOverview ? null :
-                                            classProfessorOverview.map((classProfessorResult, i) => (
-                                              <TableRow
-                                                className={classes.tableRow}
-                                                hover
-                                                key={classProfessorResult.id}>
-                                                  {classProfessorResult.evaluation_answer.map(evaluation => (
-                                                    <TableCell aling="canter" className={classes.bodyPercentage}>
-                                                      {/*<Typography align="center" variant="h6" color="textPrimary" gutterBottom>
-                                                        {evaluation.porcentage_correct}
-                                                  </Typography> */}
-                                                  {evaluation.porcentage_correct < 30 ?
-                                                  <span className={classes.percentageRed}>{evaluation.porcentage_correct+'%'}</span>
-                                                    : evaluation.porcentage_correct < 70 ?
-                                                  <span className={classes.percentageOrange}>{evaluation.porcentage_correct+'%'}</span>
-                                                  : <span className={classes.percentageGreen}>{evaluation.porcentage_correct+'%'}</span> }
-                                                      <Typography  variant="overline" color="block" gutterBottom>
-                                                        {evaluation.finalized_at != null ? "Finalizado" :
-                                                          evaluation.created_at != null ? "Iniciado" :
-                                                          "Não iniciado"}
-                                                       </Typography>
-                                                    </TableCell>
-
-                                                  ))}
-                                              </TableRow>
-
+                                          classProfessorOverview[0].class_gamified == 1 ?
+                                              <TableCell className={classes.headQuestion}> Total XP </TableCell> : null}
+                                      <TableCell className={classes.headQuestion}> % de Acerto</TableCell>
+                                      {!classProfessorOverview ?
+                                          null :
+                                          classProfessorOverview[0].evaluation_answer.map((result, i) => (
+                                              <TableCell className={classes.headQuestion}>
+                                                {'Simulado ' + (i+1)}
+                                              </TableCell>
 
                                           ))}
+                                    </TableRow>
+                                  </TableHead>
+                                  <TableBody>
+                                    {!classProfessorOverview ? null :
+                                          classProfessorOverview.map((classProfessorResult, i) => (
+                                                  <TableRow
+                                                      className={classes.tableRow}
+                                                      hover
+                                                      key={classProfessorResult.id}>
+                                                      {classProfessorResult.class_gamified ==1 &&
+                                                          <TableCell className={classes.bodyStudent}>
+                                                            <div className={classesGeneral.paperTitleTextBold} align="center">
+                                                              {classProfessorResult.total_xp+ ' XP'}
+                                                            </div>
+                                                            {classProfessorResult.position.position > 0 ?
+                                                                <span className={
+                                                                  classProfessorResult.position.position == 1 ? classes.percentageGold :
+                                                                      classProfessorResult.position.position == 2 ? classes.percentageBlue :
+                                                                          classProfessorResult.position.position == 3 ? classes.percentageBlue : null}
+                                                                      style={{fontSize: '12px'}} align="center">
+                                                                          <TooltipQuestione description={'Fornece a posição do aluno em relação aos demais colegas na turma que está participando da gamificação. '+
+                                                                              'Essa classificação é determinada com base na pontuação de experiência (XP) de cada participante.'} position={'top-start'}
+                                                                                            content={classProfessorResult.position.position+'º posição.'} justify={'center'}/>
+                                                                        </span> :
+                                                                                    null}
+                                                          </TableCell>}
+                                                      <TableCell className={classes.bodyStudent}>
+                                                          {classProfessorResult.total_porcentage_correct_all < 30 ?
+                                                              <span className={classes.percentageRed}>{classProfessorResult.total_porcentage_correct_all+'%'}</span>
+                                                              : classProfessorResult.total_porcentage_correct_all < 70 ?
+                                                                  <span className={classes.percentageOrange}>{classProfessorResult.total_porcentage_correct_all+'%'}</span>
+                                                                  : <span className={classes.percentageGreen}>{classProfessorResult.total_porcentage_correct_all+'%'}</span> }
+                                                        </TableCell>
+                                                        {classProfessorResult.evaluation_answer.map(evaluation => (
+                                                              <TableCell aling="canter" className={classes.bodyPercentage}>
+                                                                  {!evaluation.created_at ? null
+                                                                      : evaluation.porcentage_correct < 30 ?
+                                                                  <span className={classes.percentageRed}>{evaluation.porcentage_correct+'%'}</span>
+                                                                    : evaluation.porcentage_correct < 70 ?
+                                                                  <span className={classes.percentageOrange}>{evaluation.porcentage_correct+'%'}</span>
+                                                                  : <span className={classes.percentageGreen}>{evaluation.porcentage_correct+'%'}</span> }
+                                                                <div className={classesGeneral.paperTitleText} style={{fontSize: '10px', fontWeight: '1'}}>
+                                                                  {evaluation.finalized_at != null ? "Finalizado" :
+                                                                      evaluation.created_at != null ? "Iniciado" :
+                                                                          "Não iniciado"}
+                                                                </div>
+                                                                <Typography  variant="overline" color="block" gutterBottom>
 
-                                    </TableBody>
-                                  </Table>
-                              </div>
+                                                                 </Typography>
+                                                              </TableCell>
+                                                    )
+                                                    )}
+                                                  </TableRow>
 
-                        </Box>
-                    </PerfectScrollbar>
 
-                </Box>
-              </TabPanel>
+
+                                        ))}
+
+                                  </TableBody>
+                                </Table>
+                              </TableContainer>
+                            </div>
+
+                      </Box>
+                  </PerfectScrollbar>
+
+              </Box>
         </div>
     );
 }

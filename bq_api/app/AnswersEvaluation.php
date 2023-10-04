@@ -35,4 +35,9 @@ class AnswersEvaluation extends Model
             ->with('user');
     }
 
+    public function helpForStudent(){
+        return $this->hasMany(HelpForStudents::class, 'fk_anwers_id')
+            ->with('gamificationSettings');
+    }
+
 }

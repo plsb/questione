@@ -283,11 +283,13 @@ class DoEvaluation extends Controller
             $answers = AnswersEvaluation::where('fk_answers_head_id', $answerHead->id)
                 ->inRandomOrder()
                 ->with('evaluationQuestionWithoutCorrect')
+                ->with('helpForStudent')
                 ->get();
         } else {
 
             $answers = AnswersEvaluation::where('fk_answers_head_id', $answerHead->id)
                 ->with('evaluationQuestionWithoutCorrect')
+                ->with('helpForStudent')
                 ->get();
 
 
@@ -468,8 +470,7 @@ class DoEvaluation extends Controller
         //verifica se já deu o tempo final da aplicação e finaliza automaticamente
         if($request->finished_automatically){
             $answer_head->finished_automatically = 1;
-        } else
-        if(sizeof($answer)>0){
+        } else if(sizeof($answer)>0){
             return response()->json([
                 'message' => 'Para finalizar a avaliação, responda todas as questões.'
             ], 202);
@@ -499,7 +500,7 @@ class DoEvaluation extends Controller
 
             //pontuação PR ao finalizar um simulado
             $pointSystem = new PointSystemController();
-            $pointSystem->RPpointCredit('complete_a_test', $class->id, $answer_head->id, null);
+            $pointSystem->RPpoint('complete_a_test', $class->id, $answer_head->id, null, null);
 
             //pega todas as respostas
             $allAnswer = AnswersEvaluation::where('fk_answers_head_id', $answer_head->id)
@@ -530,17 +531,16 @@ class DoEvaluation extends Controller
             }
             //badge ao responder um simulado no mesmo dia que foi publicado
             $badge = new BadgesController();
-            return response()->json($badge->answerATestSameDayWasPosted($class->id, $answer_head->id), 200);
-
+            $badge->answerATestSameDayWasPosted($class->id, $answer_head->id);
 
             if(sizeof($allAnswer) == $totalAnswerCorrect){
                 //pontuação XP ao acertar todas as questões de um simulado
                 $pointSystem = new PointSystemController();
-                $pointSystem->XPpoint('correctly_mark_all_questions', $class->id, $answer_head->id, null);
+                $pointSystem->XPpoint('correctly_mark_all_questions', $class->id, $answer_head->id, null, null);
 
                 //pontuação PR ao acertar todas as questões de um simulado
                 $pointSystem = new PointSystemController();
-                $pointSystem->RPpointCredit('correctly_mark_all_questions', $class->id, $answer_head->id, null);
+                $pointSystem->RPpoint('correctly_mark_all_questions', $class->id, $answer_head->id, null, null);
 
                 //badge ao acertar dois simulados corretamente
                 $badge = new BadgesController();

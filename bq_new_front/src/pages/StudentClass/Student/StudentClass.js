@@ -80,9 +80,8 @@ function StudentClass({ history }) {
         setRegisterLoading(true);
 
         try {
-            const response = await api.post(`class/student`, {
-                id_class: studentClassCode,
-            });
+            const response = await api.post('class/student?id_class='+studentClassCode);
+            console.log(studentClassCode);
 
             if (response.status === 202) {
                 if (response.data.message) {

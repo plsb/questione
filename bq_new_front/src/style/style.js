@@ -52,6 +52,14 @@ const useStyles = makeStyles(theme => ({
         background: '#e0e0e0',
         padding: '10px'
     },
+    paperTitleSilver: {
+        background: '#c0c0c0',
+        padding: '10px'
+    },
+    paperTitleGold: {
+        background: '#ffd700',
+        padding: '10px'
+    },
     paperTitleGreen: {
         background: '#c8e6c9',
         padding: '10px'
@@ -67,7 +75,7 @@ const useStyles = makeStyles(theme => ({
     },
     paperSubtitle: {
         background: '#fafafa',
-        padding: '10px'
+        padding: '15px'
     },
     itensMenu: {
         color: '#000000', fontFamily: 'Verdana', fontSize: '13px'

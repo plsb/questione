@@ -173,7 +173,7 @@ const StudendClassCard = props => {
             {...rest}
             className={classes.root}>
             <div>
-                    <Paper className={status == 2 ? classesGeneral.paperTitleGray : classesGeneral.paperTitle} style={{background: class_student_student && class_student_student.active == 0 && '#ffcdd2'}}>
+                    <Paper className={class_student.status == 2 ? classesGeneral.paperTitleGray : classesGeneral.paperTitle} style={{background: class_student_student && class_student_student.active == 0 && '#ffcdd2'}}>
                         <Box display="flex">
                             <Box display="flex" sx={{ flexGrow: 1 }} justifyContent="flex-start">
                                 <div className={classesGeneral.paperTitleText}>
@@ -266,7 +266,7 @@ const StudendClassCard = props => {
                             {'Esta turma foi criada em: '+ moment(class_student.created_at).format('DD/MM/YYYY')+'.'}
                         </div>
 
-                        { status == 2 &&
+                        { class_student.status == 2 &&
                             <div className={classesGeneral.textRedInfo} style={{marginTop: '10px'}}>
                                 {'Turma arquivada.'}
                             </div>}

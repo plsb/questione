@@ -14,13 +14,22 @@ class EvaluationApplication extends Model
         'public_results', 'can_see_students',
         'release_preview_question','created_at', 'fk_class_id', 'data_start_type'];
     protected $hidden = [];
-
     protected $dates = [
         'created_at',
         'updated_at',
     ];
 
-    protected $appends = ['canShowResults', 'totalAnswers'];
+    protected $appends = ['canShowResults', 'totalAnswers', 'badgesStudent'];
+
+    public function getBadgesStudentAttribute(){
+        $user = auth('api')->user();
+        $badges = ClassBadgesStudent::where('fk_user_id', $user->id)
+            ->where('fk_class_id', $this->fk_class_id)
+            ->where('fk_evaluation_aplication_id', $this->id)
+            ->with('badgesSettings')
+            ->get();
+        return $badges;
+    }
 
     public function getCanShowResultsAttribute(){
         if($this->show_results == 1){

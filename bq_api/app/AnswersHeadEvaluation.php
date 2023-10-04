@@ -22,7 +22,8 @@ class AnswersHeadEvaluation extends Model
 
     public function evaluationApplication(){
         return $this->belongsTo(EvaluationApplication::class, 'fk_application_evaluation_id')
-            ->with('evaluation');
+            ->with('evaluation')
+            ->with('class');
     }
 
     public function evaluationApplicationWithQuestions(){

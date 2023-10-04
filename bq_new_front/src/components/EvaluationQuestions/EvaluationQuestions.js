@@ -112,7 +112,7 @@ function LinkTab(props) {
 };
 
 const EvaluationQuestions = props => {
-    const { className, history, evaluationId, ...rest } = props;
+    const { className, history, evaluationId, hideDescription, ...rest } = props;
 
     const classes = useStylesLocal();
     const classesGeneral = useStyles();
@@ -160,9 +160,10 @@ const EvaluationQuestions = props => {
                               <div>
                                   { evaluation &&
                                       <div>
+                                          { !hideDescription &&
                                           <div className={classesGeneral.subtitleList} style={{fontWeight: 'bold'}}>
                                               {'Descrição: '+evaluation.description}
-                                          </div>
+                                          </div>}
                                           <div className={classesGeneral.subtitleList}>
                                               {"Total de questões: "}
                                               {questions ? questions.length : null}
@@ -218,6 +219,7 @@ const EvaluationQuestions = props => {
 
 EvaluationQuestions.propTypes = {
     className: PropTypes.string,
+    hideDescription: PropTypes.bool,
 
 };
 

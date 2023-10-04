@@ -14,7 +14,18 @@ class Question extends Model
                                         'initial_difficulty'];
     protected $hidden = [];
 
-    protected $appends = ['difficulty'];
+    protected $appends = ['difficulty', 'totalAnswers'];
+
+    public function getTotalAnswersAttribute(){
+        $count = DB::table('answers')
+            ->select('answers.id')
+            ->join('evaluation_questions', 'evaluation_questions.id', '=', 'answers.fk_evaluation_question_id')
+            ->where('evaluation_questions.fk_question_id', $this->id)
+            ->whereNotNull('answers.answer')
+            ->count();
+        return $count;
+
+    }
 
     public function getDifficultyAttribute(){
         $results = DB::select( DB::raw("

@@ -45,6 +45,7 @@ class ClassEvaluationsStudentsStudent extends Controller
 
         $applications = EvaluationApplication::whereIn("fk_evaluation_id", $evaluations)
             ->where('status', 1)
+            ->with('class')
             ->get();
 
         if(sizeof($applications)==0){

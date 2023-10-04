@@ -8,13 +8,13 @@ import {
     CardHeader,
     IconButton,
     Typography,
-    CardContent, Chip, Switch, Tooltip, FormControlLabel, Box, Paper, Link
+    CardContent, Chip, Switch, Tooltip, FormControlLabel, Box, Paper, Link, AppBar, Toolbar, Dialog
 } from '@material-ui/core';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import {withRouter} from "react-router-dom";
 import api from "../../../../../services/api";
-import {Edit, FormatListBulleted, PlayArrow} from "@material-ui/icons";
+import CalendarViewDayIcon from '@material-ui/icons/CalendarViewDay';
 import ShareIcon from '@material-ui/icons/Share';
 import {FormGroup} from "reactstrap";
 import useStyles from "../../../../../style/style";
@@ -22,6 +22,9 @@ import GetAppIcon from "@material-ui/icons/GetApp";
 import DecreaseStringSize from "../../../../../components/DecreaseStringSize";
 import SettingsIcon from '@material-ui/icons/Settings';
 import TooltipQuestione from "../../../../../components/TooltipQuestione";
+import CloseIcon from "@material-ui/icons/Close";
+import People from "../../People";
+import EvaluationQuestions from "../../../../../components/EvaluationQuestions/EvaluationQuestions";
 
 const useStylesLocal = makeStyles(() => ({
   root: {
@@ -53,6 +56,10 @@ const useStylesLocal = makeStyles(() => ({
   spacer: {
     flexGrow: 1
   },
+    appBar: {
+        position: 'relative',
+        background: '#3a7cf7',
+    },
 }));
 
 const EvaluationApplicationCard = props => {
@@ -142,6 +149,12 @@ const EvaluationApplicationCard = props => {
         }
     }
 
+    const [openDialogQuestions, setOpenDialogQuestions] = React.useState(false);
+
+    const handleCloseDialogQuestions = () => {
+        setOpenDialogQuestions(false);
+    }
+
   return (
       <div>
           { evaluationApplication.id ?
@@ -198,6 +211,17 @@ const EvaluationApplicationCard = props => {
                                                   />}
                                           </div>
                                       }/>  }
+
+
+                                  <TooltipQuestione description={'Clique para visualizar as questões do simulado: '+evaluationApplication.description+'.'} position={'left-start'} content={
+                                      <IconButton
+                                          aria-label="copy"
+                                          size="small"
+                                          onClick={() => setOpenDialogQuestions(true)}
+                                          style={{marginLeft: '10px'}}>
+                                          <CalendarViewDayIcon />
+                                      </IconButton>
+                                  }/>
 
                                   {evaluationApplication.evaluation.status == 1 &&
                                       <TooltipQuestione description={'Clique para configurar o simulado: '+evaluationApplication.description+'.'} position={'left-start'} content={
@@ -299,6 +323,27 @@ const EvaluationApplicationCard = props => {
                       </Box>
 
                   </CardContent>
+                  <Dialog
+                      open={openDialogQuestions}
+                      fullScreen
+                      onClose={handleCloseDialogQuestions}
+                      aria-labelledby="simple-dialog-title">
+                          <div>
+                              <AppBar className={classes.appBar}>
+                                  <Toolbar>
+                                      <IconButton edge="start" color="inherit" onClick={handleCloseDialogQuestions} aria-label="close">
+                                          <CloseIcon />
+                                      </IconButton>
+                                      <div className={classesGeneral.titleList} style={{color: '#FFF', marginBottom: '15px'}}>
+                                         Questões do simulado {evaluationApplication.description}
+                                      </div>
+                                  </Toolbar>
+                              </AppBar>
+                              <div style={{marginTop: '50px'}}>
+                                  <EvaluationQuestions evaluationId={evaluationApplication.evaluation.id} hideDescription={true}/>
+                              </div>
+                          </div>
+                  </Dialog>
 
               </Card>
               </div>
