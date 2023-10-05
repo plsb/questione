@@ -167,7 +167,7 @@ class ClassController extends Controller
         $class->save();
 
         if($request->gamified_class == 1){
-            $this->saveParametersGamified($class->id);
+           $this->saveParametersGamified($class->id);
 
         }
 
@@ -375,7 +375,7 @@ class ClassController extends Controller
     private function storeGamificationBadges($class_id, $description_id, $description, $RP, $image){
         //verifica se já tem o elemento
         $verify = ClassBadgesSettings::where('description_id', $description_id)
-            ->where('fk_class_id', $description)->first();
+            ->where('fk_class_id', $class_id)->first();
 
         if(!$verify){
             $classGamificationBadges = new ClassBadgesSettings();
