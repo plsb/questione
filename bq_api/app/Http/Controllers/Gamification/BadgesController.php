@@ -11,6 +11,7 @@ use App\ClassGamificationSettings;
 use App\ClassQuestione;
 use App\EvaluationApplication;
 use App\Http\Controllers\Controller;
+use App\Notifications\BadgesNotifications;
 use App\RPPoints;
 use App\XPPoints;
 use Validator;
@@ -283,6 +284,13 @@ class BadgesController extends Controller
             $badge_student->fk_evaluation_aplication_id = $id_application;
         }
         $badge_student->save();
+
+        $badge_student = ClassBadgesStudent::where('id', $badge_student->id)
+            ->with('badgesSettings')
+            ->with('classQuestione')
+            ->with('badgesSettings')->first();
+        //notifica os usuários
+        event(new BadgesNotifications($badge_student));
 
         //dá pontuação do badge
         $pointSystem = new PointSystemController();

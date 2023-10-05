@@ -368,7 +368,6 @@ const DoEvaluation = props => {
             element.help_for_student.pop();
             element.help_for_student.pop();
             element.help_for_student = novaArray[0];
-            console.log('answer', novaArray, values);
           }
         });
         setAnswers(values);
@@ -384,6 +383,7 @@ const DoEvaluation = props => {
     setDialogHelpOne(false);
     setDialogHelpTwo(false);
     setDialogHelpThree(false);
+    setDialogHelpCollegeStudents(false);
   };
 
   async function removeAlternative(answerId, totalItems){
@@ -414,7 +414,6 @@ const DoEvaluation = props => {
             element.help_for_student.pop();
             element.help_for_student.pop();
             element.help_for_student = novaArray[0];
-            console.log('answer', novaArray, values);
           }
         });
         setAnswers(values);
@@ -430,6 +429,7 @@ const DoEvaluation = props => {
     setDialogHelpOne(false);
     setDialogHelpTwo(false);
     setDialogHelpThree(false);
+    setDialogHelpCollegeStudents(false);
   };
 
   return (

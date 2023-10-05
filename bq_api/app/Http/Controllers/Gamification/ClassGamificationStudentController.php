@@ -10,6 +10,7 @@ use App\ClassStudents;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
 use App\Http\Controllers\Controller;
+use App\Notifications\BadgesNotifications;
 use App\QuestionItem;
 use App\RPPoints;
 use App\XPPoints;

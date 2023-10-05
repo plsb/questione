@@ -1,7 +1,6 @@
 import axios from 'axios';
 import {getToken, logout} from "./auth";
 import React from "react";
-import { toast } from 'react-toastify';
 
 const api = axios.create({
    //baseURL: 'https://bancodequestoes.ifce.edu.br/api',

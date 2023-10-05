@@ -69,7 +69,6 @@ const GamificationPanel = props => {
 
             if(response.status == 200) {
                 setBadges(response.data);
-                console.log('badges', response.data);
             } else {
                 setBadges([]);
             }
@@ -315,30 +314,29 @@ const GamificationPanel = props => {
 
                               </Box>
                                   }/>
+                              <Divider style={{marginTop: '5px'}}/>
                               <Box display="flex" alignItems="row">
                                   <Grid container>
                                     {badges && badges.length>0 ?
                                         <Grid container>
                                             {badges.map((badge, i) => (
-                                                i < 6 ? <Grid item xs={4} sm={4} md={4} lg={4} xl={4} style={{marginTop: '10px'}}>
+                                               <Grid item xs={4} sm={4} md={4} lg={4} xl={4} style={{marginTop: '10px'}}>
                                                           <TooltipQuestione description={badge.badges_settings.description} position={'top-start'} content={
                                                                   <img
                                                                       src={badge.badges_settings.image ? "/images/medals/"+badge.badges_settings.image : "/images/404.png"}
                                                                       style={{marginRight: '5px', width:'35px'}}/>
                                                           }/>
-                                                      </Grid> :
-                                                    i == 6 ?
-                                                        <Box>
-                                                            <Link
-                                                                component="button"
-                                                                variant="body2"
-                                                                style={{fontSize: '13px', marginTop: '20px'}}
-                                                                onClick={handleOpenDialogAllBadges}>
-                                                                Todas as conquistas...
-                                                            </Link>
-                                                        </Box>
-                                                        : null
+                                                      </Grid>
                                               ))}
+                                            <Box>
+                                                <Link
+                                                    component="button"
+                                                    variant="body2"
+                                                    style={{fontSize: '13px', marginTop: '20px'}}
+                                                    onClick={handleOpenDialogAllBadges}>
+                                                    Todas as conquistas...
+                                                </Link>
+                                            </Box>
                                             <Dialog
                                                 open={openDialogAllBadges}
                                                 onClose={handleCloseDialogAllBadges}
@@ -355,7 +353,11 @@ const GamificationPanel = props => {
                                                                 <Table className={classes.table} size="small" aria-label="a dense table">
                                                                     <TableHead>
                                                                         <TableRow>
-                                                                            <TableCell align="left">Conquista</TableCell>
+                                                                            <TableCell align="left">
+                                                                                <div className={classesGeneral.paperTitleText} >
+                                                                                    Conquista
+                                                                                </div>
+                                                                            </TableCell>
                                                                         </TableRow>
                                                                     </TableHead>
                                                                     <TableBody>
@@ -367,9 +369,11 @@ const GamificationPanel = props => {
                                                                                             <div className={classesGeneral.messageDialog} style={{color: '#3a7cf7', fontWeight: 'bold', fontSize: '18px', marginTop: '8px', marginRight: '5px'}}>
                                                                                                 {badge.total+'x '}
                                                                                             </div>
-                                                                                            <img
-                                                                                                src={badge.badges_settings.image ? "/images/medals/"+badge.badges_settings.image : "/images/404.png"}
-                                                                                                style={{marginRight: '5px', width:'35px'}}/>
+                                                                                            <div>
+                                                                                                <img
+                                                                                                    src={badge.badges_settings.image ? "/images/medals/"+badge.badges_settings.image : "/images/404.png"}
+                                                                                                    style={{marginRight: '5px', width:'40px'}}/>
+                                                                                            </div>
                                                                                             <div className={classesGeneral.messageDialog} style={{marginTop: '8px', marginLeft: '5px'}}>
                                                                                                 {badge.badges_settings.description}
                                                                                             </div>

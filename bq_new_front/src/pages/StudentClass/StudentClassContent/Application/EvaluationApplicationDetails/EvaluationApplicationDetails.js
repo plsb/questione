@@ -114,7 +114,6 @@ const EvaluationApplicationDetails = props => {
         data_start_type,
       } = formState.values;
 
-      console.log('gamificada', classGamified);
 
       if(classGamified && checkedDefineDateAndHourFinal === false){
         toast.error('A turma está configurada como gamificada, é necessário informar data e hora para finalizar o simulado!');
@@ -410,7 +409,7 @@ const EvaluationApplicationDetails = props => {
                 <TooltipQuestione description={'Caso esta opção esteja habilitada, todos os estudantes que forem realizar ' +
                     ' este simulado receberão' +
                     ' um simulado com as mesmas questões, mas cada estudante possuirá um ' +
-                    ' simulado com questões em ordem diferente dos demais estudantes.'} position={'bottom-start'} content={
+                    ' simulado com questões em ordem diferente dos demais estudantes.'} position={'top-start'} content={
                   <FormControlLabel
                       control={
                         <Switch
@@ -429,7 +428,7 @@ const EvaluationApplicationDetails = props => {
                   <TooltipQuestione description={'Caso esta opção esteja habilitada, todos os estudantes terão acesso' +
                       ' ao resultado deste simulado. Você pode configurar uma data e hora programada' +
                       ' para que os estudantes tenham acesso aos resultados, e se o estudante' +
-                      ' poderá visualizar as questões completas ou não.'} position={'bottom-start'} content={
+                      ' poderá visualizar as questões completas ou não.'} position={'top-start'} content={
                     <FormControlLabel
                         control={
                           <Switch
@@ -491,7 +490,7 @@ const EvaluationApplicationDetails = props => {
                           <TooltipQuestione description={'Caso esta opção esteja habilitada, o estudante terá acesso' +
                               ' a todas as informações das questões (texto base, enunciado e alternativas).' +
                               ' Caso esteja desabilitada, o estudante poderá visualizar apenas se ' +
-                              ' acertou ou errou cada questão.'} position={'bottom-start'} content={
+                              ' acertou ou errou cada questão.'} position={'top-start'} content={
                             <FormControlLabel
                                 control={
                                   <Switch
@@ -516,7 +515,7 @@ const EvaluationApplicationDetails = props => {
                 spacing={2}>
               <Grid item xs={12} sm={12} md={12} lg={5}>
                 <TooltipQuestione description={'Caso esta opção esteja habilitada, poderá ser configurada' +
-                    ' data e hora em que o estudante deverá iniciar o simulado.'} position={'bottom-start'} content={
+                    ' data e hora em que o estudante deverá iniciar o simulado.'} position={'top-start'} content={
                   <FormControlLabel
                       control={
                         <Switch
@@ -542,7 +541,7 @@ const EvaluationApplicationDetails = props => {
                             <RadioGroup row={true} aria-label="data_start_type" name="data_start_type" value={formState.values.data_start_type}
                                         onChange={handleChange}>
                               <TooltipQuestione description={'Caso esta opção esteja habilitada, os estudantes poderão iniciar a avaliação qualquer dia e horário após a data e horário especificados.'}
-                                                position={'bottom-start'}
+                                                position={'top-start'}
                                                 content={
                                                   <FormControlLabel value="DI" checked={formState.values.data_start_type == 'DI' && true} control={<Radio />} label={'A partir da data e horário.'} />
                                                 }
@@ -551,7 +550,7 @@ const EvaluationApplicationDetails = props => {
                                   ' Caso o estudante não inicie o simulado no tempo programado, ' +
                                   ' o estudante ficará incapacitado de realizar o simulado. A tolerância é de 10 minutos, '+
                                   ' ou seja, caso esteja programado para às 18 horas, o simulado poderá ser iniciado entre '+
-                                  ' 17:50 e 18:10.'} position={'bottom-start'} content={
+                                  ' 17:50 e 18:10.'} position={'top-start'} content={
                                 <FormControlLabel value="DF" checked={formState.values.data_start_type == 'DF' && true} control={<Radio />} label="Data e horário fixo." />
                               }/>
                             </RadioGroup>
@@ -605,7 +604,7 @@ const EvaluationApplicationDetails = props => {
                     ' data e hora em que o estudante deverá finalizar o simulado.' +
                     ' Caso o estudante não finalize o simulado no tempo programado,' +
                     ' o sistema irá finalizar o simulado automaticamente (essa informação'+
-                    ' ficará disponível no relatório). '} position={'bottom-start'} content={
+                    ' ficará disponível no relatório). '} position={'top-start'} content={
                   <FormControlLabel
                       control={
                         <Switch
@@ -676,7 +675,7 @@ const EvaluationApplicationDetails = props => {
                     ' o tempo de duração (em horas) do simulado. Se for cofigurado 01:00 hora,' +
                     ' após o estudante iniciar o seu simulado terá um prazo de uma hora para finalizar. ' +
                     ' Caso o tempo de duração do simulado seja de dias, deve-se multiplicar 24 * QUANTIDADE_DE_DIAS'+
-                    ' e informar no campo. '} position={'bottom-start'} content={
+                    ' e informar no campo. '} position={'top-start'} content={
                   <FormControlLabel
                       control={
                         <Switch
@@ -727,7 +726,7 @@ const EvaluationApplicationDetails = props => {
                   xs={6}
                   className={classes.row}>
                 <TooltipQuestione description={'Caso esta opção esteja habilitada, você poderá compartilhar '+
-                'os resultados deste simulado com outros professores por meio de um link.'} position={'bottom-start'} content={
+                'os resultados deste simulado com outros professores por meio de um link.'} position={'top-start'} content={
                   <FormControlLabel
                       control={
                         <Switch

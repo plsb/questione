@@ -65,7 +65,6 @@ const EvaluationApplicationCardStudent = props => {
 
     useEffect(() => {
         setEvaluationApplication(application);
-        console.log('app', application);
 
     }, []);
 

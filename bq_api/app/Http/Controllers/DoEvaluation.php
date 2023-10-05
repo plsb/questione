@@ -484,7 +484,7 @@ class DoEvaluation extends Controller
         $userOwner = User::where('id', $evaluation->fk_user_id)->first();
         $userStudent = User::where('id', $answer_head->fk_user_id)->first();
         if($evaluation->practice == 0) { //só envia o e-mail caso a avaliação não for prática
-            $userOwner->notify(new StudentFinishEvaluationToProfessorNotification($userOwner, $userStudent, $evaluation));
+            //$userOwner->notify(new StudentFinishEvaluationToProfessorNotification($userOwner, $userStudent, $evaluation));
         }
 
         //pega a aplicação
