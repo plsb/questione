@@ -266,6 +266,10 @@ Route::group(['prefix' => 'evaluation'], function (){
     //resultados da avaliação student
     Route::get('/student/result/evaluations', 'ResultEvaluationStudent@evaluations')->name('evaluationApplication.evaluations');
     Route::get('/student/result/evaluations-specific/{idHead}', 'ResultEvaluationStudent@applicationSpecific')->name('evaluationApplication.applicationSpecific');
+
+    //Log
+    Route::post('/log-evaluation/{idApplication}', 'LogStudentAssessmentController@store')->name('logEvaluation.store');
+
 });
 
 
