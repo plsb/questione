@@ -528,6 +528,18 @@ const GamificationPanel = props => {
                           <TableRow key={1}>
                               <TableCell align="left">
                                   <div className={classesGeneral.messageDialog}>
+                                      {'Atingir 20 questões corretas'}
+                                  </div>
+                              </TableCell>
+                              <TableCell align="center">
+                                  <div className={classesGeneral.messageDialog}>
+                                      {'20 é D+!'}
+                                  </div>
+                              </TableCell>
+                          </TableRow>
+                          <TableRow key={1}>
+                              <TableCell align="left">
+                                  <div className={classesGeneral.messageDialog}>
                                       {'Obter uma posição entre os três primeiros do ranking'}
                                   </div>
                               </TableCell>
@@ -605,7 +617,19 @@ const GamificationPanel = props => {
                               </TableCell>
                               <TableCell align="center">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'Estudioso!'}
+                                      {'Estudioso 100PX!'}
+                                  </div>
+                              </TableCell>
+                          </TableRow>
+                          <TableRow key={1}>
+                              <TableCell align="left">
+                                  <div className={classesGeneral.messageDialog}>
+                                      {'Conseguir 200 pontos de experiência '}
+                                  </div>
+                              </TableCell>
+                              <TableCell align="center">
+                                  <div className={classesGeneral.messageDialog}>
+                                      {'Estudioso 200PX!'}
                                   </div>
                               </TableCell>
                           </TableRow>
@@ -648,7 +672,7 @@ const GamificationPanel = props => {
                               </TableCell>
                               <TableCell align="center">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'+10 XP'}
+                                      {'+15 XP'}
                                   </div>
                               </TableCell>
                           </TableRow>
@@ -660,7 +684,7 @@ const GamificationPanel = props => {
                               </TableCell>
                               <TableCell align="center">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'+10 XP'}
+                                      {'+5 XP'}
                                   </div>
                               </TableCell>
                           </TableRow>
@@ -672,7 +696,7 @@ const GamificationPanel = props => {
                               </TableCell>
                               <TableCell align="center">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'+20 XP'}
+                                      {'+30 XP'}
                                   </div>
                               </TableCell>
                           </TableRow>
@@ -715,7 +739,7 @@ const GamificationPanel = props => {
                               </TableCell>
                               <TableCell align="center">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'+50 PR'}
+                                      {'+70 PR'}
                                   </div>
                               </TableCell>
                           </TableRow>
@@ -739,7 +763,7 @@ const GamificationPanel = props => {
                               </TableCell>
                               <TableCell align="center">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'+20 PR'}
+                                      {'+30 PR'}
                                   </div>
                               </TableCell>
                           </TableRow>
@@ -763,7 +787,7 @@ const GamificationPanel = props => {
                               </TableCell>
                               <TableCell align="center">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'-15 PR'}
+                                      {'-20 PR'}
                                   </div>
                               </TableCell>
                           </TableRow>
@@ -775,7 +799,7 @@ const GamificationPanel = props => {
                               </TableCell>
                               <TableCell align="center">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'-20 PR'}
+                                      {'-30 PR'}
                                   </div>
                               </TableCell>
                           </TableRow>
@@ -787,7 +811,7 @@ const GamificationPanel = props => {
                               </TableCell>
                               <TableCell align="center">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'-25 PR'}
+                                      {'-30 PR'}
                                   </div>
                               </TableCell>
                           </TableRow>
@@ -799,7 +823,7 @@ const GamificationPanel = props => {
                               </TableCell>
                               <TableCell align="center">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'+50 PR'}
+                                      {'+20 PR'}
                                   </div>
                               </TableCell>
                           </TableRow>
@@ -811,38 +835,14 @@ const GamificationPanel = props => {
                               </TableCell>
                               <TableCell align="center">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'+50 PR'}
+                                      {'+30 PR'}
                                   </div>
                               </TableCell>
                           </TableRow>
                           <TableRow key={1}>
                               <TableCell align="left">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'Conquista: Medalha de ouro'}
-                                  </div>
-                              </TableCell>
-                              <TableCell align="center">
-                                  <div className={classesGeneral.messageDialog}>
-                                      {'+60 PR'}
-                                  </div>
-                              </TableCell>
-                          </TableRow>
-                          <TableRow key={1}>
-                              <TableCell align="left">
-                                  <div className={classesGeneral.messageDialog}>
-                                      {'Conquista: Medalha de prata'}
-                                  </div>
-                              </TableCell>
-                              <TableCell align="center">
-                                  <div className={classesGeneral.messageDialog}>
-                                      {'+50 PR'}
-                                  </div>
-                              </TableCell>
-                          </TableRow>
-                          <TableRow key={1}>
-                              <TableCell align="left">
-                                  <div className={classesGeneral.messageDialog}>
-                                      {'Conquista: Medalha de bronze'}
+                                      {'Conquista: 20 é D+!'}
                                   </div>
                               </TableCell>
                               <TableCell align="center">
@@ -854,31 +854,43 @@ const GamificationPanel = props => {
                           <TableRow key={1}>
                               <TableCell align="left">
                                   <div className={classesGeneral.messageDialog}>
+                                      {'Conquista: Medalha de ouro'}
+                                  </div>
+                              </TableCell>
+                              <TableCell align="center">
+                                  <div className={classesGeneral.messageDialog}>
+                                      {'+30 PR'}
+                                  </div>
+                              </TableCell>
+                          </TableRow>
+                          <TableRow key={1}>
+                              <TableCell align="left">
+                                  <div className={classesGeneral.messageDialog}>
+                                      {'Conquista: Medalha de prata'}
+                                  </div>
+                              </TableCell>
+                              <TableCell align="center">
+                                  <div className={classesGeneral.messageDialog}>
+                                      {'+20 PR'}
+                                  </div>
+                              </TableCell>
+                          </TableRow>
+                          <TableRow key={1}>
+                              <TableCell align="left">
+                                  <div className={classesGeneral.messageDialog}>
+                                      {'Conquista: Medalha de bronze'}
+                                  </div>
+                              </TableCell>
+                              <TableCell align="center">
+                                  <div className={classesGeneral.messageDialog}>
+                                      {'+15 PR'}
+                                  </div>
+                              </TableCell>
+                          </TableRow>
+                          <TableRow key={1}>
+                              <TableCell align="left">
+                                  <div className={classesGeneral.messageDialog}>
                                       {'Conquista: Gênio da turma '}
-                                  </div>
-                              </TableCell>
-                              <TableCell align="center">
-                                  <div className={classesGeneral.messageDialog}>
-                                      {'+70 PR'}
-                                  </div>
-                              </TableCell>
-                          </TableRow>
-                          <TableRow key={1}>
-                              <TableCell align="left">
-                                  <div className={classesGeneral.messageDialog}>
-                                      {'Conquista: Oráculo'}
-                                  </div>
-                              </TableCell>
-                              <TableCell align="center">
-                                  <div className={classesGeneral.messageDialog}>
-                                      {'+80 PR'}
-                                  </div>
-                              </TableCell>
-                          </TableRow>
-                          <TableRow key={1}>
-                              <TableCell align="left">
-                                  <div className={classesGeneral.messageDialog}>
-                                      {'Conquista: Pontual'}
                                   </div>
                               </TableCell>
                               <TableCell align="center">
@@ -890,12 +902,48 @@ const GamificationPanel = props => {
                           <TableRow key={1}>
                               <TableCell align="left">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'Conquista: Estudioso!'}
+                                      {'Conquista: Oráculo'}
                                   </div>
                               </TableCell>
                               <TableCell align="center">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'+90 PR'}
+                                      {'+50 PR'}
+                                  </div>
+                              </TableCell>
+                          </TableRow>
+                          <TableRow key={1}>
+                              <TableCell align="left">
+                                  <div className={classesGeneral.messageDialog}>
+                                      {'Conquista: Pontual'}
+                                  </div>
+                              </TableCell>
+                              <TableCell align="center">
+                                  <div className={classesGeneral.messageDialog}>
+                                      {'+30 PR'}
+                                  </div>
+                              </TableCell>
+                          </TableRow>
+                          <TableRow key={1}>
+                              <TableCell align="left">
+                                  <div className={classesGeneral.messageDialog}>
+                                      {'Conquista: Estudioso 100PX!'}
+                                  </div>
+                              </TableCell>
+                              <TableCell align="center">
+                                  <div className={classesGeneral.messageDialog}>
+                                      {'+20 PR'}
+                                  </div>
+                              </TableCell>
+                          </TableRow>
+                          <TableRow key={1}>
+                              <TableCell align="left">
+                                  <div className={classesGeneral.messageDialog}>
+                                      {'Conquista: Estudioso 200PX!'}
+                                  </div>
+                              </TableCell>
+                              <TableCell align="center">
+                                  <div className={classesGeneral.messageDialog}>
+                                      {'+30 PR'}
                                   </div>
                               </TableCell>
                           </TableRow>

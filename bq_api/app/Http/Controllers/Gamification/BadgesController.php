@@ -45,6 +45,34 @@ class BadgesController extends Controller
 
             if(!$verify){ //verifica se o estudante já tem o badge caso não, adiciona
                 $this->saveTheBadge($id_badge, $id_class, $user->id, null,  true);
+            } else {
+                $this->get200XP($id_class);
+            }
+
+        }
+    }
+
+    public function get200XP($id_class)
+    {
+        //se a turma não for gamificada encerra a função
+        if(!$this->isGamified($id_class)){
+            return null;
+        }
+
+        $id_badge = 'get_200_xp';
+
+        $user = auth('api')->user();
+
+        $controller = new ClassGamificationStudentController();
+        $totalXP = $controller->totalXP($id_class);
+
+        if($totalXP->original >= 200){
+            $verify = ClassBadgesStudent::where('fk_class_id', $id_class)
+                ->where('fk_user_id', $user->id)
+                ->where('description_id', $id_badge)->first();
+
+            if(!$verify){ //verifica se o estudante já tem o badge caso não, adiciona
+                $this->saveTheBadge($id_badge, $id_class, $user->id, null,  true);
 
             }
 
@@ -87,6 +115,33 @@ class BadgesController extends Controller
 
         $id_badge = 'ten_correct_questions';
         $value_parameter_max = 10;
+
+        $user = auth('api')->user();
+
+        $verify = ClassBadgesParameters::where('fk_class_id', $id_class)
+            ->where('fk_user_id', $user->id)
+            ->where('description_id', $id_badge)->first();
+
+        if(!$verify){
+            $this->saveBadgeParameter(null, $id_class, $id_badge, 1, $user->id);
+        } else if($verify->parameter < $value_parameter_max){
+            $parameter = $verify->parameter + 1;
+            $this->saveBadgeParameter($verify, $id_class, $id_badge, $parameter, $user->id);
+
+            if($parameter == $value_parameter_max){
+                $this->saveTheBadge($id_badge, $id_class, $user->id, null, true);
+            }
+        }
+    }
+
+        public function twentyCorrectQuestions($id_class){
+        //se a turma não for gamificada encerra a função
+        if(!$this->isGamified($id_class)){
+            return null;
+        }
+
+        $id_badge = 'twenty_correct_questions';
+        $value_parameter_max = 20;
 
         $user = auth('api')->user();
 

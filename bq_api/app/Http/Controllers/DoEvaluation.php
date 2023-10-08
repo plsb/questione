@@ -525,6 +525,7 @@ class DoEvaluation extends Controller
                     $badge = new BadgesController();
                     $badge->fiveCorrectQuestions($class->id);
                     $badge->tenCorrectQuestions($class->id);
+                    $badge->twentyCorrectQuestions($class->id);
 
                     $totalAnswerCorrect++;
                 }

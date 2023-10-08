@@ -1,10 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import Checkbox from '@material-ui/core/Checkbox';
+import { Player, Controls } from '@lottiefiles/react-lottie-player';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import {
   Typography,
@@ -28,6 +25,12 @@ import GamificationPanel from "../../../components/GamificationPanel/Gamificatio
 import DecreaseStringSize from "../../../components/DecreaseStringSize";
 import TooltipQuestione from "../../../components/TooltipQuestione";
 import clsx from "clsx";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import TextField from "@material-ui/core/TextField";
+import DialogActions from "@material-ui/core/DialogActions";
+import Dialog from "@material-ui/core/Dialog";
 
 const useStylesLocal = makeStyles((theme) => ({
   root: {
@@ -64,11 +67,14 @@ const DoEvaluation = props => {
   const [application, setApplication] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [questionsNotAnswers, setQuestionsNotAnswers] = useState([]);
+
+  const [enableButtonStart, setEnableButtonStart] = useState(true);
+  const [enableDialogAlert, setEnableDialogAlert] = useState(false);
+
   const [totalAnswers, setTotalAnswers] = useState(0);
   const [dateTimeToFinalized, setDateTimeToFinalized] = useState(null);
   const [dateServer, setDateServer] = useState(new Date());
   const [dialogFinish, setDialogFinish] = useState(false);
-  const [enableButtonStart, setEnableButtonStart] = useState(true);
   const [openBackdrop, setOpenBackdrop] = React.useState(false);
   const [refresh, setRefresh] = React.useState(0);
   const [showTimeDialog, setShowTimeDialog] = useState({
@@ -77,6 +83,8 @@ const DoEvaluation = props => {
   });
   const timer = React.useRef();
   const [alternativeLetters] = React.useState(['a', 'b', 'c', 'd', 'e']);
+  const [arrayAnimations] = React.useState(['boy_running', 'clock', 'coffee', 'hamburger', 'location',
+          'paperplane', 'profile', 'quiz', 'web_design']);
 
   const classes = useStylesLocal();
   const classesGeneral = useStyles();
@@ -231,6 +239,10 @@ const DoEvaluation = props => {
   useEffect(() => {
 
   }, [refresh, page, questionsNotAnswers]);
+
+  useEffect(() => {
+
+  }, [enableDialogAlert]);
 
   useEffect(() => {
     listApplication();
@@ -432,6 +444,84 @@ const DoEvaluation = props => {
     setDialogHelpCollegeStudents(false);
   };
 
+  async function logEvaluation(type, answerId){
+    try {
+      const data = {
+        type
+      }
+      const response = await api.post('evaluation/log-evaluation/'+codeAplication, data);
+
+      if (response.status === 202) {
+        if(response.data.message){
+          toast.error(response.data.message);
+        }
+      }  else if(response.status == 200){
+
+      }
+
+    } catch (error) {
+
+    }
+
+  };
+
+  (function () {
+
+    var hidden = "hidden";
+    if (hidden in document) document.addEventListener("visibilitychange", onchange);
+    else if ((hidden = "mozHidden") in document) document.addEventListener("mozvisibilitychange", onchange);
+    else if ((hidden = "webkitHidden") in document) document.addEventListener("webkitvisibilitychange", onchange);
+    else if ((hidden = "msHidden") in document) document.addEventListener("msvisibilitychange", onchange);
+    else if ('onfocusin' in document) document.onfocusin = document.onfocusout = onchange;
+    else window.onpageshow = window.onpagehide = window.onfocus = window.onblur = onchange;
+
+    var hidden, visibilityChange;
+    if (typeof document.hidden !== "undefined") {
+      hidden = "hidden";
+      visibilityChange = "visibilitychange";
+    } else if (typeof document.mozHidden !== "undefined") {
+      hidden = "mozHidden";
+      visibilityChange = "mozvisibilitychange";
+    } else if (typeof document.msHidden !== "undefined") {
+      hidden = "msHidden";
+      visibilityChange = "msvisibilitychange";
+    } else if (typeof document.webkitHidden !== "undefined") {
+      hidden = "webkitHidden";
+      visibilityChange = "webkitvisibilitychange";
+    }
+
+    function onchange(evt) {
+      var evtMap = {
+        focus: true,
+        focusin: true,
+        pageshow: true,
+        blur: false,
+        focusout: false,
+        pagehide: false
+      };
+
+      evt = evt || window.event;
+      if (evt.type in evtMap) evtMap[evt.type] ? functionVisible() : functionHidden();
+      else this[hidden] ? functionHidden() : functionVisible();
+    }
+
+    function functionVisible() {
+      if(!enableButtonStart) {
+        logEvaluation('I');
+        console.log('console I', Date.now());
+      }
+    }
+
+    function functionHidden() {
+      if(!enableButtonStart) {
+        //alert('Você saiu do questione enquanto estava respondendo um simulado. A Ação foi registrada!')
+        setEnableDialogAlert(true);
+        logEvaluation('O');
+        console.log('console O', Date.now());
+      }
+    }
+  })();
+
   return (
       <div className="do-evaluation-screen">
         <Backdrop className={classes.backdrop} open={openBackdrop} onClick={handleCloseBackdrop}>
@@ -524,6 +614,15 @@ const DoEvaluation = props => {
                   </Grid>
 
           </Card>
+          <Box display={!enableButtonStart ? 'none' : 'block'} style={{marginTop: '10px'}}>
+            <Player
+                autoplay
+                loop
+                src={'/images/animations/'+arrayAnimations[Math.floor(Math.random() * 9)]+'.json'}
+                style={{ height: '300px', width: '300px' }}>
+              <Controls visible={false} buttons={['play', 'repeat', 'frame', 'debug']} />
+            </Player>
+          </Box>
 
           {!enableButtonStart &&
               <div>
@@ -680,7 +779,7 @@ const DoEvaluation = props => {
                                                       src="/images/numero-2.png" width='35px'/>
                                                 </IconButton>
                                                 <div className={classesGeneral.textRedInfo} style={{fontSize: '12px', textAlign:'center'}}>
-                                                  {'-15 PR'}
+                                                  {'-20 PR'}
                                                 </div>
                                               </Box>
                                             }/>
@@ -692,7 +791,7 @@ const DoEvaluation = props => {
                                                       src="/images/numero-3.png" width='35px'/>
                                                 </IconButton>
                                                 <div className={classesGeneral.textRedInfo} style={{fontSize: '12px', textAlign:'center'}}>
-                                                  {'-20 PR'}
+                                                  {'-30 PR'}
                                                 </div>
                                               </Box>
                                             }/>
@@ -705,7 +804,7 @@ const DoEvaluation = props => {
                                                       src="/images/college_students.png" width='35px'/>
                                                 </IconButton>
                                                 <div className={classesGeneral.textRedInfo} style={{fontSize: '12px', textAlign:'center'}}>
-                                                  {'-25 PR'}
+                                                  {'-30 PR'}
                                                 </div>
                                               </Box>
                                             }/>}
@@ -811,9 +910,41 @@ const DoEvaluation = props => {
                              {<div className={classesGeneral.titleDialog}>
                                 {'Finalizar Avaliação'}
                                </div>}/>
+
+        <Dialog
+            open={enableDialogAlert}
+            onClose={() => setEnableDialogAlert(false)}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description">
+          <DialogTitle id="alert-dialog-title">
+            <div className={classesGeneral.titleDialog}>
+              {'Alerta de atividade suspeita'}
+            </div>
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              <div className={classesGeneral.messageDialog}>
+                {'Você deu um passeio na "Rua das Dúvidas" no meio da sua maratona de avaliação. ' +
+                    'Os detetives dos registros do simulado flagraram você em ação! 😄 ' +
+                    'Ah, o log da sua travessura foi cuidadosamente arquivado na pasta "Gafes Épicas" do seu histórico de simulado! 🤣'}
+              </div>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setEnableDialogAlert(false)}>
+              {'Fechar'}
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
+
   );
+
 };
+
+
+
+
 
 DoEvaluation.propTypes = {
   className: PropTypes.string,

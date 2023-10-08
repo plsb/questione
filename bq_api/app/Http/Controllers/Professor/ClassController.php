@@ -263,27 +263,29 @@ class ClassController extends Controller
     }
 
     private function saveParametersGamified($class_id){
-        $this->storeGamificationSettings($class_id, 'enter_class', 'Quando entrar na turma', 0, 50);
-        $this->storeGamificationSettings($class_id, 'mark_correct_question', 'Acertar uma questão', 10, 0);
-        $this->storeGamificationSettings($class_id, 'complete_a_test', 'Finalizar um simulado', 10, 10);
-        $this->storeGamificationSettings($class_id, 'correctly_mark_all_questions', 'Acertar todas as questões de um simulado', 20, 20);
+        $this->storeGamificationSettings($class_id, 'enter_class', 'Quando entrar na turma', 0, 70);
+        $this->storeGamificationSettings($class_id, 'mark_correct_question', 'Acertar uma questão', 15, 0);
+        $this->storeGamificationSettings($class_id, 'complete_a_test', 'Finalizar um simulado', 5, 10);
+        $this->storeGamificationSettings($class_id, 'correctly_mark_all_questions', 'Acertar todas as questões de um simulado', 30, 30);
         $this->storeGamificationSettings($class_id, 'get_badge', 'Conquistar emblema', 0, 0);
         //Configuração das ajudas da gamificação
         $this->storeGamificationSettings($class_id, 'help_delete_one_wrong_alternative', 'Apagar uma alternativa errada', 0, -10);
-        $this->storeGamificationSettings($class_id, 'help_delete_two_wrong_alternatives', 'Apagar duas alternativas erradas', 0, -15);
-        $this->storeGamificationSettings($class_id, 'help_delete_three_wrong_alternatives', 'Apagar três alternativas erradas', 0, -20);
-        $this->storeGamificationSettings($class_id, 'help_from_university_students', 'Ajuda dos universitários', 0, -25);
+        $this->storeGamificationSettings($class_id, 'help_delete_two_wrong_alternatives', 'Apagar duas alternativas erradas', 0, -20);
+        $this->storeGamificationSettings($class_id, 'help_delete_three_wrong_alternatives', 'Apagar três alternativas erradas', 0, -30);
+        $this->storeGamificationSettings($class_id, 'help_from_university_students', 'Ajuda dos universitários', 0, -30);
 
         //Configuração dos badges da turma
-        $this->storeGamificationBadges($class_id, 'five_correct_questions', '5 é D+!', 50, 'medal_top_5.png');
-        $this->storeGamificationBadges($class_id, 'ten_correct_questions', '10 é D+!!', 50, 'medal_top_10.png');
-        $this->storeGamificationBadges($class_id, 'achieve_first_placement_gold', 'Medalha de ouro', 60, 'medal_gold.png');
-        $this->storeGamificationBadges($class_id, 'achieve_second_placement_silver', 'Medalha de prata', 50, 'medal_silver.png');
-        $this->storeGamificationBadges($class_id, 'achieve_third_placement_bronze', 'Medalha de bronze ', 40, 'medal_bronze.png');
-        $this->storeGamificationBadges($class_id, 'two_gold_medals', 'Gênio da turma ', 70, 'medal_two_medals_gold.png');
-        $this->storeGamificationBadges($class_id, 'correctly_answer_two_simulations', 'Oráculo', 80, 'medal_oracle.png');
-        $this->storeGamificationBadges($class_id, 'answer_a_test_same_day_was_posted', 'Pontual', 50, 'medal_pontual.png');
-        $this->storeGamificationBadges($class_id, 'get_100_xp', 'Estudioso!', 90, 'medal_star.png');
+        $this->storeGamificationBadges($class_id, 'five_correct_questions', '5 é D+!', 20, 'medal_top_5.png');
+        $this->storeGamificationBadges($class_id, 'ten_correct_questions', '10 é D+!!', 30, 'medal_top_10.png');
+        $this->storeGamificationBadges($class_id, 'twenty_correct_questions', '20 é D+!!', 40, 'medal_top_20.png');
+        $this->storeGamificationBadges($class_id, 'achieve_first_placement_gold', 'Medalha de ouro', 30, 'medal_gold.png');
+        $this->storeGamificationBadges($class_id, 'achieve_second_placement_silver', 'Medalha de prata', 20, 'medal_silver.png');
+        $this->storeGamificationBadges($class_id, 'achieve_third_placement_bronze', 'Medalha de bronze ', 15, 'medal_bronze.png');
+        $this->storeGamificationBadges($class_id, 'two_gold_medals', 'Gênio da turma ', 50, 'medal_two_medals_gold.png');
+        $this->storeGamificationBadges($class_id, 'correctly_answer_two_simulations', 'Oráculo', 50, 'medal_oracle.png');
+        $this->storeGamificationBadges($class_id, 'answer_a_test_same_day_was_posted', 'Pontual', 30, 'medal_pontual.png');
+        $this->storeGamificationBadges($class_id, 'get_100_xp', 'Estudioso 100XP!', 20, 'medal_star_100.png');
+        $this->storeGamificationBadges($class_id, 'get_200_xp', 'Estudioso 200XP!', 30, 'medal_star_200.png');
     }
 
     public function changeStatus($id, Request $request)
