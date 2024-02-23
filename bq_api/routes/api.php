@@ -269,7 +269,10 @@ Route::group(['prefix' => 'evaluation'], function (){
 
     //Log
     Route::post('/log-evaluation/{idApplication}', 'LogStudentAssessmentController@store')->name('logEvaluation.store');
+});
 
+Route::group(['prefix' => 'adaptive'], function () {
+    Route::get('/', 'Adaptive\GenerateEvaluationController@generate')->name('adaptive.generate');
 });
 
 

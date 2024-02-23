@@ -166,6 +166,7 @@ class KnowledgeObjectsRelatedController extends Controller
             ->orderBy('description')->get();
 
         $combinedPhrases = $this->encontrarPalavrasMaisParecidas($list_Objects);
+        //return response()->json($this->encontrarPalavrasMaisParecidas($list_Objects), 200);
         $array = array();
         //return response()->json($combinedPhrases, 200);
         foreach ($combinedPhrases as $item) {
@@ -233,6 +234,64 @@ class KnowledgeObjectsRelatedController extends Controller
         return (1 - levenshtein($palavra1, $palavra2)/max(strlen($palavra1), strlen($palavra2)))*100;
     }
 
+    function smith_waterman($sequence1, $sequence2, $match_score = 2, $mismatch_score=-1, $gap_penalty = -2) {
+        $n = strlen($sequence1);
+        $m = strlen($sequence2);
+
+        // Inicialização da matriz de pontuação
+        $matrix = array();
+        for ($i = 0; $i <= $n; $i++) {
+            $matrix[$i] = array();
+            for ($j = 0; $j <= $m; $j++) {
+                $matrix[$i][$j] = 0;
+            }
+        }
+
+        // Preenchimento da matriz de pontuação
+        $max_score = 0;
+        $max_i = 0;
+        $max_j = 0;
+        for ($i = 1; $i <= $n; $i++) {
+            for ($j = 1; $j <= $m; $j++) {
+                $match = $matrix[$i - 1][$j - 1] + ($sequence1[$i - 1] == $sequence2[$j - 1] ? $match_score : $mismatch_score);
+                $delete = $matrix[$i - 1][$j] + $gap_penalty;
+                $insert = $matrix[$i][$j - 1] + $gap_penalty;
+                $matrix[$i][$j] = max(0, $match, $delete, $insert);
+                if ($matrix[$i][$j] >= $max_score) {
+                    $max_score = $matrix[$i][$j];
+                    $max_i = $i;
+                    $max_j = $j;
+                }
+            }
+        }
+
+
+        // Rastreamento da melhor correspondência
+        $aligned_sequence1 = "";
+        $aligned_sequence2 = "";
+        $i = $max_i;
+        $j = $max_j;
+        while ($i > 0 && $j > 0 && $matrix[$i][$j] > 0) {
+            $current_score = $matrix[$i][$j];
+            if ($current_score == $matrix[$i - 1][$j - 1] + ($sequence1[$i - 1] == $sequence2[$j - 1] ? $match_score : $mismatch_score)) {
+                $aligned_sequence1 = $sequence1[$i - 1] . $aligned_sequence1;
+                $aligned_sequence2 = $sequence2[$j - 1] . $aligned_sequence2;
+                $i--;
+                $j--;
+            } elseif ($current_score == $matrix[$i - 1][$j] + $gap_penalty) {
+                $aligned_sequence1 = $sequence1[$i - 1] . $aligned_sequence1;
+                $aligned_sequence2 = "-" . $aligned_sequence2;
+                $i--;
+            } else {
+                $aligned_sequence1 = "-" . $aligned_sequence1;
+                $aligned_sequence2 = $sequence2[$j - 1] . $aligned_sequence2;
+                $j--;
+            }
+        }
+
+        return $max_score;//array("score" => $max_score, "sequence1" => $aligned_sequence1, "sequence2" => $aligned_sequence2);
+    }
+
     // Função para encontrar as palavras mais parecidas na lista
     private function encontrarPalavrasMaisParecidas($lista_palavras) {
         $resultado = array();
@@ -284,6 +343,20 @@ class KnowledgeObjectsRelatedController extends Controller
 
                         }
                     }
+
+                    /*$accuracy = $this->smith_waterman($palavra1, $palavra2);
+                    $max_possible_score = max(strlen($palavra1), strlen($palavra2)) * 2;
+                    $normalized_score = $accuracy / $max_possible_score;
+                    if ($normalized_score >= 0.4) {
+
+                        $object_relacted = (object)[
+                            'obj' => $obj2,
+                            'cost' => $normalized_score,
+                        ];
+                        $related[] = $object_relacted;
+
+                    }*/
+
 
                 }
             }

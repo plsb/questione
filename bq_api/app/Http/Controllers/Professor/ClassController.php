@@ -281,10 +281,10 @@ class ClassController extends Controller
         $this->storeGamificationBadges($class_id, 'achieve_first_placement_gold', 'Medalha de ouro', 30, 'medal_gold.png');
         $this->storeGamificationBadges($class_id, 'achieve_second_placement_silver', 'Medalha de prata', 20, 'medal_silver.png');
         $this->storeGamificationBadges($class_id, 'achieve_third_placement_bronze', 'Medalha de bronze ', 15, 'medal_bronze.png');
-        $this->storeGamificationBadges($class_id, 'two_gold_medals', 'Gênio da turma ', 50, 'medal_two_medals_gold.png');
-        $this->storeGamificationBadges($class_id, 'correctly_answer_two_simulations', 'Oráculo', 50, 'medal_oracle.png');
+        $this->storeGamificationBadges($class_id, 'two_gold_medals', 'Mente binária', 50, 'medal_two_medals_gold.png');
+        $this->storeGamificationBadges($class_id, 'correctly_answer_two_simulations', 'Brilhante', 50, 'medal_oracle.png');
         $this->storeGamificationBadges($class_id, 'answer_a_test_same_day_was_posted', 'Pontual', 30, 'medal_pontual.png');
-        $this->storeGamificationBadges($class_id, 'get_100_xp', 'Estudioso 100XP!', 20, 'medal_star_100.png');
+        $this->storeGamificationBadges($class_id, 'get_100_xp', 'Ninja da Computação (100XP)', 20, 'medal_star_100.png');
         $this->storeGamificationBadges($class_id, 'get_200_xp', 'Estudioso 200XP!', 30, 'medal_star_200.png');
     }
 
