@@ -675,7 +675,7 @@ const GamificationPanel = props => {
                               </TableCell>
                               <TableCell align="center">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'Ninja da Computação (100XP)'}
+                                      {'Pergaminho da sabedoria'}
                                   </div>
                               </TableCell>
                           </TableRow>
@@ -687,7 +687,19 @@ const GamificationPanel = props => {
                               </TableCell>
                               <TableCell align="center">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'Estudioso 200PX!'}
+                                      {'Ninja da Computação'}
+                                  </div>
+                              </TableCell>
+                          </TableRow>
+                          <TableRow key={1}>
+                              <TableCell align="left">
+                                  <div className={classesGeneral.messageDialog}>
+                                      {'Conseguir 400 pontos de experiência '}
+                                  </div>
+                              </TableCell>
+                              <TableCell align="center">
+                                  <div className={classesGeneral.messageDialog}>
+                                      {'Surpreendente'}
                                   </div>
                               </TableCell>
                           </TableRow>
@@ -984,7 +996,7 @@ const GamificationPanel = props => {
                           <TableRow key={1}>
                               <TableCell align="left">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'Conquista: Nija da Computação (100PX)'}
+                                      {'Conquista: Pergaminho da sabedoria (100PX)'}
                                   </div>
                               </TableCell>
                               <TableCell align="center">
@@ -996,7 +1008,7 @@ const GamificationPanel = props => {
                           <TableRow key={1}>
                               <TableCell align="left">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'Conquista: Estudioso 200PX!'}
+                                      {'Conquista: Ninja da Computação (200PX)'}
                                   </div>
                               </TableCell>
                               <TableCell align="center">
