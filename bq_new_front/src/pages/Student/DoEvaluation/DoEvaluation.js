@@ -10,7 +10,7 @@ import {
   Avatar,
   CardContent,
   CardActions, List, ListItem, Button, CircularProgress,
-  Backdrop, Grid, Box, Divider, Link, Paper, IconButton, Chip
+  Backdrop, Grid, Box, Divider, Link, Paper, IconButton, Chip, FormControlLabel, Checkbox
 } from '@material-ui/core';
 import api from "../../../services/api";
 import ReactHtmlParser from "react-html-parser";
@@ -95,7 +95,13 @@ const DoEvaluation = props => {
   const [dialogHelpTwo, setDialogHelpTwo] = useState(false);
   const [dialogHelpThree, setDialogHelpThree] = useState(false);
   const [dialogHelpCollegeStudents, setDialogHelpCollegeStudents] = useState(false);
+  const [advanceAutomatically, setAdvanceAutomatically] = useState(false);
 
+
+  const handleChangeAdvanceAutomatically = (event, value) => {
+    setAdvanceAutomatically(event.target.checked);
+
+  }
 
   const handleChangePage = (event, value) => {
     setPage(value);
@@ -283,6 +289,10 @@ const DoEvaluation = props => {
         setQuestionsNotAnswers(arrayQuestionNotAnswers);
         setTotalAnswers(totalAlreadyAnswer);
         setAnswers(values);
+
+        if(advanceAutomatically && page < values.length){
+          setPage(page+1);
+        }
         setRefresh(Date.now());
       }
 
@@ -507,8 +517,8 @@ const DoEvaluation = props => {
 
     function functionVisible() {
       if(!enableButtonStart) {
-        logEvaluation('I');
-        console.log('console I', Date.now());
+        //logEvaluation('I');
+
       }
     }
 
@@ -516,8 +526,7 @@ const DoEvaluation = props => {
       if(!enableButtonStart) {
         //alert('Você saiu do questione enquanto estava respondendo um simulado. A Ação foi registrada!')
         setEnableDialogAlert(true);
-        logEvaluation('O');
-        console.log('console O', Date.now());
+        //logEvaluation('O');
       }
     }
   })();
@@ -627,22 +636,30 @@ const DoEvaluation = props => {
           {!enableButtonStart &&
               <div>
                   {!enableButtonStart && (
-                      <Box display='flex' marginRight='20px' marginTop='5px' justifyContent='right'>
-                        <Link
-                            component="button"
-                            className={classesGeneral.textRedInfo}
-                            onClick={onClickOpenDialogFinsh} disabled={enableButtonStart}>
-                          <Box display="flex" alignItems="row" style={{marginTop: '10px'}}>
-                            <div style={{marginRight: '3px', marginTop: '5px', fontSize: '15px'}}>
-                              {'Entregar simulado'}
-                            </div>
-                            <div>
-                              <ArrowForwardIcon />
-                            </div>
-                          </Box>
+                      <div>
+                        <Box display='flex' marginRight='20px' marginTop='5px' justifyContent='right'>
+                          <Link
+                              component="button"
+                              className={classesGeneral.textRedInfo}
+                              onClick={onClickOpenDialogFinsh} disabled={enableButtonStart}>
+                            <Box display="flex" alignItems="row" style={{marginTop: '10px'}}>
+                              <div style={{marginRight: '3px', marginTop: '5px', fontSize: '15px'}}>
+                                {'Entregar simulado'}
+                              </div>
+                              <div>
+                                <ArrowForwardIcon />
+                              </div>
+                            </Box>
 
-                        </Link>
-                      </Box>
+                          </Link>
+                        </Box>
+                        <Box display='flex' justifyContent='center'>
+                          <TooltipQuestione description={'Se esta opção estiver habilitada, o sistema avançará automaticamente para a próxima questão após o estudante responder.'} position={'bottom-start'} content={
+                            <FormControlLabel control={<Checkbox name="advanceAutomatically" checked={advanceAutomatically} onChange={handleChangeAdvanceAutomatically} />}
+                                              label="Avançar automaticamente ao responder." />
+                          }/>
+                        </Box>
+                      </div>
                   )}
                   <Box display='flex' margin='10px' justifyContent='center'>
                     <Pagination count={answers.length} variant="outlined" page={page} color="primary" onChange={handleChangePage}/>

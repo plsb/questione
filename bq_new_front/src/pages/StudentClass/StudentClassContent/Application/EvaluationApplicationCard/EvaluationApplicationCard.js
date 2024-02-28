@@ -286,7 +286,7 @@ const EvaluationApplicationCard = props => {
                           }
 
                           { evaluationApplication.release_preview_question == 1 &&
-                              <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Os estudantes tertão acesso as questões completas deste simulado.'}</div>
+                              <div className={clsx(classes.chip_brown, className)} style={{marginRight: '6px'}}>{'Os estudantes tetão acesso as questões completas deste simulado.'}</div>
                           }
 
                           { evaluationApplication.random_questions == 1 &&

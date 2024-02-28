@@ -133,11 +133,6 @@ const Main = props => {
         [classes.root]: true,
         [classes.shiftContent]: isDesktop
       })}>
-        <script>
-            document.addEventListener("visibilitychange", function() {
-                console.log("Mudou de aba!")
-            });
-        </script>
         <Tour
             steps={ localStorage.getItem("@Questione-acess-level-user") == 2 ? stepsProfessor :
                         localStorage.getItem("@Questione-acess-level-user") == 0 ? stepsStudent : null}

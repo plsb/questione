@@ -303,7 +303,7 @@ const ResultsGeneral = props =>{
                                                             <div className={classesGeneral.paperTitleTextBold} align="center">
                                                               {classProfessorResult.total_xp+ ' XP'}
                                                             </div>
-                                                            {classProfessorResult.position.position > 0 ?
+                                                            {classProfessorResult.position.position > 0 && classProfessorResult.total_xp > 0 ?
                                                                 <span className={
                                                                   classProfessorResult.position.position == 1 ? classes.percentageGold :
                                                                       classProfessorResult.position.position == 2 ? classes.percentageBlue :

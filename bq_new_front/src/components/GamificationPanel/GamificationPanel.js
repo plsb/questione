@@ -11,7 +11,7 @@ import {
     DialogTitle,
     DialogContent,
     DialogContentText,
-    DialogActions, Button, Table, TableHead, TableRow, TableCell, TableBody, IconButton
+    DialogActions, Button, Table, TableHead, TableRow, TableCell, TableBody, IconButton, AppBar, Toolbar, CardMedia
 } from '@material-ui/core';
 import {Link as RouterLink, withRouter} from "react-router-dom";
 import api from "../../services/api";
@@ -19,14 +19,30 @@ import moment from "moment";
 import useStyles from "../../style/style";
 import TooltipQuestione from "../TooltipQuestione";
 import InfoIcon from '@material-ui/icons/Info';
+import CloseIcon from "@material-ui/icons/Close";
 
 const useStylesLocal = makeStyles(theme => ({
+
+    appBar: {
+        position: 'relative',
+        background: '#3a7cf7',
+    },
+    fontNarrativeTitle: {
+        fontSize: '22px',
+        fontFamily: 'Lucida Sans Unicode, Lucida Grande, sans-serif',
+        fontWeight: 'bold'
+    },
+    fontNarrative: {
+        fontSize: '18px',
+        fontFamily: 'Lucida Sans Unicode, Lucida Grande, sans-serif'
+    }
 
 }));
 
 const GamificationPanel = props => {
     const { className, history, question, gamified_class, classId, refresh, ...rest } = props;
 
+    const [openDialogNarrative, setOpenDialogNarrative] = React.useState(false);
     const [openDialogRP, setOpenDialogRP] = React.useState(false);
     const [openDialogInfoRP, setOpenDialogInfoRP] = React.useState(false);
     const [openDialogXP, setOpenDialogXP] = React.useState(false);
@@ -192,6 +208,13 @@ const GamificationPanel = props => {
         setOpenDialogBadge(false);
     };
 
+    const handleOpenDialogNarrative = () => {
+        setOpenDialogNarrative(true);
+    };
+    const handleCloseDialogNarrative = () => {
+        setOpenDialogNarrative(false);
+    };
+
     useEffect(() => {
         loadHistoryRP();
         loadHistoryXP();
@@ -208,8 +231,42 @@ const GamificationPanel = props => {
       <div className={classes.content}>
               <Box>
                   <Paper style={{paddingTop: '5px', paddingBottom: '20px', paddingRight: '20px', paddingLeft: '20px',}}>
+
+                      <Grid
+                          container
+                          spacing={0}
+                          direction="column"
+                          alignItems="center"
+                          justify="center"
+                          style={{ minHeight: '100h' }}>
+                      <TooltipQuestione description={'Clique aqui para explorar a narrativa e obtenha informações detalhadas sobre o Questione Gamificado! 🌐🔍✨'} position={'bottom'} content={
+                          <Box display="flex">
+                              <Box>
+                                  <img
+                                      style={{marginTop: '15px', marginRight: '10px'}}
+                                      alt="Logo"
+                                      src="/images/control-video-game.png" width='36px'/>
+                              </Box>
+                              <Box>
+                                      <div className={classesGeneral.paperTitleTextBold} style={{marginTop: '20px', fontSize: '16px'}}>
+                                          Painel de desempenho:
+                                      </div>
+                              </Box>
+                              <Box >
+                                  <IconButton
+                                      onClick={handleOpenDialogNarrative}>
+                                      <InfoIcon style={{width: '19px'}}  />
+                                  </IconButton>
+                              </Box>
+                          </Box>
+                          }/>
+                      </Grid>
+
+                      <Divider style={{marginTop: '5px'}}/>
+
                       <Grid container spacing={1}>
                           <Grid item xs={6}>
+
                               <TooltipQuestione description={'Sua posição nesta turma é calculada com base nos seus pontos de experiência (XP). Em caso de empate, a batalha é decidida pelo número de conquistas e pela quantidade de simulados resolvidos. É uma competição amigável e inteligente! 💪🏆😄'} position={'bottom'} content={
                                   <Box display="flex" alignItems="row">
                                       <img
@@ -288,9 +345,10 @@ const GamificationPanel = props => {
                                       </div>
                                   </Box>
                               }/>
+
                           </Grid>
                           <Grid item xs={1}>
-                              <Divider orientation="vertical" style={{marginTop: '5px', padding: '2px'}}/>
+                              <Divider orientation="vertical" style={{marginTop: '5px', padding: '1px'}}/>
                           </Grid>
                           <Grid item xs={5}>
                               <TooltipQuestione description={"Conquistas são distintivos que você ganha no Questione ao realizar os simulados."}
@@ -504,7 +562,7 @@ const GamificationPanel = props => {
                           <TableRow key={1}>
                               <TableCell align="left">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'Atingir 5 questões corretas'}
+                                      {'Acumular 5 acertos'}
                                   </div>
                               </TableCell>
                               <TableCell align="center">
@@ -516,7 +574,7 @@ const GamificationPanel = props => {
                           <TableRow key={1}>
                               <TableCell align="left">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'Atingir 10 questões corretas'}
+                                      {'Acumular 10 acertos'}
                                   </div>
                               </TableCell>
                               <TableCell align="center">
@@ -528,7 +586,7 @@ const GamificationPanel = props => {
                           <TableRow key={1}>
                               <TableCell align="left">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'Atingir 20 questões corretas'}
+                                      {'Acumular 20 acertos'}
                                   </div>
                               </TableCell>
                               <TableCell align="center">
@@ -581,7 +639,7 @@ const GamificationPanel = props => {
                               </TableCell>
                               <TableCell align="center">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'Gênio da turma '}
+                                      {'Mente binária'}
                                   </div>
                               </TableCell>
                           </TableRow>
@@ -593,7 +651,7 @@ const GamificationPanel = props => {
                               </TableCell>
                               <TableCell align="center">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'Oráculo'}
+                                      {'Brilhante'}
                                   </div>
                               </TableCell>
                           </TableRow>
@@ -617,7 +675,7 @@ const GamificationPanel = props => {
                               </TableCell>
                               <TableCell align="center">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'Estudioso 100PX!'}
+                                      {'Ninja da Computação (100XP)'}
                                   </div>
                               </TableCell>
                           </TableRow>
@@ -890,7 +948,7 @@ const GamificationPanel = props => {
                           <TableRow key={1}>
                               <TableCell align="left">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'Conquista: Gênio da turma '}
+                                      {'Conquista: Mente binária '}
                                   </div>
                               </TableCell>
                               <TableCell align="center">
@@ -902,7 +960,7 @@ const GamificationPanel = props => {
                           <TableRow key={1}>
                               <TableCell align="left">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'Conquista: Oráculo'}
+                                      {'Conquista: Brilhante'}
                                   </div>
                               </TableCell>
                               <TableCell align="center">
@@ -926,7 +984,7 @@ const GamificationPanel = props => {
                           <TableRow key={1}>
                               <TableCell align="left">
                                   <div className={classesGeneral.messageDialog}>
-                                      {'Conquista: Estudioso 100PX!'}
+                                      {'Conquista: Nija da Computação (100PX)'}
                                   </div>
                               </TableCell>
                               <TableCell align="center">
@@ -956,6 +1014,174 @@ const GamificationPanel = props => {
                       Fechar
                   </Button>
               </DialogActions>
+          </Dialog>
+
+          <Dialog
+              open={openDialogNarrative}
+              fullScreen
+              onClose={handleCloseDialogNarrative}
+              aria-labelledby="simple-dialog-title">
+              <div>
+                  <AppBar className={classes.appBar}>
+                      <Toolbar>
+                          <IconButton edge="start" color="inherit" onClick={handleCloseDialogNarrative} aria-label="close">
+                              <CloseIcon />
+                          </IconButton>
+                          <div className={classesGeneral.titleList} style={{color: '#FFF', marginBottom: '15px'}}>
+                              Narrativa
+                          </div>
+                      </Toolbar>
+                  </AppBar>
+                  <Grid
+                      container
+                      spacing={0}
+                      direction="column"
+                      alignItems="center"
+                      justify="center"
+                      style={{ minHeight: '100h' }}>
+
+                          <Grid item xs={8} style={{ marginTop: '25px' }}>
+                              <div style={{textAlign: 'center', marginBottom: '50px'}}>
+                                  <img
+                                      alt="Logo"
+                                      src="/images/imagemNarrativa.png" width='500px'/>
+                              </div>
+
+                              <p className={classes.fontNarrativeTitle}> <b>Sua aventura começa assim...</b> </p>
+                              <p className={classes.fontNarrative}>
+                                  <b>Alana Gitrun</b> é uma dedicada estudante de computação que se destaca por sua paixão pela tecnologia e a ciência.
+                                  Seu grande sonho é um dia desenvolver pesquisas na área de tecnologia da informação, com trabalhos reconhecidos em todo o mundo, seguindo os passos de seus ídolos:
+                                  Alan Turing, Ada Lovelace e Grace Hopper.</p>
+                              <p className={classes.fontNarrative}>
+                                  Um dia, enquanto mergulhava em linhas de código e algoritmos, um e-mail especial chegou à sua caixa de entrada.
+                                  Era nada menos que uma convocação da prestigiada empresa de pesquisa e desenvolvimento, conhecida por abrigar as mentes mais brilhantes da área.
+                                  O e-mail anunciava a abertura de uma seleção para novos talentos e convidava Alana a participar.
+                              </p>
+                              <p className={classes.fontNarrative}>
+                                  Alana sente o coração bater forte, e sem hesitar um segundo sequer, viu nessa oportunidade a chance de trilhar o caminho para realizar seus sonhos mais ambiciosos.
+                                  Determinada e com um sorriso que não cabia no rosto, Alana clica no link. A tela se transforma em um portal virtual, transportando-a para um universo digital vibrante.
+                              </p>
+                              <p className={classes.fontNarrative}>
+                                  <b>Nesse momento, uma assistente virtual a saúda: </b>
+                              </p>
+                              <CardMedia width="892" height="502"
+                                         component="iframe" src="https://www.youtube.com/embed/dAJBXoCoYGQ"
+                              style={{marginBottom: '50px'}}/>
+
+                              <div class="container" style={{textAlign: 'center'}} className={classes.fontNarrativeTitle}>
+                                  <b>Painel de desempempo</b>
+                              </div>
+                              <Divider style={{marginTop: '5px'}}/>
+
+                              <p className={classes.fontNarrative}>
+                                  O painel de desempenho é utilizado quando o módulo gamificado em uma turma está sendo aplicado.
+                                  Desta forma, o painel é responsável por apresentar ao aluno todos os elementos utilizados na versão gamificada do Questione,
+                                  principalmente em relação ao seu desempenho. Assim, ele contém informações referentes ao desempenho do aluno,
+                                  como suas conquistas e como ele pode adquirir novas. Os elementos apresentados no painel de desempenho são os seguintes:
+                              </p>
+
+                              <ol className={classes.fontNarrative}>
+                                  <li style={{margin: '15px'}}><b>Ranking:</b> Mostra, apenas para o aluno, a sua posição em relação aos demais.
+                                      Para o seu cálculo é considerado os XP(Experience Points), adquiridos no decorrer dos simulados.</li>
+                                  <li style={{margin: '15px'}}><b>Pontos de experiências (XP):</b> Do inglês Experience Points - XP, são pontos de experiências adquiridos conforme o desempenho dos alunos nos simulados.</li>
+                                  <li style={{margin: '15px'}}><b>Pontos Reutilizáveis (PR):</b> É a nossa moeda virtual, SiCoin (Si é sigla do silício na tabela periódica - metal utilizado para a produção de circuitos eletrônicos), que representa os pontos adquiridos conforme a execução dos desafios e aquisição de novas conquistas.</li>
+                                  <li style={{margin: '15px'}}><b>Conquistas:</b> Representam todos os badges (emblemas/ícones) adquiridas conforme o  desempenho do aluno nos simulados. Todos os disponíveis para aquisição, estão representados a seguir:</li>
+                              </ol>
+
+                              <table style={{textAlign: 'center', marginBottom: '50px'}} border="1px">
+                                  <tr>
+                                      <td style={{padding: '15px'}}><b>Badges</b></td>
+                                      <td style={{padding: '15px'}}><b>Descrição</b></td>
+                                  </tr>
+                                  <tr>
+                                      <td style={{padding: '15px'}}>
+                                          <img
+                                          alt="Logo"
+                                          src="/images/medals/medal_top_5.png" width='70px'/></td>
+                                      <td style={{padding: '15px'}}><b>5 é demais!</b> - Adquirido ao acumular 5 questões corretas.  </td>
+                                  </tr>
+                                  <tr>
+                                      <td style={{padding: '15px'}}>
+                                          <img
+                                              alt="Logo"
+                                              src="/images/medals/medal_top_10.png" width='70px'/></td>
+                                      <td style={{padding: '15px'}}><b>10 é demais!</b> - Adquirido ao acumular 10 questões corretas.  </td>
+                                  </tr>
+                                  <tr>
+                                      <td style={{padding: '15px'}}>
+                                          <img
+                                              alt="Logo"
+                                              src="/images/medals/medal_top_20.png" width='70px'/></td>
+                                      <td style={{padding: '15px'}}><b>20 é demais!</b> - Adquirido ao acumular 20 questões corretas.  </td>
+                                  </tr>
+                                  <tr>
+                                      <td style={{padding: '15px'}}>
+                                          <img
+                                              alt="Logo"
+                                              src="/images/medals/medal_bronze.png" width='70px'/></td>
+                                      <td style={{padding: '15px'}}><b>Medalha de bronze</b> - Atingir o 3° lugar no ranking.  </td>
+                                  </tr>
+                                  <tr>
+                                      <td style={{padding: '15px'}}>
+                                          <img
+                                              alt="Logo"
+                                              src="/images/medals/medal_silver.png" width='70px'/></td>
+                                      <td style={{padding: '15px'}}><b>Medalha de prata</b> - Atingir o 2° lugar no ranking.  </td>
+                                  </tr>
+                                  <tr>
+                                      <td style={{padding: '15px'}}>
+                                          <img
+                                              alt="Logo"
+                                              src="/images/medals/medal_gold.png" width='70px'/></td>
+                                      <td style={{padding: '15px'}}><b>Medalha de ouro</b> - Atingir o 1° lugar no ranking.  </td>
+                                  </tr>
+                                  <tr>
+                                      <td style={{padding: '15px'}}>
+                                          <img
+                                              alt="Logo"
+                                              src="/images/medals/medal_oracle.png" width='70px'/></td>
+                                      <td style={{padding: '15px'}}><b>Brilhante</b> - Acertar completamente 2 simulados.  </td>
+                                  </tr>
+                                  <tr>
+                                      <td style={{padding: '15px'}}>
+                                          <img
+                                              alt="Logo"
+                                              src="/images/medals/medal_pontual.png" width='70px'/></td>
+                                      <td style={{padding: '15px'}}><b>Pontual</b> - Adquirido quando um simulado é respondido no mesmo dia em que ele foi publicado.  </td>
+                                  </tr>
+                                  <tr>
+                                      <td style={{padding: '15px'}}>
+                                          <img
+                                              alt="Logo"
+                                              src="/images/medals/medal_two_medals_gold.png" width='70px'/></td>
+                                      <td style={{padding: '15px'}}><b>Mente binária</b> - Adquirido quando são acumuladas 2 medalhas de ouro.  </td>
+                                  </tr>
+                                  <tr>
+                                      <td style={{padding: '15px'}}>
+                                          <img
+                                              alt="Logo"
+                                              src="/images/medals/medal_star_100.png" width='70px'/></td>
+                                      <td style={{padding: '15px'}}><b>Pergaminho da sabedoria</b> - Adquirido quando atingir 100 XP.  </td>
+                                  </tr>
+                                  <tr>
+                                      <td style={{padding: '15px'}}>
+                                          <img
+                                              alt="Logo"
+                                              src="/images/medals/medal_star_200.png" width='70px'/></td>
+                                      <td style={{padding: '15px'}}><b>Ninja da Computação</b> - Adquirido quando atingir 200 XP.  </td>
+                                  </tr>
+                                  <tr>
+                                      <td style={{padding: '15px'}}>
+                                          <img
+                                              alt="Logo"
+                                              src="/images/medals/medal_star_400.png" width='70px'/></td>
+                                      <td style={{padding: '15px'}}><b>Surpreendente</b> - Adquirido quando atingir 400 XP.  </td>
+                                  </tr>
+
+                              </table>
+                          </Grid>
+                      </Grid>
+              </div>
           </Dialog>
       </div>
     );

@@ -109,7 +109,7 @@ const EvaluationApplicationCardStudent = props => {
               <Card
                   {...rest}
                   className={classes.root} pointerEv >
-                  <div style={{pointerEvents: evaluationApplication.status == 0 ? 'none' : 'auto'}}>
+                  <div >
                       <Paper className={evaluationApplication.status == 0 || evaluationApplication.class.status === 2 || evaluationApplication.evaluation.status === 2 ?  classesGeneral.paperTitleGray
                                              : answer_head && answer_head.finalized_at ? classesGeneral.paperTitleGreen : classesGeneral.paperTitle}>
                           <Box display="flex">

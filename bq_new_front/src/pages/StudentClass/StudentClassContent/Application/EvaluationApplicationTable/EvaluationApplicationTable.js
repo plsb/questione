@@ -182,7 +182,7 @@ const EvaluationApplicationTable = props => {
             </div>
 
             <div className={classesGeneral.paperTitleGray} style={{marginLeft: '10px', fontWeight: 'bold', marginTop: '15px', marginBottom: '15px', borderRadius: '15px'}}>
-              {totals.unavailable == 1 ? totals.unavailable + ' inhabilitado.' : totals.unavailable + ' inabilitados.'}
+              {totals.unavailable == 1 ? totals.unavailable + ' inabilitado.' : totals.unavailable + ' inabilitados.'}
             </div>
 
           </Box>
