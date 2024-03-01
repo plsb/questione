@@ -9,6 +9,7 @@ use App\CourseProfessor;
 use App\Evaluation;
 use App\EvaluationApplication;
 use App\EvaluationHasQuestions;
+use App\KnowledgeObject;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Validator;
@@ -42,6 +43,24 @@ class DepthFirstSearch
         }
 
         return $itens_relacionados;
+    }
+
+    function findMostRecentObject($itens_relacionados) {
+        $id_object_actual = 0;
+        $year_object_actual = 0;
+
+        foreach ($itens_relacionados as $item_rel) {
+            $verify_object = KnowledgeObject::where('id', $item_rel)
+                ->with('regulation')
+                ->first();
+
+            if ($year_object_actual < $verify_object->regulation->year) {
+                $year_object_actual = $verify_object->regulation->year;
+                $id_object_actual = $item_rel;
+            }
+        }
+
+        return $id_object_actual;
     }
 
 }

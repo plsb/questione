@@ -15,7 +15,17 @@ import {
     AppBar,
     Toolbar,
     Dialog,
-    Breadcrumbs, Button, LinearProgress, TablePagination, List, Divider, ListItem, ListItemText, Hidden,
+    Breadcrumbs,
+    Button,
+    LinearProgress,
+    TablePagination,
+    List,
+    Divider,
+    ListItem,
+    ListItemText,
+    Hidden,
+    DialogTitle,
+    TextField,
 } from '@material-ui/core';
 
 import People from './People';
@@ -31,6 +41,8 @@ import moment from "moment";
 import EvaluationQuestions from "../../../components/EvaluationQuestions/EvaluationQuestions";
 import {toast} from "react-toastify";
 import TooltipQuestione from "../../../components/TooltipQuestione";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
 
 const useStylesLocal = makeStyles(theme => ({
     root: {
@@ -71,6 +83,7 @@ const StudentClassContent = props => {
     }
     
     const [refresh, setRefresh] = React.useState(1);
+    const [totalQuestionsToGenerateTest, setTotalQuestionsToGenerateTest] = React.useState(0);
     const [tabValue, setTabValue] = useState(parseInt(initialTabValue));
 
     const classes = useStylesLocal();
@@ -81,6 +94,7 @@ const StudentClassContent = props => {
 
     const [evaluationSelected, setEvaluationSelected] = useState(null);
     const [openNewApplication, setOpenNewApplication] = React.useState(false);
+    const [openExpressSimulation, setOpenExpressSimulation] = React.useState(false);
     const [evaluations, setEvaluations] = useState(null);
     const [totalEvaluations, setTotalEvaluations] = useState(0);
     const [page, setPage] = useState(0);
@@ -190,9 +204,44 @@ const StudentClassContent = props => {
         setEvaluationSelected(null);
     }
 
+    const handleExpressSimulationExit = () => {
+        setOpenExpressSimulation(false);
+    }
+
     const handleNewApplication = () => {
         setOpenNewApplication(true);
     };
+
+    const handleExpressSimulation = () => {
+        setOpenExpressSimulation(true);
+    };
+
+    async function expressTestGenerator(){
+
+        try {
+
+            const fk_class_id = studentClassId;
+            const data = {
+                totalQuestionsToGenerateTest, fk_class_id
+            }
+            const response = await api.post('adaptive/', data);
+            if (response.status === 202) {
+                if(response.data.message){
+                    toast.error(response.data.message);
+                }
+            } else {
+                toast.success(response.data);
+                setOpenExpressSimulation(false);
+                window.location.reload();
+            }
+            setTotalQuestionsToGenerateTest(0);
+
+
+        } catch (error) {
+
+        }
+
+    }
 
     async function newApplication(){
         if(evaluationSelected != null){
@@ -224,6 +273,10 @@ const StudentClassContent = props => {
 
         }
     }
+
+    const handleChangeTotalQuestions = (event) => {
+        setTotalQuestionsToGenerateTest(event.target.value);
+    };
 
     return (
         <div className={classesGeneral.root}>
@@ -299,7 +352,9 @@ const StudentClassContent = props => {
                                                 </div>
                                             }
                                             { localStorage.getItem('@Questione-acess-level-user') === "2" &&
-                                                <Button style={{marginTop:'20px'}} color="primary" variant='outlined' onClick={handleNewApplication}>Adicionar Simulado</Button>}
+                                                <Button style={{marginTop:'20px', marginRight: '10px'}} color="primary" variant='outlined' onClick={handleNewApplication}>Adicionar Simulado</Button>}
+                                            { localStorage.getItem('@Questione-acess-level-user') === "2" &&
+                                                <Button style={{marginTop:'20px'}} color="primary" variant='outlined' onClick={handleExpressSimulation}>Simulado Expresso</Button>}
                                         </Box>
                                     </Box>
                                 </Grid>
@@ -394,6 +449,42 @@ const StudentClassContent = props => {
                                         <EvaluationQuestions evaluationId={evaluationSelected.id}/>
                                     </div>
                                 }
+                            </Dialog>
+                            <Dialog onClose={handleExpressSimulationExit} aria-labelledby="customized-dialog-title" open={openExpressSimulation}>
+                                <DialogTitle id="customized-dialog-title" >
+                                    Simulado Expresso
+                                </DialogTitle>
+                                <DialogContent dividers>
+                                    <Typography gutterBottom>
+                                        "Simulado Expresso" é uma abordagem que permite a criação rápida, eficiente e direta de simulados.
+                                        O simulado resultante é configurado com um número total de questões determinado pelo professor e
+                                        inclui perguntas previamente utilizadas em avaliações do Enade para o curso específico cadastrado
+                                        na turma.
+                                    </Typography>
+                                    <Typography gutterBottom>
+                                        O algoritmo de seleção das questões considera a média das dificuldades e o total médio de conteúdos
+                                        das últimas provas, buscando equilibrar esses dois critérios para gerar a avaliação final.
+                                    </Typography>
+                                    <Typography gutterBottom>
+                                        A cada execução do algoritmo, as questões podem ser alteradas, pois o algoritmo emprega critérios
+                                        randômicos para tomar algumas decisões.
+                                    </Typography>
+                                    <TextField
+                                        fullWidth
+                                        label="Total de questões"
+                                        margin="dense"
+                                        name="description"
+                                        variant="outlined"
+                                        onChange={handleChangeTotalQuestions}
+                                        value={totalQuestionsToGenerateTest}
+                                        className={classes.fieldsDialog}
+                                    />
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button autoFocus onClick={expressTestGenerator} color="primary">
+                                        Gerar simulado
+                                    </Button>
+                                </DialogActions>
                             </Dialog>
                         </div>
                     }

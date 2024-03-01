@@ -56,7 +56,7 @@ class KnowledgeObjectAssessmentManager extends Controller
             ->get();
     }
 
-    function findMostRecentObject($itens_relacionados) {
+    /*function findMostRecentObject($itens_relacionados) {
         $id_object_actual = 0;
         $year_object_actual = 0;
 
@@ -72,7 +72,7 @@ class KnowledgeObjectAssessmentManager extends Controller
         }
 
         return $id_object_actual;
-    }
+    }*/
 
     function calculatesTotalQuestionsByObject($total_number_of_questions_to_have_on_a_test, $course, $regulation, $totalRegulation){
         // Obter as questões relacionadas aos objetos de conhecimento
@@ -97,7 +97,7 @@ class KnowledgeObjectAssessmentManager extends Controller
                 $itens_relacionados = $dfs->encontrarItensRelacionados($object, $list_object_relacted);
 
                 // Encontrar o objeto mais recente
-                $id_object_actual = $this->findMostRecentObject($itens_relacionados);;
+                $id_object_actual = $dfs->findMostRecentObject($itens_relacionados);;
 
                 // Procurar a posição do objeto no array
                 $position = $this->searchByIdArray($objects_array, $id_object_actual);

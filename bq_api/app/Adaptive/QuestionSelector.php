@@ -37,9 +37,9 @@ class QuestionSelector extends Controller
      *
      * @return array O array contendo os IDs das perguntas selecionadas.
      */
-    public function selectQuestionsToComposeTest($item, $property, &$totalQuestionsFromObject, &$quantityDifficulty)
+    public function selectTestQuestionsByDifficultyAndContent($array_final_id_questions_that_must_have_a_test, $item, $property, &$totalQuestionsFromObject, &$quantityDifficulty)
     {
-        $selectedQuestions = [];
+        $selectedQuestions = $array_final_id_questions_that_must_have_a_test;
 
         // Verifica se a propriedade existe e se há perguntas restantes para selecionar
         if (property_exists($item, $property) && $totalQuestionsFromObject > 0 && $quantityDifficulty > 0) {
@@ -48,7 +48,12 @@ class QuestionSelector extends Controller
 
             // Se houver menos questões disponíveis do que o necessário, selecione todas disponíveis
             if ($countDifficulty < $totalQuestionsFromObject) {
-                $selectedQuestions = array_merge($selectedQuestions, $item->$property);
+                // Verifica se há interseção entre os arrays
+                $intersection = array_intersect($selectedQuestions, $item->$property);
+                // Adiciona os elementos que não estão na interseção
+                $valuesAdd = array_diff($item->$property, $intersection);
+
+                $selectedQuestions = array_merge($selectedQuestions, $valuesAdd);
                 $totalSub = $countDifficulty;
             } else {
                 // Seleciona índices aleatórios se houver questões suficientes disponíveis
@@ -58,7 +63,10 @@ class QuestionSelector extends Controller
 
                 // Adiciona as perguntas selecionadas ao array
                 foreach ($randomIndices as $value) {
-                    $selectedQuestions[] = $item->$property[$value];
+                    //se o valor não existir no array, é adicionado
+                    if (!in_array($item->$property[$value], $selectedQuestions)) {
+                        $selectedQuestions[] = $item->$property[$value];
+                    }
                 }
 
                 $totalSub = $totalQuestionsFromObject;
@@ -70,6 +78,37 @@ class QuestionSelector extends Controller
         }
 
         return $selectedQuestions;
+    }
+
+    //// Verifica se não foram geradas o total de questões adequadas
+    function selectRandomTestItems($total_number_of_questions_to_have_on_a_test, $array_final_id_questions_that_must_have_a_test, $regulation) {
+        // Verifica se não foram geradas o total de questões adequadas
+        if ($total_number_of_questions_to_have_on_a_test > count($array_final_id_questions_that_must_have_a_test)) {
+            $numPositionsToDraw = $total_number_of_questions_to_have_on_a_test - count($array_final_id_questions_that_must_have_a_test);
+
+            $questionsToChoose = Question::whereIn('fk_regulation_id', $regulation)
+                ->where('fk_type_of_evaluation_id', 2)
+                ->whereNotIn('id', $array_final_id_questions_that_must_have_a_test)
+                ->get();
+
+            // Verifica se há mais questões disponíveis do que necessárias
+            if ($numPositionsToDraw < count($questionsToChoose)) {
+                // Sorteia posições aleatórias
+                $drawnPositions = array_rand($questionsToChoose->toArray(), $numPositionsToDraw);
+
+                // Se $drawnPositions for um único valor, converte para um array
+                if (!is_array($drawnPositions)) {
+                    $drawnPositions = array($drawnPositions);
+                }
+
+                // Adiciona os IDs sorteados ao array final
+                foreach ($drawnPositions as $position) {
+                    $array_final_id_questions_that_must_have_a_test[] = $questionsToChoose[$position]->id;
+                }
+            }
+        }
+
+        return $array_final_id_questions_that_must_have_a_test;
     }
 
 }
