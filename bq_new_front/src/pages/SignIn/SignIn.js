@@ -165,7 +165,7 @@ const SignIn = props => {
                 response.data[0].email, response.data[0].acess_level,
                 response.data[0].id, response.data[0].show_tour, response.data[0].add_external_question);
 
-        toast.info(response.data[0].name+', seja bem-vindo!');
+        toast.info(response.data[0].name+', seja bem-vindo(a)!');
         history.push(destinationPath || '/home');
       }
 
