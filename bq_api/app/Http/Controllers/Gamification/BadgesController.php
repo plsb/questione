@@ -73,6 +73,34 @@ class BadgesController extends Controller
 
             if(!$verify){ //verifica se o estudante já tem o badge caso não, adiciona
                 $this->saveTheBadge($id_badge, $id_class, $user->id, null,  true);
+            } else {
+                $this->get400XP($id_class);
+            }
+
+        }
+    }
+
+    public function get400XP($id_class)
+    {
+        //se a turma não for gamificada encerra a função
+        if(!$this->isGamified($id_class)){
+            return null;
+        }
+
+        $id_badge = 'get_400_xp';
+
+        $user = auth('api')->user();
+
+        $controller = new ClassGamificationStudentController();
+        $totalXP = $controller->totalXP($id_class);
+
+        if($totalXP->original >= 200){
+            $verify = ClassBadgesStudent::where('fk_class_id', $id_class)
+                ->where('fk_user_id', $user->id)
+                ->where('description_id', $id_badge)->first();
+
+            if(!$verify){ //verifica se o estudante já tem o badge caso não, adiciona
+                $this->saveTheBadge($id_badge, $id_class, $user->id, null,  true);
 
             }
 
@@ -134,7 +162,7 @@ class BadgesController extends Controller
         }
     }
 
-        public function twentyCorrectQuestions($id_class){
+    public function twentyCorrectQuestions($id_class){
         //se a turma não for gamificada encerra a função
         if(!$this->isGamified($id_class)){
             return null;

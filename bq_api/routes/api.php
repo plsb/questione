@@ -272,7 +272,8 @@ Route::group(['prefix' => 'evaluation'], function (){
 });
 
 Route::group(['prefix' => 'adaptive'], function () {
-    Route::get('/', 'Adaptive\GenerateEvaluationController@generate')->name('adaptive.generate');
+    Route::post('/', 'Adaptive\GenerateEvaluationController@expressExamGenerator')->name('adaptive.generate');
+    Route::get('/eloTest', 'Adaptive\GenerateEvaluationController@calculateAndUpdateElo')->name('adaptive.elo');
 });
 
 

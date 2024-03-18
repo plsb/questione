@@ -284,8 +284,9 @@ class ClassController extends Controller
         $this->storeGamificationBadges($class_id, 'two_gold_medals', 'Mente binária', 50, 'medal_two_medals_gold.png');
         $this->storeGamificationBadges($class_id, 'correctly_answer_two_simulations', 'Brilhante', 50, 'medal_oracle.png');
         $this->storeGamificationBadges($class_id, 'answer_a_test_same_day_was_posted', 'Pontual', 30, 'medal_pontual.png');
-        $this->storeGamificationBadges($class_id, 'get_100_xp', 'Ninja da Computação (100XP)', 20, 'medal_star_100.png');
-        $this->storeGamificationBadges($class_id, 'get_200_xp', 'Estudioso 200XP!', 30, 'medal_star_200.png');
+        $this->storeGamificationBadges($class_id, 'get_100_xp', 'Pergaminho da sabedoria (100XP)', 20, 'medal_star_100.png');
+        $this->storeGamificationBadges($class_id, 'get_200_xp', 'Ninja da computação (200XP)', 30, 'medal_star_200.png');
+        $this->storeGamificationBadges($class_id, 'get_400_xp', 'Surpreendente  (400XP)', 30, 'medal_star_400.png');
     }
 
     public function changeStatus($id, Request $request)
