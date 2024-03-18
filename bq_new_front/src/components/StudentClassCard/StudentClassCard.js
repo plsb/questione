@@ -273,7 +273,7 @@ const StudendClassCard = props => {
 
                         {class_student_student && class_student_student.active == 0 &&
                             <div className={classesGeneral.textRedInfo} style={{marginTop: '10px'}}>
-                                {'Você está desabalitado nesta turma. Entre em contato com o seu professor.'}
+                                {'Você está desabilitado nesta turma. Entre em contato com o seu professor.'}
                             </div>}
 
                     </CardContent>
